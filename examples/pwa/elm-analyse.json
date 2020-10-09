@@ -1,0 +1,18 @@
+{
+    "checks": {
+        "ExposeAll": true,
+        "SingleFieldRecord": false,
+        "UnnecessaryParens": false,
+        "ImportAll": false,
+        "UseConsOverConcat": false,
+        "MultiLineRecordFormatting": false,
+        "MapNothingToNothing": false,
+        "TriggerWords": false,
+        "DropConcatOfLists": false
+    },
+    "TriggerWords": {
+        "words": ["test"]
+    },
+    "excludedPaths": [
+    ]
+}

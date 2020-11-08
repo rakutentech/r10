@@ -2,15 +2,19 @@ module R10.Color.Font exposing
     ( fontButtonPrimary
     , fontButtonPrimaryDisabled
     , fontButtonPrimaryDisabledOver
+    , fontButtonPrimaryString
     , fontError
     , fontInputFieldCheckboxOver
     , fontLink
     , fontLinkOver
     , fontNormal
     , fontNormalLighter
+    , fontNormalString
     , fontValid
     )
 
+import Color
+import Color.Convert
 import Element
 import Element.Font
 import R10.Color
@@ -18,12 +22,23 @@ import R10.Color.Derived
 import R10.Theme
 
 
-fontNormal : R10.Theme.Theme -> Element.Attr decorative msg
-fontNormal theme =
+fontNormal_ : R10.Theme.Theme -> Color.Color
+fontNormal_ theme =
     R10.Color.Derived.FontHighEmphasis
         |> R10.Color.Derived.toColor theme
+
+
+fontNormal : R10.Theme.Theme -> Element.Attr decorative msg
+fontNormal theme =
+    fontNormal_ theme
         |> R10.Color.colorToElementColor
         |> Element.Font.color
+
+
+fontNormalString : R10.Theme.Theme -> String
+fontNormalString theme =
+    fontNormal_ theme
+        |> Color.Convert.colorToCssRgba
 
 
 fontNormalLighter : R10.Theme.Theme -> Element.Attr decorative msg
@@ -71,16 +86,31 @@ fontValid theme =
 -- BUTTON PRIMARY
 
 
-fontButtonPrimary : R10.Theme.Theme -> Element.Attr decorative msg
-fontButtonPrimary theme =
+fontButtonPrimary_ : R10.Theme.Theme -> Color.Color
+fontButtonPrimary_ theme =
     --
     -- Font color on primary color can be either white or black.
     -- We chose the one with maximumContrast
     --
     R10.Color.Derived.FontHighEmphasisWithMaximumContrast
         |> R10.Color.Derived.toColor theme
+
+
+fontButtonPrimary : R10.Theme.Theme -> Element.Attr decorative msg
+fontButtonPrimary theme =
+    fontButtonPrimary_ theme
         |> R10.Color.colorToElementColor
         |> Element.Font.color
+
+
+fontButtonPrimaryString : R10.Theme.Theme -> String
+fontButtonPrimaryString theme =
+    fontButtonPrimary_ theme
+        |> Color.Convert.colorToCssRgba
+
+
+
+--
 
 
 fontButtonPrimaryDisabled : R10.Theme.Theme -> Element.Attr decorative msg

@@ -147,6 +147,7 @@ attrsInCommon =
     , transition
     , Border.rounded 5
     , Font.center
+    , R10.FontSize.normal
     ]
 
 
@@ -180,10 +181,11 @@ attrsPrimaryDisabled theme =
 attrsSecondary : R10.Theme.Theme -> List (Attribute msg)
 attrsSecondary theme =
     attrsInCommon
-        ++ [ mouseOver [ R10.Color.Background.backgroundButtonMinorOver theme ]
-           , focused [ R10.Color.Background.backgroundButtonMinorOver theme ]
-           , R10.Color.Border.borderButtonSecondary theme
+        ++ [ -- Font color is just "normal" so we omit
+             R10.Color.Border.borderButtonSecondary theme
            , Border.width 1
+           , mouseOver [ R10.Color.Background.backgroundButtonMinorOver theme ]
+           , focused [ R10.Color.Background.backgroundButtonMinorOver theme ]
            ]
 
 

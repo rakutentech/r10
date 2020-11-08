@@ -12,6 +12,7 @@ import R10.Color.Background
 import R10.Color.CssRgba
 import R10.Color.Derived
 import R10.Color.Primary
+import R10.FontSize
 import R10.Libu
 import R10.Mode
 import R10.Paragraph
@@ -24,13 +25,13 @@ import R10.Theme
 theme : R10.Theme.Theme
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Primary.CrimsonRed
+    , primaryColor = R10.Color.Primary.Yellow
     }
 
 
 main : Html.Html msg
 main =
-    layout [ R10.Color.Background.underModal theme, padding 20 ] <|
+    layout [ R10.Color.Background.underModal theme, padding 20, R10.FontSize.normal ] <|
         column
             (R10.Card.high theme
                 ++ [ centerX
@@ -43,18 +44,22 @@ main =
             [ R10.Svg.Logos.rakuten [] (R10.Color.Derived.toColor theme R10.Color.Derived.Logo) 32
             , R10.Paragraph.normalMarkdown [] theme "This is an example of view made with **Elm**, **elm-ui** and [R10](https://r10.netlify.app)."
             , el [ Font.size 60, centerX, padding 10 ] <| text "🎉"
-            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or at [ellie-app.com](https://ellie-app.com/bsZTBJxHFrna1)."
+            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or at [ellie-app.com](https://ellie-app.com/new)."
             , R10.Button.primary []
                 { label =
                     row [ spacing 15, centerX ]
-                        [ el [] <| R10.Svg.Icons.cart_f (R10.Color.CssRgba.fontButtonPrimary theme) 20
-                        , R10.Paragraph.normal [] [ text "Primary Buttons" ]
+                        [ paragraph [] [ text "Primary Buttons" ]
+                        , el [] <| R10.Svg.Icons.cart_f (R10.Color.CssRgba.fontButtonPrimary theme) 18
                         ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
                 , theme = theme
                 }
             , R10.Button.secondary []
-                { label = R10.Paragraph.normal [] [ text "Secondary Buttons" ]
+                { label =
+                    row [ spacing 10, centerX ]
+                        [ paragraph [] [ text "Secondary Buttons" ]
+                        , el [ moveUp 2 ] <| R10.Svg.Icons.like_f (R10.Color.CssRgba.fontNormal theme) 18
+                        ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
                 , theme = theme
                 }

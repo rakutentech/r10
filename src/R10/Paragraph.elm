@@ -31,7 +31,7 @@ normalMarkdown attrs theme string =
 {-| -}
 normal : List (Attribute msg) -> List (Element msg) -> Element msg
 normal attrs children =
-    paragraph ([ R10.FontSize.normal, spacing 10 ] ++ attrs) children
+    paragraph ([ spacing 10 ] ++ attrs) children
 
 
 {-| -}

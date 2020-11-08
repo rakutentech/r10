@@ -1,14 +1,21 @@
-module R10.Color.CssRgba exposing (backgroundButtonMinorOver, backgroundPhoneDropdown, fontButtonPrimary, icon, iconError, iconPrimaryHex, iconValid, logoHex, mediumEmphasis, primary, spinner)
+module R10.Color.CssRgba exposing (backgroundButtonMinorOver, backgroundPhoneDropdown, fontButtonPrimary, icon, iconError, iconPrimaryHex, iconValid, logoHex, mediumEmphasis, primary, spinner, fontNormal)
 
 {-| Background in CSS Rgba format, like `rgba(127, 0, 0, 0.5)`.
 
-@docs backgroundButtonMinorOver, backgroundPhoneDropdown, fontButtonPrimary, icon, iconError, iconPrimaryHex, iconValid, logoHex, mediumEmphasis, primary, spinner
+@docs backgroundButtonMinorOver, backgroundPhoneDropdown, fontButtonPrimary, icon, iconError, iconPrimaryHex, iconValid, logoHex, mediumEmphasis, primary, spinner, fontNormal
 
 -}
 
 import Color.Convert
 import R10.Color.Derived
+import R10.Color.Font
 import R10.Theme
+
+
+{-| -}
+fontNormal : R10.Theme.Theme -> String
+fontNormal theme =
+    R10.Color.Font.fontNormalString theme
 
 
 {-| -}
@@ -22,9 +29,7 @@ primary theme =
 {-| -}
 fontButtonPrimary : R10.Theme.Theme -> String
 fontButtonPrimary theme =
-    R10.Color.Derived.FontHighEmphasisWithMaximumContrast
-        |> R10.Color.Derived.toColor theme
-        |> Color.Convert.colorToCssRgba
+    R10.Color.Font.fontButtonPrimaryString theme
 
 
 {-| -}

@@ -20,7 +20,7 @@ If you already have an existing Elm project, install the library with
 elm install rakutentech/r10
 ```
 
-See [this Ellie](https://ellie-app.com/bsZTBJxHFrna1) or scroll down this page to see a real life example.
+See [this Ellie](https://ellie-app.com/btv2tGK7tk8a1) or scroll down this page to see a real life example.
 
 
                
@@ -98,7 +98,7 @@ theme =
 
 This is the source code of this view.
 
-You can also find it at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or in  [this Ellie](https://ellie-app.com/bsZTBJxHFrna1).
+You can also find it at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or in  [this Ellie](https://ellie-app.com/btv2tGK7tk8a1).
 
 ```elm
 module Main exposing (main)
@@ -147,7 +147,7 @@ main =
             [ R10.Svg.Logos.rakuten [] (R10.Color.Derived.toColor theme R10.Color.Derived.Logo) 32
             , R10.Paragraph.normalMarkdown [] theme "This is an example of view made with **Elm**, **elm-ui** and [R10](https://r10.netlify.app)."
             , el [ Font.size 60, centerX, padding 10 ] <| text "🎉"
-            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or at [ellie-app.com](https://ellie-app.com/new)."
+            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or at [ellie-app.com](https://ellie-app.com/btv2tGK7tk8a1)."
             , R10.Button.primary []
                 { label =
                     row [ spacing 15, centerX ]

@@ -1,6 +1,11 @@
-module Pages.Shared.Utils exposing (toFormPalette)
+module Pages.Shared.Utils exposing
+    ( maxWidth
+    , maxWidthPx
+    , toFormPalette
+    )
 
 import Color
+import Element exposing (..)
 import R10.FormComponents.UI.Palette
 
 
@@ -18,3 +23,13 @@ toFormPalette =
     , surface = Color.rgb 1 1 1
     , background = Color.rgb 0.8 0.8 0.8
     }
+
+
+maxWidthPx : Int
+maxWidthPx =
+    800
+
+
+maxWidth : Attribute msg
+maxWidth =
+    width (fill |> maximum maxWidthPx)

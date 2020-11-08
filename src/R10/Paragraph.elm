@@ -18,6 +18,11 @@ import R10.SimpleMarkdown
 import R10.Theme
 
 
+paragraphSpacing : Attribute msg
+paragraphSpacing =
+    spacing 10
+
+
 {-| -}
 normalMarkdown : List (Attribute msg) -> R10.Theme.Theme -> String -> Element msg
 normalMarkdown attrs theme string =
@@ -31,7 +36,7 @@ normalMarkdown attrs theme string =
 {-| -}
 normal : List (Attribute msg) -> List (Element msg) -> Element msg
 normal attrs children =
-    paragraph ([ spacing 10 ] ++ attrs) children
+    paragraph ([ paragraphSpacing ] ++ attrs) children
 
 
 {-| -}

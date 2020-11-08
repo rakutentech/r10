@@ -111,11 +111,6 @@ conf =
     }
 
 
-maxWidth : number
-maxWidth =
-    1000
-
-
 main : Program Flags Model Msg
 main =
     Browser.element
@@ -532,7 +527,7 @@ mainLayout model title content =
         , column
             [ centerX
             , paddingXY 20 80
-            , width (fill |> maximum maxWidth)
+            , Pages.Shared.Utils.maxWidth
             , spacing 40
             ]
             ([ el [ Font.size 40 ] <| text <| R10.I18n.t (routeToLanguage model.route) title ]
@@ -617,7 +612,7 @@ cssMarkdown =
 }
 
 .markdown pre {
-    max-width: 720px;
+    max-width: """ ++ String.fromInt Pages.Shared.Utils.maxWidthPx ++ """px;
     overflow: scroll;
 }
 

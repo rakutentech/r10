@@ -48,7 +48,7 @@ main =
             , R10.Button.primary []
                 { label =
                     row [ spacing 15, centerX ]
-                        [ paragraph [] [ text "Primary Buttons" ]
+                        [ R10.Paragraph.normal [] [ text "Primary Buttons" ]
                         , el [] <| R10.Svg.Icons.cart_f (R10.Color.CssRgba.fontButtonPrimary theme) 18
                         ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
@@ -56,8 +56,8 @@ main =
                 }
             , R10.Button.secondary []
                 { label =
-                    row [ spacing 10, centerX ]
-                        [ paragraph [] [ text "Secondary Buttons" ]
+                    row [ spacing 15, centerX ]
+                        [ R10.Paragraph.normal [] [ text "Secondary Buttons" ]
                         , el [ moveUp 2 ] <| R10.Svg.Icons.like_f (R10.Color.CssRgba.fontNormal theme) 18
                         ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"

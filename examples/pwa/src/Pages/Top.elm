@@ -5,6 +5,7 @@ import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes
 import Markdown
+import Pages.Shared.Utils
 import R10.Color.Primary
 import R10.I18n
 import R10.Language
@@ -60,7 +61,7 @@ view : R10.Language.Language -> Attribute msg -> List (Element msg) -> (String -
 view language heroBackgroundColor content onClick =
     let
         columnAttrs =
-            [ width (fill |> maximum 800)
+            [ Pages.Shared.Utils.maxWidth
             , padding 20
             , centerX
             ]
@@ -70,10 +71,6 @@ view language heroBackgroundColor content onClick =
             [ width fill
             , paddingXY 0 140
             , spacing 70
-
-            -- , R10.Color.Background.backgroundButtonPrimary theme
-            -- , Background.color <| R10.Color.Primary.toColor theme R10.Color.Primary.Blue
-            -- , Background.color <| rgb 0.5 0.5 1
             , heroBackgroundColor
             ]
             [ row [ spacing 40, centerX, centerY ]
@@ -83,10 +80,9 @@ view language heroBackgroundColor content onClick =
                 ]
             , viewMessage language
             ]
-        , column columnAttrs [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] readme1 ]
+        , column columnAttrs [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] readme ]
         , column columnAttrs [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] "# Content" ]
         , column (columnAttrs ++ [ paddingEach { top = 0, right = 20, bottom = 40, left = 50 } ]) content
-        , column columnAttrs [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] readme ]
         ]
 
 
@@ -109,8 +105,8 @@ intro =
     }
 
 
-readme1 : String
-readme1 =
+readme : String
+readme =
     --
     -- This is copied and pasted from /README.md
     --
@@ -212,6 +208,23 @@ This is the source code of this view.
 You can also find it at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or in  [this Ellie](https://ellie-app.com/bsZTBJxHFrna1).
 
 ```elm
+""" ++ codeExample ++ """
+```
+
+# Other languages or frameworks
+
+If you are looking for Rakuten UI components written in other languages or frameworks, have a look at the [ReX Github repository](https://github.com/rakuten-rex) and the [ReX Frontend Components Library](https://zeroheight.com/390c074f3/p/080991-).
+
+
+
+# Thanks
+
+Thanks to Evan Czaplicki, Matthew Griffith, Richard Feldman, the folks at NoRedInk, Ryan Haskell-Glatz, Ilias Van Peer, Aaron VonderHaar, Abadi Kurniawaan, Dillon Kearns, Jeroen Engels, Keith Lazuka, Luke Westby, Alex Korban, Thibaut Assus, Brian Hicks and many more from the Elm community that directly or indirectly supported us in this journey."""
+
+
+codeExample : String
+codeExample =
+    """
 module Main exposing (main)
 
 import Element exposing (..)
@@ -226,6 +239,7 @@ import R10.Color.Background
 import R10.Color.CssRgba
 import R10.Color.Derived
 import R10.Color.Primary
+import R10.FontSize
 import R10.Libu
 import R10.Mode
 import R10.Paragraph
@@ -234,13 +248,17 @@ import R10.Svg.Logos
 import R10.Svg.LogosExtra
 import R10.Theme
 
+
+theme : R10.Theme.Theme
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Primary.CrimsonRed
+    , primaryColor = R10.Color.Primary.Yellow
     }
 
+
+main : Html.Html msg
 main =
-    layout [ R10.Color.Background.underModal theme, padding 20 ] <|
+    layout [ R10.Color.Background.underModal theme, padding 20, R10.FontSize.normal ] <|
         column
             (R10.Card.high theme
                 ++ [ centerX
@@ -253,35 +271,23 @@ main =
             [ R10.Svg.Logos.rakuten [] (R10.Color.Derived.toColor theme R10.Color.Derived.Logo) 32
             , R10.Paragraph.normalMarkdown [] theme "This is an example of view made with **Elm**, **elm-ui** and [R10](https://r10.netlify.app)."
             , el [ Font.size 60, centerX, padding 10 ] <| text "🎉"
-            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or at [ellie-app.com](https://ellie-app.com/bsZTBJxHFrna1)."
+            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or at [ellie-app.com](https://ellie-app.com/new)."
             , R10.Button.primary []
                 { label =
                     row [ spacing 15, centerX ]
-                        [ el [] <| R10.Svg.Icons.cart_f (R10.Color.CssRgba.fontButtonPrimary theme) 20
-                        , R10.Paragraph.normal [] [ text "Primary Buttons" ]
+                        [ R10.Paragraph.normal [] [ text "Primary Buttons" ]
+                        , el [] <| R10.Svg.Icons.cart_f (R10.Color.CssRgba.fontButtonPrimary theme) 18
                         ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
                 , theme = theme
                 }
             , R10.Button.secondary []
-                { label = R10.Paragraph.normal [] [ text "Secondary Buttons" ]
+                { label =
+                    row [ spacing 15, centerX ]
+                        [ R10.Paragraph.normal [] [ text "Secondary Buttons" ]
+                        , el [ moveUp 2 ] <| R10.Svg.Icons.like_f (R10.Color.CssRgba.fontNormal theme) 18
+                        ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
                 , theme = theme
                 }
-            ]
-```
-
-# Other languages or frameworks
-
-If you are looking for Rakuten UI components written in other languages or frameworks, have a look at the [ReX Github repository](https://github.com/rakuten-rex) and the [ReX Frontend Components Library](https://zeroheight.com/390c074f3/p/080991-).
-
-
-
-# Thanks
-
-Thanks to Evan Czaplicki, Matthew Griffith, Richard Feldman, the folks at NoRedInk, Ryan Haskell-Glatz, Ilias Van Peer, Aaron VonderHaar, Abadi Kurniawaan, Dillon Kearns, Jeroen Engels, Keith Lazuka, Luke Westby, Alex Korban, Thibaut Assus, Brian Hicks and many more from the Elm community that directly or indirectly supported us in this journey."""
-
-
-readme : String
-readme =
-    ""
+            ]"""

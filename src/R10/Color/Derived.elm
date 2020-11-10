@@ -245,19 +245,19 @@ toString value =
 {-| -}
 list : List Color
 list =
-    [ Success
+    [ BackgroundNormal
+    , FontMediumEmphasis
     , Primary
+    , Success
+    , Error
     , Logo
     , FontMediumEmphasisWithMaximumContrast
-    , FontMediumEmphasis
     , FontLink
     , FontHighEmphasisWithMaximumContrast
     , FontHighEmphasis
-    , Error
     , Debugger
     , Border
     , BackgroundPhoneDropdown
-    , BackgroundNormal
     , BackgroundInputFieldText
     , BackgroundButtonPrimaryOver
     , BackgroundButtonPrimaryDisabledOver

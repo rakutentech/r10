@@ -3,7 +3,27 @@ module R10.Color.Base exposing
     , toString
     )
 
-{-| Rakuten base colors
+{-| Rakuten base colors.
+
+From these 6 colors all other colors are generated programmatically.
+
+
+## Background
+
+
+## Font
+
+
+## FontReversed
+
+
+## FontLink
+
+
+## Success
+
+
+## Error
 
 More info about colors at <https://r10.netlify.app/>
 
@@ -27,12 +47,12 @@ import R10.Theme
 
 {-| -}
 type Color
-    = Success
+    = Background
+    | Font
     | FontReversed
     | FontLink
-    | Font
+    | Success
     | Error
-    | Background
 
 
 {-| -}
@@ -114,12 +134,12 @@ toString value =
 {-| -}
 list : List Color
 list =
-    [ Success
+    [ Background
+    , Font
     , FontReversed
     , FontLink
-    , Font
+    , Success
     , Error
-    , Background
     ]
 
 

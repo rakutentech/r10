@@ -141,14 +141,14 @@ toString value =
 {-| -}
 list : List Color
 list =
-    [ Yellow
-    , Purple
+    [ CrimsonRed
     , Pink
-    , Orange
+    , Purple
+    , Blue
     , LightBlue
     , Green
-    , CrimsonRed
-    , Blue
+    , Orange
+    , Yellow
     ]
 
 

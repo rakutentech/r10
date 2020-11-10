@@ -63,4 +63,21 @@ main =
                 , libu = R10.Libu.Li "https://r10.netlify.app"
                 , theme = theme
                 }
+            , row [ width fill ]
+                [ R10.Button.quaternary []
+                    { label =
+                        row [ spacing 15, centerX ]
+                            [ R10.Paragraph.normal [] [ text "Help" ]
+                            ]
+                    , libu = R10.Libu.Li "https://r10.netlify.app"
+                    , theme = theme
+                    }
+                , R10.Button.quaternary [ alignRight ]
+                    { label =
+                        el [ spacing 15, centerX ] <|
+                            R10.Paragraph.normal [] [ text "Terms" ]
+                    , libu = R10.Libu.Li "https://r10.netlify.app"
+                    , theme = theme
+                    }
+                ]
             ]

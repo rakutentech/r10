@@ -1,10 +1,23 @@
 module R10.Color exposing
-    ( Primary, primary
-    , Base
-    , listPrimary, listBase
+    ( Base
+    , Primary, primary, decoder, decoderExploration
+    , Derived
+    , logo
+    , listPrimary, listBase, listDerived
     )
 
 {-| These lists are just to be used to create documentations, not to actually use colors in the layout.
+
+
+# Base
+
+Base colors are the only color, together with one primary color, that are used to derive all other colors for the interface.
+
+They are different depending on the mode:
+
+![Colors](https://r10.netlify.app/images/base_500.png)
+
+@docs Base
 
 
 # Primary
@@ -15,26 +28,36 @@ Rakutenn Brand guideline: <https://global.rakuten.com/corp/brand/>
 
 ![Colors](https://r10.netlify.app/images/colors-overview400.png)
 
-@docs Primary, primary
+@docs Primary, primary, decoder, decoderExploration
 
 
-# Base
+# Derived
 
-![Colors](https://r10.netlify.app/images/base_500.png)
+@docs Derived
 
-@docs Base
+
+# Colors
+
+These are colors that can be used for SVGs because SVGs don't accept `Element.Attr` as they are not part of the `elm-ui` package.
+
+For all other colors, look into `R10.Color.Attr...` modules.
+
+@docs logo
 
 
 # Lists
 
 These lists should only be used to generate documentation.
 
-@docs listPrimary, listBase
+@docs listPrimary, listBase, listDerived
 
 -}
 
 import Color
+import Json.Decode
+import Json.Decode.Exploration
 import R10.Color.Internal.Base
+import R10.Color.Internal.Derived
 import R10.Color.Internal.Primary
 import R10.Theme
 
@@ -71,6 +94,18 @@ primary =
     }
 
 
+{-| -}
+decoder : Json.Decode.Decoder Primary
+decoder =
+    R10.Color.Internal.Primary.decoder
+
+
+{-| -}
+decoderExploration : Json.Decode.Exploration.Decoder Primary
+decoderExploration =
+    R10.Color.Internal.Primary.decoderExploration
+
+
 
 -- EXPOSING BASE COLOR STUFF
 
@@ -81,11 +116,31 @@ type alias Base =
 
 
 
+-- EXPOSING DERIVED COLOR STUFF
+
+
+{-| -}
+type alias Derived =
+    R10.Color.Internal.Derived.Color
+
+
+
+-- COLORS
+
+
+{-| -}
+logo : R10.Theme.Theme -> Color.Color
+logo theme =
+    R10.Color.Internal.Derived.Logo
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+
 -- LISTS
 
 
 {-| -}
-listPrimary : R10.Theme.Theme -> List { color : Color.Color, name : String }
+listPrimary : R10.Theme.Theme -> List { color : Color.Color, name : String, type_ : Primary }
 listPrimary =
     R10.Color.Internal.Primary.list
 
@@ -94,3 +149,9 @@ listPrimary =
 listBase : R10.Theme.Theme -> List { color : Color.Color, name : String }
 listBase theme =
     R10.Color.Internal.Base.list theme
+
+
+{-| -}
+listDerived : R10.Theme.Theme -> List { color : Color.Color, name : String }
+listDerived theme =
+    R10.Color.Internal.Derived.list theme

@@ -1,6 +1,6 @@
 module R10.Color.Internal.Primary exposing
     ( Color(..), list, default, toColor
-    , decoderExploration
+    , decoderExploration, decoder
     )
 
 {-| Rakuten brand colors
@@ -14,7 +14,7 @@ More info about colors at <https://r10.netlify.app/>
 
 # Encoders/Decoders
 
-@docs decoderExploration
+@docs decoderExploration, decoder
 
 -}
 
@@ -55,46 +55,51 @@ encodeColor value =
             Json.Encode.string "Orange"
 
         LightBlue ->
-            Json.Encode.string "LightBlue"
+            Json.Encode.string "Light Blue"
 
         Green ->
             Json.Encode.string "Green"
 
         CrimsonRed ->
-            Json.Encode.string "CrimsonRed"
+            Json.Encode.string "Crimson Red"
 
         Blue ->
             Json.Encode.string "Blue"
 
 
 {-| -}
-decodeColor : Json.Decode.Decoder Color
-decodeColor =
+decoder : Json.Decode.Decoder Color
+decoder =
     let
         findMatch str =
-            case str of
-                "Yellow" ->
+            case
+                str
+                    |> String.toLower
+                    |> String.replace " " ""
+                    |> String.replace "crimson" ""
+            of
+                "yellow" ->
                     Json.Decode.succeed Yellow
 
-                "Purple" ->
+                "purple" ->
                     Json.Decode.succeed Purple
 
-                "Pink" ->
+                "pink" ->
                     Json.Decode.succeed Pink
 
-                "Orange" ->
+                "orange" ->
                     Json.Decode.succeed Orange
 
-                "LightBlue" ->
+                "lightblue" ->
                     Json.Decode.succeed LightBlue
 
-                "Green" ->
+                "green" ->
                     Json.Decode.succeed Green
 
-                "CrimsonRed" ->
+                "red" ->
                     Json.Decode.succeed CrimsonRed
 
-                "Blue" ->
+                "blue" ->
                     Json.Decode.succeed Blue
 
                 _ ->
@@ -142,6 +147,7 @@ list theme =
         (\color ->
             { color = toColor theme color
             , name = toString_ color
+            , type_ = color
             }
         )
         list_
@@ -175,7 +181,7 @@ default =
 fromString : String -> Color
 fromString string =
     Result.withDefault default <|
-        Json.Decode.decodeValue decodeColor (Json.Encode.string string)
+        Json.Decode.decodeValue decoder (Json.Encode.string string)
 
 
 {-| -}

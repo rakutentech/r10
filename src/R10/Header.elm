@@ -20,8 +20,8 @@ import Html.Attributes
 import Http
 import Json.Decode
 import Process
-import R10.Color.Background
-import R10.Color.Derived
+import R10.Color.AttrBackground
+import R10.Color.Internal.Derived
 import R10.Color.Internal.Primary
 import R10.Color.Utils
 import R10.I18n
@@ -409,7 +409,7 @@ view model args =
         , if model.negative then
             case model.backgroundColor of
                 Nothing ->
-                    R10.Color.Background.backgroundButtonPrimary model.theme
+                    R10.Color.AttrBackground.buttonPrimary model.theme
 
                 Just color ->
                     Background.color color
@@ -884,7 +884,7 @@ logo logo_ negative theme =
         elementLogo typeLogo =
             case typeLogo of
                 Rakuten ->
-                    R10.Svg.Logos.rakuten [ moveUp 1 ] (R10.Color.Derived.toColor theme R10.Color.Derived.Logo) 32
+                    R10.Svg.Logos.rakuten [ moveUp 1 ] (R10.Color.Internal.Derived.toColor theme R10.Color.Internal.Derived.Logo) 32
 
         elementText string =
             el

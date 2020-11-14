@@ -1,18 +1,4 @@
-module R10.Color.Derived exposing
-    ( Color(..), list, toColor
-    , toString
-    )
-
-{-| Rakuten derived colors
-
-@docs Color, list, toColor
-
-
-# To String
-
-@docs toString
-
--}
+module R10.Color.Internal.Derived exposing (Color(..), list, toColor)
 
 import Color
 import Color.Accessibility
@@ -26,7 +12,6 @@ import R10.Mode
 import R10.Theme
 
 
-{-| -}
 type Color
     = Success
     | Primary
@@ -49,140 +34,19 @@ type Color
     | BackgroundButtonMinorOver
 
 
-{-| -}
-encodeColor : Color -> Json.Encode.Value
-encodeColor value =
-    case value of
-        Success ->
-            Json.Encode.string "Success"
-
-        Primary ->
-            Json.Encode.string "Primary"
-
-        Logo ->
-            Json.Encode.string "Logo"
-
-        FontMediumEmphasisWithMaximumContrast ->
-            Json.Encode.string "FontMediumEmphasisWithMaximumContrast"
-
-        FontMediumEmphasis ->
-            Json.Encode.string "FontMediumEmphasis"
-
-        FontLink ->
-            Json.Encode.string "FontLink"
-
-        FontHighEmphasisWithMaximumContrast ->
-            Json.Encode.string "FontHighEmphasisWithMaximumContrast"
-
-        FontHighEmphasis ->
-            Json.Encode.string "FontHighEmphasis"
-
-        Error ->
-            Json.Encode.string "Error"
-
-        Debugger ->
-            Json.Encode.string "Debugger"
-
-        Border ->
-            Json.Encode.string "Border"
-
-        BackgroundPhoneDropdown ->
-            Json.Encode.string "BackgroundPhoneDropdown"
-
-        BackgroundNormal ->
-            Json.Encode.string "BackgroundNormal"
-
-        BackgroundInputFieldText ->
-            Json.Encode.string "BackgroundInputFieldText"
-
-        BackgroundButtonPrimaryOver ->
-            Json.Encode.string "BackgroundButtonPrimaryOver"
-
-        BackgroundButtonPrimaryDisabledOver ->
-            Json.Encode.string "BackgroundButtonPrimaryDisabledOver"
-
-        BackgroundButtonPrimaryDisabled ->
-            Json.Encode.string "BackgroundButtonPrimaryDisabled"
-
-        BackgroundButtonPrimary ->
-            Json.Encode.string "BackgroundButtonPrimary"
-
-        BackgroundButtonMinorOver ->
-            Json.Encode.string "BackgroundButtonMinorOver"
+list : R10.Theme.Theme -> List { color : Color.Color, name : String }
+list theme =
+    List.map
+        (\color ->
+            { color = toColor theme color
+            , name = toString_ color
+            }
+        )
+        list_
 
 
-{-| -}
-decodeColor : Json.Decode.Decoder Color
-decodeColor =
-    let
-        findMatch str =
-            case str of
-                "Success" ->
-                    Json.Decode.succeed Success
-
-                "Primary" ->
-                    Json.Decode.succeed Primary
-
-                "Logo" ->
-                    Json.Decode.succeed Logo
-
-                "FontMediumEmphasisWithMaximumContrast" ->
-                    Json.Decode.succeed FontMediumEmphasisWithMaximumContrast
-
-                "FontMediumEmphasis" ->
-                    Json.Decode.succeed FontMediumEmphasis
-
-                "FontLink" ->
-                    Json.Decode.succeed FontLink
-
-                "FontHighEmphasisWithMaximumContrast" ->
-                    Json.Decode.succeed FontHighEmphasisWithMaximumContrast
-
-                "FontHighEmphasis" ->
-                    Json.Decode.succeed FontHighEmphasis
-
-                "Error" ->
-                    Json.Decode.succeed Error
-
-                "Debugger" ->
-                    Json.Decode.succeed Debugger
-
-                "Border" ->
-                    Json.Decode.succeed Border
-
-                "BackgroundPhoneDropdown" ->
-                    Json.Decode.succeed BackgroundPhoneDropdown
-
-                "BackgroundNormal" ->
-                    Json.Decode.succeed BackgroundNormal
-
-                "BackgroundInputFieldText" ->
-                    Json.Decode.succeed BackgroundInputFieldText
-
-                "BackgroundButtonPrimaryOver" ->
-                    Json.Decode.succeed BackgroundButtonPrimaryOver
-
-                "BackgroundButtonPrimaryDisabledOver" ->
-                    Json.Decode.succeed BackgroundButtonPrimaryDisabledOver
-
-                "BackgroundButtonPrimaryDisabled" ->
-                    Json.Decode.succeed BackgroundButtonPrimaryDisabled
-
-                "BackgroundButtonPrimary" ->
-                    Json.Decode.succeed BackgroundButtonPrimary
-
-                "BackgroundButtonMinorOver" ->
-                    Json.Decode.succeed BackgroundButtonMinorOver
-
-                _ ->
-                    Json.Decode.fail "Unknown value for Color"
-    in
-    Json.Decode.string |> Json.Decode.andThen findMatch
-
-
-{-| -}
-toString : Color -> String
-toString value =
+toString_ : Color -> String
+toString_ value =
     case value of
         Success ->
             "Success"
@@ -194,19 +58,19 @@ toString value =
             "Logo"
 
         FontMediumEmphasisWithMaximumContrast ->
-            "FontMediumEmphasisWithMaximumContrast"
+            "Font Medium Emphasis With Maximum Contrast"
 
         FontMediumEmphasis ->
-            "FontMediumEmphasis"
+            "Font Medium Emphasis"
 
         FontLink ->
-            "FontLink"
+            "Font Link"
 
         FontHighEmphasisWithMaximumContrast ->
-            "FontHighEmphasisWithMaximumContrast"
+            "Font High Emphasis With Maximum Contrast"
 
         FontHighEmphasis ->
-            "FontHighEmphasis"
+            "Font High Emphasis"
 
         Error ->
             "Error"
@@ -218,33 +82,32 @@ toString value =
             "Border"
 
         BackgroundPhoneDropdown ->
-            "BackgroundPhoneDropdown"
+            "Background Phone Dropdown"
 
         BackgroundNormal ->
-            "BackgroundNormal"
+            "Background Normal"
 
         BackgroundInputFieldText ->
-            "BackgroundInputFieldText"
+            "Background Input Field Text"
 
         BackgroundButtonPrimaryOver ->
-            "BackgroundButtonPrimaryOver"
+            "Background Button Primary Over"
 
         BackgroundButtonPrimaryDisabledOver ->
-            "BackgroundButtonPrimaryDisabledOver"
+            "Background Button Primary Disabled Over"
 
         BackgroundButtonPrimaryDisabled ->
-            "BackgroundButtonPrimaryDisabled"
+            "Background Button Primary Disabled"
 
         BackgroundButtonPrimary ->
-            "BackgroundButtonPrimary"
+            "Background Button Primary"
 
         BackgroundButtonMinorOver ->
-            "BackgroundButtonMinorOver"
+            "Background Button Minor Over"
 
 
-{-| -}
-list : List Color
-list =
+list_ : List Color
+list_ =
     [ BackgroundNormal
     , FontMediumEmphasis
     , Primary
@@ -269,10 +132,12 @@ list =
 
 
 -- EXTRAS
+--
+-- Convert a derived color into a `avh4/elm-color` type of color.
+-- It requiires a `Mode` because the color can be sligtly different
+-- in Light or Dark mode.
 
 
-{-| Convert a primary color into a `avh4/elm-color` type of color. It requiires a `Mode` because the color can be sligtly different in Light or Dark mode.
--}
 toColor : R10.Theme.Theme -> Color -> Color.Color
 toColor theme colorDerived =
     case colorDerived of

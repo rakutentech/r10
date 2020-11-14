@@ -18,7 +18,6 @@ import Html.Attributes
 import Markdown
 import R10.Button
 import R10.Color
-import R10.Color.Derived
 import R10.Color.Utils
 import R10.Form
 import R10.Form.Conf
@@ -180,17 +179,14 @@ paletteBase theme =
     paletteAdv2 theme R10.Color.listBase
 
 
-
---
--- palettePrimary : R10.Theme.Theme -> Element msg
--- palettePrimary theme =
---     paletteAdv theme R10.Color.Internal.Primary.toColor R10.Color.Primary.toString R10.Color.Primary.list
---
+palettePrimary : R10.Theme.Theme -> Element msg
+palettePrimary theme =
+    paletteAdv2 theme R10.Color.listPrimary
 
 
 paletteDerived : R10.Theme.Theme -> Element msg
 paletteDerived theme =
-    paletteAdv theme R10.Color.Derived.toColor R10.Color.Derived.toString R10.Color.Derived.list
+    paletteAdv2 theme R10.Color.listDerived
 
 
 paletteAdv :
@@ -244,7 +240,7 @@ paletteAdv theme toColor toString list =
 
 paletteAdv2 :
     R10.Theme.Theme
-    -> (R10.Theme.Theme -> List { color : Color.Color, name : String })
+    -> (R10.Theme.Theme -> List { a | color : Color.Color, name : String })
     -> Element msg
 paletteAdv2 theme list =
     column [ centerX, scrollbars ]
@@ -451,14 +447,13 @@ view model =
                         , primaryColor = primaryColor
                         }
                 )
-
-           -- , section "Palette Primary"
-           --      (el [] <|
-           --          palettePrimary
-           --              { mode = mode
-           --              , primaryColor = primaryColor
-           --              }
-           --      )
+           , section "Palette Primary"
+                (el [] <|
+                    palettePrimary
+                        { mode = mode
+                        , primaryColor = primaryColor
+                        }
+                )
            , section "Palette Derived"
                 (el [] <|
                     paletteDerived

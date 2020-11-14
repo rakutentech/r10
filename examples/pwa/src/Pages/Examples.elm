@@ -19,11 +19,10 @@ import Html.Attributes
 import Markdown
 import R10.Button
 import R10.Color
-import R10.Color.Background
-import R10.Color.Border
+import R10.Color.AttrBackground
+import R10.Color.AttrBorder
+import R10.Color.AttrFont
 import R10.Color.CssRgba
-import R10.Color.Derived
-import R10.Color.Font
 import R10.Color.Utils
 import R10.Form
 import R10.Form.Conf
@@ -133,7 +132,7 @@ titleSection theme string =
         [ Font.bold
         , paddingEach { top = 70, right = 0, bottom = 20, left = 0 }
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , R10.Color.Border.borderNormal theme
+        , R10.Color.AttrBorder.normal theme
         ]
         [ text string ]
 
@@ -189,7 +188,7 @@ paletteView theme toColor toString list =
 
 paletteView2 :
     R10.Theme.Theme
-    -> (R10.Theme.Theme -> List { color : Color.Color, name : String })
+    -> (R10.Theme.Theme -> List { a | color : Color.Color, name : String })
     -> Element msg
 paletteView2 theme list =
     column
@@ -228,7 +227,10 @@ paletteView2 theme list =
                 <|
                     row [ Font.size 13, spacing 20, width fill ]
                         [ el
-                            [ Font.family [ Font.monospace ], Font.color <| fontColorMaxContrast color ]
+                            [ Font.family [ Font.monospace ]
+                            , Font.color <| fontColorMaxContrast color
+                            , width <| px 80
+                            ]
                           <|
                             text hex
                         , el [ Font.color <| fontColorMaxContrast color ] <| text name
@@ -385,34 +387,22 @@ view : Model -> { x : Int, y : Int } -> { x : Int, y : Int } -> List (Element Ms
 view model mouse windowSize =
     [ titleSection model.theme "Palettes"
     , text "Palette Base"
-    , paletteView2
-        model.theme
-        R10.Color.listBase
+    , paletteView2 model.theme R10.Color.listBase
     , text "Palette Primary"
-
-    -- , paletteView
-    --     model.theme
-    --     R10.Color.Internal.Primary.toColor
-    --     R10.Color.Primary.toString
-    --     R10.Color.Primary.list
+    , paletteView2 model.theme R10.Color.listPrimary
     , text "Palette Derived"
-    , paletteView
-        model.theme
-        R10.Color.Derived.toColor
-        R10.Color.Derived.toString
-        R10.Color.Derived.list
+    , paletteView2 model.theme R10.Color.listDerived
     , text "Palette Modifier - Primary Color"
-
-    -- , wrappedRow [ spacing 16 ] <|
-    --     List.map
-    --         (\color ->
-    --             R10.Button.secondary []
-    --                 { label = text <| R10.Color.Primary.toString color
-    --                 , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor color
-    --                 , theme = defaultTheme
-    --                 }
-    --         )
-    --         R10.Color.Primary.list
+    , wrappedRow [ spacing 16 ] <|
+        List.map
+            (\{ color, name, type_ } ->
+                R10.Button.secondary []
+                    { label = text name
+                    , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor type_
+                    , theme = defaultTheme
+                    }
+            )
+            (R10.Color.listPrimary defaultTheme)
     , text "Palette Modifier - Mode"
     , wrappedRow [ spacing 16 ] <|
         List.map
@@ -428,8 +418,8 @@ view model mouse windowSize =
     , column
         [ padding 20
         , spacing 20
-        , R10.Color.Background.backgroundNormal model.theme
-        , R10.Color.Font.fontNormal model.theme
+        , R10.Color.AttrBackground.normal model.theme
+        , R10.Color.AttrFont.normal model.theme
         ]
         [ R10.Button.primary []
             { label = text "Primary Button"

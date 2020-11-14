@@ -12,8 +12,6 @@ The only way to get these color is through `list` just for documentation purpose
 
 -}
 
--- import R10.Color
-
 import Color
 import Color.Manipulate
 import Json.Decode
@@ -39,7 +37,7 @@ toColor theme =
             toColorLight_
 
         R10.Mode.Dark ->
-            toColorDark
+            toColorDark_
 
 
 list : R10.Theme.Theme -> List { color : Color.Color, name : String }
@@ -112,8 +110,8 @@ toColorLight_ color =
             R10.Color.Utils.fromHex "#ffffff"
 
 
-toColorDark : Color -> Color.Color
-toColorDark color =
+toColorDark_ : Color -> Color.Color
+toColorDark_ color =
     case color of
         Font ->
             Color.rgb 1 1 1

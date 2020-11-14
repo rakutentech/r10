@@ -20,10 +20,10 @@ import Element exposing (..)
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes
-import R10.Color.Background
-import R10.Color.Border
+import R10.Color.AttrBackground
+import R10.Color.AttrBorder
+import R10.Color.AttrFont
 import R10.Color.CssRgba
-import R10.Color.Font
 import R10.FontSize
 import R10.Libu
 import R10.Paragraph
@@ -154,25 +154,25 @@ attrsInCommon =
 attrsPrimary : R10.Theme.Theme -> List (Attribute msg)
 attrsPrimary theme =
     attrsInCommon
-        ++ [ R10.Color.Background.backgroundButtonPrimary theme
-           , R10.Color.Font.fontButtonPrimary theme
-           , mouseOver [ R10.Color.Background.backgroundButtonPrimaryOver theme ]
-           , focused [ R10.Color.Background.backgroundButtonPrimaryOver theme ]
+        ++ [ R10.Color.AttrBackground.buttonPrimary theme
+           , R10.Color.AttrFont.buttonPrimary theme
+           , mouseOver [ R10.Color.AttrBackground.buttonPrimaryOver theme ]
+           , focused [ R10.Color.AttrBackground.buttonPrimaryOver theme ]
            ]
 
 
 attrsPrimaryDisabled : R10.Theme.Theme -> List (Attribute msg)
 attrsPrimaryDisabled theme =
     attrsInCommon
-        ++ [ R10.Color.Background.backgroundButtonPrimaryDisabled theme
-           , R10.Color.Font.fontButtonPrimaryDisabled theme
+        ++ [ R10.Color.AttrBackground.buttonPrimaryDisabled theme
+           , R10.Color.AttrFont.buttonPrimaryDisabled theme
            , mouseOver
-                [ R10.Color.Background.backgroundButtonPrimaryDisabledOver theme
-                , R10.Color.Font.fontButtonPrimaryDisabledOver theme
+                [ R10.Color.AttrBackground.buttonPrimaryDisabledOver theme
+                , R10.Color.AttrFont.buttonPrimaryDisabledOver theme
                 ]
            , focused
-                [ R10.Color.Background.backgroundButtonPrimaryDisabledOver theme
-                , R10.Color.Font.fontButtonPrimaryDisabledOver theme
+                [ R10.Color.AttrBackground.buttonPrimaryDisabledOver theme
+                , R10.Color.AttrFont.buttonPrimaryDisabledOver theme
                 ]
            , htmlAttribute <| Html.Attributes.style "cursor" "not-allowed"
            ]
@@ -182,20 +182,20 @@ attrsSecondary : R10.Theme.Theme -> List (Attribute msg)
 attrsSecondary theme =
     attrsInCommon
         ++ [ -- Font color is just "normal" so we omit
-             R10.Color.Border.borderButtonSecondary theme
+             R10.Color.AttrBorder.buttonSecondary theme
            , Border.width 1
-           , mouseOver [ R10.Color.Background.backgroundButtonMinorOver theme ]
-           , focused [ R10.Color.Background.backgroundButtonMinorOver theme ]
+           , mouseOver [ R10.Color.AttrBackground.buttonMinorOver theme ]
+           , focused [ R10.Color.AttrBackground.buttonMinorOver theme ]
            ]
 
 
 attrsSecondaryDisabled : R10.Theme.Theme -> List (Attribute msg)
 attrsSecondaryDisabled theme =
     attrsInCommon
-        ++ [ R10.Color.Background.backgroundButtonPrimaryDisabled theme
-           , mouseOver [ R10.Color.Background.backgroundButtonMinorOver theme ]
-           , focused [ R10.Color.Background.backgroundButtonMinorOver theme ]
-           , R10.Color.Border.borderButtonSecondary theme
+        ++ [ R10.Color.AttrBackground.buttonPrimaryDisabled theme
+           , mouseOver [ R10.Color.AttrBackground.buttonMinorOver theme ]
+           , focused [ R10.Color.AttrBackground.buttonMinorOver theme ]
+           , R10.Color.AttrBorder.buttonSecondary theme
            , Border.width 1
            , htmlAttribute <| Html.Attributes.style "cursor" "not-allowed"
            ]
@@ -205,8 +205,8 @@ attrsTertiary : R10.Theme.Theme -> List (Attribute msg)
 attrsTertiary theme =
     [ padding numberPadding
     , width fill
-    , mouseOver [ R10.Color.Background.backgroundButtonMinorOver theme ]
-    , focused [ R10.Color.Background.backgroundButtonMinorOver theme ]
+    , mouseOver [ R10.Color.AttrBackground.buttonMinorOver theme ]
+    , focused [ R10.Color.AttrBackground.buttonMinorOver theme ]
     , transition
     , Border.rounded 5
     , Font.center
@@ -217,13 +217,13 @@ attrsTertiary theme =
 attrsQuaternary : R10.Theme.Theme -> List (Attribute msg)
 attrsQuaternary theme =
     [ paddingXY (numberPadding - 4) (numberPadding - 8)
-    , mouseOver [ R10.Color.Background.backgroundButtonMinorOver theme ]
-    , focused [ R10.Color.Background.backgroundButtonMinorOver theme ]
+    , mouseOver [ R10.Color.AttrBackground.buttonMinorOver theme ]
+    , focused [ R10.Color.AttrBackground.buttonMinorOver theme ]
     , transition
     , Border.rounded 5
     , Font.center
     , R10.FontSize.xxsmall
-    , R10.Color.Font.fontNormalLighter theme
+    , R10.Color.AttrFont.normalLighter theme
     ]
 
 

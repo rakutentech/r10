@@ -9,9 +9,9 @@ module R10.Card exposing (high, low, normal)
 import Element exposing (..)
 import Element.Border as Border
 import Html.Attributes
-import R10.Color.Background
-import R10.Color.Border
-import R10.Color.Font
+import R10.Color.AttrBackground
+import R10.Color.AttrBorder
+import R10.Color.AttrFont
 import R10.Theme
 
 
@@ -27,9 +27,9 @@ shadow level =
 
 base : R10.Theme.Theme -> List (Attribute msg)
 base theme =
-    [ R10.Color.Background.backgroundNormal theme
-    , R10.Color.Border.borderNormal theme
-    , R10.Color.Font.fontNormal theme
+    [ R10.Color.AttrBackground.normal theme
+    , R10.Color.AttrBorder.normal theme
+    , R10.Color.AttrFont.normal theme
     , Border.rounded 10
     , Border.width 1
     , padding 30

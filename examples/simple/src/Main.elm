@@ -7,9 +7,9 @@ import Element.Font as Font
 import Html
 import R10.Button
 import R10.Card
-import R10.Color.Background
+import R10.Color
+import R10.Color.AttrBackground
 import R10.Color.CssRgba
-import R10.Color.Derived
 import R10.Color.Internal.Primary
 import R10.FontSize
 import R10.Libu
@@ -30,7 +30,7 @@ theme =
 
 main : Html.Html msg
 main =
-    layout [ R10.Color.Background.underModal theme, padding 20, R10.FontSize.normal ] <|
+    layout [ R10.Color.AttrBackground.underModal theme, padding 20, R10.FontSize.normal ] <|
         column
             (R10.Card.high theme
                 ++ [ centerX
@@ -40,7 +40,7 @@ main =
                    , spacing 30
                    ]
             )
-            [ R10.Svg.Logos.rakuten [] (R10.Color.Derived.toColor theme R10.Color.Derived.Logo) 32
+            [ R10.Svg.Logos.rakuten [] (R10.Color.logo theme) 32
             , R10.Paragraph.normalMarkdown [] theme "This is an example of view made with **Elm**, **elm-ui** and [R10](https://r10.netlify.app)."
             , el [ Font.size 60, centerX, padding 10 ] <| text "🎉"
             , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or at [ellie-app.com](https://ellie-app.com/btv2tGK7tk8a1)."

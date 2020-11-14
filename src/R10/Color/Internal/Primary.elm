@@ -1,6 +1,5 @@
-module R10.Color.Primary exposing
+module R10.Color.Internal.Primary exposing
     ( Color(..), list, default, toColor
-    , toString
     , decoderExploration
     )
 
@@ -13,11 +12,6 @@ More info about colors at <https://r10.netlify.app/>
 @docs Color, list, default, toColor
 
 
-# To String
-
-@docs toString
-
-
 # Encoders/Decoders
 
 @docs decoderExploration
@@ -28,7 +22,7 @@ import Color
 import Json.Decode
 import Json.Decode.Exploration
 import Json.Encode
-import R10.Color
+import R10.Color.Utils
 import R10.Mode
 
 
@@ -110,8 +104,8 @@ decodeColor =
 
 
 {-| -}
-toString : Color -> String
-toString value =
+toString_ : Color -> String
+toString_ value =
     case value of
         Yellow ->
             "Yellow"
@@ -126,21 +120,36 @@ toString value =
             "Orange"
 
         LightBlue ->
-            "LightBlue"
+            "Light Blue"
 
         Green ->
             "Green"
 
         CrimsonRed ->
-            "CrimsonRed"
+            "Crimson Red"
 
         Blue ->
             "Blue"
 
 
+
+-- Cannot add the type signature here, otherwise we create a loop of imports
+-- list : R10.Theme.Theme -> List { color : Color.Color, name : String }
+
+
+list theme =
+    List.map
+        (\color ->
+            { color = toColor theme color
+            , name = toString_ color
+            }
+        )
+        list_
+
+
 {-| -}
-list : List Color
-list =
+list_ : List Color
+list_ =
     [ CrimsonRed
     , Pink
     , Purple
@@ -181,28 +190,28 @@ toColorLight : Color -> Color.Color
 toColorLight color =
     case color of
         CrimsonRed ->
-            R10.Color.fromHex "#bf0000"
+            R10.Color.Utils.fromHex "#bf0000"
 
         Orange ->
-            R10.Color.fromHex "#f59600"
+            R10.Color.Utils.fromHex "#f59600"
 
         Yellow ->
-            R10.Color.fromHex "#ffcc00"
+            R10.Color.Utils.fromHex "#ffcc00"
 
         Green ->
-            R10.Color.fromHex "#00b900"
+            R10.Color.Utils.fromHex "#00b900"
 
         LightBlue ->
-            R10.Color.fromHex "#00a0f0"
+            R10.Color.Utils.fromHex "#00a0f0"
 
         Blue ->
-            R10.Color.fromHex "#002896"
+            R10.Color.Utils.fromHex "#002896"
 
         Purple ->
-            R10.Color.fromHex "#7d00be"
+            R10.Color.Utils.fromHex "#7d00be"
 
         Pink ->
-            R10.Color.fromHex "#ff41be"
+            R10.Color.Utils.fromHex "#ff41be"
 
 
 {-| -}
@@ -210,28 +219,28 @@ toColorDark : Color -> Color.Color
 toColorDark color =
     case color of
         CrimsonRed ->
-            R10.Color.fromLightToDark <| toColorLight color
+            R10.Color.Utils.fromLightToDark <| toColorLight color
 
         Orange ->
-            R10.Color.fromLightToDark <| toColorLight color
+            R10.Color.Utils.fromLightToDark <| toColorLight color
 
         Yellow ->
-            R10.Color.fromLightToDark <| toColorLight color
+            R10.Color.Utils.fromLightToDark <| toColorLight color
 
         Green ->
-            R10.Color.fromLightToDark <| toColorLight color
+            R10.Color.Utils.fromLightToDark <| toColorLight color
 
         LightBlue ->
-            R10.Color.fromLightToDark <| toColorLight color
+            R10.Color.Utils.fromLightToDark <| toColorLight color
 
         Blue ->
-            R10.Color.fromLightToDark <| toColorLight color
+            R10.Color.Utils.fromLightToDark <| toColorLight color
 
         Purple ->
-            R10.Color.fromLightToDark <| toColorLight color
+            R10.Color.Utils.fromLightToDark <| toColorLight color
 
         Pink ->
-            R10.Color.fromLightToDark <| toColorLight color
+            R10.Color.Utils.fromLightToDark <| toColorLight color
 
 
 {-| Convert a primary color into a `avh4/elm-color` type of color. It requiires a `Mode` because the color can be sligtly different in Light or Dark mode.

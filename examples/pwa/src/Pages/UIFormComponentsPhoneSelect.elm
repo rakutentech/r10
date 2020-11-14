@@ -13,7 +13,7 @@ import Element.Border as Border
 import Html exposing (Html)
 import Html.Attributes
 import Pages.Shared.Utils
-import R10.Color.Primary
+import R10.Color
 import R10.FormComponents.IconButton
 import R10.FormComponents.Single
 import R10.FormComponents.Single.Common
@@ -50,7 +50,7 @@ theme : R10.Theme.Theme
 theme =
     R10.Theme.fromFlags
         { mode = R10.Mode.Light
-        , primaryColor = R10.Color.Primary.Green
+        , primaryColor = R10.Color.primary.green
         }
 
 

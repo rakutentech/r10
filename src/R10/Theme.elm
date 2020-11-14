@@ -8,14 +8,14 @@ Most of the application use only one primary color but some are configurable and
 
 -}
 
-import R10.Color.Primary
+import R10.Color.Internal.Primary
 import R10.Mode
 
 
 {-| -}
 type alias Theme =
     { mode : R10.Mode.Mode
-    , primaryColor : R10.Color.Primary.Color
+    , primaryColor : R10.Color.Internal.Primary.Color
     }
 
 
@@ -24,7 +24,7 @@ type alias Theme =
 fromFlags :
     { c
         | mode : R10.Mode.Mode
-        , primaryColor : R10.Color.Primary.Color
+        , primaryColor : R10.Color.Internal.Primary.Color
     }
     -> Theme
 fromFlags flags =

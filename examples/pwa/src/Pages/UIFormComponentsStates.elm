@@ -12,7 +12,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Pages.Shared.Utils
-import R10.Color.Primary
+import R10.Color
 import R10.Form.Helpers
 import R10.FormComponents.Binary
 import R10.FormComponents.Style
@@ -46,7 +46,7 @@ theme : R10.Theme.Theme
 theme =
     R10.Theme.fromFlags
         { mode = R10.Mode.Light
-        , primaryColor = R10.Color.Primary.Green
+        , primaryColor = R10.Color.primary.green
         }
 
 

@@ -12,7 +12,7 @@ import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
 import R10.Button
-import R10.Color.Primary
+import R10.Color
 import R10.Form
 import R10.Form.Conf exposing (..)
 import R10.Form.FieldConf exposing (..)
@@ -49,7 +49,7 @@ theme : R10.Theme.Theme
 theme =
     R10.Theme.fromFlags
         { mode = R10.Mode.Light
-        , primaryColor = R10.Color.Primary.Green
+        , primaryColor = R10.Color.primary.green
         }
 
 

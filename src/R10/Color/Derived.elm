@@ -19,9 +19,9 @@ import Color.Accessibility
 import Color.Manipulate
 import Json.Decode
 import Json.Encode
-import R10.Color
-import R10.Color.Base
-import R10.Color.Primary
+import R10.Color.Internal.Base
+import R10.Color.Internal.Primary
+import R10.Color.Utils
 import R10.Mode
 import R10.Theme
 
@@ -277,7 +277,7 @@ toColor : R10.Theme.Theme -> Color -> Color.Color
 toColor theme colorDerived =
     case colorDerived of
         Success ->
-            R10.Color.Base.toColor theme R10.Color.Base.Success
+            R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Success
 
         Logo ->
             case theme.mode of
@@ -297,13 +297,13 @@ toColor theme colorDerived =
             highEmphasis theme
 
         FontLink ->
-            R10.Color.Base.toColor theme R10.Color.Base.FontLink
+            R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontLink
 
         Error ->
-            R10.Color.Base.toColor theme R10.Color.Base.Error
+            R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Error
 
         Debugger ->
-            R10.Color.Primary.toColor theme R10.Color.Primary.LightBlue
+            R10.Color.Internal.Primary.toColor theme R10.Color.Internal.Primary.LightBlue
 
         FontMediumEmphasisWithMaximumContrast ->
             let
@@ -348,35 +348,35 @@ toColor theme colorDerived =
             colorFont
 
         Border ->
-            R10.Color.Base.Font
-                |> R10.Color.Base.toColor theme
-                |> R10.Color.setAlpha 0.2
+            R10.Color.Internal.Base.Font
+                |> R10.Color.Internal.Base.toColor theme
+                |> R10.Color.Utils.setAlpha 0.2
 
         BackgroundPhoneDropdown ->
             case theme.mode of
                 R10.Mode.Light ->
-                    R10.Color.Base.toColor theme R10.Color.Base.Background
+                    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
 
                 R10.Mode.Dark ->
-                    R10.Color.Base.toColor theme R10.Color.Base.Background
+                    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
                         |> Color.Manipulate.lighten 0.05
 
         BackgroundNormal ->
-            R10.Color.Base.Background
-                |> R10.Color.Base.toColor theme
+            R10.Color.Internal.Base.Background
+                |> R10.Color.Internal.Base.toColor theme
 
         BackgroundInputFieldText ->
             case theme.mode of
                 R10.Mode.Light ->
-                    R10.Color.Base.toColor theme R10.Color.Base.Background
+                    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
                         |> Color.Manipulate.darken 0.05
 
                 R10.Mode.Dark ->
-                    R10.Color.Base.toColor theme R10.Color.Base.Background
+                    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
                         |> Color.Manipulate.lighten 0.05
 
         BackgroundButtonPrimaryOver ->
-            R10.Color.Primary.toColor theme theme.primaryColor
+            R10.Color.Internal.Primary.toColor theme theme.primaryColor
                 |> Color.Manipulate.scaleHsl
                     { saturationScale = 0.3
                     , lightnessScale = 0.2
@@ -395,11 +395,11 @@ toColor theme colorDerived =
             backgroundButtonPrimaryDisabled theme
 
         BackgroundButtonPrimary ->
-            R10.Color.Primary.toColor theme theme.primaryColor
+            R10.Color.Internal.Primary.toColor theme theme.primaryColor
 
         BackgroundButtonMinorOver ->
-            R10.Color.Base.Background
-                |> R10.Color.Base.toColor theme
+            R10.Color.Internal.Base.Background
+                |> R10.Color.Internal.Base.toColor theme
                 |> (\color ->
                         case theme.mode of
                             R10.Mode.Dark ->
@@ -417,8 +417,8 @@ toColor theme colorDerived =
 
 backgroundButtonPrimaryDisabled : R10.Theme.Theme -> Color.Color
 backgroundButtonPrimaryDisabled theme =
-    R10.Color.Base.Background
-        |> R10.Color.Base.toColor theme
+    R10.Color.Internal.Base.Background
+        |> R10.Color.Internal.Base.toColor theme
         |> (\color ->
                 case theme.mode of
                     R10.Mode.Dark ->
@@ -431,32 +431,32 @@ backgroundButtonPrimaryDisabled theme =
 
 highEmphasis : R10.Theme.Theme -> Color.Color
 highEmphasis theme =
-    R10.Color.Base.toColor theme R10.Color.Base.Font
+    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Font
         -- https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
-        |> R10.Color.setAlpha 0.87
+        |> R10.Color.Utils.setAlpha 0.87
 
 
 highEmphasisReversed : R10.Theme.Theme -> Color.Color
 highEmphasisReversed theme =
-    R10.Color.Base.toColor theme R10.Color.Base.FontReversed
+    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontReversed
         -- https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
-        |> R10.Color.setAlpha 0.87
+        |> R10.Color.Utils.setAlpha 0.87
 
 
 mediumEmphasis : R10.Theme.Theme -> Color.Color
 mediumEmphasis theme =
-    R10.Color.Base.toColor theme R10.Color.Base.Font
+    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Font
         -- https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
-        |> R10.Color.setAlpha 0.6
+        |> R10.Color.Utils.setAlpha 0.6
 
 
 mediumEmphasisReversed : R10.Theme.Theme -> Color.Color
 mediumEmphasisReversed theme =
-    R10.Color.Base.toColor theme R10.Color.Base.FontReversed
+    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontReversed
         -- https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
-        |> R10.Color.setAlpha 0.6
+        |> R10.Color.Utils.setAlpha 0.6
 
 
 primary : R10.Theme.Theme -> Color.Color
 primary theme =
-    R10.Color.Primary.toColor theme theme.primaryColor
+    R10.Color.Internal.Primary.toColor theme theme.primaryColor

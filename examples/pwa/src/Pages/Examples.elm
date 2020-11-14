@@ -8,6 +8,7 @@ module Pages.Examples exposing
     )
 
 import Color
+import Color.Accessibility
 import Color.Convert
 import Element exposing (..)
 import Element.Background as Background
@@ -19,12 +20,11 @@ import Markdown
 import R10.Button
 import R10.Color
 import R10.Color.Background
-import R10.Color.Base
 import R10.Color.Border
 import R10.Color.CssRgba
 import R10.Color.Derived
 import R10.Color.Font
-import R10.Color.Primary
+import R10.Color.Utils
 import R10.Form
 import R10.Form.Conf
 import R10.Form.FieldConf
@@ -71,9 +71,9 @@ type alias Model =
     }
 
 
-defaultTheme : { mode : R10.Mode.Mode, primaryColor : R10.Color.Primary.Color }
+defaultTheme : { mode : R10.Mode.Mode, primaryColor : R10.Color.Primary }
 defaultTheme =
-    { primaryColor = R10.Color.Primary.CrimsonRed
+    { primaryColor = R10.Color.primary.crimsonRed
     , mode = R10.Mode.Light
     }
 
@@ -88,7 +88,7 @@ init =
 
 type Msg
     = ChangeLanguage R10.Language.Language
-    | ChangePrimaryColor R10.Color.Primary.Color
+    | ChangePrimaryColor R10.Color.Primary
     | ChangeMode R10.Mode.Mode
     | MsgForm R10.Form.Msg.Msg
 
@@ -155,7 +155,7 @@ paletteView theme toColor toString list =
                 let
                     elementColor : Element.Color
                     elementColor =
-                        R10.Color.colorToElementColor color
+                        R10.Color.Utils.colorToElementColor color
 
                     color : Color.Color
                     color =
@@ -185,6 +185,64 @@ paletteView theme toColor toString list =
                         ]
             )
             list
+
+
+paletteView2 :
+    R10.Theme.Theme
+    -> (R10.Theme.Theme -> List { color : Color.Color, name : String })
+    -> Element msg
+paletteView2 theme list =
+    column
+        [ Border.widthEach { bottom = 0, left = 1, right = 0, top = 1 }
+        , Border.color <| rgba 0 0 0 0.2
+        ]
+    <|
+        List.map
+            (\paletteColor ->
+                let
+                    elementColor : Element.Color
+                    elementColor =
+                        R10.Color.Utils.colorToElementColor color
+
+                    color : Color.Color
+                    color =
+                        paletteColor.color
+
+                    hex : String
+                    hex =
+                        color
+                            |> Color.Convert.colorToHexWithAlpha
+
+                    name : String
+                    name =
+                        paletteColor.name
+                in
+                el
+                    [ padding 10
+                    , Background.color elementColor
+                    , width fill
+                    , tooltip above (myTooltip (String.join "\n" [ hex, name ]))
+                    , Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
+                    , Border.color <| rgba 0 0 0 0.2
+                    ]
+                <|
+                    row [ Font.size 13, spacing 20, width fill ]
+                        [ el
+                            [ Font.family [ Font.monospace ], Font.color <| fontColorMaxContrast color ]
+                          <|
+                            text hex
+                        , el [ Font.color <| fontColorMaxContrast color ] <| text name
+
+                        -- , el [ Font.color <| rgb 1 1 1, alignRight ] <| text "⬤"
+                        -- , el [ Font.color <| rgb 0 0 0 ] <| text "⬤"
+                        ]
+            )
+            (list theme)
+
+
+fontColorMaxContrast : Color.Color -> Color
+fontColorMaxContrast color =
+    R10.Color.Utils.colorToElementColor <| Maybe.withDefault (Color.rgb 0 0 0) <| Color.Accessibility.maximumContrast color [ Color.rgb 1 1 1, Color.rgb 0 0 0 ]
 
 
 myTooltip : String -> Element msg
@@ -327,17 +385,16 @@ view : Model -> { x : Int, y : Int } -> { x : Int, y : Int } -> List (Element Ms
 view model mouse windowSize =
     [ titleSection model.theme "Palettes"
     , text "Palette Base"
-    , paletteView
+    , paletteView2
         model.theme
-        R10.Color.Base.toColor
-        R10.Color.Base.toString
-        R10.Color.Base.list
+        R10.Color.listBase
     , text "Palette Primary"
-    , paletteView
-        model.theme
-        R10.Color.Primary.toColor
-        R10.Color.Primary.toString
-        R10.Color.Primary.list
+
+    -- , paletteView
+    --     model.theme
+    --     R10.Color.Internal.Primary.toColor
+    --     R10.Color.Primary.toString
+    --     R10.Color.Primary.list
     , text "Palette Derived"
     , paletteView
         model.theme
@@ -345,16 +402,17 @@ view model mouse windowSize =
         R10.Color.Derived.toString
         R10.Color.Derived.list
     , text "Palette Modifier - Primary Color"
-    , wrappedRow [ spacing 16 ] <|
-        List.map
-            (\color ->
-                R10.Button.secondary []
-                    { label = text <| R10.Color.Primary.toString color
-                    , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor color
-                    , theme = defaultTheme
-                    }
-            )
-            R10.Color.Primary.list
+
+    -- , wrappedRow [ spacing 16 ] <|
+    --     List.map
+    --         (\color ->
+    --             R10.Button.secondary []
+    --                 { label = text <| R10.Color.Primary.toString color
+    --                 , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor color
+    --                 , theme = defaultTheme
+    --                 }
+    --         )
+    --         R10.Color.Primary.list
     , text "Palette Modifier - Mode"
     , wrappedRow [ spacing 16 ] <|
         List.map

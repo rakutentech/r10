@@ -24,8 +24,6 @@ import Pages.UIFormComponentsStates
 import Pages.UIFormComponentsText
 import Pages.UIFormIntroduction
 import Process
-import R10.Color
-import R10.Color.Primary
 import R10.Footer
 import R10.Form.MakerForView
 import R10.Header
@@ -48,8 +46,8 @@ import Url.Parser exposing ((</>))
 
 heroColor : Color
 heroColor =
-    -- R10.Color.colorToElementColor <|
-    --     R10.Color.Primary.toColor { mode = R10.Mode.Light } R10.Color.Primary.Blue
+    -- R10.Color.Utils.colorToElementColor <|
+    --     R10.Color.Internal.Primary.toColor { mode = R10.Mode.Light } R10.Color.Primary.Blue
     -- rgb255 18 147 216
     rgb255 17 123 180
 

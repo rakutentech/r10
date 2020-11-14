@@ -18,9 +18,8 @@ import Html.Attributes
 import Markdown
 import R10.Button
 import R10.Color
-import R10.Color.Base
 import R10.Color.Derived
-import R10.Color.Primary
+import R10.Color.Utils
 import R10.Form
 import R10.Form.Conf
 import R10.Form.FieldConf
@@ -178,12 +177,15 @@ subTitleAttrs =
 
 paletteBase : R10.Theme.Theme -> Element msg
 paletteBase theme =
-    paletteAdv theme R10.Color.Base.toColor R10.Color.Base.toString R10.Color.Base.list
+    paletteAdv2 theme R10.Color.listBase
 
 
-palettePrimary : R10.Theme.Theme -> Element msg
-palettePrimary theme =
-    paletteAdv theme R10.Color.Primary.toColor R10.Color.Primary.toString R10.Color.Primary.list
+
+--
+-- palettePrimary : R10.Theme.Theme -> Element msg
+-- palettePrimary theme =
+--     paletteAdv theme R10.Color.Internal.Primary.toColor R10.Color.Primary.toString R10.Color.Primary.list
+--
 
 
 paletteDerived : R10.Theme.Theme -> Element msg
@@ -207,7 +209,7 @@ paletteAdv theme toColor toString list =
                     let
                         elementColor : Element.Color
                         elementColor =
-                            R10.Color.colorToElementColor color
+                            R10.Color.Utils.colorToElementColor color
 
                         color : Color.Color
                         color =
@@ -237,6 +239,53 @@ paletteAdv theme toColor toString list =
                             ]
                 )
                 list
+        ]
+
+
+paletteAdv2 :
+    R10.Theme.Theme
+    -> (R10.Theme.Theme -> List { color : Color.Color, name : String })
+    -> Element msg
+paletteAdv2 theme list =
+    column [ centerX, scrollbars ]
+        [ el subTitleAttrs <| text <| R10.Mode.toString theme.mode
+        , el [ width fill, height <| px 50, Background.color <| rgb 0 0 0 ] none
+        , row [] <|
+            List.map
+                (\paletteColor ->
+                    let
+                        elementColor : Element.Color
+                        elementColor =
+                            R10.Color.Utils.colorToElementColor color
+
+                        color : Color.Color
+                        color =
+                            paletteColor.color
+
+                        hex : String
+                        hex =
+                            color
+                                |> Color.Convert.colorToHexWithAlpha
+
+                        name : String
+                        name =
+                            paletteColor.name
+                    in
+                    el
+                        [ padding 10
+                        , Background.color elementColor
+                        , width <| px 80
+                        , scrollbarX
+                        ]
+                    <|
+                        column [ Font.size 13, spacing 4 ]
+                            [ el [ Font.color <| rgb 1 1 1, Font.family [ Font.monospace ] ] <| text hex
+                            , el [ Font.color <| rgb 1 1 1 ] <| text name
+                            , el [ Font.color <| rgb 0 0 0, Font.family [ Font.monospace ] ] <| text hex
+                            , el [ Font.color <| rgb 0 0 0 ] <| text name
+                            ]
+                )
+                (list theme)
         ]
 
 
@@ -314,14 +363,14 @@ view model =
                 _ ->
                     R10.Mode.fromString "light"
 
-        primaryColor : R10.Color.Primary.Color
+        primaryColor : R10.Color.Primary
         primaryColor =
             case R10.Form.Helpers.getFieldValueAsBool "primaryColor" model.formState of
                 Just True ->
-                    R10.Color.Primary.Blue
+                    R10.Color.primary.blue
 
                 _ ->
-                    R10.Color.Primary.Pink
+                    R10.Color.primary.pink
 
         theme : R10.Theme.Theme
         theme =
@@ -402,13 +451,14 @@ view model =
                         , primaryColor = primaryColor
                         }
                 )
-           , section "Palette Primary"
-                (el [] <|
-                    palettePrimary
-                        { mode = mode
-                        , primaryColor = primaryColor
-                        }
-                )
+
+           -- , section "Palette Primary"
+           --      (el [] <|
+           --          palettePrimary
+           --              { mode = mode
+           --              , primaryColor = primaryColor
+           --              }
+           --      )
            , section "Palette Derived"
                 (el [] <|
                     paletteDerived

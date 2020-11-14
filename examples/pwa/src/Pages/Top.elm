@@ -6,7 +6,7 @@ import Element.Font as Font
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
-import R10.Color.Primary
+import R10.Color
 import R10.I18n
 import R10.Language
 import R10.Mode
@@ -20,7 +20,7 @@ import R10.Theme
 theme : R10.Theme.Theme
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Primary.Blue
+    , primaryColor = R10.Color.primary.blue
     }
 
 

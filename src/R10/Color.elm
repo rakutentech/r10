@@ -1,57 +1,96 @@
-module R10.Color exposing (colorToElementColor, fromHex, fromLightToDark, setAlpha)
+module R10.Color exposing
+    ( Primary, primary
+    , Base
+    , listPrimary, listBase
+    )
 
-{-| Utilities for colors.
+{-| These lists are just to be used to create documentations, not to actually use colors in the layout.
 
-@docs colorToElementColor, fromHex, fromLightToDark, setAlpha
+
+# Primary
+
+These represent the brands color of Rakuten.
+
+Rakutenn Brand guideline: <https://global.rakuten.com/corp/brand/>
+
+![Colors](https://r10.netlify.app/images/colors-overview400.png)
+
+@docs Primary, primary
+
+
+# Base
+
+![Colors](https://r10.netlify.app/images/base_500.png)
+
+@docs Base
+
+
+# Lists
+
+These lists should only be used to generate documentation.
+
+@docs listPrimary, listBase
 
 -}
 
 import Color
-import Color.Convert
-import Element
+import R10.Color.Internal.Base
+import R10.Color.Internal.Primary
+import R10.Theme
 
 
-{-| Change the alpha channel in a color.
--}
-setAlpha : Float -> Color.Color -> Color.Color
-setAlpha newAlpha color =
-    let
-        c : { alpha : Float, blue : Float, green : Float, red : Float }
-        c =
-            Color.toRgba color
-    in
-    Color.fromRgba { red = c.red, green = c.green, blue = c.blue, alpha = newAlpha }
+
+-- EXPOSING PRIMARY COLOR STUFF
 
 
-{-| Transform a color, as defined in `avh4/elm-color`, to an Element color, as defined in `mdgriffith/elm-ui`.
--}
-colorToElementColor : Color.Color -> Element.Color
-colorToElementColor color =
-    let
-        { red, green, blue, alpha } =
-            Color.toRgba color
-    in
-    Element.rgba red green blue alpha
+{-| -}
+type alias Primary =
+    R10.Color.Internal.Primary.Color
 
 
-{-| Convert a string containing an hexadecimal number to a Color.
--}
-fromHex : String -> Color.Color
-fromHex hex =
-    let
-        resultColor : Result String Color.Color
-        resultColor =
-            Color.Convert.hexToColor hex
+{-| -}
+primary :
+    { crimsonRed : Primary
+    , orange : Primary
+    , yellow : Primary
+    , green : Primary
+    , lightBlue : Primary
+    , blue : Primary
+    , purple : Primary
+    , pink : Primary
+    }
+primary =
+    { yellow = R10.Color.Internal.Primary.Yellow
+    , purple = R10.Color.Internal.Primary.Purple
+    , pink = R10.Color.Internal.Primary.Pink
+    , orange = R10.Color.Internal.Primary.Orange
+    , lightBlue = R10.Color.Internal.Primary.LightBlue
+    , green = R10.Color.Internal.Primary.Green
+    , crimsonRed = R10.Color.Internal.Primary.CrimsonRed
+    , blue = R10.Color.Internal.Primary.Blue
+    }
 
-        color : Color.Color
-        color =
-            Result.withDefault (Color.fromRgba { red = 0, green = 0, blue = 0, alpha = 0 }) resultColor
-    in
-    color
 
 
-{-| Convert a color from Light Mode to Dark Mode. At the moment this function leave the color untouched as we could not find any good transformation.
--}
-fromLightToDark : Color.Color -> Color.Color
-fromLightToDark color =
-    color
+-- EXPOSING BASE COLOR STUFF
+
+
+{-| -}
+type alias Base =
+    R10.Color.Internal.Base.Color
+
+
+
+-- LISTS
+
+
+{-| -}
+listPrimary : R10.Theme.Theme -> List { color : Color.Color, name : String }
+listPrimary =
+    R10.Color.Internal.Primary.list
+
+
+{-| -}
+listBase : R10.Theme.Theme -> List { color : Color.Color, name : String }
+listBase theme =
+    R10.Color.Internal.Base.list theme

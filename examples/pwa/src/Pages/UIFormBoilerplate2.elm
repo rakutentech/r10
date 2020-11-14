@@ -14,7 +14,7 @@ import Element.Font as Font
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
-import R10.Color.Primary
+import R10.Color
 import R10.Form.Element
 import R10.Form.Helpers
 import R10.Form.Msg
@@ -48,7 +48,7 @@ theme : R10.Theme.Theme
 theme =
     R10.Theme.fromFlags
         { mode = R10.Mode.Light
-        , primaryColor = R10.Color.Primary.Green
+        , primaryColor = R10.Color.primary.green
         }
 
 

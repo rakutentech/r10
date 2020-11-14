@@ -20,10 +20,10 @@ import Html.Attributes
 import Http
 import Json.Decode
 import Process
-import R10.Color
 import R10.Color.Background
 import R10.Color.Derived
-import R10.Color.Primary
+import R10.Color.Internal.Primary
+import R10.Color.Utils
 import R10.I18n
 import R10.Language
 import R10.Libu
@@ -108,7 +108,7 @@ init =
 defaultTheme : R10.Theme.Theme
 defaultTheme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Primary.Blue
+    , primaryColor = R10.Color.Internal.Primary.Blue
     }
 
 
@@ -791,13 +791,13 @@ logoColorColor negative theme =
         Color.rgb 1 1 1
 
     else
-        R10.Color.Primary.toColor theme theme.primaryColor
+        R10.Color.Internal.Primary.toColor theme theme.primaryColor
 
 
 {-| -}
 logoColor : Bool -> R10.Theme.Theme -> Color
 logoColor negative theme =
-    R10.Color.colorToElementColor <| logoColorColor negative theme
+    R10.Color.Utils.colorToElementColor <| logoColorColor negative theme
 
 
 {-| -}

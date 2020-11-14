@@ -7,11 +7,10 @@ import Element.Font as Font
 import Html
 import R10.Button
 import R10.Card
-import R10.Color
 import R10.Color.Background
 import R10.Color.CssRgba
 import R10.Color.Derived
-import R10.Color.Primary
+import R10.Color.Internal.Primary
 import R10.FontSize
 import R10.Libu
 import R10.Mode
@@ -25,7 +24,7 @@ import R10.Theme
 theme : R10.Theme.Theme
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Primary.Yellow
+    , primaryColor = R10.Color.Internal.Primary.Yellow
     }
 
 

@@ -1,5 +1,6 @@
 module Pages.Top exposing (view)
 
+import Color
 import Element exposing (..)
 import Element.Background as Background
 import Element.Font as Font
@@ -53,7 +54,7 @@ viewMessage language =
             , spacing 10
             ]
             [ html <| Markdown.toHtml [ Html.Attributes.class "markdown whiteLinks" ] (R10.I18n.t language intro) ]
-        , el [ centerX, moveDown 60, alpha 0.2 ] <| R10.Svg.IconsExtra.keyboardArrowDown "#fff" 100
+        , el [ centerX, moveDown 60, alpha 0.2 ] <| R10.Svg.IconsExtra.keyboardArrowDown (Color.rgb 1 1 1) 100
         ]
 
 
@@ -74,9 +75,9 @@ view language heroBackgroundColor content onClick =
             , heroBackgroundColor
             ]
             [ row [ spacing 40, centerX, centerY ]
-                [ el [] <| R10.Svg.LogosExtra.elm_monocrome "#ffffff" 155
-                , el [ moveRight 15 ] <| R10.Svg.Icons.x "#ffffff" 100
-                , el [ moveDown 19 ] <| R10.Svg.Logos.r "#ffffff" 200
+                [ el [] <| R10.Svg.LogosExtra.elm_monocrome (Color.rgb 1 1 1) 155
+                , el [ moveRight 15 ] <| R10.Svg.Icons.x (Color.rgb 1 1 1) 100
+                , el [ moveDown 19 ] <| R10.Svg.Logos.r (Color.rgb 1 1 1) 200
                 ]
             , viewMessage language
             ]
@@ -189,17 +190,17 @@ The differences among these views are coming from different `theme` definitions.
 ```elm
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Primary.CrimsonRed
+    , primaryColor = R10.Color.primary.crimsonRed
     }
 
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Primary.Green
+    , primaryColor = R10.Color.primary.green
     }
 
 theme =
     { mode = R10.Mode.Dark
-    , primaryColor = R10.Color.Primary.CrimsonRed
+    , primaryColor = R10.Color.primary.crimsonRed
     }
 ```
 
@@ -235,10 +236,7 @@ import Html
 import R10.Button
 import R10.Card
 import R10.Color
-import R10.Color.Background
-import R10.Color.CssRgba
-import R10.Color.Derived
-import R10.Color.Primary
+import R10.Color.AttrBackground
 import R10.FontSize
 import R10.Libu
 import R10.Mode
@@ -252,13 +250,13 @@ import R10.Theme
 theme : R10.Theme.Theme
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Primary.Yellow
+    , primaryColor = R10.Color.primary.yellow
     }
 
 
 main : Html.Html msg
 main =
-    layout [ R10.Color.Background.underModal theme, padding 20, R10.FontSize.normal ] <|
+    layout [ R10.Color.AttrBackground.underModal theme, padding 20, R10.FontSize.normal ] <|
         column
             (R10.Card.high theme
                 ++ [ centerX
@@ -268,25 +266,21 @@ main =
                    , spacing 30
                    ]
             )
-            [ R10.Svg.Logos.rakuten [] (R10.Color.Derived.toColor theme R10.Color.Derived.Logo) 32
-            , R10.Paragraph.normalMarkdown [] theme "This is an example of view made with **Elm**, **elm-ui** and [R10](https://r10.netlify.app)."
+            [ R10.Svg.Logos.rakuten [] (R10.Color.logo theme) 32
+            , R10.Paragraph.normalMarkdown [] theme "This is an example of a view made with **Elm**, **elm-ui** and [R10](https://package.elm-lang.org/packages/rakutentech/r10/latest/)."
             , el [ Font.size 60, centerX, padding 10 ] <| text "🎉"
-            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or at [ellie-app.com](https://ellie-app.com/https://ellie-app.com/btv2tGK7tk8a1)."
+            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view in the [README of the R10 package](https://package.elm-lang.org/packages/rakutentech/r10/latest/)."
             , R10.Button.primary []
                 { label =
                     row [ spacing 15, centerX ]
                         [ R10.Paragraph.normal [] [ text "Primary Buttons" ]
-                        , el [] <| R10.Svg.Icons.cart_f (R10.Color.CssRgba.fontButtonPrimary theme) 18
+                        , el [] <| R10.Svg.Icons.cart_f (R10.Color.fontButtonPrimary theme) 18
                         ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
                 , theme = theme
                 }
             , R10.Button.secondary []
-                { label =
-                    row [ spacing 15, centerX ]
-                        [ R10.Paragraph.normal [] [ text "Secondary Buttons" ]
-                        , el [ moveUp 2 ] <| R10.Svg.Icons.like_f (R10.Color.CssRgba.fontNormal theme) 18
-                        ]
+                { label = R10.Paragraph.normal [] [ text "Secondary Buttons" ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
                 , theme = theme
                 }

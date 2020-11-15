@@ -1,11 +1,11 @@
 module R10.Paragraph exposing
-    ( large, normal, small, xlarge, xsmall, xxsmall
+    ( large, normal, small, xlarge, xxlarge, xsmall, xxsmall
     , normalMarkdown
     )
 
 {-| Paraggraphs.
 
-@docs large, normal, small, xlarge, xsmall, xxsmall
+@docs large, normal, small, xlarge, xxlarge, xsmall, xxsmall
 
 @docs normalMarkdown
 
@@ -49,6 +49,12 @@ large attrs children =
 xlarge : List (Attribute msg) -> List (Element msg) -> Element msg
 xlarge attrs children =
     paragraph ([ R10.FontSize.xlarge ] ++ attrs) children
+
+
+{-| -}
+xxlarge : List (Attribute msg) -> List (Element msg) -> Element msg
+xxlarge attrs children =
+    paragraph ([ R10.FontSize.xxlarge ] ++ attrs) children
 
 
 {-| -}

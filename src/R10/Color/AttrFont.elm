@@ -1,8 +1,8 @@
-module R10.Color.AttrFont exposing (buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, buttonPrimaryString, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, normalString, valid)
+module R10.Color.AttrFont exposing (buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid)
 
 {-| Font colors
 
-@docs buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, buttonPrimaryString, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, normalString, valid
+@docs buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid
 
 -}
 
@@ -16,25 +16,12 @@ import R10.Theme
 
 
 {-| -}
-normal_ : R10.Theme.Theme -> Color.Color
-normal_ theme =
-    R10.Color.Internal.Derived.FontHighEmphasis
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
 normal : R10.Theme.Theme -> Element.Attr decorative msg
 normal theme =
-    normal_ theme
+    R10.Color.Internal.Derived.FontHighEmphasis
+        |> R10.Color.Internal.Derived.toColor theme
         |> R10.Color.Utils.colorToElementColor
         |> Element.Font.color
-
-
-{-| -}
-normalString : R10.Theme.Theme -> String
-normalString theme =
-    normal_ theme
-        |> Color.Convert.colorToCssRgba
 
 
 {-| -}
@@ -88,33 +75,12 @@ valid theme =
 
 
 {-| -}
-buttonPrimary_ : R10.Theme.Theme -> Color.Color
-buttonPrimary_ theme =
-    --
-    -- Font color on primary color can be either white or black.
-    -- We chose the one with maximumContrast
-    --
-    R10.Color.Internal.Derived.FontHighEmphasisWithMaximumContrast
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
 buttonPrimary : R10.Theme.Theme -> Element.Attr decorative msg
 buttonPrimary theme =
-    buttonPrimary_ theme
+    R10.Color.Internal.Derived.FontHighEmphasisWithMaximumContrast
+        |> R10.Color.Internal.Derived.toColor theme
         |> R10.Color.Utils.colorToElementColor
         |> Element.Font.color
-
-
-{-| -}
-buttonPrimaryString : R10.Theme.Theme -> String
-buttonPrimaryString theme =
-    buttonPrimary_ theme
-        |> Color.Convert.colorToCssRgba
-
-
-
---
 
 
 {-| -}

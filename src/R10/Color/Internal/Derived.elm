@@ -34,12 +34,17 @@ type Color
     | BackgroundButtonMinorOver
 
 
-list : R10.Theme.Theme -> List { color : Color.Color, name : String }
+list : R10.Theme.Theme -> List { color : Color.Color, name : String, description : String }
 list theme =
     List.map
         (\color ->
-            { color = toColor theme color
+            let
+                ( color_, description ) =
+                    toColor_ theme color
+            in
+            { color = color_
             , name = toString_ color
+            , description = description
             }
         )
         list_
@@ -140,98 +145,130 @@ list_ =
 
 toColor : R10.Theme.Theme -> Color -> Color.Color
 toColor theme colorDerived =
+    Tuple.first <| toColor_ theme colorDerived
+
+
+toColor_ : R10.Theme.Theme -> Color -> ( Color.Color, String )
+toColor_ theme colorDerived =
     case colorDerived of
         Success ->
-            R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Success
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Success
+            , "same as base color `Succes`"
+            )
 
         Logo ->
-            case theme.mode of
+            ( case theme.mode of
                 R10.Mode.Light ->
-                    primary theme
+                    primary_ theme
 
                 R10.Mode.Dark ->
-                    highEmphasis theme
+                    highEmphasis_ theme
+            , "Logo color is the same as primary color in light mode and `highEmphasis` in dark mode"
+            )
 
         Primary ->
-            primary theme
+            ( primary_ theme
+            , "Just the primary color"
+            )
 
         FontMediumEmphasis ->
-            mediumEmphasis theme
+            ( mediumEmphasis_ theme
+            , "A color used for fonts when they carry a less important message. It is made changing the alpha channel to 0.6 so the result is that is going to be more similar to the background."
+            )
 
         FontHighEmphasis ->
-            highEmphasis theme
+            ( highEmphasis_ theme
+            , "The default color for text. It is made changing the alpha channel to 0.87."
+            )
 
         FontLink ->
-            R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontLink
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontLink
+            , "The same as the base `FontLink` color"
+            )
 
         Error ->
-            R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Error
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Error
+            , "The same as the base `Error` color"
+            )
 
         Debugger ->
-            R10.Color.Internal.Primary.toColor theme R10.Color.Internal.Primary.LightBlue
+            ( R10.Color.Internal.Primary.toColor theme R10.Color.Internal.Primary.LightBlue
+            , "The same as the base `LightBlue` color"
+            )
 
         FontMediumEmphasisWithMaximumContrast ->
             let
                 goesOn : R10.Theme.Theme -> Color.Color
                 goesOn =
-                    primary
+                    primary_
 
                 color1 : Color.Color
                 color1 =
-                    mediumEmphasis theme
+                    mediumEmphasis_ theme
 
                 color2 : Color.Color
                 color2 =
-                    mediumEmphasisReversed theme
+                    mediumEmphasisReversed_ theme
 
                 colorFont : Color.Color
                 colorFont =
                     Maybe.withDefault color1 <|
                         Color.Accessibility.maximumContrast (goesOn theme) [ color1, color2 ]
             in
-            colorFont
+            ( colorFont
+            , "A `mediumEmphasis` color for less important text that goes above a primary color"
+            )
 
         FontHighEmphasisWithMaximumContrast ->
             let
                 goesOn : R10.Theme.Theme -> Color.Color
                 goesOn =
-                    primary
+                    primary_
 
                 color1 : Color.Color
                 color1 =
-                    highEmphasis theme
+                    highEmphasis_ theme
 
                 color2 : Color.Color
                 color2 =
-                    highEmphasisReversed theme
+                    highEmphasisReversed_ theme
 
                 colorFont : Color.Color
                 colorFont =
                     Maybe.withDefault color1 <|
                         Color.Accessibility.maximumContrast (goesOn theme) [ color1, color2 ]
             in
-            colorFont
+            ( colorFont
+            , "A `highEmphasis` color for regular text that goes above a primary color"
+            )
 
         Border ->
-            R10.Color.Internal.Base.Font
+            ( R10.Color.Internal.Base.Font
                 |> R10.Color.Internal.Base.toColor theme
                 |> R10.Color.Utils.setAlpha 0.2
+            , "Color for borders derived from the base `Font` changing the alpha channel to 0.2"
+            )
 
         BackgroundPhoneDropdown ->
-            case theme.mode of
+            -- TODO - Verify if this color can actually be replaced with BackgroundInputFieldText
+            ( case theme.mode of
                 R10.Mode.Light ->
                     R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
 
                 R10.Mode.Dark ->
                     R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
                         |> Color.Manipulate.lighten 0.05
+            , "A special background for the phone dropdown. On `light` mode is the same as the base `Background` but in `dark` mode is lighter 0.05 compared to the base `Background` so that it became visible."
+            )
 
         BackgroundNormal ->
-            R10.Color.Internal.Base.Background
+            ( R10.Color.Internal.Base.Background
                 |> R10.Color.Internal.Base.toColor theme
+            , "The same as the base `Background`."
+            )
 
         BackgroundInputFieldText ->
-            case theme.mode of
+            ( case theme.mode of
                 R10.Mode.Light ->
                     R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
                         |> Color.Manipulate.darken 0.05
@@ -239,31 +276,41 @@ toColor theme colorDerived =
                 R10.Mode.Dark ->
                     R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
                         |> Color.Manipulate.lighten 0.05
+            , "A special background color for input fields. In `light` mode is sligthly darken than normal background. In `dark` mode is sligthly lighten than normal background."
+            )
 
         BackgroundButtonPrimaryOver ->
-            R10.Color.Internal.Primary.toColor theme theme.primaryColor
+            ( R10.Color.Internal.Primary.toColor theme theme.primaryColor
                 |> Color.Manipulate.scaleHsl
-                    { saturationScale = 0.3
-                    , lightnessScale = 0.2
+                    { saturationScale = -0.15
+                    , lightnessScale = 0.17
                     , alphaScale = 0
                     }
+            , "The mouse-over color for the primary button obtained adding a `scaleHsl` transformation to the primary color."
+            )
 
         BackgroundButtonPrimaryDisabledOver ->
-            backgroundButtonPrimaryDisabled theme
+            ( backgroundButtonPrimaryDisabled_ theme
                 |> Color.Manipulate.scaleHsl
                     { saturationScale = 0
                     , lightnessScale = 0.2
                     , alphaScale = 0
                     }
+            , "The mouse-over color for the disabled primary button obtained adding a `scaleHsl` transformation to the primary color that has been already transformed to change it to disabled."
+            )
 
         BackgroundButtonPrimaryDisabled ->
-            backgroundButtonPrimaryDisabled theme
+            ( backgroundButtonPrimaryDisabled_ theme
+            , "The background color of disabled primary button obtained. This is made making it ligher on Light mode and darker on Dark mode."
+            )
 
         BackgroundButtonPrimary ->
-            R10.Color.Internal.Primary.toColor theme theme.primaryColor
+            ( R10.Color.Internal.Primary.toColor theme theme.primaryColor
+            , "Just the primary color, extracted from the `theme`."
+            )
 
         BackgroundButtonMinorOver ->
-            R10.Color.Internal.Base.Background
+            ( R10.Color.Internal.Base.Background
                 |> R10.Color.Internal.Base.toColor theme
                 |> (\color ->
                         case theme.mode of
@@ -273,6 +320,8 @@ toColor theme colorDerived =
                             R10.Mode.Light ->
                                 Color.Manipulate.darken 0.08 color
                    )
+            , "Background of minors buttons based on the normal background color. Just making it lighter in Dark mode and darker in Light mode"
+            )
 
 
 
@@ -280,8 +329,8 @@ toColor theme colorDerived =
 -- extracted in separated functions
 
 
-backgroundButtonPrimaryDisabled : R10.Theme.Theme -> Color.Color
-backgroundButtonPrimaryDisabled theme =
+backgroundButtonPrimaryDisabled_ : R10.Theme.Theme -> Color.Color
+backgroundButtonPrimaryDisabled_ theme =
     R10.Color.Internal.Base.Background
         |> R10.Color.Internal.Base.toColor theme
         |> (\color ->
@@ -294,34 +343,34 @@ backgroundButtonPrimaryDisabled theme =
            )
 
 
-highEmphasis : R10.Theme.Theme -> Color.Color
-highEmphasis theme =
+highEmphasis_ : R10.Theme.Theme -> Color.Color
+highEmphasis_ theme =
     R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Font
         -- https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
         |> R10.Color.Utils.setAlpha 0.87
 
 
-highEmphasisReversed : R10.Theme.Theme -> Color.Color
-highEmphasisReversed theme =
+highEmphasisReversed_ : R10.Theme.Theme -> Color.Color
+highEmphasisReversed_ theme =
     R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontReversed
         -- https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
         |> R10.Color.Utils.setAlpha 0.87
 
 
-mediumEmphasis : R10.Theme.Theme -> Color.Color
-mediumEmphasis theme =
+mediumEmphasis_ : R10.Theme.Theme -> Color.Color
+mediumEmphasis_ theme =
     R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Font
         -- https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
         |> R10.Color.Utils.setAlpha 0.6
 
 
-mediumEmphasisReversed : R10.Theme.Theme -> Color.Color
-mediumEmphasisReversed theme =
+mediumEmphasisReversed_ : R10.Theme.Theme -> Color.Color
+mediumEmphasisReversed_ theme =
     R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontReversed
         -- https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
         |> R10.Color.Utils.setAlpha 0.6
 
 
-primary : R10.Theme.Theme -> Color.Color
-primary theme =
+primary_ : R10.Theme.Theme -> Color.Color
+primary_ theme =
     R10.Color.Internal.Primary.toColor theme theme.primaryColor

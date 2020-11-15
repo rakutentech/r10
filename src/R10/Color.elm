@@ -2,7 +2,7 @@ module R10.Color exposing
     ( Base
     , Primary, primary, decoder, decoderExploration
     , Derived
-    , logo
+    , logo, fontNormal, primaryColor, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, icon, logoHex, iconPrimaryHex, iconError, iconValid, spinner
     , listPrimary, listBase, listDerived
     )
 
@@ -24,7 +24,7 @@ They are different depending on the mode:
 
 These represent the brands color of Rakuten.
 
-Rakutenn Brand guideline: <https://global.rakuten.com/corp/brand/>
+Rakuten Brand guideline: <https://global.rakuten.com/corp/brand/>
 
 ![Colors](https://r10.netlify.app/images/colors-overview400.png)
 
@@ -42,7 +42,7 @@ These are colors that can be used for SVGs because SVGs don't accept `Element.At
 
 For all other colors, look into `R10.Color.Attr...` modules.
 
-@docs logo
+@docs logo, fontNormal, primaryColor, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, icon, logoHex, iconPrimaryHex, iconError, iconValid, spinner
 
 
 # Lists
@@ -135,23 +135,107 @@ logo theme =
         |> R10.Color.Internal.Derived.toColor theme
 
 
+{-| -}
+fontNormal : R10.Theme.Theme -> Color.Color
+fontNormal theme =
+    R10.Color.Internal.Derived.FontHighEmphasis
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+primaryColor : R10.Theme.Theme -> Color.Color
+primaryColor theme =
+    R10.Color.Internal.Derived.Primary
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+fontButtonPrimary : R10.Theme.Theme -> Color.Color
+fontButtonPrimary theme =
+    R10.Color.Internal.Derived.FontHighEmphasisWithMaximumContrast
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+mediumEmphasis : R10.Theme.Theme -> Color.Color
+mediumEmphasis theme =
+    R10.Color.Internal.Derived.FontMediumEmphasis
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+backgroundButtonMinorOver : R10.Theme.Theme -> Color.Color
+backgroundButtonMinorOver theme =
+    R10.Color.Internal.Derived.BackgroundButtonMinorOver
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+backgroundPhoneDropdown : R10.Theme.Theme -> Color.Color
+backgroundPhoneDropdown theme =
+    R10.Color.Internal.Derived.BackgroundPhoneDropdown
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+icon : R10.Theme.Theme -> Color.Color
+icon theme =
+    R10.Color.Internal.Derived.FontHighEmphasis
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+logoHex : R10.Theme.Theme -> Color.Color
+logoHex theme =
+    R10.Color.Internal.Derived.Logo
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+iconPrimaryHex : R10.Theme.Theme -> Color.Color
+iconPrimaryHex theme =
+    R10.Color.Internal.Derived.Primary
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+iconError : R10.Theme.Theme -> Color.Color
+iconError theme =
+    R10.Color.Internal.Derived.Error
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+iconValid : R10.Theme.Theme -> Color.Color
+iconValid theme =
+    R10.Color.Internal.Derived.Success
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+spinner : R10.Theme.Theme -> Color.Color
+spinner theme =
+    R10.Color.Internal.Derived.Primary
+        |> R10.Color.Internal.Derived.toColor theme
+
+
 
 -- LISTS
 
 
 {-| -}
-listPrimary : R10.Theme.Theme -> List { color : Color.Color, name : String, type_ : Primary }
+listPrimary : R10.Theme.Theme -> List { color : Color.Color, name : String, description : String, type_ : Primary }
 listPrimary =
     R10.Color.Internal.Primary.list
 
 
 {-| -}
-listBase : R10.Theme.Theme -> List { color : Color.Color, name : String }
+listBase : R10.Theme.Theme -> List { color : Color.Color, name : String, description : String }
 listBase theme =
     R10.Color.Internal.Base.list theme
 
 
 {-| -}
-listDerived : R10.Theme.Theme -> List { color : Color.Color, name : String }
+listDerived : R10.Theme.Theme -> List { color : Color.Color, name : String, description : String }
 listDerived theme =
     R10.Color.Internal.Derived.list theme

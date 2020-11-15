@@ -2,6 +2,7 @@ port module Main exposing (conf, main)
 
 import Browser
 import Browser.Events
+import Color
 import Dict
 import Element exposing (..)
 import Element.Background as Background
@@ -384,11 +385,11 @@ view model =
                     { extraContent = links model.route language
                     , extraContentRightSide =
                         [ R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
-                            { label = R10.Svg.LogosExtra.github "white" 24
+                            { label = R10.Svg.LogosExtra.github (Color.rgb 1 1 1) 24
                             , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
                             }
                         , R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
-                            { label = R10.Svg.LogosExtra.elm_monocrome "white" 24
+                            { label = R10.Svg.LogosExtra.elm_monocrome (Color.rgb 1 1 1) 24
                             , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
                             }
                         ]
@@ -441,7 +442,7 @@ view model =
                         mouseCorrected =
                             -- This correction depend on the vertical position
                             -- of the panda in the page
-                            { mouse | y = mouse.y - 4000 }
+                            { mouse | y = mouse.y - 7000 }
                     in
                     mainLayout model Pages.Examples.title (List.map (map PagesExamples) (Pages.Examples.view model.pageExamples mouseCorrected model.windowSize))
 

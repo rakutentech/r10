@@ -17,6 +17,7 @@ import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
 import R10.Color
+import R10.Color.Utils
 import R10.Form.Helpers
 import R10.FormComponents.IconButton
 import R10.FormComponents.Single
@@ -126,7 +127,7 @@ toIconEl palette leadingIcon =
         Play ->
             R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Play
-                , icon = R10.Svg.IconsExtra.play (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString) 24
+                , icon = R10.Svg.IconsExtra.play (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 24
                 , palette = palette
                 , size = 24
                 }
@@ -134,7 +135,7 @@ toIconEl palette leadingIcon =
         Pause ->
             R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Pause
-                , icon = R10.Svg.IconsExtra.pause (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString) 30
+                , icon = R10.Svg.IconsExtra.pause (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 30
                 , palette = palette
                 , size = 30
                 }

@@ -1,8 +1,8 @@
-module R10.FontSize exposing (large, normal, small, xlarge, xsmall, xxsmall)
+module R10.FontSize exposing (large, normal, small, xlarge, xxlarge, xsmall, xxsmall)
 
 {-| Font sizes
 
-@docs large, normal, small, xlarge, xsmall, xxsmall
+@docs large, normal, small, xlarge, xxlarge, xsmall, xxsmall
 
 -}
 
@@ -14,6 +14,12 @@ import Element.Font
 xlarge : Attr decorative msg
 xlarge =
     Element.Font.size 24
+
+
+{-| -}
+xxlarge : Attr decorative msg
+xxlarge =
+    Element.Font.size 32
 
 
 {-| -}

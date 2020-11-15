@@ -20,10 +20,11 @@ import Element exposing (..)
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes
+import R10.Color
 import R10.Color.AttrBackground
 import R10.Color.AttrBorder
 import R10.Color.AttrFont
-import R10.Color.CssRgba
+import R10.Color.Utils
 import R10.FontSize
 import R10.Libu
 import R10.Paragraph
@@ -238,7 +239,9 @@ cssButtonStyle theme =
     let
         primaryColorHex : String
         primaryColorHex =
-            R10.Color.CssRgba.iconPrimaryHex theme
+            theme
+                |> R10.Color.iconPrimaryHex
+                |> R10.Color.Utils.toHex
     in
     """
 .form.btn {

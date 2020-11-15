@@ -1,13 +1,14 @@
-module R10.Color.Utils exposing (colorToElementColor, fromHex, fromLightToDark, setAlpha)
+module R10.Color.Utils exposing (colorToElementColor, elementColorToColor, fromHex, toHex, fromLightToDark, setAlpha)
 
 {-| Utilities for colors.
 
-@docs colorToElementColor, fromHex, fromLightToDark, setAlpha
+@docs colorToElementColor, elementColorToColor, fromHex, toHex, fromLightToDark, setAlpha
 
 -}
 
 import Color
 import Color.Convert
+import Color.Manipulate
 import Element
 
 
@@ -34,6 +35,17 @@ colorToElementColor color =
     Element.rgba red green blue alpha
 
 
+{-| Transform a color, as defined in `mdgriffith/elm-ui`, to an Element color, as defined in `avh4/elm-color`.
+-}
+elementColorToColor : Element.Color -> Color.Color
+elementColorToColor elementColor =
+    let
+        { red, green, blue, alpha } =
+            Element.toRgb elementColor
+    in
+    Color.fromRgba { red = red, green = green, blue = blue, alpha = alpha }
+
+
 {-| Convert a string containing an hexadecimal number to a Color.
 -}
 fromHex : String -> Color.Color
@@ -50,8 +62,19 @@ fromHex hex =
     color
 
 
-{-| Convert a color from Light Mode to Dark Mode. At the moment this function leave the color untouched as we could not find any good transformation.
+{-| -}
+toHex : Color.Color -> String
+toHex =
+    Color.Convert.colorToCssRgba
+
+
+{-| Convert a color from Light Mode to Dark Mode.
 -}
 fromLightToDark : Color.Color -> Color.Color
 fromLightToDark color =
     color
+        |> Color.Manipulate.scaleHsl
+            { saturationScale = -0.17
+            , lightnessScale = -0.04
+            , alphaScale = 0
+            }

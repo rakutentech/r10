@@ -22,7 +22,7 @@ import R10.Color
 import R10.Color.AttrBackground
 import R10.Color.AttrBorder
 import R10.Color.AttrFont
-import R10.Color.CssRgba
+import R10.Color.Internal.Primary
 import R10.Color.Utils
 import R10.Form
 import R10.Form.Conf
@@ -128,7 +128,7 @@ langauges =
 
 titleSection : R10.Theme.Theme -> String -> Element msg
 titleSection theme string =
-    R10.Paragraph.xlarge
+    R10.Paragraph.xxlarge
         [ Font.bold
         , paddingEach { top = 70, right = 0, bottom = 20, left = 0 }
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
@@ -137,60 +137,36 @@ titleSection theme string =
         [ text string ]
 
 
-paletteView :
-    { b | mode : R10.Mode.Mode }
-    -> ({ b | mode : R10.Mode.Mode } -> a -> Color.Color)
-    -> (a -> String)
-    -> List a
-    -> Element msg
-paletteView theme toColor toString list =
-    wrappedRow
-        [ Border.widthEach { bottom = 0, left = 1, right = 0, top = 1 }
-        , Border.color <| rgba 0 0 0 0.2
-        ]
-    <|
-        List.map
-            (\paletteColor ->
-                let
-                    elementColor : Element.Color
-                    elementColor =
-                        R10.Color.Utils.colorToElementColor color
-
-                    color : Color.Color
-                    color =
-                        toColor theme paletteColor
-
-                    hex : String
-                    hex =
-                        color
-                            |> Color.Convert.colorToHexWithAlpha
-
-                    name : String
-                    name =
-                        toString paletteColor
-                in
-                el
-                    [ padding 10
-                    , Background.color elementColor
-                    , width fill
-                    , tooltip above (myTooltip (String.join "\n" [ hex, name ]))
-                    , Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
-                    , Border.color <| rgba 0 0 0 0.2
-                    ]
-                <|
-                    column [ Font.size 13, spacing 10 ]
-                        [ el [ Font.color <| rgb 1 1 1 ] <| text "O"
-                        , el [ Font.color <| rgb 0 0 0 ] <| text "O"
-                        ]
-            )
-            list
+titleSubSection : R10.Theme.Theme -> String -> Element msg
+titleSubSection theme string =
+    R10.Paragraph.xlarge [] [ text string ]
 
 
-paletteView2 :
+twoPalettes :
     R10.Theme.Theme
-    -> (R10.Theme.Theme -> List { a | color : Color.Color, name : String })
+    ->
+        (R10.Theme.Theme
+         -> List { a | color : Color.Color, description : String, name : String }
+        )
     -> Element msg
-paletteView2 theme list =
+twoPalettes theme list =
+    wrappedRow [ spacing 20 ]
+        [ column [ width fill, spacing 10, alignTop ]
+            [ el [ centerX ] <| text "Light Mode"
+            , paletteView { theme | mode = R10.Mode.Light } list
+            ]
+        , column [ width fill, spacing 10, alignTop ]
+            [ el [ centerX ] <| text "Dark Mode"
+            , paletteView { theme | mode = R10.Mode.Dark } list
+            ]
+        ]
+
+
+paletteView :
+    R10.Theme.Theme
+    -> (R10.Theme.Theme -> List { a | color : Color.Color, name : String, description : String })
+    -> Element msg
+paletteView theme list =
     column
         [ Border.widthEach { bottom = 0, left = 1, right = 0, top = 1 }
         , Border.color <| rgba 0 0 0 0.2
@@ -220,21 +196,17 @@ paletteView2 theme list =
                     [ padding 10
                     , Background.color elementColor
                     , width fill
-                    , tooltip above (myTooltip (String.join "\n" [ hex, name ]))
+                    , tooltip above (myTooltip paletteColor.description)
                     , Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
                     , Border.color <| rgba 0 0 0 0.2
+                    , Font.color <| fontColorMaxContrast color
                     ]
                 <|
                     row [ Font.size 13, spacing 20, width fill ]
-                        [ el
-                            [ Font.family [ Font.monospace ]
-                            , Font.color <| fontColorMaxContrast color
-                            , width <| px 80
-                            ]
-                          <|
-                            text hex
-                        , el [ Font.color <| fontColorMaxContrast color ] <| text name
+                        [ paragraph [ width <| px 100 ] [ text name ]
+                        , el [ Font.family [ Font.monospace ], width <| px 80 ] <| text hex
 
+                        -- , paragraph [] [ text paletteColor.description ]
                         -- , el [ Font.color <| rgb 1 1 1, alignRight ] <| text "⬤"
                         -- , el [ Font.color <| rgb 0 0 0 ] <| text "⬤"
                         ]
@@ -385,35 +357,17 @@ formConf =
 
 view : Model -> { x : Int, y : Int } -> { x : Int, y : Int } -> List (Element Msg)
 view model mouse windowSize =
+    let
+        theme =
+            model.theme
+    in
     [ titleSection model.theme "Palettes"
-    , text "Palette Base"
-    , paletteView2 model.theme R10.Color.listBase
-    , text "Palette Primary"
-    , paletteView2 model.theme R10.Color.listPrimary
-    , text "Palette Derived"
-    , paletteView2 model.theme R10.Color.listDerived
-    , text "Palette Modifier - Primary Color"
-    , wrappedRow [ spacing 16 ] <|
-        List.map
-            (\{ color, name, type_ } ->
-                R10.Button.secondary []
-                    { label = text name
-                    , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor type_
-                    , theme = defaultTheme
-                    }
-            )
-            (R10.Color.listPrimary defaultTheme)
-    , text "Palette Modifier - Mode"
-    , wrappedRow [ spacing 16 ] <|
-        List.map
-            (\mode ->
-                R10.Button.secondary []
-                    { label = text <| R10.Mode.toString mode
-                    , libu = R10.Libu.Bu <| Just <| ChangeMode mode
-                    , theme = defaultTheme
-                    }
-            )
-            [ R10.Mode.Light, R10.Mode.Dark ]
+    , titleSubSection model.theme "Palette Base"
+    , twoPalettes theme R10.Color.listBase
+    , titleSubSection model.theme "Palette Primary"
+    , twoPalettes theme R10.Color.listPrimary
+    , titleSubSection model.theme "Palette Derived"
+    , twoPalettes theme R10.Color.listDerived
     , titleSection model.theme "Buttons"
     , column
         [ padding 20
@@ -429,7 +383,7 @@ view model mouse windowSize =
         , R10.Button.primary []
             { label =
                 row [ spacing 10 ]
-                    [ el [] <| R10.Svg.Icons.arrow_left_l (R10.Color.CssRgba.fontButtonPrimary model.theme) 24
+                    [ el [] <| R10.Svg.Icons.arrow_left_l (R10.Color.fontButtonPrimary model.theme) 24
                     , text "Primary Button"
                     ]
             , libu = R10.Libu.Li "#"
@@ -567,20 +521,53 @@ R10.Okaimonopanda.view
     --
     -- LOGOS & ICONS
     --
-    , titleSection model.theme "Logos"
+    , titleSection model.theme "Logos & Icons"
+    , titleSubSection model.theme "Logos"
     , f R10.Svg.Lists.listLogos 30
-    , titleSection model.theme "Logos Extra"
+    , titleSubSection model.theme "Logos Extra"
     , f R10.Svg.Lists.listLogosExtra 30
-    , titleSection model.theme "Icons"
+    , titleSubSection model.theme "Icons"
     , f R10.Svg.Lists.listIcons 30
-    , titleSection model.theme "Icons Extra"
+    , titleSubSection model.theme "Icons Extra"
     , f R10.Svg.Lists.listIconsExtra 30
-    , titleSection model.theme "Others"
+    , titleSubSection model.theme "Others"
     , f R10.Svg.Lists.listOthers 200
+    , el
+        [ htmlAttribute <| Html.Attributes.style "position" "fixed"
+        , htmlAttribute <| Html.Attributes.style "bottom" "0"
+        , htmlAttribute <| Html.Attributes.style "left" "0"
+        , padding 10
+        , width fill
+        , R10.Color.AttrBackground.normal theme
+        , R10.Color.AttrFont.normal model.theme
+        , Border.color <| rgba 0 0 0 0.05
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
+        , Border.shadow { offset = ( 0, 0 ), size = 2, blur = 10, color = rgba 0 0 0 0.05 }
+        ]
+      <|
+        wrappedRow [ spacing 10 ] <|
+            List.map
+                (\{ color, name, type_ } ->
+                    R10.Button.primary []
+                        { label = text name
+                        , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor type_
+                        , theme = { theme | primaryColor = type_ }
+                        }
+                )
+                (R10.Color.listPrimary defaultTheme)
+                ++ List.map
+                    (\mode ->
+                        R10.Button.secondary []
+                            { label = text <| R10.Mode.toString mode
+                            , libu = R10.Libu.Bu <| Just <| ChangeMode mode
+                            , theme = theme
+                            }
+                    )
+                    [ R10.Mode.Light, R10.Mode.Dark ]
     ]
 
 
-f : (Int -> String -> List ( Element msg, String )) -> Int -> Element msg
+f : (Int -> Color.Color -> List ( Element msg, String )) -> Int -> Element msg
 f list size =
     Element.wrappedRow
         [ spacing 10 ]
@@ -592,4 +579,4 @@ f list size =
                     , el [ width <| px 300, alpha 0.3 ] <| text name
                     ]
             )
-            (list size "#333")
+            (list size (R10.Color.Utils.fromHex "#333"))

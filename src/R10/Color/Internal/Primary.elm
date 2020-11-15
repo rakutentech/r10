@@ -143,10 +143,29 @@ toString_ value =
 
 
 list theme =
+    -- List.map
+    --     (\color ->
+    --         { color = toColor theme color
+    --         , name = toString_ color
+    --         , description = ""
+    --         , type_ = color
+    --         }
+    --     )
+    --     list_
     List.map
         (\color ->
-            { color = toColor theme color
+            let
+                ( color_, description_ ) =
+                    case theme.mode of
+                        R10.Mode.Light ->
+                            toColorLight_ color
+
+                        R10.Mode.Dark ->
+                            toColorDark_ color
+            in
+            { color = color_
             , name = toString_ color
+            , description = description_
             , type_ = color
             }
         )
@@ -192,61 +211,93 @@ decoderExploration =
 
 
 {-| -}
-toColorLight : Color -> Color.Color
-toColorLight color =
+toColorLight_ : Color -> ( Color.Color, String )
+toColorLight_ color =
     case color of
         CrimsonRed ->
-            R10.Color.Utils.fromHex "#bf0000"
+            ( R10.Color.Utils.fromHex "#bf0000"
+            , "Hard coded as #bf0000"
+            )
 
         Orange ->
-            R10.Color.Utils.fromHex "#f59600"
+            ( R10.Color.Utils.fromHex "#f59600"
+            , "Hard coded as #f59600"
+            )
 
         Yellow ->
-            R10.Color.Utils.fromHex "#ffcc00"
+            ( R10.Color.Utils.fromHex "#ffcc00"
+            , "Hard coded as #ffcc00"
+            )
 
         Green ->
-            R10.Color.Utils.fromHex "#00b900"
+            ( R10.Color.Utils.fromHex "#00b900"
+            , "Hard coded as #00b900"
+            )
 
         LightBlue ->
-            R10.Color.Utils.fromHex "#00a0f0"
+            ( R10.Color.Utils.fromHex "#00a0f0"
+            , "Hard coded as #00a0f0"
+            )
 
         Blue ->
-            R10.Color.Utils.fromHex "#002896"
+            ( R10.Color.Utils.fromHex "#002896"
+            , "Hard coded as #002896"
+            )
 
         Purple ->
-            R10.Color.Utils.fromHex "#7d00be"
+            ( R10.Color.Utils.fromHex "#7d00be"
+            , "Hard coded as #7d00be"
+            )
 
         Pink ->
-            R10.Color.Utils.fromHex "#ff41be"
+            ( R10.Color.Utils.fromHex "#ff41be"
+            , "Hard coded as #ff41be"
+            )
 
 
 {-| -}
-toColorDark : Color -> Color.Color
-toColorDark color =
+toColorDark_ : Color -> ( Color.Color, String )
+toColorDark_ color =
     case color of
         CrimsonRed ->
-            R10.Color.Utils.fromLightToDark <| toColorLight color
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
 
         Orange ->
-            R10.Color.Utils.fromLightToDark <| toColorLight color
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
 
         Yellow ->
-            R10.Color.Utils.fromLightToDark <| toColorLight color
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
 
         Green ->
-            R10.Color.Utils.fromLightToDark <| toColorLight color
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
 
         LightBlue ->
-            R10.Color.Utils.fromLightToDark <| toColorLight color
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
 
         Blue ->
-            R10.Color.Utils.fromLightToDark <| toColorLight color
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
 
         Purple ->
-            R10.Color.Utils.fromLightToDark <| toColorLight color
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
 
         Pink ->
-            R10.Color.Utils.fromLightToDark <| toColorLight color
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
 
 
 {-| Convert a primary color into a `avh4/elm-color` type of color. It requiires a `Mode` because the color can be sligtly different in Light or Dark mode.
@@ -255,7 +306,7 @@ toColor : { a | mode : R10.Mode.Mode } -> Color -> Color.Color
 toColor theme =
     case theme.mode of
         R10.Mode.Light ->
-            toColorLight
+            \c -> Tuple.first (toColorLight_ c)
 
         R10.Mode.Dark ->
-            toColorDark
+            \c -> Tuple.first (toColorDark_ c)

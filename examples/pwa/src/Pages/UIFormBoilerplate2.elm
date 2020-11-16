@@ -14,15 +14,12 @@ import Element.Font as Font
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
-import R10.Color
 import R10.Form.Element
 import R10.Form.Helpers
 import R10.Form.Msg
 import R10.Form.State
 import R10.Form.Update
 import R10.Language
-import R10.Mode
-import R10.Theme
 
 
 title : R10.Language.Translations
@@ -42,14 +39,6 @@ title =
     , da_dk = "Forms - Boilerplate 2"
     , sv_se = "Forms - Boilerplate 2"
     }
-
-
-theme : R10.Theme.Theme
-theme =
-    R10.Theme.fromFlags
-        { mode = R10.Mode.Light
-        , primaryColor = R10.Color.primary.green
-        }
 
 
 type alias Model =

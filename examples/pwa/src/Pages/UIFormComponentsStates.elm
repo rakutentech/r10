@@ -12,15 +12,12 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Pages.Shared.Utils
-import R10.Color
 import R10.Form.Helpers
 import R10.FormComponents.Binary
 import R10.FormComponents.Style
 import R10.FormComponents.Text
 import R10.FormComponents.Validations
 import R10.Language
-import R10.Mode
-import R10.Theme
 
 
 title : R10.Language.Translations
@@ -40,14 +37,6 @@ title =
     , da_dk = "Forms - States"
     , sv_se = "Forms - States"
     }
-
-
-theme : R10.Theme.Theme
-theme =
-    R10.Theme.fromFlags
-        { mode = R10.Mode.Light
-        , primaryColor = R10.Color.primary.green
-        }
 
 
 type alias Model =

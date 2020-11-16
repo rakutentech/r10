@@ -2,40 +2,16 @@ module Pages.Top exposing (view)
 
 import Color
 import Element exposing (..)
-import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
-import R10.Color
 import R10.I18n
 import R10.Language
-import R10.Mode
 import R10.Svg.Icons
 import R10.Svg.IconsExtra
 import R10.Svg.Logos
 import R10.Svg.LogosExtra
-import R10.Theme
-
-
-theme : R10.Theme.Theme
-theme =
-    { mode = R10.Mode.Light
-    , primaryColor = R10.Color.primary.blue
-    }
-
-
-linkAttrs : List (Attr () msg)
-linkAttrs =
-    mouseOverEffect
-        ++ [ htmlAttribute <| Html.Attributes.style "text-decoration" "underline" ]
-
-
-mouseOverEffect : List (Attr () msg)
-mouseOverEffect =
-    [ mouseOver [ alpha 1, Background.color <| rgba 0 0 0 0.2 ]
-    , htmlAttribute <| Html.Attributes.style "transition" "0.3s"
-    ]
 
 
 viewMessage : R10.Language.Language -> Element msg
@@ -54,7 +30,7 @@ viewMessage language =
             , spacing 10
             ]
             [ html <| Markdown.toHtml [ Html.Attributes.class "markdown whiteLinks" ] (R10.I18n.t language intro) ]
-        , el [ centerX, moveDown 60, alpha 0.2 ] <| R10.Svg.IconsExtra.keyboardArrowDown (Color.rgb 1 1 1) 100
+        , R10.Svg.IconsExtra.keyboardArrowDown [ centerX, moveDown 60, alpha 0.2 ] (Color.rgb 1 1 1) 100
         ]
 
 
@@ -75,9 +51,9 @@ view language heroBackgroundColor content onClick =
             , heroBackgroundColor
             ]
             [ row [ spacing 40, centerX, centerY ]
-                [ el [] <| R10.Svg.LogosExtra.elm_monocrome (Color.rgb 1 1 1) 155
-                , el [ moveRight 15 ] <| R10.Svg.Icons.x (Color.rgb 1 1 1) 100
-                , el [ moveDown 19 ] <| R10.Svg.Logos.r (Color.rgb 1 1 1) 200
+                [ R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 155
+                , R10.Svg.Icons.x [ moveRight 15 ] (Color.rgb 1 1 1) 100
+                , R10.Svg.Logos.r [ moveDown 19 ] (Color.rgb 1 1 1) 200
                 ]
             , viewMessage language
             ]

@@ -1,11 +1,18 @@
 module R10.Color.FormPalette exposing (palette)
 
+{-| Palette used in the form component.
+
+@docs palette
+
+-}
+
 import Element exposing (..)
 import R10.Color.Internal.Derived
 import R10.FormComponents.UI.Palette
 import R10.Theme
 
 
+{-| -}
 palette : R10.Theme.Theme -> R10.FormComponents.UI.Palette.Palette
 palette theme =
     { -- Colors

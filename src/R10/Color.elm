@@ -64,6 +64,7 @@ type alias Primary =
 {-| -}
 primary :
     { crimsonRed : Primary
+    , red : Primary
     , orange : Primary
     , yellow : Primary
     , green : Primary
@@ -80,6 +81,7 @@ primary =
     , lightBlue = R10.Color.Internal.Primary.LightBlue
     , green = R10.Color.Internal.Primary.Green
     , crimsonRed = R10.Color.Internal.Primary.CrimsonRed
+    , red = R10.Color.Internal.Primary.CrimsonRed
     , blue = R10.Color.Internal.Primary.Blue
     }
 

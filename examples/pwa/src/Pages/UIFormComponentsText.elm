@@ -16,7 +16,6 @@ import Html exposing (Html)
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
-import R10.Color
 import R10.Color.Utils
 import R10.Form.Helpers
 import R10.FormComponents.IconButton
@@ -26,9 +25,7 @@ import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
 import R10.Language
-import R10.Mode
 import R10.Svg.IconsExtra
-import R10.Theme
 
 
 title : R10.Language.Translations
@@ -48,14 +45,6 @@ title =
     , da_dk = "Forms - Text"
     , sv_se = "Forms - Text"
     }
-
-
-theme : R10.Theme.Theme
-theme =
-    R10.Theme.fromFlags
-        { mode = R10.Mode.Light
-        , primaryColor = R10.Color.primary.green
-        }
 
 
 type alias Model =
@@ -125,7 +114,7 @@ toIconEl palette leadingIcon =
         Play ->
             R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Play
-                , icon = R10.Svg.IconsExtra.play (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 24
+                , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 24
                 , palette = palette
                 , size = 24
                 }
@@ -133,7 +122,7 @@ toIconEl palette leadingIcon =
         Pause ->
             R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Pause
-                , icon = R10.Svg.IconsExtra.pause (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 30
+                , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 30
                 , palette = palette
                 , size = 30
                 }

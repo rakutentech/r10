@@ -13,7 +13,6 @@ import Element.Border as Border
 import Html exposing (Html)
 import Html.Attributes
 import Pages.Shared.Utils
-import R10.Color
 import R10.FormComponents.IconButton
 import R10.FormComponents.Single
 import R10.FormComponents.Single.Common
@@ -22,9 +21,7 @@ import R10.FormComponents.UI
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
 import R10.Language
-import R10.Mode
 import R10.SimpleMarkdown
-import R10.Theme
 
 
 title : R10.Language.Translations
@@ -44,14 +41,6 @@ title =
     , da_dk = "Forms - Phone Select"
     , sv_se = "Forms - Phone Select"
     }
-
-
-theme : R10.Theme.Theme
-theme =
-    R10.Theme.fromFlags
-        { mode = R10.Mode.Light
-        , primaryColor = R10.Color.primary.green
-        }
 
 
 type alias Model =

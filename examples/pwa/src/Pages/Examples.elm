@@ -10,7 +10,6 @@ module Pages.Examples exposing
 import Color
 import Color.Accessibility
 import Color.Convert
-import Color.Manipulate
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -20,10 +19,10 @@ import Html.Attributes
 import Markdown
 import R10.Button
 import R10.Color
-import R10.Color.AttrBackground
-import R10.Color.AttrBorder
-import R10.Color.AttrFont
-import R10.Color.Internal.Primary
+import R10.Color.AttrsBackground
+import R10.Color.AttrsBorder
+import R10.Color.AttrsFont
+import R10.Color.Svg
 import R10.Color.Utils
 import R10.Form
 import R10.Form.Conf
@@ -133,7 +132,7 @@ titleSection theme string =
         [ Font.bold
         , paddingEach { top = 70, right = 0, bottom = 20, left = 0 }
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , R10.Color.AttrBorder.normal theme
+        , R10.Color.AttrsBorder.normal theme
         ]
         [ text string ]
 
@@ -373,8 +372,8 @@ view model mouse windowSize =
     , column
         [ padding 20
         , spacing 20
-        , R10.Color.AttrBackground.normal model.theme
-        , R10.Color.AttrFont.normal model.theme
+        , R10.Color.AttrsBackground.normal model.theme
+        , R10.Color.AttrsFont.normal model.theme
         ]
         [ R10.Button.primary []
             { label = text "Primary Button"
@@ -384,7 +383,7 @@ view model mouse windowSize =
         , R10.Button.primary []
             { label =
                 row [ spacing 10 ]
-                    [ el [] <| R10.Svg.Icons.arrow_left_l (R10.Color.fontButtonPrimary model.theme) 24
+                    [ R10.Svg.Icons.arrow_left_l [] (R10.Color.Svg.fontButtonPrimary model.theme) 24
                     , text "Primary Button"
                     ]
             , libu = R10.Libu.Li "#"
@@ -496,8 +495,8 @@ Where `signInHeader` is defined as
 
                     Err _ ->
                         ChangeLanguage R10.Language.default
-        , colorBackground = "white"
-        , colorFont = "black"
+        , colorBackground = Color.rgb 1 1 1
+        , colorFont = Color.rgb 0 0 0
         , currentLocale = model.language
         , supportedLanguageList = R10.Language.defaultSupportedLanguageList
         , withLanguageSelector = True
@@ -539,8 +538,8 @@ R10.Okaimonopanda.view
         , htmlAttribute <| Html.Attributes.style "left" "0"
         , padding 10
         , width fill
-        , R10.Color.AttrBackground.normal theme
-        , R10.Color.AttrFont.normal model.theme
+        , R10.Color.AttrsBackground.normal theme
+        , R10.Color.AttrsFont.normal model.theme
         , Border.color <| rgba 0 0 0 0.05
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , Border.shadow { offset = ( 0, 0 ), size = 2, blur = 10, color = rgba 0 0 0 0.05 }

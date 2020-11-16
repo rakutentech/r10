@@ -176,73 +176,24 @@ subTitleAttrs =
 
 paletteBase : R10.Theme.Theme -> Element msg
 paletteBase theme =
-    paletteAdv2 theme R10.Color.listBase
+    paletteAdv theme R10.Color.listBase
 
 
 palettePrimary : R10.Theme.Theme -> Element msg
 palettePrimary theme =
-    paletteAdv2 theme R10.Color.listPrimary
+    paletteAdv theme R10.Color.listPrimary
 
 
 paletteDerived : R10.Theme.Theme -> Element msg
 paletteDerived theme =
-    paletteAdv2 theme R10.Color.listDerived
+    paletteAdv theme R10.Color.listDerived
 
 
 paletteAdv :
     R10.Theme.Theme
-    -> (R10.Theme.Theme -> a -> Color.Color)
-    -> (a -> String)
-    -> List a
-    -> Element msg
-paletteAdv theme toColor toString list =
-    column [ centerX, scrollbars ]
-        [ el subTitleAttrs <| text <| R10.Mode.toString theme.mode
-        , el [ width fill, height <| px 50, Background.color <| rgb 0 0 0 ] none
-        , row [] <|
-            List.map
-                (\paletteColor ->
-                    let
-                        elementColor : Element.Color
-                        elementColor =
-                            R10.Color.Utils.colorToElementColor color
-
-                        color : Color.Color
-                        color =
-                            toColor theme paletteColor
-
-                        hex : String
-                        hex =
-                            color
-                                |> Color.Convert.colorToHexWithAlpha
-
-                        name : String
-                        name =
-                            toString paletteColor
-                    in
-                    el
-                        [ padding 10
-                        , Background.color elementColor
-                        , width <| px 80
-                        , scrollbarX
-                        ]
-                    <|
-                        column [ Font.size 13, spacing 4 ]
-                            [ el [ Font.color <| rgb 1 1 1, Font.family [ Font.monospace ] ] <| text hex
-                            , el [ Font.color <| rgb 1 1 1 ] <| text name
-                            , el [ Font.color <| rgb 0 0 0, Font.family [ Font.monospace ] ] <| text hex
-                            , el [ Font.color <| rgb 0 0 0 ] <| text name
-                            ]
-                )
-                list
-        ]
-
-
-paletteAdv2 :
-    R10.Theme.Theme
     -> (R10.Theme.Theme -> List { a | color : Color.Color, name : String })
     -> Element msg
-paletteAdv2 theme list =
+paletteAdv theme list =
     column [ centerX, scrollbars ]
         [ el subTitleAttrs <| text <| R10.Mode.toString theme.mode
         , el [ width fill, height <| px 50, Background.color <| rgb 0 0 0 ] none

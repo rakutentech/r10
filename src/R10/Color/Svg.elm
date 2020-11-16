@@ -7,7 +7,7 @@ module R10.Color.Svg exposing (logo, fontNormal, primary, fontButtonPrimary, med
 
 These are colors that can be used for SVGs because SVGs don't accept `Element.Attr` as they are not part of the `elm-ui` package.
 
-For all other colors, look into `R10.Color.Attr...` modules.
+For all other colors, look into `R10.Color.Attrs...` modules.
 
 @docs logo, fontNormal, primary, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, logoHex, fontError, fontValid
 

@@ -6,13 +6,10 @@ import Color
 import Dict
 import Element exposing (..)
 import Element.Background as Background
-import Element.Border as Border
 import Element.Font as Font
 import Html
 import Html.Attributes
-import Http
 import Json.Decode
-import Json.Encode
 import Pages.Examples
 import Pages.Shared.Utils
 import Pages.Top
@@ -24,23 +21,16 @@ import Pages.UIFormComponentsSingle
 import Pages.UIFormComponentsStates
 import Pages.UIFormComponentsText
 import Pages.UIFormIntroduction
-import Process
 import R10.Footer
 import R10.Form.MakerForView
 import R10.Header
 import R10.I18n
 import R10.Language
 import R10.Libu
-import R10.Mode
 import R10.Okaimonopanda
-import R10.Svg.Icons
-import R10.Svg.IconsExtra
-import R10.Svg.Logos
 import R10.Svg.LogosExtra
-import R10.Translations
 import Starter.ConfMain
 import Starter.Flags
-import Task
 import Url
 import Url.Parser exposing ((</>))
 
@@ -461,11 +451,11 @@ viewHeader model =
         { extraContent = links model.route language
         , extraContentRightSide =
             [ R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
-                { label = R10.Svg.LogosExtra.github (Color.rgb 1 1 1) 24
+                { label = R10.Svg.LogosExtra.github [] (Color.rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
                 }
             , R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
-                { label = R10.Svg.LogosExtra.elm_monocrome (Color.rgb 1 1 1) 24
+                { label = R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
                 }
             ]

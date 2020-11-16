@@ -39,35 +39,6 @@ type Color
 
 
 {-| -}
-encodeColor : Color -> Json.Encode.Value
-encodeColor value =
-    case value of
-        Yellow ->
-            Json.Encode.string "Yellow"
-
-        Purple ->
-            Json.Encode.string "Purple"
-
-        Pink ->
-            Json.Encode.string "Pink"
-
-        Orange ->
-            Json.Encode.string "Orange"
-
-        LightBlue ->
-            Json.Encode.string "Light Blue"
-
-        Green ->
-            Json.Encode.string "Green"
-
-        CrimsonRed ->
-            Json.Encode.string "Crimson Red"
-
-        Blue ->
-            Json.Encode.string "Blue"
-
-
-{-| -}
 decoder : Json.Decode.Decoder Color
 decoder =
     let

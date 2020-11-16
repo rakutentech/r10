@@ -10,6 +10,7 @@ module Pages.Examples exposing
 import Color
 import Color.Accessibility
 import Color.Convert
+import Color.Manipulate
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -545,11 +546,24 @@ R10.Okaimonopanda.view
         , Border.shadow { offset = ( 0, 0 ), size = 2, blur = 10, color = rgba 0 0 0 0.05 }
         ]
       <|
-        wrappedRow [ spacing 10 ] <|
+        wrappedRow [ spacing 10, centerX ] <|
             List.map
                 (\{ color, name, type_ } ->
-                    R10.Button.primary []
-                        { label = text name
+                    R10.Button.primary
+                        [ width shrink, padding 16 ]
+                        { label =
+                            el
+                                [ alpha <|
+                                    if theme.primaryColor == type_ then
+                                        1
+
+                                    else
+                                        0
+                                ]
+                            <|
+                                text "⬤"
+
+                        -- stext name
                         , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor type_
                         , theme = { theme | primaryColor = type_ }
                         }
@@ -557,7 +571,7 @@ R10.Okaimonopanda.view
                 (R10.Color.listPrimary defaultTheme)
                 ++ List.map
                     (\mode ->
-                        R10.Button.secondary []
+                        R10.Button.secondary [ width shrink ]
                             { label = text <| R10.Mode.toString mode
                             , libu = R10.Libu.Bu <| Just <| ChangeMode mode
                             , theme = theme

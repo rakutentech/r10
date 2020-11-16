@@ -9,8 +9,7 @@
 * [R10 demo with documentation and examples](https://r10.netlify.app/)
 * [R10 in the Elm's package website](https://package.elm-lang.org/packages/rakutentech/r10/latest/)
 * [R10 in Github](https://github.com/rakutentech/r10)
-
-
+* [Simple usage sample in Ellie](https://ellie-app.com/btv2tGK7tk8a1)
 
 # How to use the R10 library
 
@@ -20,7 +19,7 @@ If you already have an existing Elm project, install the library with
 elm install rakutentech/r10
 ```
 
-See [this Ellie](https://ellie-app.com/btv2tGK7tk8a1) or scroll down this page to see a real life example.
+See [this Ellie](https://ellie-app.com/btv2tGK7tk8a1) or scroll down this page to see an usage code sample.
 
 
                

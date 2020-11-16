@@ -22,7 +22,7 @@ type alias Theme =
 {-| Usually `mode` and `primaryColor` are stored in the flags. Use this helper to create a `Theme` from flags.
 -}
 fromFlags :
-    { c
+    { a
         | mode : R10.Mode.Mode
         , primaryColor : R10.Color.Internal.Primary.Color
     }

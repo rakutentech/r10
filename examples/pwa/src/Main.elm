@@ -345,16 +345,6 @@ port onChangeIsTop : (Bool -> msg) -> Sub msg
 -- VIEW HELPERS
 
 
-headerPlaceholder : Element msg
-headerPlaceholder =
-    el [ height <| px 80, Background.color <| rgb 1 1 1, width fill ] none
-
-
-transition : Attribute msg
-transition =
-    htmlAttribute <| Html.Attributes.style "transition" "opacity 0.3s"
-
-
 view : Model -> Html.Html Msg
 view model =
     let
@@ -379,59 +369,14 @@ view model =
             , Font.size 18
             , Font.color <| rgb 0.2 0.2 0.2
             , Background.color <| rgb255 247 247 247
-            , inFront <|
-                R10.Header.view
-                    model.header
-                    { extraContent = links model.route language
-                    , extraContentRightSide =
-                        [ R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
-                            { label = R10.Svg.LogosExtra.github (Color.rgb 1 1 1) 24
-                            , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
-                            }
-                        , R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
-                            { label = R10.Svg.LogosExtra.elm_monocrome (Color.rgb 1 1 1) 24
-                            , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
-                            }
-                        ]
-                    , msgMapper = Header
-                    , isTop = model.isTop
-                    , from = routeToPathWithoutLanguage model.route
-                    , isMobile = False
-                    , onClick = OnClick
-                    , urlTop = "/"
-                    , languageSystem =
-                        R10.Header.LanguageInRoute
-                            { routeToPath = routeToPath
-                            , route = model.route
-                            , routeToLanguage = routeToLanguage
-                            }
-                    }
+            , inFront <| viewHeader model
             ]
           <|
             case model.route of
                 RouteTop _ ->
-                    let
-                        content =
-                            List.map
-                                (\( route, title ) ->
-                                    let
-                                        url =
-                                            routeToPathWithoutLanguage route
-                                    in
-                                    R10.Libu.view []
-                                        { label =
-                                            row [ spacing 10 ]
-                                                [ el [ Font.size 35, moveUp 3, Font.bold ] <| text "•"
-                                                , text <| R10.I18n.t (routeToLanguage model.route) title
-                                                ]
-                                        , type_ = R10.Libu.LiInternal (routeToPathWithoutLanguage route) OnClick
-                                        }
-                                )
-                                (list R10.Language.EN_US)
-                    in
                     column [ width fill ]
-                        [ Pages.Top.view (routeToLanguage model.route) heroBackgroundColor content OnClick
-                        , footer model
+                        [ Pages.Top.view (routeToLanguage model.route) heroBackgroundColor (links model.route language) OnClick
+                        , viewFooter model
                         ]
 
                 RouteExamples lang ->
@@ -495,8 +440,52 @@ view model =
         ]
 
 
-footer : Model -> Element Msg
-footer model =
+headerPlaceholder : Element msg
+headerPlaceholder =
+    el [ height <| px 80, Background.color <| rgb 1 1 1, width fill ] none
+
+
+transition : Attribute msg
+transition =
+    htmlAttribute <| Html.Attributes.style "transition" "opacity 0.3s"
+
+
+viewHeader : Model -> Element Msg
+viewHeader model =
+    let
+        language =
+            routeToLanguage model.route
+    in
+    R10.Header.view
+        model.header
+        { extraContent = links model.route language
+        , extraContentRightSide =
+            [ R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
+                { label = R10.Svg.LogosExtra.github (Color.rgb 1 1 1) 24
+                , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
+                }
+            , R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
+                { label = R10.Svg.LogosExtra.elm_monocrome (Color.rgb 1 1 1) 24
+                , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
+                }
+            ]
+        , msgMapper = Header
+        , isTop = model.isTop
+        , from = routeToPathWithoutLanguage model.route
+        , isMobile = False
+        , onClick = OnClick
+        , urlTop = "/"
+        , languageSystem =
+            R10.Header.LanguageInRoute
+                { routeToPath = routeToPath
+                , route = model.route
+                , routeToLanguage = routeToLanguage
+                }
+        }
+
+
+viewFooter : Model -> Element Msg
+viewFooter model =
     R10.Footer.view model.header
         { extraContent = links model.route (routeToLanguage model.route)
         , extraContentRightSide = []
@@ -532,22 +521,22 @@ mainLayout model title content =
             ([ el [ Font.size 40 ] <| text <| R10.I18n.t (routeToLanguage model.route) title ]
                 ++ content
             )
-        , footer model
+        , viewFooter model
         ]
 
 
 links : Route -> R10.Language.Language -> List (Element Msg)
 links currentRoute currentLanguage =
     List.map
-        (\( route, title ) ->
+        (\route ->
             let
                 url =
-                    routeToPathWithoutLanguage route
+                    routeToPathWithoutLanguage (route currentLanguage)
 
                 label =
-                    text <| R10.I18n.t currentLanguage title
+                    text <| R10.I18n.t currentLanguage (.title (routeDetails (route currentLanguage)))
             in
-            if route == currentRoute then
+            if route currentLanguage == currentRoute then
                 el
                     (R10.Header.attrsLink
                         ++ [ Font.bold
@@ -559,10 +548,10 @@ links currentRoute currentLanguage =
             else
                 R10.Libu.view R10.Header.attrsLink
                     { label = label
-                    , type_ = R10.Libu.LiInternal (routeToPathWithoutLanguage route) OnClick
+                    , type_ = R10.Libu.LiInternal (routeToPathWithoutLanguage (route currentLanguage)) OnClick
                     }
         )
-        (list currentLanguage)
+        routesList
 
 
 
@@ -751,27 +740,13 @@ listForSSR : List String
 listForSSR =
     let
         routes =
-            RouteTop R10.Language.EN_US :: List.map (\( route, title ) -> route) (list R10.Language.EN_US)
+            RouteTop R10.Language.EN_US :: List.map (\route -> route R10.Language.EN_US) routesList
     in
     List.map routeToPathWithoutLanguage routes
 
 
-list : R10.Language.Language -> List ( Route, R10.Language.Translations )
-list language =
-    -- TODO - Remove this list and use list2 and routeDetails instead
-    [ ( RouteExamples language, Pages.Examples.title )
-    , ( RouteExample8 language, Pages.UIComponents.title )
-    , ( RouteExample7 language, Pages.UIFormIntroduction.title )
-    , ( RouteExample1 language, Pages.UIFormBoilerplate.title )
-    , ( RouteExample2 language, Pages.UIFormBoilerplate2.title )
-    , ( RouteExample3 language, Pages.UIFormComponentsPhoneSelect.title )
-    , ( RouteExample4 language, Pages.UIFormComponentsSingle.title )
-    , ( RouteExample6 language, Pages.UIFormComponentsText.title )
-    ]
-
-
-list2 : List (R10.Language.Language -> Route)
-list2 =
+routesList : List (R10.Language.Language -> Route)
+routesList =
     [ RouteExamples
     , RouteExample8
     , RouteExample7
@@ -926,7 +901,7 @@ routeParser =
          , Url.Parser.map (RouteTop languageDefault) Url.Parser.top
          ]
             -- Routes with language
-            ++ List.map routeWithLanguage list2
+            ++ List.map routeWithLanguage routesList
             -- Routes with default language
-            ++ List.map routeWithDefaultLanguage list2
+            ++ List.map routeWithDefaultLanguage routesList
         )

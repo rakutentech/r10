@@ -6,6 +6,7 @@ module R10.LanguageSelector exposing (view)
 
 -}
 
+import Color
 import Element exposing (..)
 import R10.DropDown
 import R10.Language
@@ -16,8 +17,8 @@ view :
     List (Attribute msg)
     ->
         { changeMsg : Result String R10.Language.Language -> msg
-        , colorBackground : String
-        , colorFont : String
+        , colorBackground : Color.Color
+        , colorFont : Color.Color
         , currentLocale : R10.Language.Language
         , supportedLanguageList : List R10.Language.Language
         , withLanguageSelector : Bool

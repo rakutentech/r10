@@ -14,8 +14,6 @@ The only way to get these color is through `list` just for documentation purpose
 
 import Color
 import Color.Manipulate
-import Json.Decode
-import Json.Encode
 import R10.Color.Utils
 import R10.Mode
 import R10.Theme

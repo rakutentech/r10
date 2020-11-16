@@ -1,8 +1,7 @@
 module R10.Color exposing
     ( Base
-    , Primary, primary, decoder, decoderExploration
+    , Primary, primary, primaryDefault, primaryToString, primaryDecoder, primaryDecoderExploration
     , Derived
-    , logo, fontNormal, primaryColor, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, icon, logoHex, iconPrimaryHex, iconError, iconValid, spinner
     , listPrimary, listBase, listDerived
     )
 
@@ -28,21 +27,12 @@ Rakuten Brand guideline: <https://global.rakuten.com/corp/brand/>
 
 ![Colors](https://r10.netlify.app/images/colors-overview400.png)
 
-@docs Primary, primary, decoder, decoderExploration
+@docs Primary, primary, primaryDefault, primaryToString, primaryDecoder, primaryDecoderExploration
 
 
 # Derived
 
 @docs Derived
-
-
-# Colors
-
-These are colors that can be used for SVGs because SVGs don't accept `Element.Attr` as they are not part of the `elm-ui` package.
-
-For all other colors, look into `R10.Color.Attr...` modules.
-
-@docs logo, fontNormal, primaryColor, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, icon, logoHex, iconPrimaryHex, iconError, iconValid, spinner
 
 
 # Lists
@@ -95,15 +85,27 @@ primary =
 
 
 {-| -}
-decoder : Json.Decode.Decoder Primary
-decoder =
+primaryDecoder : Json.Decode.Decoder Primary
+primaryDecoder =
     R10.Color.Internal.Primary.decoder
 
 
 {-| -}
-decoderExploration : Json.Decode.Exploration.Decoder Primary
-decoderExploration =
+primaryDecoderExploration : Json.Decode.Exploration.Decoder Primary
+primaryDecoderExploration =
     R10.Color.Internal.Primary.decoderExploration
+
+
+{-| -}
+primaryToString : Primary -> String
+primaryToString =
+    R10.Color.Internal.Primary.toString
+
+
+{-| -}
+primaryDefault : Primary
+primaryDefault =
+    R10.Color.Internal.Primary.default
 
 
 
@@ -122,101 +124,6 @@ type alias Base =
 {-| -}
 type alias Derived =
     R10.Color.Internal.Derived.Color
-
-
-
--- COLORS
-
-
-{-| -}
-logo : R10.Theme.Theme -> Color.Color
-logo theme =
-    R10.Color.Internal.Derived.Logo
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-fontNormal : R10.Theme.Theme -> Color.Color
-fontNormal theme =
-    R10.Color.Internal.Derived.FontHighEmphasis
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-primaryColor : R10.Theme.Theme -> Color.Color
-primaryColor theme =
-    R10.Color.Internal.Derived.Primary
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-fontButtonPrimary : R10.Theme.Theme -> Color.Color
-fontButtonPrimary theme =
-    R10.Color.Internal.Derived.FontHighEmphasisWithMaximumContrast
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-mediumEmphasis : R10.Theme.Theme -> Color.Color
-mediumEmphasis theme =
-    R10.Color.Internal.Derived.FontMediumEmphasis
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-backgroundButtonMinorOver : R10.Theme.Theme -> Color.Color
-backgroundButtonMinorOver theme =
-    R10.Color.Internal.Derived.BackgroundButtonMinorOver
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-backgroundPhoneDropdown : R10.Theme.Theme -> Color.Color
-backgroundPhoneDropdown theme =
-    R10.Color.Internal.Derived.BackgroundPhoneDropdown
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-icon : R10.Theme.Theme -> Color.Color
-icon theme =
-    R10.Color.Internal.Derived.FontHighEmphasis
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-logoHex : R10.Theme.Theme -> Color.Color
-logoHex theme =
-    R10.Color.Internal.Derived.Logo
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-iconPrimaryHex : R10.Theme.Theme -> Color.Color
-iconPrimaryHex theme =
-    R10.Color.Internal.Derived.Primary
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-iconError : R10.Theme.Theme -> Color.Color
-iconError theme =
-    R10.Color.Internal.Derived.Error
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-iconValid : R10.Theme.Theme -> Color.Color
-iconValid theme =
-    R10.Color.Internal.Derived.Success
-        |> R10.Color.Internal.Derived.toColor theme
-
-
-{-| -}
-spinner : R10.Theme.Theme -> Color.Color
-spinner theme =
-    R10.Color.Internal.Derived.Primary
-        |> R10.Color.Internal.Derived.toColor theme
 
 
 

@@ -7,23 +7,23 @@ module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monocrome,
 -}
 
 import Color
-import Element
+import Element exposing (..)
 import Html.Attributes
 import R10.Color.Utils
-import R10.Svg exposing (wrapperWithViewbox)
+import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA
 
 
 {-| -}
-elm : Int -> Element.Element msg
-elm size =
-    elm_monocrome (R10.Color.Utils.fromHex "#1293d8") size
+elm : List (Attribute msg) -> Int -> Element.Element msg
+elm attrs size =
+    elm_monocrome attrs (R10.Color.Utils.fromHex "#1293d8") size
 
 
 {-| -}
-elm_monocrome : Color.Color -> Int -> Element.Element msg
-elm_monocrome cl size =
+elm_monocrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+elm_monocrome attrs cl size =
     let
         data =
             { p1 = ( 0, -210, 0 )
@@ -35,7 +35,7 @@ elm_monocrome cl size =
             , p7 = ( 256, -150, -270 )
             }
     in
-    wrapperWithViewbox
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "-300 -300 600 600"
         size
         [ Svg.g
@@ -72,9 +72,10 @@ poly color points ( translateX, translateY, rotation ) =
 
 
 {-| -}
-microsoft_ : Color.Color -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
-microsoft_ cl1 cl2 cl3 cl4 size =
-    wrapperWithViewbox "0 0 21 21"
+microsoft_ : List (Attribute msg) -> Color.Color -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+microsoft_ attrs cl1 cl2 cl3 cl4 size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 21 21"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M1 1h9v9H1z" ] []
         , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M1 11h9v9H1z" ] []
@@ -84,9 +85,9 @@ microsoft_ cl1 cl2 cl3 cl4 size =
 
 
 {-| -}
-microsoft : Int -> Element.Element msg
-microsoft size =
-    microsoft_
+microsoft : List (Attribute msg) -> Int -> Element.Element msg
+microsoft attrs size =
+    microsoft_ attrs
         (R10.Color.Utils.fromHex "#f25022")
         (R10.Color.Utils.fromHex "#00a4ef")
         (R10.Color.Utils.fromHex "#7fba00")
@@ -95,9 +96,9 @@ microsoft size =
 
 
 {-| -}
-microsoft_monochrome : Color.Color -> Int -> Element.Element msg
-microsoft_monochrome cl size =
-    microsoft_
+microsoft_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+microsoft_monochrome attrs cl size =
+    microsoft_ attrs
         cl
         cl
         cl
@@ -106,9 +107,10 @@ microsoft_monochrome cl size =
 
 
 {-| -}
-google_ : Color.Color -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
-google_ cl1 cl2 cl3 cl4 size =
-    wrapperWithViewbox "4 4 17 17"
+google_ : List (Attribute msg) -> Color.Color -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+google_ attrs cl1 cl2 cl3 cl4 size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "4 4 17 17"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M20.66 12.693c0-.603-.054-1.182-.155-1.738H12.5v3.287h4.575a3.91 3.91 0 0 1-1.697 2.566v2.133h2.747c1.608-1.48 2.535-3.65 2.535-6.24z" ] []
         , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M12.5 21c2.295 0 4.22-.76 5.625-2.06l-2.747-2.132c-.76.51-1.734.81-2.878.81-2.214 0-4.088-1.494-4.756-3.503h-2.84v2.202A8.498 8.498 0 0 0 12.5 21z" ] []
@@ -118,9 +120,9 @@ google_ cl1 cl2 cl3 cl4 size =
 
 
 {-| -}
-google : Int -> Element.Element msg
-google size =
-    google_
+google : List (Attribute msg) -> Int -> Element.Element msg
+google attrs size =
+    google_ attrs
         (R10.Color.Utils.fromHex "#4285F4")
         (R10.Color.Utils.fromHex "#34A853")
         (R10.Color.Utils.fromHex "#FBBC05")
@@ -129,9 +131,9 @@ google size =
 
 
 {-| -}
-google_monochrome : Color.Color -> Int -> Element.Element msg
-google_monochrome cl size =
-    google_
+google_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+google_monochrome attrs cl size =
+    google_ attrs
         cl
         cl
         cl
@@ -140,39 +142,41 @@ google_monochrome cl size =
 
 
 {-| -}
-facebook : Int -> Element.Element msg
-facebook size =
-    facebook_monochrome (R10.Color.Utils.fromHex "#3b5998") size
+facebook : List (Attribute msg) -> Int -> Element.Element msg
+facebook attrs size =
+    facebook_monochrome attrs (R10.Color.Utils.fromHex "#3b5998") size
 
 
 {-| -}
-facebook_monochrome : Color.Color -> Int -> Element.Element msg
-facebook_monochrome cl size =
-    wrapperWithViewbox "4 4 17 17"
+facebook_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+facebook_monochrome attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "4 4 17 17"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.fillRule "evenodd", SA.d "M20.292 4H4.709A.709.709 0 0 0 4 4.708v15.584c0 .391.317.708.709.708h8.323v-6.375h-2.125v-2.656h2.125V9.844c0-2.196 1.39-3.276 3.348-3.276.938 0 1.745.07 1.98.1v2.295h-1.358c-1.066 0-1.314.507-1.314 1.25v1.756h2.656l-.531 2.656h-2.125L15.73 21h4.562a.708.708 0 0 0 .708-.708V4.708A.708.708 0 0 0 20.292 4" ] []
         ]
 
 
 {-| -}
-apple : Int -> Element.Element msg
-apple size =
-    apple_monochrome (R10.Color.Utils.fromHex "#555") size
+apple : List (Attribute msg) -> Int -> Element.Element msg
+apple attrs size =
+    apple_monochrome attrs (R10.Color.Utils.fromHex "#555") size
 
 
 {-| -}
-apple_monochrome : Color.Color -> Int -> Element.Element msg
-apple_monochrome cl size =
-    wrapperWithViewbox "-80 0 1187.2 1187.2"
+apple_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+apple_monochrome attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "-80 0 1187.2 1187.2"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M979 925c-18 42-39 80-64 115-33 48-61 81-82 99-33 31-68 46-106 47-27 0-59-8-97-23-38-16-73-24-105-24-34 0-70 8-108 24-39 15-70 23-94 24-36 2-72-14-108-48A712 712 0 010 640c0-79 17-148 52-205a303 303 0 01254-151c29 0 66 9 113 27 47 17 77 26 90 26 9 0 43-10 99-31 53-19 98-27 135-24 100 8 175 47 225 118a250 250 0 00-133 227c1 76 29 139 83 189 24 23 52 41 82 54l-21 55zM750 24c0 59-22 115-65 166-52 61-115 96-184 91l-1-23c0-57 25-118 69-168 22-25 50-46 84-63 34-16 66-25 96-27l1 24z" ] []
         ]
 
 
 {-| -}
-pcHome24hours : Int -> Element.Element msg
-pcHome24hours size =
-    pcHome24hours_
+pcHome24hours : List (Attribute msg) -> Int -> Element.Element msg
+pcHome24hours attrs size =
+    pcHome24hours_ attrs
         False
         (R10.Color.Utils.fromHex "#d7000f")
         (R10.Color.Utils.fromHex "#b81c22")
@@ -181,9 +185,9 @@ pcHome24hours size =
 
 
 {-| -}
-pcHome24hours_monochrome : Color.Color -> Int -> Element.Element msg
-pcHome24hours_monochrome cl size =
-    pcHome24hours_
+pcHome24hours_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+pcHome24hours_monochrome attrs cl size =
+    pcHome24hours_ attrs
         True
         (R10.Color.Utils.fromHex "#00000000")
         (R10.Color.Utils.fromHex "#00000000")
@@ -192,9 +196,10 @@ pcHome24hours_monochrome cl size =
 
 
 {-| -}
-pcHome24hours_ : Bool -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
-pcHome24hours_ isMonochrome cl1 cl2 cl3 size =
-    wrapperWithViewbox "0 0 430.9 430.9"
+pcHome24hours_ : List (Attribute msg) -> Bool -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+pcHome24hours_ attrs isMonochrome cl1 cl2 cl3 size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 430.9 430.9"
         size
         ([]
             ++ (if isMonochrome then
@@ -217,9 +222,10 @@ pcHome24hours_ isMonochrome cl1 cl2 cl3 size =
 
 
 {-| -}
-github : Color.Color -> Int -> Element.Element msg
-github cl size =
-    wrapperWithViewbox "4.5 4.5 44 44"
+github : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+github attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "4.5 4.5 44 44"
         size
         [ Svg.path [ SA.fill "none", SA.d "M-.2.1h53.8v53.4H-.2z" ] []
         , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M15.9 7.7a21.3 21.3 0 0121.6 0 21.3 21.3 0 016.6 31.2 20.5 20.5 0 01-10.6 7.7c-.5.1-.9 0-1.1-.2-.2-.2-.4-.5-.4-.8v-2.1-3.8c0-1.8-.5-3.1-1.5-4l2.9-.5c.8-.2 1.7-.6 2.6-1.1.9-.5 1.7-1.1 2.3-1.9.6-.7 1.1-1.7 1.5-2.9s.6-2.6.6-4.2a8 8 0 00-2.2-5.7c.7-1.7.6-3.6-.2-5.7-.5-.2-1.3-.1-2.3.3l-2.6 1.2-1.1.7a20 20 0 00-10.8 0l-1.2-.8a17 17 0 00-2.3-1.1c-1.1-.4-1.9-.5-2.4-.4-.8 2.1-.9 4-.2 5.7a8.8 8.8 0 00-2.1 5.8c0 1.6.2 3 .6 4.2a8.2 8.2 0 003.7 4.8c.9.5 1.8.9 2.6 1.1l2.9.5a5 5 0 00-1.4 2.9 5 5 0 01-1.3.4l-1.6.1c-.6 0-1.2-.2-1.8-.6a5 5 0 01-1.5-1.7 5 5 0 00-1.4-1.5c-.5-.4-1-.6-1.4-.7l-.6-.1-.8.1c-.1.1-.2.2-.1.3l.3.4.4.3.2.1c.4.2.8.5 1.2 1.1l.9 1.4.3.6c.2.7.7 1.3 1.2 1.7.6.4 1.2.7 1.9.8l1.9.2 1.5-.1.6-.1v4c0 .3-.1.6-.4.8-.2.2-.6.3-1.1.2A21.4 21.4 0 018 15.2c2-3 4.6-5.6 7.9-7.5zm-2.6 27.9c.1-.1 0-.2-.2-.3-.2-.1-.3 0-.4.1-.1.1 0 .2.2.3.2.1.4.1.4-.1zm.9 1c.1-.1.1-.2-.1-.4s-.3-.2-.4-.1c-.1.1-.1.2.1.4.1.2.3.2.4.1zm.8 1.2c.2-.1.2-.3 0-.5-.1-.2-.3-.3-.5-.2-.2.1-.2.3 0 .5s.4.3.5.2zm1.2 1.2c.1-.1.1-.3-.1-.5s-.4-.3-.6-.1c-.2.1-.1.3.1.5.3.2.5.2.6.1zm1.6.7c.1-.2-.1-.4-.4-.4-.3-.1-.5 0-.5.2-.1.2 0 .3.4.4.2.1.4 0 .5-.2zm1.8.1c0-.2-.2-.3-.5-.3s-.4.1-.4.3c0 .2.2.3.5.3.2 0 .4-.1.4-.3zm1.6-.3c0-.2-.2-.3-.5-.3-.3.1-.4.2-.4.4s.2.3.5.2c.3.1.4-.1.4-.3z" ] []

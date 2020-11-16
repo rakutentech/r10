@@ -7,35 +7,37 @@ module R10.Svg.IconsExtra exposing (more_vert_, checkBold_, aToZ, check_thick, b
 -}
 
 import Color
-import Element
+import Element exposing (..)
 import R10.Color.Utils
-import R10.Svg exposing (wrapperWithViewbox)
+import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA
 
 
 {-| -}
-check_thick : Color.Color -> Int -> Element.Element msg
-check_thick cl size =
-    R10.Svg.wrapperWithViewbox "0 0 12 10"
+check_thick : List (Attribute msg) -> Color.Color -> Int -> Element msg
+check_thick attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 12 10"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M11.75.78a.72.72 0 0 0-1.03 0l-6.5 6.95-2.98-3a.64.64 0 0 0-.52-.2c-.2 0-.38.08-.52.24a.79.79 0 0 0-.2.53c0 .2.09.4.23.54l3.5 3.5c.14.14.33.22.52.22.2 0 .4-.08.52-.22l7.01-7.47A.81.81 0 0 0 12 1.3a.87.87 0 0 0-.25-.52z" ] []
         ]
 
 
 {-| -}
-bug : Color.Color -> Int -> Element.Element msg
-bug cl size =
-    wrapperWithViewbox "0 0 412.8 412.8"
+bug : List (Attribute msg) -> Color.Color -> Int -> Element msg
+bug attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 412.8 412.8"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M376.5 311a57.4 57.4 0 0 0-54.1-54.1V235H316V257A57.4 57.4 0 0 0 262 311h-21.5v6.2H262a57.4 57.4 0 0 0 54.1 54.2V393h6.3v-21.7a57.4 57.4 0 0 0 54-54.2h26.2V311h-26.1zM316 365.1a51.2 51.2 0 0 1-47.9-47.9h48v48zm0-54.1h-47.9a51.2 51.2 0 0 1 48-48v48zm6.3 54.1v-47.9h47.9a51.2 51.2 0 0 1-48 48zm0-54.1v-48a51.2 51.2 0 0 1 47.9 48h-48zm-31-221c-.8-4.7 2.4-9 7-9.8 2.1-.4 50.6-8.8 53.6-50.6a8.6 8.6 0 0 1 17 1.2c-3.8 55.5-67.2 66.2-67.8 66.3a8.5 8.5 0 0 1-9.8-7.1zm-259-59.2a8.6 8.6 0 0 1 17.1-1.2c3 41.9 51.5 50.2 53.5 50.6a8.6 8.6 0 0 1-2.7 17c-.6-.2-64-10.9-68-66.4zm298.2 131.7c2.4.1 60.9 3.1 72.6 50a8.6 8.6 0 0 1-8.3 10.7c-4 0-7.4-2.7-8.3-6.5-8.6-34.4-56.3-37-56.8-37a8.5 8.5 0 0 1-8.2-9c.2-4.6 4-8.2 8.5-8.2h.5zm-257 17.2c-.4 0-48.1 2.8-56.7 37a8.6 8.6 0 1 1-16.6-4.2c11.7-46.9 70.2-49.9 72.7-50h.3a8.6 8.6 0 0 1 .4 17.2zM161 49.1a40.4 40.4 0 1 1 80.2 0 126.4 126.4 0 0 1 59.3 57.8l1.6 3-3 1.6a187.3 187.3 0 0 1-87.4 20.7c-46.9 0-86.9-15-106.5-24l-3.4-1.5 1.8-3.3c14-25 34.3-44 57.4-54.3zM116 298.2a8.6 8.6 0 0 1-6.2 10.4c-.5.2-46.1 12.4-52 53A8.6 8.6 0 0 1 48 369c-4.7-.6-8-5-7.2-9.7 7.6-52.3 62.5-66.6 64.8-67.2l2-.3c4 0 7.4 2.7 8.4 6.5zm203.2-76l-4.2.2a173.8 173.8 0 0 0-8.6-102.8l-1.4-3.4-3.3 1.7c-22 11.3-57.3 17.9-83.2 20.3l-2.4.2-.6 2.3c-7 27.1-11.2 60.3-13.6 91.2a1777 1777 0 0 0-9.6-91.3l-.4-3a332 332 0 0 1-90.1-23.4l-3.2-1.4-1.4 3.2C88 137 83 160.8 83 184.9c0 79.5 53 144.3 118.1 144.3 8.7 0 17.1-1.3 25.3-3.4a93.6 93.6 0 1 0 93-103.6zm0 180.8a87.4 87.4 0 0 1 0-174.6 87.4 87.4 0 0 1 0 174.6z" ] []
         ]
 
 
 {-| -}
-add : Color.Color -> Int -> Element.Element msg
-add cl size =
-    wrapperWithViewbox
+add : List (Attribute msg) -> Color.Color -> Int -> Element msg
+add attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M18 13h-5v5c0 .55-.45 1-1 1s-1-.45-1-1v-5H6c-.55 0-1-.45-1-1s.45-1 1-1h5V6c0-.55.45-1 1-1s1 .45 1 1v5h5c.55 0 1 .45 1 1s-.45 1-1 1z" ] []
@@ -43,9 +45,9 @@ add cl size =
 
 
 {-| -}
-arrowBack : Color.Color -> Int -> Element.Element msg
-arrowBack cl size =
-    wrapperWithViewbox
+arrowBack : List (Attribute msg) -> Color.Color -> Int -> Element msg
+arrowBack attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M7.38 21.01c.49.49 1.28.49 1.77 0l8.31-8.31c.39-.39.39-1.02 0-1.41L9.15 2.98c-.49-.49-1.28-.49-1.77 0s-.49 1.28 0 1.77L14.62 12l-7.25 7.25c-.48.48-.48 1.28.01 1.76z" ] []
@@ -53,9 +55,9 @@ arrowBack cl size =
 
 
 {-| -}
-arrowForward : Color.Color -> Int -> Element.Element msg
-arrowForward cl size =
-    wrapperWithViewbox
+arrowForward : List (Attribute msg) -> Color.Color -> Int -> Element msg
+arrowForward attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M16.62 2.99c-.49-.49-1.28-.49-1.77 0L6.54 11.3c-.39.39-.39 1.02 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z" ] []
@@ -63,9 +65,9 @@ arrowForward cl size =
 
 
 {-| -}
-grid : Color.Color -> Int -> Element.Element msg
-grid cl size =
-    wrapperWithViewbox
+grid : List (Attribute msg) -> Color.Color -> Int -> Element msg
+grid attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM16,6c0,1.1 0.9,2 2,2s2,-0.9 2,-2 -0.9,-2 -2,-2 -2,0.9 -2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z" ] []
@@ -73,9 +75,9 @@ grid cl size =
 
 
 {-| -}
-play : Color.Color -> Int -> Element.Element msg
-play cl size =
-    wrapperWithViewbox
+play : List (Attribute msg) -> Color.Color -> Int -> Element msg
+play attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 60 60"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M45.6 29.2l-22-15a1 1 0 00-1.6.8v30a1 1 0 001.6.8l22-15a1 1 0 000-1.6zM24 43.2V16.8L43.2 30 24 43.1z" ] []
@@ -84,9 +86,9 @@ play cl size =
 
 
 {-| -}
-pause : Color.Color -> Int -> Element.Element msg
-pause cl size =
-    wrapperWithViewbox
+pause : List (Attribute msg) -> Color.Color -> Int -> Element msg
+pause attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 60 60"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M30 0a30 30 0 100 60 30 30 0 000-60zm0 58a28 28 0 110-56 28 28 0 010 56z" ] []
@@ -95,36 +97,36 @@ pause cl size =
 
 
 {-| -}
-close : Color.Color -> Int -> Element.Element msg
-close cl size =
-    wrapperWithViewbox
+close : List (Attribute msg) -> Color.Color -> Int -> Element msg
+close attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z" ] [] ]
 
 
 {-| -}
-clear : Color.Color -> Int -> Element.Element msg
-clear cl size =
-    wrapperWithViewbox
+clear : List (Attribute msg) -> Color.Color -> Int -> Element msg
+clear attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.59-13L12 10.59 8.41 7 7 8.41 10.59 12 7 15.59 8.41 17 12 13.41 15.59 17 17 15.59 13.41 12 17 8.41z" ] [] ]
 
 
 {-| -}
-submit : Color.Color -> Int -> Element.Element msg
-submit cl size =
-    wrapperWithViewbox
+submit : List (Attribute msg) -> Color.Color -> Int -> Element msg
+submit attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z" ] [] ]
 
 
 {-| -}
-love : Color.Color -> Int -> Element.Element msg
-love cl size =
-    wrapperWithViewbox
+love : List (Attribute msg) -> Color.Color -> Int -> Element msg
+love attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 52 52"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M52 16.2C51.1 8 45.1 1.8 37.7 1.8a14 14 0 00-12 7c-2.5-4.4-6.8-7-11.6-7C6.8 1.8.8 7.8 0 16.2c0 .4-.3 2.4.4 5.5 1.1 4.6 3.6 8.7 7.2 12l18.1 16.5 18.5-16.5c3.6-3.3 6-7.4 7.2-12 .7-3.1.5-5 .4-5.5zm-2.5 5c-1 4.2-3.2 8-6.6 11L26 47.5 9 32.2c-3.4-3-5.6-6.8-6.6-11-.7-3-.4-4.6-.4-4.6v-.1C2.7 9 7.8 3.8 14 3.8c4.7 0 8.9 3 10.8 7.5l1 2.2.9-2.2a12 12 0 0111-7.5c6.4 0 11.5 5.3 12.1 12.8 0 0 .3 1.7-.4 4.7z" ] []
@@ -132,9 +134,9 @@ love cl size =
 
 
 {-| -}
-respect : Color.Color -> Int -> Element.Element msg
-respect cl size =
-    wrapperWithViewbox
+respect : List (Attribute msg) -> Color.Color -> Int -> Element msg
+respect attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M467.8 88.1a10 10 0 00-14.2 0 10 10 0 000 14.1c1.9 1.9 4.4 3 7 3a10 10 0 007-17zM238 323.6a10 10 0 00-14 0 10 10 0 000 14.2c1.8 1.8 4.4 2.9 7 2.9 2.6 0 5.2-1 7-3a10 10 0 000-14z" ] []
@@ -143,9 +145,9 @@ respect cl size =
 
 
 {-| -}
-organize : Color.Color -> Int -> Element.Element msg
-organize cl size =
-    wrapperWithViewbox
+organize : List (Attribute msg) -> Color.Color -> Int -> Element msg
+organize attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M354 64h-54v-3c0-16-13-29-29-29h-19c-8-19-27-32-49-32h-2c-22 0-41 13-49 32h-19c-16 0-29 13-29 29v3H50C19 64 0 79 0 104v358c0 28 22 50 50 50h304c28 0 50-22 50-50V236a10 10 0 10-20 0v226c0 17-13 30-30 30H50c-17 0-30-13-30-30V104c0-5 0-20 30-20h54v14c0 6 4 10 10 10h176c6 0 10-4 10-10V84h54c17 0 30 13 30 30v34a10 10 0 1020 0v-34c0-28-22-50-50-50zm-74 24H124V61c0-5 4-9 9-9h26c4 0 8-3 9-7 4-15 18-25 33-25h2c15 0 29 10 33 25 1 4 5 7 9 7h26c5 0 9 4 9 9zm0 0" ] []
@@ -155,9 +157,9 @@ organize cl size =
 
 
 {-| -}
-customSupport : Color.Color -> Int -> Element.Element msg
-customSupport cl size =
-    wrapperWithViewbox
+customSupport : List (Attribute msg) -> Color.Color -> Int -> Element msg
+customSupport attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 575 575"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M1.5 52.2l38 66.5a9.5 9.5 0 006 4.5l35.4 8.9 121.5 121.5 13.5-13.4L92.4 116.8a9.5 9.5 0 00-4.4-2.5l-34-8.6-32.4-56.6 27.7-27.7L106 53.7l8.5 34a9.5 9.5 0 002.5 4.5l123.5 123.4 13.4-13.4L132.4 80.7l-8.9-35.5a9.5 9.5 0 00-4.5-5.9l-66.5-38a9.5 9.5 0 00-11.4 1.5l-38 38c-3 3-3.7 7.7-1.6 11.4zm0 0M396.3 187.1l-208.9 209-13.4-13.5 208.9-208.9zm0 0M150.8 403.4a9.5 9.5 0 00-8-4.6h-57a9.5 9.5 0 00-8.2 4.6L49.1 451a9.5 9.5 0 000 9.8l28.5 47.5a9.5 9.5 0 008.1 4.6h57c3.3 0 6.4-1.8 8.1-4.6l28.5-47.5c1.8-3 1.8-6.8 0-9.8zm-13.5 90.4H91.1l-22.8-38 22.8-38h46.2l22.8 38zm0 0" ] []
@@ -167,9 +169,9 @@ customSupport cl size =
 
 
 {-| -}
-card : Color.Color -> Int -> Element.Element msg
-card cl size =
-    wrapperWithViewbox
+card : List (Attribute msg) -> Color.Color -> Int -> Element msg
+card attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 -84 512 512"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M467.7 0H44.3A44.3 44.3 0 000 44.3v255.1a44.3 44.3 0 0044.3 44.3h423.4a44.3 44.3 0 0044.3-44.3V44.3A44.3 44.3 0 00467.7 0zm29 299.4c0 16-13 29-29 29H44.3c-16 0-29-13-29-29V44.3c0-16 13-29 29-29h423.4c16 0 29 13 29 29zm0 0" ] []
@@ -179,9 +181,9 @@ card cl size =
 
 
 {-| -}
-highFive : Color.Color -> Int -> Element.Element msg
-highFive cl size =
-    wrapperWithViewbox
+highFive : List (Attribute msg) -> Color.Color -> Int -> Element msg
+highFive attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M423.5 495a10 10 0 00-14.2 0 10 10 0 000 14 10 10 0 0014.2 0 10 10 0 000-14zM505 167.9a39.5 39.5 0 00-67.2 3.6V65.9a38.8 38.8 0 00-58-33.6 38.8 38.8 0 00-76.4 0 38.8 38.8 0 00-57.8 29.9A38.8 38.8 0 00188 96a10 10 0 0020 0 18.8 18.8 0 0137.4-2v26.6a10 10 0 0020 0V66a18.8 18.8 0 0137.4-1.9v77.8l.1 3.8a10 10 0 0020 0V65.9 38.8a18.8 18.8 0 0137.5 0v24.5l-.1 2.6v140.7a10 10 0 0020 0V64a18.8 18.8 0 0137.5 2v147.9a14 14 0 0012.5 14.1 14 14 0 0015.6-10.7l7.8-31.8a19.4 19.4 0 0137.9 8.4l-15.1 76.4c-5 25.6-17.5 49-36 67.4l-31.1 31a10 10 0 00-3 7.1V465a10 10 0 0020 0v-85l28.2-28.1a150.5 150.5 0 0041.5-77.7l15-76.4c2.1-10.5 0-21.1-6-30zM296.6 309a10 10 0 00-10 10v29.3a122 122 0 01-36.1 87l-19 19a10 10 0 00-3 7V502a10 10 0 0020 0v-36.5l16.1-16c27-27 42-63 42-101.2V319a10 10 0 00-10-10z" ] []
@@ -190,9 +192,9 @@ highFive cl size =
 
 
 {-| -}
-moon : Color.Color -> Int -> Element.Element msg
-moon cl size =
-    wrapperWithViewbox
+moon : List (Attribute msg) -> Color.Color -> Int -> Element msg
+moon attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 383.19 383.19"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M226.38 123.66a8.88 8.88 0 00-6.16-1.92h-33.6l31.6-35.28 2.96-3.28 1.52-1.92c.53-.74.96-1.55 1.28-2.4a8 8 0 00.56-2.88 6 6 0 00-2.96-5.76 17.84 17.84 0 00-8.4-1.6H173.9a8.64 8.64 0 00-5.84 1.76 5.92 5.92 0 00-2.08 4.72c0 2.72.91 4.37 2.72 4.96 2.6.74 5.3 1.06 8 .96h25.6a86.75 86.75 0 01-4.16 5.28l-6.56 7.36-8.88 9.6-10.32 11.44c-3.57 4-5.92 6.66-7.04 8a7.52 7.52 0 00.72 10.32 10.88 10.88 0 007.36 2.16h46.72a9.12 9.12 0 006.24-1.84 6.08 6.08 0 002.08-4.72 6.4 6.4 0 00-2.08-4.96zM297.18 164.54a7.04 7.04 0 00-4.96-1.52h-26.88l25.2-28.16 2.4-2.64 1.52-1.84a8.4 8.4 0 001.04-1.92c.3-.74.47-1.52.48-2.32a4.8 4.8 0 00-2.32-4.64c-2.1-.97-4.4-1.4-6.72-1.28h-31.68a6.96 6.96 0 00-4.64 1.44 4.72 4.72 0 00-1.68 3.76c0 2.13.72 3.47 2.16 4 2.09.58 4.25.82 6.4.72h20.48c-.8 1.2-1.92 2.56-3.36 4.24l-5.28 5.92-6.88 8-8 9.12c-2.88 3.2-4.77 5.39-5.68 6.56a6 6 0 00.56 8 8.64 8.64 0 005.84 1.68h37.12a7.28 7.28 0 004.96-1.44 4.88 4.88 0 001.6-3.76 5.12 5.12 0 00-1.68-3.92zM381.1 119.58a8.88 8.88 0 00-6.16-1.92H341.1l31.6-35.28 2.96-3.28 1.92-2.32c.53-.74.96-1.55 1.28-2.4a8 8 0 00.56-2.88 6 6 0 00-2.96-5.76 17.85 17.85 0 00-8.4-1.6h-39.68a8.64 8.64 0 00-5.84 1.76 5.92 5.92 0 00-2.08 4.72c0 2.72.91 4.37 2.72 4.96 2.6.74 5.3 1.06 8 .96h25.6a86.75 86.75 0 01-4.16 5.28l-6.64 7.52-8.64 9.6-10.32 11.44c-3.57 4-5.92 6.66-7.04 8a7.52 7.52 0 00.72 10.32 10.88 10.88 0 007.36 2.16h46.64a9.12 9.12 0 006.4-1.6 6.08 6.08 0 002.08-4.72 6.4 6.4 0 00-2.08-4.96z" ] []
@@ -201,9 +203,9 @@ moon cl size =
 
 
 {-| -}
-paperPlane : Color.Color -> Int -> Element.Element msg
-paperPlane cl size =
-    wrapperWithViewbox
+paperPlane : List (Attribute msg) -> Color.Color -> Int -> Element msg
+paperPlane attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M507 1.3a10 10 0 00-10 0L313.6 109.9a10 10 0 1010.1 17.2l131.5-77.8-244.9 254.1-121.8-37.2 159-94a10 10 0 00-10.2-17.2L58.9 260.4a10 10 0 002.2 18.2L206.5 323l64.2 116.8.2.3a10 10 0 0015.6 2l73.8-72.1L499 412.6A10 10 0 00512 403V10c0-3.6-2-7-5-8.7zm-235.7 328a10 10 0 00-1.8 5.6v61.2l-43.8-79.8 193.9-201.2-148.3 214.1zm18.2 82v-62.9l49 15-49 48zM492 389.5l-196.5-60.1L492 45.7v343.8z" ] []
@@ -212,9 +214,9 @@ paperPlane cl size =
 
 
 {-| -}
-internet : Color.Color -> Int -> Element.Element msg
-internet cl size =
-    wrapperWithViewbox
+internet : List (Attribute msg) -> Color.Color -> Int -> Element msg
+internet attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 58 58"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M50.7 48.2a28.9 28.9 0 00-.6-39 29 29 0 00-20-9.2H28A28.9 28.9 0 007.3 48.2v.1A29 29 0 0028 58h2a29 29 0 0020.6-9.7zM2 30h12a37 37 0 002.4 12.2c-2.8 1-5.5 2.4-8 4.1C4.5 42 2.2 36.3 2 30zM9 11c2.5 1.6 5.1 3 7.9 3.9A37 37 0 0014 28H2c.3-6.5 2.8-12.4 6.9-17zm47 17H44c0-4.6-1-9-2.7-13.1 2.8-1 5.4-2.3 8-3.9 4 4.6 6.5 10.5 6.8 17zM28 15a35 35 0 01-8.5-1.3c2-4.2 5-8 8.5-11V15zm0 2v11H16a35 35 0 012.7-12.5A37 37 0 0028 17zm2 0a37 37 0 009.3-1.5A35 35 0 0142 28H30V17zm0-2V2.6a35 35 0 018.5 11A35 35 0 0130 15zm10.4-2a37 37 0 00-7.9-10.8 27 27 0 0115.2 7.4 34.8 34.8 0 01-7.3 3.5zm-22.8 0c-2.6-.8-5-2-7.3-3.4a27 27 0 0115.2-7.4 37 37 0 00-8 10.9zM16 30h12v10c-3.3.1-6.5.6-9.7 1.6A35 35 0 0116 30zm12 12v13.4a35 35 0 01-8.9-12C22 42.6 25 42.1 28 42zm2 13.4V42c3 .1 6 .6 8.9 1.4a35 35 0 01-8.9 12zM30 40V30h12c-.1 4-1 8-2.3 11.6-3.2-1-6.4-1.5-9.7-1.6zm14-10h12a26.9 26.9 0 01-6.3 16.3 36.9 36.9 0 00-8.1-4A37 37 0 0044 30zM9.7 47.8c2.4-1.5 4.9-2.8 7.5-3.7 2 4.3 4.7 8.3 8.3 11.7a27 27 0 01-15.8-8zm22.8 8c3.6-3.4 6.3-7.4 8.3-11.7 2.6 1 5.1 2.2 7.5 3.7a27 27 0 01-15.8 8z" ] []
@@ -222,9 +224,9 @@ internet cl size =
 
 
 {-| -}
-email : Color.Color -> Int -> Element.Element msg
-email cl size =
-    wrapperWithViewbox
+email : List (Attribute msg) -> Color.Color -> Int -> Element msg
+email attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M486.4 59.7H25.6A25.6 25.6 0 000 85.3v341.4a25.6 25.6 0 0025.6 25.6h460.8a25.6 25.6 0 0025.6-25.6V85.3a25.6 25.6 0 00-25.6-25.6zm8.5 367c0 4.7-3.8 8.5-8.5 8.5H25.6a8.5 8.5 0 01-8.5-8.5V85.3c0-4.7 3.8-8.5 8.5-8.5h460.8c4.7 0 8.5 3.8 8.5 8.5v341.4z" ] []
@@ -233,9 +235,9 @@ email cl size =
 
 
 {-| -}
-waveHand : Color.Color -> Int -> Element.Element msg
-waveHand cl size =
-    wrapperWithViewbox
+waveHand : List (Attribute msg) -> Color.Color -> Int -> Element msg
+waveHand attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 297.7 297.7"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M40.2 77a37.1 37.1 0 0137-37 6 6 0 000-12c-27 0-49 22-49 49a6 6 0 0012 0z" ] []
@@ -245,9 +247,9 @@ waveHand cl size =
 
 
 {-| -}
-training : Color.Color -> Int -> Element.Element msg
-training cl size =
-    wrapperWithViewbox
+training : List (Attribute msg) -> Color.Color -> Int -> Element msg
+training attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 500 500"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M120 32h80v16h-80zm0 0M144 96h-16v88h-16v-64H96v64H80v-40H64v40H48v16h112v-16h-16zm0 0M48 216h16v16H48zm0 0M80 216h80v16H80zm0 0" ] []
@@ -257,9 +259,9 @@ training cl size =
 
 
 {-| -}
-startup : Color.Color -> Int -> Element.Element msg
-startup cl size =
-    wrapperWithViewbox
+startup : List (Attribute msg) -> Color.Color -> Int -> Element msg
+startup attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.circle [ SA.cx "10.1", SA.cy "500.4", SA.r "10.1" ] []
@@ -270,9 +272,9 @@ startup cl size =
 
 
 {-| -}
-fireworks : Color.Color -> Int -> Element.Element msg
-fireworks cl size =
-    wrapperWithViewbox
+fireworks : List (Attribute msg) -> Color.Color -> Int -> Element msg
+fireworks attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M288.7 244.3L268 231.5l5.8-23.6a7.5 7.5 0 00-10.8-8.4l-21.4 11.6-17.5-16.9a7.5 7.5 0 00-12.7 5.2l-.7 24.3-23.3 6.8a7.5 7.5 0 00-1.9 13.6l20.7 12.7-5.8 23.6a7.5 7.5 0 0010.8 8.4l21.4-11.6 17.5 16.9a7.5 7.5 0 0012.7-5.2l.7-24.3 23.3-6.7a7.5 7.5 0 001.9-13.6zm-34.7 7.4a7.5 7.5 0 00-5.4 7l-.3 12.8-9.2-9a7.5 7.5 0 00-8.8-1.1l-11.3 6 3.1-12.3c.8-3.2-.6-6.5-3.3-8.2l-11-6.7 12.3-3.6a7.5 7.5 0 005.5-7l.3-12.8 9.2 9c2.4 2.2 6 2.7 8.8 1.1l11.3-6-3.1 12.3c-.8 3.2.5 6.5 3.3 8.2l11 6.7-12.4 3.6zM168.4 211L95 186a7.5 7.5 0 10-4.9 14.2l73.5 25a7.5 7.5 0 104.8-14.2zM223.5 164.2L195.8 69a7.5 7.5 0 00-14.4 4.2l27.7 95.2a7.5 7.5 0 0014.4-4.2zM354.6 92.5c-3.3-2.6-8-2-10.5 1.3l-63.9 82.4a7.5 7.5 0 1011.9 9.2l63.8-82.4c2.5-3.3 2-8-1.3-10.5zM271.5 89.8c-4-.9-8 1.7-9 5.7L243.3 182a7.5 7.5 0 1014.6 3.3L277 98.8c1-4-1.6-8-5.6-9zM194 184.3l-38-42.7a7.5 7.5 0 00-11.2 10l38 42.7a7.5 7.5 0 0010.5.6 7.5 7.5 0 00.6-10.6zM169 249.5c-.4-4-4-7.2-8.1-6.8l-43.2 3.4a7.5 7.5 0 001.2 15l43.2-3.5c4.1-.3 7.2-4 6.9-8zM198.1 20.6a23.6 23.6 0 10-4.7 17.4c3.8-5 5.5-11.2 4.7-17.4zm-16.6 8.1a8.5 8.5 0 01-12 1.6 8.5 8.5 0 01-1.5-12 8.5 8.5 0 0113.5 10.4zM69 174a23.4 23.4 0 00-26.3-20.3A23.4 23.4 0 0022.4 180a23.4 23.4 0 0026.3 20.4A23.4 23.4 0 0069 174.1zm-16.5 8.3a8.5 8.5 0 01-12 1.5 8.5 8.5 0 01-1.5-12 8.5 8.5 0 0112-1.5 8.5 8.5 0 011.5 12zM393.8 41.8a23.4 23.4 0 00-33 4.2 23.4 23.4 0 004.2 33 23.4 23.4 0 0033-4.2c8-10.3 6.1-25.1-4.2-33zm-7.6 23.8A8.5 8.5 0 11372.7 55a8.5 8.5 0 0113.5 10.5zM329 367.2l-42.7-64.8a7.5 7.5 0 00-12.5 8.2l42.7 64.8a7.5 7.5 0 1012.5-8.2zM417 240.3l-99-3a7.5 7.5 0 00-.5 15l99 3h.3a7.5 7.5 0 00.2-15zM378 172.3a7.5 7.5 0 00-10.2-3.3L289 209.3a7.5 7.5 0 006.8 13.3l79-40.2a7.5 7.5 0 003.2-10.1zM356.6 297l-50.8-26a7.5 7.5 0 00-6.8 13.3l50.8 26a7.5 7.5 0 0010-3.2c2-3.7.5-8.2-3.2-10.1zM265.1 360.2l-7.5-42.6a7.5 7.5 0 00-14.8 2.5l7.5 42.7a7.5 7.5 0 1014.8-2.6zM480.7 230.7a23.4 23.4 0 00-33 4.2 23.4 23.4 0 004.2 33 23.4 23.4 0 0033-4.2c8-10.2 6-25-4.2-33zm-7.7 23.8a8.5 8.5 0 01-12 1.6 8.5 8.5 0 01-1.4-12 8.5 8.5 0 0112-1.5 8.5 8.5 0 011.4 12zM364.3 394a23.6 23.6 0 10-28.8 37.3 23.6 23.6 0 0028.8-37.2zm-7.6 23.9a8.5 8.5 0 01-12 1.5 8.5 8.5 0 1112-1.5zM186 298.7a7.5 7.5 0 00-10.6.2c-3.7 3.8-91.8 95.5-133 203a7.5 7.5 0 0014 5.3c40.1-104.5 128.9-197 129.8-197.9 2.9-3 2.8-7.7-.2-10.6z" ] []
@@ -280,9 +282,9 @@ fireworks cl size =
 
 
 {-| -}
-alarmClock : Color.Color -> Int -> Element.Element msg
-alarmClock cl size =
-    wrapperWithViewbox
+alarmClock : List (Attribute msg) -> Color.Color -> Int -> Element msg
+alarmClock attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 58.15 58.15"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M40.08 29.15h-7.15a4 4 0 00-2.85-2.85V16.14a1 1 0 10-2 0V26.3a4 4 0 104.85 4.86h7.15a1 1 0 100-2zm-11 3a2 2 0 110-4 2 2 0 010 4z" ] []
@@ -292,9 +294,9 @@ alarmClock cl size =
 
 
 {-| -}
-conversation : Color.Color -> Int -> Element.Element msg
-conversation cl size =
-    wrapperWithViewbox
+conversation : List (Attribute msg) -> Color.Color -> Int -> Element msg
+conversation attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M346 319a10 10 0 00-10 10v69c0 27.57-22.43 50-50 50H178.03a10 10 0 00-10 10l-.01 19.87-23.87-23.86a10 10 0 00-9.17-6.01H70c-27.57 0-50-22.43-50-50V244c0-27.57 22.43-50 50-50h101a10 10 0 000-20H70c-38.6 0-70 31.4-70 70v154c0 38.6 31.4 70 70 70h59.86l41.07 41.07a10 10 0 0017.07-7.06l.02-34.01H286c38.6 0 70-31.4 70-70v-69a10 10 0 00-10-10z" ] []
@@ -304,9 +306,9 @@ conversation cl size =
 
 
 {-| -}
-sun : Color.Color -> Int -> Element.Element msg
-sun cl size =
-    wrapperWithViewbox
+sun : List (Attribute msg) -> Color.Color -> Int -> Element msg
+sun attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 397.4 397.4"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M173.6 97.8l-22-22.2a7.3 7.3 0 10-10.2 10.2l21.9 22.2a7.3 7.3 0 0010.3-10.2zM359 76.8a7.3 7.3 0 00-11 0l-22.1 21.8A7.3 7.3 0 10336 109L358 87c3.2-2.5 3.6-7.1 1-10.2zM227.3 72.2l-.2-.6-8-30a7.2 7.2 0 10-14 3.6l8 30a7.2 7.2 0 0014.2-3zM326.7 227.1l-4.2-4 1.2-2.1a83 83 0 00-42.2-116.3l-.2-.2a83 83 0 00-103 36 94.3 94.3 0 00-119.6 91.1v3.8a63.2 63.2 0 004 126.2H271a78.8 78.8 0 0055.8-134.5zm-101.4-109a68.4 68.4 0 0185.4 96.1v.6a78.8 78.8 0 00-66.1-6 94.2 94.2 0 00-23.9-42.8c8.1-15 26.1-21.6 42-15.4a7.2 7.2 0 005.4-13.5 48 48 0 00-58.6 19.1 94.5 94.5 0 00-17.6-10.4 68.4 68.4 0 0133.4-27.8zM286 345.2c-5 1.2-10 1.8-15 1.7H63a48.7 48.7 0 01-34.5-83 48.5 48.5 0 0134.3-14.2H66.3a7.2 7.2 0 007.6-8.6l-.4-4.6v-5a79.8 79.8 0 01158.4-11.8 7.2 7.2 0 0010.4 5.5 64.3 64.3 0 1143.8 120zM397 145.4a7.2 7.2 0 00-8.3-5l-30.1 8a7.2 7.2 0 103.6 14l30-8c4-1.1 6-5.2 4.9-9zM392 216.2l-30-8.2a7.3 7.3 0 10-4 14l30 8.1a7.3 7.3 0 104-14zM289.8 36.7a7.3 7.3 0 00-9 5l-8.2 30a7.2 7.2 0 005 9 7.2 7.2 0 009.1-5l8-30a7.3 7.3 0 00-5-9z" ] []
@@ -314,9 +316,9 @@ sun cl size =
 
 
 {-| -}
-checkBold_ : Color.Color -> Int -> Element.Element msg
-checkBold_ cl size =
-    wrapperWithViewbox
+checkBold_ : List (Attribute msg) -> Color.Color -> Int -> Element msg
+checkBold_ attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z" ] []
@@ -324,9 +326,9 @@ checkBold_ cl size =
 
 
 {-| -}
-keyboardArrowDown : Color.Color -> Int -> Element.Element msg
-keyboardArrowDown cl size =
-    wrapperWithViewbox
+keyboardArrowDown : List (Attribute msg) -> Color.Color -> Int -> Element msg
+keyboardArrowDown attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M8.12 9.29L12 13.17l3.88-3.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-4.59 4.59c-.39.39-1.02.39-1.41 0L6.7 10.7c-.39-.39-.39-1.02 0-1.41.39-.38 1.03-.39 1.42 0z" ] []
@@ -334,9 +336,9 @@ keyboardArrowDown cl size =
 
 
 {-| -}
-delete : Color.Color -> Int -> Element.Element msg
-delete cl size =
-    wrapperWithViewbox
+delete : List (Attribute msg) -> Color.Color -> Int -> Element msg
+delete attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v10zM9 9h6c.55 0 1 .45 1 1v8c0 .55-.45 1-1 1H9c-.55 0-1-.45-1-1v-8c0-.55.45-1 1-1zm6.5-5l-.71-.71c-.18-.18-.44-.29-.7-.29H9.91c-.26 0-.52.11-.7.29L8.5 4H6c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1h-2.5z" ] []
@@ -344,9 +346,9 @@ delete cl size =
 
 
 {-| -}
-restore : Color.Color -> Int -> Element.Element msg
-restore cl size =
-    wrapperWithViewbox
+restore : List (Attribute msg) -> Color.Color -> Int -> Element msg
+restore attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v10zm5.65-8.65c.2-.2.51-.2.71 0L16 14h-2v4h-4v-4H8l3.65-3.65zM15.5 4l-.71-.71c-.18-.18-.44-.29-.7-.29H9.91c-.26 0-.52.11-.7.29L8.5 4H6c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1h-2.5z" ] []
@@ -354,9 +356,9 @@ restore cl size =
 
 
 {-| -}
-keyboardArrowUp : Color.Color -> Int -> Element.Element msg
-keyboardArrowUp cl size =
-    wrapperWithViewbox
+keyboardArrowUp : List (Attribute msg) -> Color.Color -> Int -> Element msg
+keyboardArrowUp attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M8.12 14.71L12 10.83l3.88 3.88c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L12.7 8.71c-.39-.39-1.02-.39-1.41 0L6.7 13.3c-.39.39-.39 1.02 0 1.41.39.38 1.03.39 1.42 0z" ] []
@@ -364,9 +366,9 @@ keyboardArrowUp cl size =
 
 
 {-| -}
-search : Color.Color -> Int -> Element.Element msg
-search cl size =
-    wrapperWithViewbox
+search : List (Attribute msg) -> Color.Color -> Int -> Element msg
+search attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M15.5 14h-.79l-.28-.27c1.2-1.4 1.82-3.31 1.48-5.34-.47-2.78-2.79-5-5.59-5.34-4.23-.52-7.79 3.04-7.27 7.27.34 2.8 2.56 5.12 5.34 5.59 2.03.34 3.94-.28 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" ] []
@@ -374,9 +376,9 @@ search cl size =
 
 
 {-| -}
-more_vert_ : Color.Color -> Int -> Element.Element msg
-more_vert_ cl size =
-    wrapperWithViewbox
+more_vert_ : List (Attribute msg) -> Color.Color -> Int -> Element msg
+more_vert_ attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 48 48"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M24 16a4 4 0 100-8 4 4 0 000 8zm0 4a4 4 0 100 8 4 4 0 000-8zm0 12a4 4 0 100 8 4 4 0 000-8z" ] []
@@ -384,9 +386,9 @@ more_vert_ cl size =
 
 
 {-| -}
-aToZ : Color.Color -> Int -> Element.Element msg
-aToZ _ size =
-    wrapperWithViewbox
+aToZ : List (Attribute msg) -> Color.Color -> Int -> Element msg
+aToZ attrs _ size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
         size
         [ Svg.path [ SA.d "M93.9 426.7c-1.3 0-2.6-.3-3.9-1a8.5 8.5 0 01-3.8-11.4l68.3-136.5a8.5 8.5 0 0115.3 7.6L101.5 422a8.5 8.5 0 01-7.6 4.7zm0 0" ] []

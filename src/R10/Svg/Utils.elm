@@ -1,12 +1,12 @@
-module R10.Svg exposing (wrapperWithViewbox, wrapperWithViewbox_, wrapper_)
+module R10.Svg.Utils exposing (wrapperWithViewbox, wrapper32)
 
 {-| Utilities to render SVG elements.
 
-@docs wrapperWithViewbox, wrapperWithViewbox_, wrapper_
+@docs wrapperWithViewbox, wrapper32
 
 -}
 
-import Element
+import Element exposing (..)
 import Html.Attributes
 import Svg
 import Svg.Attributes as SA
@@ -16,8 +16,8 @@ import Svg.Attributes as SA
 -- WRAPPERS
 
 
-svgSize : String -> Int -> List (Svg.Attribute msg)
-svgSize viewbox ySize =
+svgSize_ : String -> Int -> List (Svg.Attribute msg)
+svgSize_ viewbox ySize =
     --
     -- IE11 is very picky about knowing all sizes of a SVG so
     -- here we calculate the width starting from the height
@@ -59,18 +59,18 @@ wrapperWithViewbox_ viewbox ySize listSvg =
          --
          , Html.Attributes.attribute "focusable" "false"
          ]
-            ++ svgSize viewbox ySize
+            ++ svgSize_ viewbox ySize
         )
         listSvg
 
 
 {-| -}
-wrapperWithViewbox : String -> Int -> List (Svg.Svg msg) -> Element.Element msg
-wrapperWithViewbox viewbox size listSvg =
-    Element.html <| wrapperWithViewbox_ viewbox size listSvg
+wrapperWithViewbox : List (Attribute msg) -> String -> Int -> List (Svg.Svg msg) -> Element.Element msg
+wrapperWithViewbox attrs viewbox size listSvg =
+    el attrs <| Element.html <| wrapperWithViewbox_ viewbox size listSvg
 
 
 {-| -}
-wrapper_ : Int -> List (Svg.Svg msg) -> Element.Element msg
-wrapper_ size listSvg =
-    wrapperWithViewbox "0 0 32 32" size listSvg
+wrapper32 : List (Attribute msg) -> Int -> List (Svg.Svg msg) -> Element.Element msg
+wrapper32 attrs size listSvg =
+    wrapperWithViewbox attrs "0 0 32 32" size listSvg

@@ -1,4 +1,4 @@
-module R10.Color.AttrBorder exposing (buttonSecondary, inputFieldCheckboxNormal, inputFieldCheckboxOver, inputFieldCheckboxSelected, inputFieldError, inputFieldFocused, inputFieldNormal, inputFieldSuccess, normal, shadow)
+module R10.Color.AttrsBorder exposing (buttonSecondary, inputFieldCheckboxNormal, inputFieldCheckboxOver, inputFieldCheckboxSelected, inputFieldError, inputFieldFocused, inputFieldNormal, inputFieldSuccess, normal, shadow)
 
 {-| Border colors
 

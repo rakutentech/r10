@@ -3,8 +3,6 @@ module R10.Color.Internal.Derived exposing (Color(..), list, toColor)
 import Color
 import Color.Accessibility
 import Color.Manipulate
-import Json.Decode
-import Json.Encode
 import R10.Color.Internal.Base
 import R10.Color.Internal.Primary
 import R10.Color.Utils

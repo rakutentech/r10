@@ -1,31 +1,24 @@
-module R10.Svg.Logos exposing (authenticator, authenticator_monocrome, r, rakuten, rakuten_, rakutenMarketing, rakutenRagri, rakutenReady)
+module R10.Svg.Logos exposing (authenticator, authenticator_monocrome, r, rakuten, rakutenMarketing, rakutenRagri, rakutenReady)
 
 {-|
 
-@docs authenticator, authenticator_monocrome, r, rakuten, rakuten_, rakutenMarketing, rakutenRagri, rakutenReady
+@docs authenticator, authenticator_monocrome, r, rakuten, rakutenMarketing, rakutenRagri, rakutenReady
 
 -}
 
 import Color
-import Color.Convert
 import Element exposing (..)
 import R10.Color.Utils
-import R10.Svg exposing (wrapperWithViewbox)
+import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA
 
 
 {-| -}
-rakuten : List (Attribute msg) -> Color.Color -> Int -> Element msg
-rakuten attrs color size =
-    el attrs <|
-        rakuten_ color size
-
-
-{-| -}
-rakuten_ : Color.Color -> Int -> Element.Element msg
-rakuten_ cl size =
-    wrapperWithViewbox "0 0 166 50"
+rakuten : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+rakuten attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 166 50"
         size
         [ Svg.path
             [ SA.fill <| R10.Color.Utils.toHex cl
@@ -36,19 +29,21 @@ rakuten_ cl size =
 
 
 {-| -}
-r : Color.Color -> Int -> Element.Element msg
-r cl size =
-    wrapperWithViewbox "7 4.6 22 22"
+r : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "7 4.6 22 22"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M10.86 26.27L8 23.88h20l-17.14 2.39zM14.1 22.09v-5.3h2.29l3.97 5.3h4.06l-4.8-6.4A5.9 5.9 0 0 0 16.2 5h-5.36v17.08h3.24zm0-13.85h2.11a2.65 2.65 0 1 1 0 5.3H14.1v-5.3z" ] []
         ]
 
 
 {-| -}
-rakutenMarketing : Color.Color -> Int -> Element.Element msg
-rakutenMarketing cl size =
+rakutenMarketing : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+rakutenMarketing attrs cl size =
     -- Default color "#fff"
-    wrapperWithViewbox "0 0 400 56"
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 400 56"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M149.259 46.355H37.757l8.883 8.883 102.619-8.883zM41.617 34.144c-3.852 0-6.672-3.793-6.672-8.584 0-4.788 2.82-8.582 6.672-8.582 3.856 0 6.574 3.794 6.574 8.582 0 4.791-2.718 8.584-6.574 8.584zm6.469-23.714v1.344c-2.07-1.32-3.927-2.086-6.47-2.086-7.811 0-13.746 7.123-13.746 15.872 0 8.75 5.935 15.87 13.747 15.87 2.542 0 4.399-.764 6.469-2.086v1.342h6.867V10.43h-6.867zM103.092 10.43v17.774c0 3.334-2.29 6.15-5.626 6.15-3.333 0-5.625-2.816-5.625-6.15V10.43h-6.867v17.774c0 7.293 4.99 13.225 12.283 13.225 3.377 0 5.835-1.868 5.835-1.868v1.125h6.867V10.43h-6.867zM167.077 40.686V22.913c0-3.334 2.29-6.15 5.626-6.15 3.333 0 5.625 2.816 5.625 6.15v17.773h6.867V22.913c0-7.293-4.988-13.225-12.282-13.225-3.378 0-5.836 1.867-5.836 1.867V10.43h-6.868v30.256h6.868z" ] []
         , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M8.079 10.067h4.687c3.225 0 5.862 2.623 5.862 5.855a5.868 5.868 0 0 1-5.862 5.862H8.079V10.067zm0 30.62V28.963h5.08l8.794 11.722h8.99L20.316 26.542c3.312-2.376 5.487-6.242 5.487-10.62 0-7.19-5.847-13.031-13.037-13.031H.898v37.795h7.18zM128.467 33.527c-.616.419-1.395.744-2.296.744-1.122 0-3.238-.857-3.238-3.711V17.612h5.872V10.43h-5.872V2.89h-6.866v7.54h-3.633v7.182h3.633v13.052c-.002 6.756 5.088 10.791 10.209 10.791 1.908 0 4.556-.624 6.717-1.904l-4.526-6.024zM72.024 24.613l11.78-14.183h-9.627L65.94 20.971V.391h-7.071v40.295h7.071V28.258l10.128 12.428h9.62L72.025 24.613z" ] []
@@ -58,9 +53,10 @@ rakutenMarketing cl size =
 
 
 {-| -}
-rakutenRagri : Color.Color -> Int -> Element.Element msg
-rakutenRagri cl size =
-    wrapperWithViewbox "0 0 178 32"
+rakutenRagri : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+rakutenRagri attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 178 32"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M113.7 23.5v-21h6.6c4.2 0 7.4 3.2 7.4 7.2 0 2.8-1 4.7-3.2 5.7l5.2 8.1h-5l-3.9-6.8h-3v6.8h-4.1zm4-10.5h2.6c1.8 0 3.2-1.6 3.2-3.3 0-2-1.4-3.4-3.2-3.4h-2.6V13zM140.8 22c-1 1.3-2.4 2-4.1 2-4.2 0-7.6-4-7.6-8.8 0-4.8 3.5-8.8 7.8-8.8 1.7 0 2.9.6 3.9 2l.5-1.6h3.5v16.8h-3.5l-.5-1.6zm-7.7-6.9c0 2.8 1.7 5 3.8 5 2.3 0 3.9-2 3.9-5s-1.6-5-3.9-5c-2.1 0-3.8 2.2-3.8 5zM161.5 19.3c0 5.5-2.9 8.7-7.6 8.7a8 8 0 0 1-7-3.6l2.9-2.3c1 1.4 2.4 2.2 3.8 2.2 2.2 0 3.6-1.7 3-5a4.4 4.4 0 0 1-4 2.1c-4 0-7-3.1-7-7.4 0-4.5 3-7.7 7.2-7.7 1.7 0 3.3.6 4.1 1.6l.3-1.2h3.4v12.6h.2zM150.3 14c0 2.2 1.6 3.9 3.6 3.9s3.6-1.8 3.6-4c0-2.1-1.5-3.8-3.6-3.8-2 0-3.6 1.8-3.6 4zM167.4 8.3c1-1.3 2.8-2 4.9-2V10c-1.9.2-3 .7-3.8 2-.4.6-.7 1.5-.7 2.3v9.2H164V6.8h3.2l.3 1.5zM174 5.1v-4h4v4h-4zm0 18.4V6.8h4v16.8h-4zM86.2 26.9H21.4l5.2 5.1 59.6-5.1zM27.4 5.8v.8a6.5 6.5 0 0 0-3.8-1.2c-4.5 0-8 4.1-8 9.2 0 5.2 3.5 9.3 8 9.3 1.5 0 2.6-.5 3.8-1.2v.7h4V5.8h-4zm-3.8 13.9c-2.2 0-3.8-2.2-3.8-5s1.6-5 3.8-5c2.3 0 3.8 2.2 3.8 5 .1 2.8-1.5 5-3.8 5zM59.4 5.8v10.4c0 2-1.4 3.6-3.3 3.6-2 0-3.3-1.7-3.3-3.6V5.8h-4v10.4c0 4.3 2.9 7.7 7.1 7.7 2 0 3.5-1 3.5-1v.5h4V5.8h-4zM96.6 23.5V13.2c0-2 1.3-3.6 3.2-3.6 2 0 3.3 1.6 3.3 3.6v10.3h4V13.2c0-4.3-2.9-7.7-7.1-7.7-2 0-3.4 1-3.4 1v-.7h-4v17.7h4z" ] []
         , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M4.2 23.5v-6.8h3l5 6.8h5.2l-6.2-8.2A7.6 7.6 0 0 0 6.8 1.4H0v22h4.2v.1zm0-17.8h2.7c1.9 0 3.4 1.5 3.4 3.4S8.8 12.5 7 12.5H4.2V5.7zM74.2 19.4c-.4.2-.8.5-1.4.5-.6 0-1.8-.5-1.8-2.2V10h3.4V5.8H71V1.4h-4v4.4h-2.1V10h2v7.7c0 4 3 6.3 6 6.3 1.1 0 2.7-.4 3.9-1.1l-2.6-3.5zM41.3 14.2l6.9-8.4h-5.6L37.8 12V0h-4v23.5h4v-7.2l6 7.2h5.5l-8-9.3z" ] []
@@ -69,10 +65,11 @@ rakutenRagri cl size =
 
 
 {-| -}
-rakutenReady : Color.Color -> Int -> Element.Element msg
-rakutenReady cl size =
+rakutenReady : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+rakutenReady attrs cl size =
     -- Default color "#05B46E"
-    wrapperWithViewbox "0 0 600 110"
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 600 110"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M362.6 49.3H373c7.6 0 13.3-5.8 13.3-13.6 0-7.7-5.7-13.5-13.3-13.5h-10.3v27zm-7.2 29.6V15.5h17.5C385 15.5 394 24 394 35.7c0 8.6-3.8 14.4-11.6 17.8l15.5 25.4h-9.2L375.8 56h-13.2v23h-7.2zM434.2 49c-.7-9.4-6.2-15.6-13.7-15.6-5 0-9.5 2.7-12.1 7.1a19 19 0 0 0-2.6 8.4h28.4zm7.6 20.7a23 23 0 0 1-20.4 10.5c-13.8 0-23.5-11-23.5-26.7s9.2-26.6 22.6-26.6c12.3 0 22 10.8 22 24.6 0 1.4-.1 2.4-.3 4h-36.5a20 20 0 0 0 5.2 13.3c2.9 3.1 6.7 4.9 10.5 4.9 6.5 0 11.8-3.1 14.5-8.6l6 4.6zM455 53.5c0 11.6 6.3 20 14.9 20 8.5 0 14.8-8.4 14.8-19.9 0-11.6-6.3-20-14.9-20-8.5 0-14.8 8.6-14.8 20zm29 19.9c-3.9 4.7-8.4 6.8-14.3 6.8-13.3 0-22.4-10.9-22.4-26.7 0-15.8 9.2-26.6 22.6-26.6a18 18 0 0 1 14.3 6l1-4.8h6.5V79h-6.5l-1.1-5.5zM505 53.5c0 11.6 6.2 20 14.8 20 8.5 0 14.7-8.4 14.7-19.9 0-11.6-6.2-20-14.8-20-8.5 0-14.8 8.6-14.8 20zm29 19.9c-4 4.7-8.5 6.8-14.4 6.8-13.3 0-22.4-10.9-22.4-26.7 0-15.8 9.2-26.6 22.5-26.6a17 17 0 0 1 14.6 7.4v-23h7.3v67.6H535l-1.1-5.5zM588.9 28.1l-18.2 55.3c-2 5.9-6.3 9.2-11.7 9.2-3.5 0-6.7-1.3-9-3.7l3.3-5.2a7.2 7.2 0 0 0 5.2 2c2.8 0 4.2-1.1 5.5-5l1.2-3-17.6-49.6h7.5l13.5 39.5L581.3 28h7.6zM271.8 89H74.6l15.7 15.7zM81.4 67.4c-6.8 0-11.8-6.7-11.8-15.2S74.6 37 81.4 37C88.2 37 93 43.7 93 52.2s-4.8 15.2-11.6 15.2zm11.5-42v2.4a20 20 0 0 0-11.5-3.7c-13.8 0-24.3 12.6-24.3 28.1 0 15.5 10.5 28 24.3 28 4.5 0 7.8-1.3 11.5-3.6v2.3h12V25.5H93zM190.1 25.5v31.4c0 5.9-4 10.8-10 10.8-5.8 0-9.9-5-9.9-10.8V25.5h-12.1v31.4c0 12.9 8.8 23.4 21.7 23.4 6 0 10.3-3.3 10.3-3.3v2h12.2V25.4H190zM303.3 79V47.4c0-5.9 4-10.9 10-10.9 5.8 0 9.9 5 9.9 11v31.3h12.1V47.5c0-12.9-8.8-23.4-21.7-23.4-6 0-10.3 3.3-10.3 3.3v-2H291V79h12.2z" ] []
         , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M22.1 24.8h8.3a10.4 10.4 0 0 1 0 20.7H22V24.8zm0 54.1V58.2h9L46.6 79h16L43.6 54a23 23 0 0 0-13.3-41.8h-21V79h12.7zM235 66.3c-1.1.7-2.5 1.3-4 1.3-2 0-5.8-1.5-5.8-6.6V38.1h10.4V25.5h-10.4V12h-12.1v13.4h-6.5V38h6.5v23.1c0 12 9 19.1 18 19.1 3.4 0 8-1.1 11.9-3.4l-8-10.6zM135.2 50.5l20.8-25h-17L124.4 44V7.7H112v71.2h12.5V57l18 22h17z" ] []
@@ -103,9 +100,10 @@ authenticator_shapeR =
 
 
 {-| -}
-authenticator : Color.Color -> Int -> Element.Element msg
-authenticator cl size =
-    wrapperWithViewbox "0 0 77 77"
+authenticator : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+authenticator attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 77 77"
         size
         [ Svg.path [ SA.fill "#BF0000", SA.d authenticator_shapeSquare ] []
         , Svg.path [ SA.fill "#fff", SA.d authenticator_shapeShield ] []
@@ -114,9 +112,10 @@ authenticator cl size =
 
 
 {-| -}
-authenticator_monocrome : Color.Color -> Int -> Element.Element msg
-authenticator_monocrome cl size =
-    wrapperWithViewbox "0 0 77 77"
+authenticator_monocrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+authenticator_monocrome attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 77 77"
         size
         [ Svg.mask [ SA.id "authenticator_mask" ]
             [ Svg.path [ SA.fill "white", SA.d authenticator_shapeSquare ] []

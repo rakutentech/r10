@@ -7,8 +7,7 @@ module R10.Svg.Lists exposing (listIcons, listIconsExtra, listLogos, listLogosEx
 -}
 
 import Color
-import Element
-import R10.Color.Utils
+import Element exposing (..)
 import R10.Svg.Icons
 import R10.Svg.IconsExtra
 import R10.Svg.Logos
@@ -21,7 +20,7 @@ import R10.Svg.Others
 
 
 {-| -}
-listOthers : Int -> Color.Color -> List ( Element.Element msg, String )
+listOthers : Int -> Color.Color -> List ( Element msg, String )
 listOthers size cl =
     [ ( R10.Svg.Others.mountain size, "mountain" )
     , ( R10.Svg.Others.mobileWithPerson "#fc0" size, "mobileWithPerson" )
@@ -29,7 +28,7 @@ listOthers size cl =
 
 
 {-| -}
-listLogosExtra : Int -> Color.Color -> List ( Element.Element msg, String )
+listLogosExtra : Int -> Color.Color -> List ( Element msg, String )
 listLogosExtra size cl =
     [ ( R10.Svg.LogosExtra.elm size, "elm" )
     , ( R10.Svg.LogosExtra.elm_monocrome cl size, "elm_monocrome" )
@@ -48,7 +47,7 @@ listLogosExtra size cl =
 
 
 {-| -}
-listLogos : Int -> Color.Color -> List ( Element.Element msg, String )
+listLogos : Int -> Color.Color -> List ( Element msg, String )
 listLogos size cl =
     [ ( R10.Svg.Logos.authenticator cl size, "authenticator" )
     , ( R10.Svg.Logos.authenticator_monocrome cl size, "authenticator_monocrome" )
@@ -61,7 +60,7 @@ listLogos size cl =
 
 
 {-| -}
-listIconsExtra : Int -> Color.Color -> List ( Element.Element msg, String )
+listIconsExtra : Int -> Color.Color -> List ( Element msg, String )
 listIconsExtra size cl =
     [ ( R10.Svg.IconsExtra.add cl size, "add" )
     , ( R10.Svg.IconsExtra.bug cl size, "bug" )
@@ -102,7 +101,7 @@ listIconsExtra size cl =
 
 
 {-| -}
-listIcons : Int -> Color.Color -> List ( Element.Element msg, String )
+listIcons : Int -> Color.Color -> List ( Element msg, String )
 listIcons size cl =
     [ ( R10.Svg.Icons.arrow_down_l cl size, "arrow_down_l" )
     , ( R10.Svg.Icons.arrow_left_l cl size, "arrow_left_l" )

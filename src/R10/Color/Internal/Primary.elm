@@ -1,5 +1,5 @@
 module R10.Color.Internal.Primary exposing
-    ( Color(..), list, default, toColor
+    ( Color(..), list, default, toColor, toString
     , decoderExploration, decoder
     )
 
@@ -9,7 +9,7 @@ module R10.Color.Internal.Primary exposing
 
 More info about colors at <https://r10.netlify.app/>
 
-@docs Color, list, default, toColor
+@docs Color, list, default, toColor, toString
 
 
 # Encoders/Decoders
@@ -109,8 +109,8 @@ decoder =
 
 
 {-| -}
-toString_ : Color -> String
-toString_ value =
+toString : Color -> String
+toString value =
     case value of
         Yellow ->
             "Yellow"
@@ -146,7 +146,7 @@ list theme =
     -- List.map
     --     (\color ->
     --         { color = toColor theme color
-    --         , name = toString_ color
+    --         , name = toString color
     --         , description = ""
     --         , type_ = color
     --         }
@@ -164,7 +164,7 @@ list theme =
                             toColorDark_ color
             in
             { color = color_
-            , name = toString_ color
+            , name = toString color
             , description = description_
             , type_ = color
             }

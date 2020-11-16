@@ -1,4 +1,4 @@
-module R10.Color.AttrFont exposing (buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid)
+module R10.Color.AttrsFont exposing (buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid)
 
 {-| Font colors
 
@@ -6,8 +6,6 @@ module R10.Color.AttrFont exposing (buttonPrimary, buttonPrimaryDisabled, button
 
 -}
 
-import Color
-import Color.Convert
 import Element
 import Element.Font
 import R10.Color.Internal.Derived

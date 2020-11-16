@@ -20,7 +20,7 @@ import Html.Attributes
 import Http
 import Json.Decode
 import Process
-import R10.Color.AttrBackground
+import R10.Color.AttrsBackground
 import R10.Color.Internal.Derived
 import R10.Color.Internal.Primary
 import R10.Color.Utils
@@ -32,7 +32,6 @@ import R10.Svg.Logos
 import R10.Theme
 import R10.Translations
 import Task
-import Url.Parser
 
 
 {-| -}
@@ -409,7 +408,7 @@ view model args =
         , if model.negative then
             case model.backgroundColor of
                 Nothing ->
-                    R10.Color.AttrBackground.buttonPrimary model.theme
+                    R10.Color.AttrsBackground.buttonPrimary model.theme
 
                 Just color ->
                     Background.color color

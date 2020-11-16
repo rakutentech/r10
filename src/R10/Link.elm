@@ -8,7 +8,7 @@ module R10.Link exposing (attrs)
 
 import Element exposing (..)
 import Html.Attributes
-import R10.Color.AttrFont
+import R10.Color.AttrsFont
 import R10.Theme
 
 
@@ -16,8 +16,8 @@ import R10.Theme
 -}
 attrs : R10.Theme.Theme -> List (Attr () msg)
 attrs theme =
-    [ R10.Color.AttrFont.link theme
-    , mouseOver [ R10.Color.AttrFont.linkOver theme ]
+    [ R10.Color.AttrsFont.link theme
+    , mouseOver [ R10.Color.AttrsFont.linkOver theme ]
     , transition
     ]
 

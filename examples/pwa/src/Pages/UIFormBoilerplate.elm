@@ -14,9 +14,6 @@ import Pages.Shared.Utils
 import R10.Button
 import R10.Color
 import R10.Form
-import R10.Form.Msg
-import R10.Form.Update
-import R10.Form.Validation
 import R10.Language
 import R10.Libu
 import R10.Mode
@@ -72,7 +69,7 @@ init =
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
                             R10.Form.validation.allOf
-                                [ R10.Form.Validation.commonValidation.email
+                                [ R10.Form.commonValidation.email
                                 , R10.Form.validation.minLength 5
                                 , R10.Form.validation.maxLength 50
                                 , R10.Form.validation.required
@@ -93,7 +90,7 @@ init =
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
                             R10.Form.validation.allOf
-                                [ R10.Form.Validation.commonValidation.password
+                                [ R10.Form.commonValidation.password
                                 , R10.Form.validation.minLength 5
                                 , R10.Form.validation.maxLength 50
                                 , R10.Form.validation.required
@@ -114,7 +111,7 @@ init =
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
                             R10.Form.validation.allOf
-                                [ R10.Form.Validation.commonValidation.password
+                                [ R10.Form.commonValidation.password
                                 , R10.Form.validation.minLength 5
                                 , R10.Form.validation.maxLength 50
                                 , R10.Form.validation.required
@@ -134,7 +131,7 @@ init =
 
 
 type Msg
-    = MsgForm R10.Form.Msg.Msg
+    = MsgForm R10.Form.Msg
 
 
 update : Msg -> Model -> Model
@@ -146,7 +143,7 @@ update msg model =
                     model.form
 
                 ( newFormState_, _ ) =
-                    R10.Form.Update.update formMsg form.state
+                    R10.Form.update formMsg form.state
             in
             { model | form = { form | state = newFormState_ } }
 
@@ -164,7 +161,7 @@ view model =
             Element.map MsgForm <|
                 R10.Button.primary []
                     { label = text "Submit"
-                    , libu = R10.Libu.Bu <| Just <| R10.Form.Msg.Submit model.form.conf
+                    , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
                     , theme = theme
                     }
     in
@@ -215,7 +212,7 @@ init _ _ =
 
 
 type Msg
-    = MsgForm R10.Form.Msg.Msg
+    = MsgForm R10.Form.Msg
 
 
 
@@ -236,7 +233,7 @@ update { global } msg model =
                 form =
                     model.form
             in
-            ( { model | form = { form | state = R10.Form.Update.update formMsg form.state } }, Cmd.none, Cmd.none )
+            ( { model | form = { form | state = R10.Form.update formMsg form.state } }, Cmd.none, Cmd.none )
 
 
 view : Spa.Types.PageContext Generated.Routes.Route GlobalModel.Model -> Model -> Element Msg

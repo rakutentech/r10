@@ -25,8 +25,6 @@ import R10.Color.AttrsFont
 import R10.Color.Svg
 import R10.Color.Utils
 import R10.Form
-import R10.Form.Msg
-import R10.Form.Update
 import R10.FormComponents.Style
 import R10.I18n
 import R10.Language
@@ -86,7 +84,7 @@ type Msg
     = ChangeLanguage R10.Language.Language
     | ChangePrimaryColor R10.Color.Primary
     | ChangeMode R10.Mode.Mode
-    | MsgForm R10.Form.Msg.Msg
+    | MsgForm R10.Form.Msg
 
 
 update : Msg -> Model -> Model
@@ -110,7 +108,7 @@ update msg model =
             { model | theme = { theme | mode = mode } }
 
         MsgForm msgForm ->
-            { model | formState = Tuple.first <| R10.Form.Update.update msgForm model.formState }
+            { model | formState = Tuple.first <| R10.Form.update msgForm model.formState }
 
 
 langauges : List R10.Language.Language

@@ -5,6 +5,12 @@ module R10.Form exposing
     , Conf, Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
     , FieldConf, TypeSingle, single, fieldType, text, validationIcon, validation, binary, initFieldConf
     , State, initState, stateToString, stringToState
+    , update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations
+    , Msg, msg
+    , keyToString
+    , getFieldValueAsBool
+    , commonValidation
+    , boolToString, stringToBool
     )
 
 {-| Use this stuff if you need to add a form in your page.
@@ -30,28 +36,38 @@ module R10.Form exposing
 
 @docs State, initState, stateToString, stringToState
 
+@docs update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations
+
+@docs Model
+
+@docs Msg, msg
+
+@docs keyToString
+
+@docs getFieldValueAsBool
+
+@docs commonValidation
+
 -}
 
+import Dict
 import Element
 import Json.Decode
 import R10.Form.Conf
 import R10.Form.FieldConf
+import R10.Form.FieldState
+import R10.Form.Helpers
 import R10.Form.Key
 import R10.Form.MakerForView
 import R10.Form.Msg
+import R10.Form.Shared
 import R10.Form.State
+import R10.Form.Update
+import R10.Form.Validation
 import R10.Form.ValidationCode
 import R10.FormComponents
 import R10.FormComponents.Style
 import R10.FormComponents.UI.Palette
-
-
-{-| Forms are composed of two parts: a configuration and a state.
--}
-type alias Model =
-    { conf : R10.Form.Conf.Conf
-    , state : R10.Form.State.State
-    }
 
 
 {-| -}
@@ -82,7 +98,7 @@ type alias Options =
 
 {-| This is the no-configuration version.
 -}
-view : Model -> (R10.Form.Msg.Msg -> msg) -> List (Element.Element msg)
+view : R10.Form.Shared.Model -> (R10.Form.Msg.Msg -> msg) -> List (Element.Element msg)
 view form msgMapper =
     viewWithOptions form
         msgMapper
@@ -95,7 +111,7 @@ view form msgMapper =
 
 {-| Use this version if you have a specific palette that you want to use.
 -}
-viewWithPalette : Model -> (R10.Form.Msg.Msg -> msg) -> R10.FormComponents.UI.Palette.Palette -> List (Element.Element msg)
+viewWithPalette : R10.Form.Shared.Model -> (R10.Form.Msg.Msg -> msg) -> R10.FormComponents.UI.Palette.Palette -> List (Element.Element msg)
 viewWithPalette form msgMapper palette =
     viewWithOptions form
         msgMapper
@@ -108,7 +124,7 @@ viewWithPalette form msgMapper palette =
 
 {-| Use this version for a full control.
 -}
-viewWithOptions : Model -> (R10.Form.Msg.Msg -> msg) -> Options -> List (Element.Element msg)
+viewWithOptions : R10.Form.Shared.Model -> (R10.Form.Msg.Msg -> msg) -> Options -> List (Element.Element msg)
 viewWithOptions form msgMapper args =
     List.map
         (Element.map msgMapper)
@@ -234,6 +250,10 @@ type alias ValidationMessage =
     R10.Form.FieldConf.ValidationMessage
 
 
+type alias ValidationSpecs =
+    R10.Form.FieldConf.ValidationSpecs
+
+
 fieldType :
     { text : TypeText -> FieldType
     , single : TypeSingle -> List FieldOption -> FieldType
@@ -332,6 +352,14 @@ initFieldConf =
 
 
 
+-- EXPOSING STUFF FROM R10.Form.FieldState
+
+
+type alias FieldState =
+    R10.Form.FieldState.FieldState
+
+
+
 -- EXPOSING STUFF FROM R10.Form.State
 
 
@@ -352,3 +380,106 @@ stateToString =
 stringToState : String -> Result Json.Decode.Error R10.Form.State.State
 stringToState =
     R10.Form.State.fromString
+
+
+
+-- EXPOSING STUFF FROM R10.Form.Update
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update =
+    R10.Form.Update.update
+
+
+shouldShowTheValidationOverview : R10.Form.State.State -> Bool
+shouldShowTheValidationOverview =
+    R10.Form.Update.shouldShowTheValidationOverview
+
+
+allValidationKeysMaker : Model -> List ( Key, Maybe ValidationSpecs )
+allValidationKeysMaker =
+    R10.Form.Update.allValidationKeysMaker
+
+
+entitiesWithErrors : List ( Key, Maybe ValidationSpecs ) -> Dict.Dict KeyAsString FieldState -> List ( Key, Maybe ValidationSpecs )
+entitiesWithErrors =
+    R10.Form.Update.entitiesWithErrors
+
+
+runOnlyExistingValidations : List ( Key, Maybe ValidationSpecs ) -> State -> Dict.Dict KeyAsString FieldState -> Dict.Dict KeyAsString FieldState
+runOnlyExistingValidations =
+    R10.Form.Update.runOnlyExistingValidations
+
+
+
+-- EXPOSING STUFF FROM R10.Form.Msg
+
+
+type alias Msg =
+    R10.Form.Msg.Msg
+
+
+msg : { submit : Conf -> Msg }
+msg =
+    { submit = R10.Form.Msg.Submit }
+
+
+
+-- EXPOSING STUFF FROM R10.Form.Shared
+
+
+type alias Model =
+    R10.Form.Shared.Model
+
+
+
+-- EXPOSING STUFF FROM R10.Form.Key
+
+
+type alias Key =
+    R10.Form.Key.Key
+
+
+type alias KeyAsString =
+    R10.Form.Key.KeyAsString
+
+
+keyToString : Key -> KeyAsString
+keyToString =
+    R10.Form.Key.toString
+
+
+
+-- EXPOSING STUFF FROM R10.Form.Helpers
+
+
+getFieldValueAsBool : KeyAsString -> State -> Maybe Bool
+getFieldValueAsBool =
+    R10.Form.Helpers.getFieldValueAsBool
+
+
+stringToBool : String -> Bool
+stringToBool =
+    R10.Form.Helpers.stringToBool
+
+
+boolToString : Bool -> String
+boolToString =
+    R10.Form.Helpers.boolToString
+
+
+
+-- EXPOSING STUFF FROM R10.Form.Validation
+
+
+commonValidation :
+    { alphaNumericDash : Validation
+    , alphaNumericDashSpace : Validation
+    , email : Validation
+    , hexColor : Validation
+    , password : Validation
+    , phoneNumber : Validation
+    , url : Validation
+    }
+commonValidation =
+    R10.Form.Validation.commonValidation

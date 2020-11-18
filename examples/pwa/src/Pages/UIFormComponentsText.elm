@@ -17,7 +17,7 @@ import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
 import R10.Color.Utils
-import R10.Form.Helpers
+import R10.Form
 import R10.FormComponents.IconButton
 import R10.FormComponents.Style
 import R10.FormComponents.Text
@@ -553,7 +553,7 @@ The messages on the right are all the messages that are fired by the component.
 
                                 else
                                     OnFocus
-                        , label = text <| R10.Form.Helpers.boolToString model.focused
+                        , label = text <| R10.Form.boolToString model.focused
                         }
                     ]
                 , row []
@@ -567,14 +567,14 @@ The messages on the right are all the messages that are fired by the component.
                     [ text "    , disabled = "
                     , Input.button [ backgroundColor ]
                         { onPress = Just ToggleDisabled
-                        , label = text <| R10.Form.Helpers.boolToString model.disabled
+                        , label = text <| R10.Form.boolToString model.disabled
                         }
                     ]
                 , row []
                     [ text "    , showPassword = "
                     , Input.button [ backgroundColor ]
                         { onPress = Just ToggleShowPassword
-                        , label = text <| R10.Form.Helpers.boolToString model.showPassword
+                        , label = text <| R10.Form.boolToString model.showPassword
                         }
                     ]
                 , text " "

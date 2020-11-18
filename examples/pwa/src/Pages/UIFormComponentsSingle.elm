@@ -17,7 +17,7 @@ import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
 import R10.Color.Utils
-import R10.Form.Helpers
+import R10.Form
 import R10.FormComponents.IconButton
 import R10.FormComponents.Single
 import R10.FormComponents.Single.Common
@@ -627,14 +627,14 @@ The messages on the right are all the messages that are fired by the component.
                     [ text "    , focused = "
                     , Input.button [ backgroundColor ]
                         { onPress = Just RotateFocused
-                        , label = text <| R10.Form.Helpers.boolToString model.singleModel.focused
+                        , label = text <| R10.Form.boolToString model.singleModel.focused
                         }
                     ]
                 , row []
                     [ text "    , opened = "
                     , Input.button [ backgroundColor ]
                         { onPress = Just RotateOpened
-                        , label = text <| R10.Form.Helpers.boolToString model.singleModel.opened
+                        , label = text <| R10.Form.boolToString model.singleModel.opened
                         }
                     ]
                 , row []
@@ -648,7 +648,7 @@ The messages on the right are all the messages that are fired by the component.
                     [ text "    , disabled = "
                     , Input.button [ backgroundColor ]
                         { onPress = Just ToggleDisabled
-                        , label = text <| R10.Form.Helpers.boolToString model.disabled
+                        , label = text <| R10.Form.boolToString model.disabled
                         }
                     ]
                 , text " "

@@ -23,10 +23,6 @@ import Pages.Shared.Utils
 import R10.Card
 import R10.Color
 import R10.Form
-import R10.Form.Key
-import R10.Form.Msg
-import R10.Form.Update
-import R10.Form.Validation
 import R10.Language
 import R10.Mode
 import R10.Theme
@@ -125,7 +121,7 @@ type Msg
     = DoNothing
     | Reset Int
     | ResetAll
-    | MsgForm Int R10.Form.Msg.Msg
+    | MsgForm Int R10.Form.Msg
     | ChangeConf Int String
     | ChangeState Int String
 
@@ -174,7 +170,7 @@ formsInit =
                             , validationIcon = R10.Form.validationIcon.noIcon
                             , validation =
                                 R10.Form.validation.allOf
-                                    [ R10.Form.Validation.commonValidation.email
+                                    [ R10.Form.commonValidation.email
                                     , R10.Form.validation.minLength 5
                                     , R10.Form.validation.maxLength 50
                                     , R10.Form.validation.required
@@ -211,7 +207,7 @@ formsInit =
                                 , validationIcon = R10.Form.validationIcon.noIcon
                                 , validation =
                                     R10.Form.validation.allOf
-                                        [ R10.Form.Validation.commonValidation.email
+                                        [ R10.Form.commonValidation.email
                                         , R10.Form.validation.minLength 5
                                         , R10.Form.validation.maxLength 50
                                         , R10.Form.validation.required
@@ -407,13 +403,13 @@ update msg model =
                             ( form.conf, Json.Decode.errorToString err )
 
                 allKeys =
-                    R10.Form.Update.allValidationKeysMaker { form | conf = newFormConf }
+                    R10.Form.allValidationKeysMaker { form | conf = newFormConf }
 
                 -- Re-running existing validations because if the validations rules
                 -- changed in the configuration would only be picked up after changing
                 -- a related input field.
                 newFieldsState =
-                    R10.Form.Update.runOnlyExistingValidations allKeys form.state form.state.fieldsState
+                    R10.Form.runOnlyExistingValidations allKeys form.state form.state.fieldsState
             in
             ( { model
                 | forms =
@@ -477,7 +473,7 @@ update msg model =
                     getForm index model.forms
 
                 ( newState, formCmd ) =
-                    R10.Form.Update.update formMsg form.state
+                    R10.Form.update formMsg form.state
             in
             ( { model
                 | forms = Array.set index { form | state = newState } model.forms
@@ -531,7 +527,7 @@ viewRow :
     Int
     -> Model
     -- -> { a | code : String, title : String }
-    -- -> (R10.Form.Msg.Msg -> Msg)
+    -- -> (R10.Form.Msg -> Msg)
     -> List (Element Msg)
 viewRow index model =
     let
@@ -562,20 +558,20 @@ viewRow index model =
             [ paragraph secondaryTitle [ text <| formName index ]
             , column [ width fill, spacing 20 ] <|
                 (R10.Form.viewWithPalette form msgTransformer Pages.Shared.Utils.toFormPalette
-                    ++ [ if R10.Form.Update.shouldShowTheValidationOverview form.state then
+                    ++ [ if R10.Form.shouldShowTheValidationOverview form.state then
                             let
                                 allKeys_ =
-                                    R10.Form.Update.allValidationKeysMaker form
+                                    R10.Form.allValidationKeysMaker form
 
                                 allErrors =
-                                    R10.Form.Update.entitiesWithErrors allKeys_ form.state.fieldsState
+                                    R10.Form.entitiesWithErrors allKeys_ form.state.fieldsState
                             in
                             if List.length allErrors > 0 then
                                 column [ spacing 10 ] <|
                                     [ paragraph [] [ text "Errors in the form:" ] ]
                                         ++ List.map
                                             (\( key, _ ) ->
-                                                paragraph [ Font.color <| rgb 1 0 0 ] [ text <| R10.Form.Key.toString key ]
+                                                paragraph [ Font.color <| rgb 1 0 0 ] [ text <| R10.Form.keyToString key ]
                                             )
                                             allErrors
 
@@ -586,7 +582,7 @@ viewRow index model =
                             none
                        ]
                     ++ [ row [ spacing 15 ]
-                            [ Input.button [] { label = text "Submit", onPress = Just <| MsgForm index <| R10.Form.Msg.Submit form.conf }
+                            [ Input.button [] { label = text "Submit", onPress = Just <| MsgForm index <| R10.Form.msg.submit form.conf }
                             , Input.button [] { label = text "Reset", onPress = Just <| Reset index }
                             ]
                        ]
@@ -818,7 +814,7 @@ The library provide a built in system to manage message and state changes. So, t
 
 ### Maker.elm
 
-This maker generate `Element R10.Form.Msg.Msg` that is a nested view structure to display the form on the screen
+This maker generate `Element R10.Form.Msg` that is a nested view structure to display the form on the screen
 
 ### MakerForValidationKeys.elm
 

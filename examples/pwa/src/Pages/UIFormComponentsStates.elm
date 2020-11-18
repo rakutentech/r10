@@ -12,7 +12,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Pages.Shared.Utils
-import R10.Form.Helpers
+import R10.Form
 import R10.FormComponents.Binary
 import R10.FormComponents.Style
 import R10.FormComponents.Text
@@ -189,10 +189,10 @@ viewChecboxTable =
                                                                         --
                                                                         , typeBinary = R10.FormComponents.Binary.BinaryCheckbox
                                                                         }
-                                                            , el attrsCell <| text <| R10.Form.Helpers.boolToString focused_
-                                                            , el attrsCell <| text <| R10.Form.Helpers.boolToString value_
+                                                            , el attrsCell <| text <| R10.Form.boolToString focused_
+                                                            , el attrsCell <| text <| R10.Form.boolToString value_
                                                             , el attrsCell <| text <| "..."
-                                                            , el attrsCell <| text <| R10.Form.Helpers.boolToString disabled_
+                                                            , el attrsCell <| text <| R10.Form.boolToString disabled_
                                                             ]
                                                     )
                                                     disabled
@@ -404,10 +404,10 @@ viewJoinedTable =
                                                                     --
                                                                     , typeBinary = R10.FormComponents.Binary.BinaryCheckbox
                                                                     }
-                                                            , el attrsPropCell <| text <| R10.Form.Helpers.boolToString focused_
-                                                            , el attrsPropCell <| text <| R10.Form.Helpers.boolToString value_
+                                                            , el attrsPropCell <| text <| R10.Form.boolToString focused_
+                                                            , el attrsPropCell <| text <| R10.Form.boolToString value_
                                                             , el attrsPropCell <| text <| validationToStr validation_
-                                                            , el attrsPropCell <| text <| R10.Form.Helpers.boolToString disabled_
+                                                            , el attrsPropCell <| text <| R10.Form.boolToString disabled_
                                                             ]
                                                     )
                                                     disabled
@@ -571,10 +571,10 @@ viewTextTable =
                                                                     , style = R10.FormComponents.Style.Outlined
                                                                     , palette = Pages.Shared.Utils.toFormPalette
                                                                     }
-                                                            , el attrsCell <| text <| R10.Form.Helpers.boolToString focused_
+                                                            , el attrsCell <| text <| R10.Form.boolToString focused_
                                                             , el attrsCell <| text <| validationToStr validation_
-                                                            , el attrsCell <| text <| R10.Form.Helpers.boolToString displayValidation_
-                                                            , el attrsCell <| text <| R10.Form.Helpers.boolToString disabled_
+                                                            , el attrsCell <| text <| R10.Form.boolToString displayValidation_
+                                                            , el attrsCell <| text <| R10.Form.boolToString disabled_
                                                             ]
                                                     )
                                                     disabled

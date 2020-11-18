@@ -20,9 +20,6 @@ import R10.Button
 import R10.Color
 import R10.Color.Utils
 import R10.Form
-import R10.Form.Helpers
-import R10.Form.Msg
-import R10.Form.Update
 import R10.FormComponents.Style
 import R10.Language
 import R10.Libu
@@ -68,7 +65,7 @@ init =
 
 
 type Msg
-    = FormMsg R10.Form.Msg.Msg
+    = FormMsg R10.Form.Msg
     | DoNothing
 
 
@@ -81,7 +78,7 @@ update msg model =
         FormMsg formMsg ->
             let
                 ( newFormState, _ ) =
-                    R10.Form.Update.update formMsg model.formState
+                    R10.Form.update formMsg model.formState
             in
             { model | formState = newFormState }
 
@@ -157,7 +154,7 @@ formConf =
     ]
 
 
-formView : R10.Form.State -> (R10.Form.Msg.Msg -> msg) -> List (Element msg)
+formView : R10.Form.State -> (R10.Form.Msg -> msg) -> List (Element msg)
 formView formState msgMapper =
     R10.Form.view
         { conf = formConf
@@ -300,7 +297,7 @@ view model =
     let
         mode : R10.Mode.Mode
         mode =
-            case R10.Form.Helpers.getFieldValueAsBool "mode" model.formState of
+            case R10.Form.getFieldValueAsBool "mode" model.formState of
                 Just True ->
                     R10.Mode.fromString "dark"
 
@@ -309,7 +306,7 @@ view model =
 
         primaryColor : R10.Color.Primary
         primaryColor =
-            case R10.Form.Helpers.getFieldValueAsBool "primaryColor" model.formState of
+            case R10.Form.getFieldValueAsBool "primaryColor" model.formState of
                 Just True ->
                     R10.Color.primary.blue
 
@@ -325,7 +322,7 @@ view model =
 
         widthMode : Attribute msg
         widthMode =
-            case R10.Form.Helpers.getFieldValueAsBool "width" model.formState of
+            case R10.Form.getFieldValueAsBool "width" model.formState of
                 Just True ->
                     width shrink
 
@@ -334,7 +331,7 @@ view model =
 
         explainComponent : Element msg -> Element msg
         explainComponent =
-            case R10.Form.Helpers.getFieldValueAsBool "explain" model.formState of
+            case R10.Form.getFieldValueAsBool "explain" model.formState of
                 Just True ->
                     el
                         [ Border.width 4
@@ -381,7 +378,7 @@ view model =
             -- type alias Data msg =
             --     { doSomething : msg
             --     , formState : R10.Form.State
-            --     , msgMapper : R10.Form.Msg.Msg -> msg
+            --     , msgMapper : R10.Form.Msg -> msg
             --     , theme : R10.Theme.Theme
             --     , widthMode : Attribute msg
             --     }
@@ -489,7 +486,7 @@ links =
 type alias Data msg =
     { doSomething : msg
     , formState : R10.Form.State
-    , msgMapper : R10.Form.Msg.Msg -> msg
+    , msgMapper : R10.Form.Msg -> msg
     , theme : R10.Theme.Theme
     , widthMode : Attribute msg
     }

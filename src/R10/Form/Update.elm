@@ -12,7 +12,6 @@ module R10.Form.Update exposing
 
 import Browser.Dom
 import Dict
-import R10.Form
 import R10.Form.Conf
 import R10.Form.Dict
 import R10.Form.FieldConf
@@ -21,6 +20,7 @@ import R10.Form.Key
 import R10.Form.MakerForValidationKeys
 import R10.Form.Msg
 import R10.Form.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
+import R10.Form.Shared
 import R10.Form.State
 import R10.Form.Validation
 import R10.FormComponents.Single
@@ -136,7 +136,7 @@ helperValidateOnChangeValue maybeValidationSpec qtySubmitAttempted formState may
 --
 
 
-allValidationKeysMaker : R10.Form.Model -> List R10.Form.MakerForValidationKeys.Outcome
+allValidationKeysMaker : R10.Form.Shared.Model -> List R10.Form.MakerForValidationKeys.Outcome
 allValidationKeysMaker form =
     R10.Form.MakerForValidationKeys.maker R10.Form.Key.empty form.state form.conf
 
@@ -202,7 +202,7 @@ entitiesWithErrors allKeys fieldsState =
         allKeys
 
 
-allErrorsForView : R10.Form.Model -> List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
+allErrorsForView : R10.Form.Shared.Model -> List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
 allErrorsForView form =
     if shouldShowTheValidationOverview form.state then
         let
@@ -221,7 +221,7 @@ shouldShowTheValidationOverview formState =
     QtySubmitAttempted.toInt formState.qtySubmitAttempted > 0 && not formState.changesSinceLastSubmissions
 
 
-submittable : R10.Form.Model -> Bool
+submittable : R10.Form.Shared.Model -> Bool
 submittable form =
     if QtySubmitAttempted.toInt form.state.qtySubmitAttempted == 0 then
         -- Always submittable if it has never been submitted
@@ -240,7 +240,7 @@ submittable form =
         List.length fieldsWithErrors_ == 0
 
 
-isFormSubmittableAndSubmitted : R10.Form.Model -> R10.Form.Msg.Msg -> Bool
+isFormSubmittableAndSubmitted : R10.Form.Shared.Model -> R10.Form.Msg.Msg -> Bool
 isFormSubmittableAndSubmitted form formMsg =
     submittable form && R10.Form.Msg.isSubmitted formMsg
 

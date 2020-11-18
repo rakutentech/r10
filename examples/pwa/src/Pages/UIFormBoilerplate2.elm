@@ -15,10 +15,7 @@ import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
 import R10.Form
-import R10.Form.Element
-import R10.Form.Helpers
-import R10.Form.Msg
-import R10.Form.Update
+import R10.FormComponents.UI.Palette
 import R10.Language
 
 
@@ -51,7 +48,7 @@ init =
 
 
 type Msg
-    = MsgForm R10.Form.Msg.Msg
+    = MsgForm R10.Form.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -60,7 +57,7 @@ update msg model =
         MsgForm formMsg ->
             let
                 ( newFormState_, formCmd ) =
-                    R10.Form.Update.update formMsg model.formState
+                    R10.Form.update formMsg model.formState
             in
             ( { model | formState = newFormState_ }
             , Cmd.map MsgForm formCmd
@@ -115,7 +112,7 @@ operationsTable formState =
               , width = px 46
               , view =
                     \index _ ->
-                        row cellAttrs <| R10.Form.Element.checkbox Pages.Shared.Utils.toFormPalette formState MsgForm index
+                        row cellAttrs <| checkbox Pages.Shared.Utils.toFormPalette formState MsgForm index
               }
             , { header = el headerAttrs <| text "Name"
               , width = fill
@@ -133,11 +130,32 @@ operationsTable formState =
         }
 
 
+checkbox : R10.FormComponents.UI.Palette.Palette -> R10.Form.State -> (R10.Form.Msg -> msg) -> Int -> List (Element msg)
+checkbox palette state msgTransformer index =
+    let
+        initFieldConf : R10.Form.FieldConf
+        initFieldConf =
+            R10.Form.initFieldConf
+    in
+    R10.Form.viewWithPalette
+        { conf =
+            [ R10.Form.entity.field
+                { initFieldConf
+                    | id = String.fromInt index
+                    , type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox
+                }
+            ]
+        , state = state
+        }
+        msgTransformer
+        palette
+
+
 view : Model -> List (Element Msg)
 view model =
     let
         checked =
-            Dict.filter (\_ value -> R10.Form.Helpers.stringToBool value.value) model.formState.fieldsState
+            Dict.filter (\_ value -> R10.Form.stringToBool value.value) model.formState.fieldsState
     in
     [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
 # Operations table example
@@ -166,7 +184,7 @@ This is an example of a form that is not completely generate by the Form library
 * 1 Message
 
 ```elm
-    type Msg = MsgForm R10.Form.Msg.Msg
+    type Msg = MsgForm R10.Form.Msg
 ```
 
 * 1 Update entry
@@ -175,7 +193,7 @@ This is an example of a form that is not completely generate by the Form library
     update msg model =
         case msg of
             MsgForm formMsg ->
-                { model | formState = R10.Form.Update.update formMsg model.formState }
+                { model | formState = R10.Form.update formMsg model.formState }
 ```
 
 and this is all you need as boilerplate.

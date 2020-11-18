@@ -10,9 +10,6 @@ import Html.Attributes
 import R10.Button
 import R10.Color.Primary
 import R10.Form
-import R10.Form.Helpers
-import R10.Form.Msg
-import R10.Form.Update
 import R10.FormComponents.Button
 import R10.FormComponents.Style
 import R10.Mode
@@ -35,7 +32,7 @@ type alias Model =
 
 
 type Msg
-    = ChangeTheme R10.Form.Msg.Msg
+    = ChangeTheme R10.Form.Msg
     | NoOp
 
 
@@ -50,7 +47,7 @@ update msg model =
                 R10.Form.Msg.ChangeValue _ _ _ newVal ->
                     let
                         ( newFormState_, _ ) =
-                            R10.Form.Update.update formMsg model.formState
+                            R10.Form.update formMsg model.formState
                     in
                     ( { model
                         | formState = newFormState_
@@ -59,7 +56,7 @@ update msg model =
                                 theme =
                                     model.theme
                             in
-                            case newVal |> R10.Form.Helpers.stringToBool of
+                            case newVal |> R10.Form.stringToBool of
                                 True ->
                                     { theme | mode = R10.Mode.Dark }
 
@@ -72,7 +69,7 @@ update msg model =
                 _ ->
                     let
                         ( newFormState_, formCmd ) =
-                            R10.Form.Update.update formMsg model.formState
+                            R10.Form.update formMsg model.formState
                     in
                     ( { model | formState = newFormState_ }
                     , Cmd.map ChangeTheme formCmd

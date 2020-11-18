@@ -14,10 +14,10 @@ import Element.Font as Font
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
+import R10.Form
 import R10.Form.Element
 import R10.Form.Helpers
 import R10.Form.Msg
-import R10.Form.State
 import R10.Form.Update
 import R10.Language
 
@@ -42,12 +42,12 @@ title =
 
 
 type alias Model =
-    { formState : R10.Form.State.State }
+    { formState : R10.Form.State }
 
 
 init : Model
 init =
-    { formState = R10.Form.State.init }
+    { formState = R10.Form.initState }
 
 
 type Msg
@@ -84,7 +84,7 @@ operations =
         (List.repeat 20 ())
 
 
-operationsTable : R10.Form.State.State -> Element Msg
+operationsTable : R10.Form.State -> Element Msg
 operationsTable formState =
     let
         cellAttrs =
@@ -151,7 +151,7 @@ This is an example of a form that is not completely generate by the Form library
 
 ```elm
     type alias Model =
-        { formState : R10.Form.State.State }
+        { formState : R10.Form.State }
 ```
 
 
@@ -160,7 +160,7 @@ This is an example of a form that is not completely generate by the Form library
 
 ```elm
     initModel =
-        { formState = R10.Form.State.init }
+        { formState = R10.Form.initState }
 ```
 
 * 1 Message

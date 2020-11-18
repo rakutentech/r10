@@ -1,4 +1,4 @@
-module Pages.UIElements exposing (Model, Msg, Params, page)
+module Pages.Old.UIElements exposing (Model, Msg, Params, page)
 
 import Color
 import Element exposing (..)
@@ -10,11 +10,8 @@ import Html.Attributes
 import R10.Button
 import R10.Color.Primary
 import R10.Form
-import R10.Form.Conf exposing (Entity(..))
-import R10.Form.FieldConf exposing (FieldType(..), TypeBinary(..))
 import R10.Form.Helpers
 import R10.Form.Msg
-import R10.Form.State
 import R10.Form.Update
 import R10.FormComponents.Button
 import R10.FormComponents.Style

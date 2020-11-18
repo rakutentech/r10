@@ -23,11 +23,8 @@ import Pages.Shared.Utils
 import R10.Card
 import R10.Color
 import R10.Form
-import R10.Form.Conf exposing (..)
-import R10.Form.FieldConf exposing (..)
 import R10.Form.Key
 import R10.Form.Msg
-import R10.Form.State
 import R10.Form.Update
 import R10.Form.Validation
 import R10.Language
@@ -100,8 +97,8 @@ init shared =
                 List.reverse formsState
 
         initHelper index =
-            { conf = Maybe.withDefault R10.Form.Conf.init <| Maybe.map .conf <| Array.get index formsInit
-            , state = Maybe.withDefault R10.Form.State.init <| Array.get index formState
+            { conf = Maybe.withDefault R10.Form.initConf <| Maybe.map .conf <| Array.get index formsInit
+            , state = Maybe.withDefault R10.Form.initState <| Array.get index formState
             }
     in
     { forms =
@@ -113,12 +110,12 @@ init shared =
         Array.fromList <|
             repeatForAllForms <|
                 \index ->
-                    R10.Form.Conf.toString (Maybe.withDefault R10.Form.Conf.init <| Maybe.map .conf <| Array.get index formsInit)
+                    R10.Form.confToString (Maybe.withDefault R10.Form.initConf <| Maybe.map .conf <| Array.get index formsInit)
     , buffersState =
         Array.fromList <|
             repeatForAllForms <|
                 \index ->
-                    R10.Form.State.toString (Maybe.withDefault R10.Form.State.init <| Array.get index formState)
+                    R10.Form.stateToString (Maybe.withDefault R10.Form.initState <| Array.get index formState)
     , buffersConfErrors = Array.fromList <| repeatForAllForms <| \_ -> ""
     , buffersStateErrors = Array.fromList <| repeatForAllForms <| \_ -> ""
     }
@@ -133,40 +130,40 @@ type Msg
     | ChangeState Int String
 
 
-getFormState : Int -> Dict.Dict String String -> ( R10.Form.State.State, String )
+getFormState : Int -> Dict.Dict String String -> ( R10.Form.State, String )
 getFormState index paramsDict =
     case Dict.get (formName index) paramsDict of
         Just state ->
-            case R10.Form.State.fromString state of
+            case R10.Form.stringToState state of
                 Err error ->
-                    ( R10.Form.State.init, formName index ++ " error: " ++ Json.Decode.errorToString error )
+                    ( R10.Form.initState, formName index ++ " error: " ++ Json.Decode.errorToString error )
 
                 Ok formState_ ->
                     ( formState_, formName index ++ " recovered from local storage" )
 
         Nothing ->
-            ( R10.Form.State.init, formName index ++ " not found in the local storage" )
+            ( R10.Form.initState, formName index ++ " not found in the local storage" )
 
 
-fieldConfInit : FieldConf
+fieldConfInit : R10.Form.FieldConf
 fieldConfInit =
-    R10.Form.FieldConf.init
+    R10.Form.initFieldConf
 
 
-formsInit : Array.Array { title : String, code : String, conf : List Entity }
+formsInit : Array.Array { title : String, code : String, conf : List R10.Form.Entity }
 formsInit =
     Array.fromList
         [ { title = "A simple text field"
           , conf =
-                [ EntityField fieldConfInit ]
-          , code = """[ EntityField fieldConfInit ]"""
+                [ R10.Form.entity.field fieldConfInit ]
+          , code = """[ R10.Form.entity.field fieldConfInit ]"""
           }
         , { title = "An email input field with validation"
           , conf =
-                [ EntityField
+                [ R10.Form.entity.field
                     { id = "email"
                     , idDom = Nothing
-                    , type_ = TypeText TextEmail
+                    , type_ = R10.Form.fieldType.text R10.Form.text.email
                     , label = "Email"
                     , helperText = Just "Go to [example.com](http://example.com)"
                     , requiredLabel = Just "(required)"
@@ -174,20 +171,20 @@ formsInit =
                         Just
                             { showPassedValidationMessages = False
                             , hidePassedValidationStyle = False
-                            , validationIcon = NoIcon
+                            , validationIcon = R10.Form.validationIcon.noIcon
                             , validation =
-                                AllOf
+                                R10.Form.validation.allOf
                                     [ R10.Form.Validation.commonValidation.email
-                                    , MinLength 5
-                                    , MaxLength 50
-                                    , Required
+                                    , R10.Form.validation.minLength 5
+                                    , R10.Form.validation.maxLength 50
+                                    , R10.Form.validation.required
                                     ]
                             }
                     }
                 ]
-          , code = """[ EntityField
+          , code = """[ R10.Form.entity.field
     { id = "email"
-    , type_ = TypeText TextEmail
+    , type_ = R10.Form.fieldType.text R10.Form.text.email
     , label = "Email"
     , helperText = Just "Helper text"
     , required = True
@@ -199,11 +196,11 @@ formsInit =
           }
         , { title = "Two fields - multiple instances"
           , conf =
-                [ EntityMulti "Two fields - multiple instances"
-                    [ EntityField
+                [ R10.Form.entity.multi "Two fields - multiple instances"
+                    [ R10.Form.entity.field
                         { id = "email"
                         , idDom = Nothing
-                        , type_ = TypeText TextEmail
+                        , type_ = R10.Form.fieldType.text R10.Form.text.email
                         , label = "Email"
                         , helperText = Just "Helper text"
                         , requiredLabel = Just "(required)"
@@ -211,28 +208,28 @@ formsInit =
                             Just
                                 { showPassedValidationMessages = False
                                 , hidePassedValidationStyle = False
-                                , validationIcon = NoIcon
+                                , validationIcon = R10.Form.validationIcon.noIcon
                                 , validation =
-                                    AllOf
+                                    R10.Form.validation.allOf
                                         [ R10.Form.Validation.commonValidation.email
-                                        , MinLength 5
-                                        , MaxLength 50
-                                        , Required
+                                        , R10.Form.validation.minLength 5
+                                        , R10.Form.validation.maxLength 50
+                                        , R10.Form.validation.required
                                         ]
                                 }
                         }
-                    , EntityField
+                    , R10.Form.entity.field
                         { fieldConfInit
                             | id = "password"
                             , label = "Password"
-                            , type_ = TypeText TextPasswordNew
+                            , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
                         }
                     ]
                 ]
-          , code = """[ EntityMulti ""
-    [ EntityField
+          , code = """[ R10.Form.entity.multi ""
+    [ R10.Form.entity.field
         { id = "email"
-        , type_ = TypeText TextEmail
+        , type_ = R10.Form.fieldType.text R10.Form.text.email
         , label = "Email"
         , helperText = Just "Helper text"
         , required = True
@@ -240,22 +237,22 @@ formsInit =
         , maxLength = Just 50
         , regexValidations = R10.Form.Validation.commonValidation.email
         }
-    , EntityField
+    , R10.Form.entity.field
         { fieldConfInit
             | id = "password"
             , label = "Password"
-            , type_ = TypeText TextPasswordNew
+            , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
         }
     ]
 ]"""
           }
         , { title = "Radio buttons"
           , conf =
-                [ EntityField
+                [ R10.Form.entity.field
                     { fieldConfInit
                         | id = "countryCodeAndRegion"
                         , type_ =
-                            TypeSingle SingleRadio
+                            R10.Form.fieldType.single R10.Form.single.radio
                                 [ { value = "Japan", label = "Japan" }
                                 , { value = "United States", label = "United States" }
                                 , { value = "Taiwan", label = "Taiwan" }
@@ -263,11 +260,11 @@ formsInit =
                         , label = "Country code and region"
                         , helperText = Just "Used, among other things, to set the prefix of the telephone number"
                     }
-                , EntityField
+                , R10.Form.entity.field
                     { fieldConfInit
                         | id = "countryCodeAndRegion"
                         , type_ =
-                            TypeSingle SingleCombobox
+                            R10.Form.fieldType.single R10.Form.single.combobox
                                 [ { value = "Japan", label = "Japan" }
                                 , { value = "United States", label = "United States" }
                                 , { value = "Taiwan", label = "Taiwan" }
@@ -276,11 +273,11 @@ formsInit =
                         , helperText = Just "Used, among other things, to set the prefix of the telephone number"
                     }
                 ]
-          , code = """[ EntityField
+          , code = """[ R10.Form.entity.field
   { fieldConfInit
       | id = "countryCodeAndRegion"
       , type_ =
-          TypeSingle SingleRadio
+          R10.Form.fieldType.single R10.Form.single.radio
               [ { value = "Japan", label = "Japan" }
               , { value = "United States", label = "United States" }
               , { value = "Taiwan", label = "Taiwan" }
@@ -288,11 +285,11 @@ formsInit =
       , label = "Country code and region"
       , helperText = Just "Used, among other things, to set the prefix of the telephone number"
   }
-, EntityField
+, R10.Form.entity.field
   { fieldConfInit
       | id = "countryCodeAndRegion"
       , type_ =
-          TypeSingle SingleCombobox
+          R10.Form.fieldType.single R10.Form.single.combobox
               [ { value = "Japan", label = "Japan" }
               , { value = "United States", label = "United States" }
               , { value = "Taiwan", label = "Taiwan" }
@@ -305,50 +302,50 @@ formsInit =
           }
         , { title = "Checkboxes"
           , conf =
-                [ EntityWithBorder ""
-                    [ EntitySubTitle "" { title = "Social Providers", helperText = Just "Select all social networks that you would like to activate", validationSpecs = Nothing }
-                    , EntityField { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = TypeBinary BinaryCheckbox }
-                    , EntityField { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = TypeBinary BinarySwitch }
-                    , EntityField { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = TypeBinary BinaryCheckbox }
-                    , EntityField { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = TypeBinary BinaryCheckbox }
+                [ R10.Form.entity.withBorder ""
+                    [ R10.Form.entity.subTitle "" { title = "Social Providers", helperText = Just "Select all social networks that you would like to activate", validationSpecs = Nothing }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = R10.Form.fieldType.binary R10.Form.binary.switch }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
                     ]
                 ]
-          , code = """[ EntityWithBorder ""
-    [ EntitySubTitle { title = "Social Providers", helperText = Just "Select all social networks that you would like to activate" }
-    , EntityField { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = TypeBinary BinaryCheckbox }
-    , EntityField { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = TypeBinary BinaryCheckbox }
-    , EntityField { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = TypeBinary BinaryCheckbox }
-    , EntityField { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = TypeBinary BinaryCheckbox }
+          , code = """[ R10.Form.entity.withBorder ""
+    [ R10.Form.entity.subTitle { title = "Social Providers", helperText = Just "Select all social networks that you would like to activate" }
+    , R10.Form.entity.field { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
+    , R10.Form.entity.field { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
+    , R10.Form.entity.field { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
+    , R10.Form.entity.field { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
     ]
 ]"""
           }
         , { title = "Tabs"
           , conf =
-                [ EntityWithTabs ""
-                    [ EntityField
+                [ R10.Form.entity.withTabs ""
+                    [ R10.Form.entity.field
                         { fieldConfInit
                             | id = "email"
                             , label = "Email"
                         }
-                    , EntityField
+                    , R10.Form.entity.field
                         { fieldConfInit
                             | id = "password"
                             , label = "Password"
-                            , type_ = TypeText TextPasswordNew
+                            , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
                         }
                     ]
                 ]
-          , code = """[ EntityWithTabs ""
-    [ EntityField
+          , code = """[ R10.Form.entity.withTabs ""
+    [ R10.Form.entity.field
         { fieldConfInit
             | id = "email"
             , label = "Email"
         }
-    , EntityField
+    , R10.Form.entity.field
         { fieldConfInit
             | id = "password"
             , label = "Password"
-            , type_ = TypeText TextPasswordNew
+            , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
         }
     ]
 ]
@@ -378,7 +375,7 @@ update msg model =
                     getForm index model.forms
 
                 ( newState, newError ) =
-                    case R10.Form.State.fromString string of
+                    case R10.Form.stringToState string of
                         Ok state ->
                             ( state, "" )
 
@@ -402,7 +399,7 @@ update msg model =
                     form.state
 
                 ( newFormConf, newError ) =
-                    case R10.Form.Conf.fromString string of
+                    case R10.Form.stringToConf string of
                         Ok conf ->
                             ( conf, "" )
 
@@ -436,11 +433,11 @@ update msg model =
             let
                 newForm =
                     { conf = .conf (getForm index model.forms)
-                    , state = R10.Form.State.init
+                    , state = R10.Form.initState
                     }
 
                 initStateAsString =
-                    R10.Form.State.toString R10.Form.State.init
+                    R10.Form.stateToString R10.Form.initState
             in
             ( { model
                 | forms = Array.set index newForm model.forms
@@ -454,7 +451,7 @@ update msg model =
         ResetAll ->
             let
                 initStateAsString =
-                    R10.Form.State.toString R10.Form.State.init
+                    R10.Form.stateToString R10.Form.initState
             in
             ( { model
                 | forms =
@@ -462,7 +459,7 @@ update msg model =
                         repeatForAllForms <|
                             \index ->
                                 { conf = .conf (getForm index model.forms)
-                                , state = R10.Form.State.init
+                                , state = R10.Form.initState
                                 }
                 , buffersState = Array.fromList <| repeatForAllForms <| \_ -> initStateAsString
                 , buffersStateErrors = Array.fromList <| repeatForAllForms <| \_ -> ""
@@ -484,11 +481,11 @@ update msg model =
             in
             ( { model
                 | forms = Array.set index { form | state = newState } model.forms
-                , buffersState = Array.set index (R10.Form.State.toString newState) model.buffersState
+                , buffersState = Array.set index (R10.Form.stateToString newState) model.buffersState
                 , buffersStateErrors = Array.set index "" model.buffersStateErrors
               }
             , Cmd.map (MsgForm index) formCmd
-              --, Ports.writeLocalStorage ( formName index, R10.Form.State.toString newState )
+              --, Ports.writeLocalStorage ( formName index, R10.Form.stateToString newState )
             )
 
 
@@ -509,13 +506,13 @@ workAroundMultiLine attribs mlspec =
 
 getForm :
     Int
-    -> Array.Array { conf : List a, state : R10.Form.State.State }
-    -> { conf : List a, state : R10.Form.State.State }
+    -> Array.Array { conf : List a, state : R10.Form.State }
+    -> { conf : List a, state : R10.Form.State }
 getForm index forms_ =
-    Maybe.withDefault { conf = [], state = R10.Form.State.init } <| Array.get index forms_
+    Maybe.withDefault { conf = [], state = R10.Form.initState } <| Array.get index forms_
 
 
-getFormInit : Int -> { code : String, conf : List Entity, title : String }
+getFormInit : Int -> { code : String, conf : List R10.Form.Entity, title : String }
 getFormInit index =
     Maybe.withDefault { title = "", code = "", conf = [] } <| Array.get index formsInit
 
@@ -681,7 +678,7 @@ Forms are based on two parts, a configuration and a state:
 
         type alias Model =
             { conf : R10.Form.Conf.Conf
-            , state : R10.Form.State.State
+            , state : R10.Form.State
             }
 
 These parts also contains field state and configuration for a total of four things:
@@ -704,12 +701,12 @@ where `Entity` is a recursive basic block of the form. `Entity` can be an input 
         type Entity
             = EntityNormal EntityId (List Entity)
             | EntityWrappable EntityId (List Entity)
-            | EntityWithBorder EntityId (List Entity)
-            | EntityWithTabs EntityId (List Entity)
-            | EntityMulti EntityId (List Entity)
+            | R10.Form.entity.withBorder EntityId (List Entity)
+            | R10.Form.entity.withTabs EntityId (List Entity)
+            | R10.Form.entity.multi EntityId (List Entity)
             | EntityTitle TextSection
-            | EntitySubTitle TextSection
-            | EntityField R10.Form.FieldConf.FieldConf
+            | R10.Form.entity.subTitle TextSection
+            | R10.Form.entity.field R10.Form.FieldConf.FieldConf
 
 The form is like a tree where leafs are the actually input fields.
 
@@ -747,7 +744,7 @@ In details
 
 * `fieldState` is a dictionary where: the key is a special value generated by the library containing information about the position of the input field in the tree and the value is the field state.
 * `quantities` keep the count of how many quantity a __multiplicable__ entity has been multiplied
-* `activeTabs` is used to rememebr which tab is active when `EntityWithTabs` is used
+* `activeTabs` is used to rememebr which tab is active when `R10.Form.entity.withTabs` is used
 * `focuesed` store the key of the input field that has the focus
 * `removed` keep track of all items that have been removed from an __multiplicable__ entity
 * `qtySubmitAttempted` counts home many time a form has been submitted. If zero, the from has never been submitted
@@ -770,7 +767,7 @@ Field state contain data that can change in an input field
 Field types are grouped in 4 categories:
 
         type FieldType
-            = TypeText TypeText
+            = R10.Form.fieldType.text TypeText
             | TypeSingle TypeSingle (List FieldOption)
             | TypeMulti TypeMulti (List FieldOption)
             | TypeBinary TypeBinary
@@ -779,7 +776,7 @@ Field types are grouped in 4 categories:
 
         type TypeText
             = TextPlain
-            | TextEmail
+            | R10.Form.text.email
             | TextUsername
             | TextPasswordNew
             | TextPasswordCurrent

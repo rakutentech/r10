@@ -25,10 +25,7 @@ import R10.Color.AttrsFont
 import R10.Color.Svg
 import R10.Color.Utils
 import R10.Form
-import R10.Form.Conf
-import R10.Form.FieldConf
 import R10.Form.Msg
-import R10.Form.State
 import R10.Form.Update
 import R10.FormComponents.Style
 import R10.I18n
@@ -66,7 +63,7 @@ title =
 type alias Model =
     { language : R10.Language.Language
     , theme : R10.Theme.Theme
-    , formState : R10.Form.State.State
+    , formState : R10.Form.State
     }
 
 
@@ -81,7 +78,7 @@ init : Model
 init =
     { language = R10.Language.EN_US
     , theme = defaultTheme
-    , formState = R10.Form.State.init
+    , formState = R10.Form.initState
     }
 
 
@@ -255,21 +252,21 @@ tooltip usher tooltip_ =
             none
 
 
-formConf : R10.Form.Conf.Conf
+formConf : R10.Form.Conf
 formConf =
-    [ R10.Form.Conf.EntityField
+    [ R10.Form.entity.field
         { id = "binary"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeBinary R10.Form.FieldConf.BinarySwitch
+        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
         , label = "Binary Switch"
         , helperText = Just "Helper Text"
         , requiredLabel = Nothing
         , validationSpecs = Nothing
         }
-    , R10.Form.Conf.EntityField
+    , R10.Form.entity.field
         { id = "binary"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeBinary R10.Form.FieldConf.BinaryCheckbox
+        , type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox
         , label = "Checkbox"
         , helperText = Nothing
         , requiredLabel = Just <| "Required"
@@ -277,14 +274,14 @@ formConf =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.FieldConf.NoIcon
-                , validation = R10.Form.FieldConf.Required
+                , validationIcon = R10.Form.validationIcon.noIcon
+                , validation = R10.Form.validation.required
                 }
         }
-    , R10.Form.Conf.EntityField
+    , R10.Form.entity.field
         { id = "userId"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeText R10.Form.FieldConf.TextUsername
+        , type_ = R10.Form.fieldType.text R10.Form.text.username
         , label = "User ID"
         , helperText = Nothing
         , requiredLabel = Just "Required"
@@ -292,21 +289,21 @@ formConf =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.FieldConf.NoIcon
+                , validationIcon = R10.Form.validationIcon.noIcon
                 , validation =
-                    R10.Form.FieldConf.AllOf
-                        [ R10.Form.FieldConf.Required
-                        , R10.Form.FieldConf.MinLength 6
-                        , R10.Form.FieldConf.MaxLength 128
-                        , R10.Form.FieldConf.WithMsg { ok = "INVALID_FORMAT_INVALID_CHARACTERS", err = "INVALID_FORMAT_INVALID_CHARACTERS" }
-                            (R10.Form.FieldConf.Regex "^((?!(/|\\\\))[\\x21-\\x7F])+$")
+                    R10.Form.validation.allOf
+                        [ R10.Form.validation.required
+                        , R10.Form.validation.minLength 6
+                        , R10.Form.validation.maxLength 128
+                        , R10.Form.validation.withMsg { ok = "INVALID_FORMAT_INVALID_CHARACTERS", err = "INVALID_FORMAT_INVALID_CHARACTERS" }
+                            (R10.Form.validation.regex "^((?!(/|\\\\))[\\x21-\\x7F])+$")
                         ]
                 }
         }
-    , R10.Form.Conf.EntityField
+    , R10.Form.entity.field
         { id = "password"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeText R10.Form.FieldConf.TextPasswordCurrent
+        , type_ = R10.Form.fieldType.text R10.Form.text.passwordCurrent
         , label = "Password"
         , helperText = Nothing
         , requiredLabel = Just <| "Required"
@@ -314,15 +311,15 @@ formConf =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.FieldConf.NoIcon
-                , validation = R10.Form.FieldConf.Required
+                , validationIcon = R10.Form.validationIcon.noIcon
+                , validation = R10.Form.validation.required
                 }
         }
-    , R10.Form.Conf.EntityField
+    , R10.Form.entity.field
         { id = "single"
         , idDom = Nothing
         , type_ =
-            R10.Form.FieldConf.TypeSingle R10.Form.FieldConf.SingleRadio
+            R10.Form.fieldType.single R10.Form.single.radio
                 [ { value = "option1"
                   , label = "Option 1"
                   }
@@ -335,11 +332,11 @@ formConf =
         , requiredLabel = Just <| "Required"
         , validationSpecs = Nothing
         }
-    , R10.Form.Conf.EntityField
+    , R10.Form.entity.field
         { id = "single"
         , idDom = Nothing
         , type_ =
-            R10.Form.FieldConf.TypeSingle R10.Form.FieldConf.SingleCombobox
+            R10.Form.fieldType.single R10.Form.single.combobox
                 [ { value = "option1"
                   , label = "Option 1"
                   }
@@ -410,10 +407,10 @@ view model mouse windowSize =
 
 An example of `Configuration` is
 
-    [ R10.Form.Conf.EntityField
+    [ R10.Form.entity.field
         { id = "userId"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeText R10.Form.FieldConf.TextUsername
+        , type_ = R10.Form.fieldType.text R10.Form.text.username
         , label = "User ID"
         , helperText = Nothing
         , requiredLabel = Just "Required"
@@ -421,17 +418,17 @@ An example of `Configuration` is
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.FieldConf.NoIcon
+                , validationIcon = R10.Form.validationIcon.noIcon
                 , validation =
-                    R10.Form.FieldConf.AllOf
-                        [ R10.Form.FieldConf.Required
-                        , R10.Form.FieldConf.MinLength 6
-                        , R10.Form.FieldConf.MaxLength 128
-                        , R10.Form.FieldConf.WithMsg
+                    R10.Form.validation.allOf
+                        [ R10.Form.validation.required
+                        , R10.Form.validation.minLength 6
+                        , R10.Form.validation.maxLength 128
+                        , R10.Form.validation.withMsg
                             { ok = "INVALID_FORMAT_INVALID_CHARACTERS"
                             , err = "INVALID_FORMAT_INVALID_CHARACTERS"
                             }
-                            (R10.Form.FieldConf.Regex "^((?!(/|\\\\))[\\x21-\\x7F])+$")
+                            (R10.Form.validation.regex "^((?!(/|\\\\))[\\x21-\\x7F])+$")
                         ]
                 }
         }

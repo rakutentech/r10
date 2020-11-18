@@ -20,11 +20,8 @@ import R10.Button
 import R10.Color
 import R10.Color.Utils
 import R10.Form
-import R10.Form.Conf
-import R10.Form.FieldConf
 import R10.Form.Helpers
 import R10.Form.Msg
-import R10.Form.State
 import R10.Form.Update
 import R10.FormComponents.Style
 import R10.Language
@@ -62,12 +59,12 @@ title =
 
 
 type alias Model =
-    { formState : R10.Form.State.State }
+    { formState : R10.Form.State }
 
 
 init : Model
 init =
-    { formState = R10.Form.State.init }
+    { formState = R10.Form.initState }
 
 
 type Msg
@@ -118,40 +115,40 @@ rowAttrs =
     ]
 
 
-formConf : R10.Form.Conf.Conf
+formConf : R10.Form.Conf
 formConf =
     -- Same as WidgetLogin.Shared.userIdInputField
-    [ R10.Form.Conf.EntityField
+    [ R10.Form.entity.field
         { id = "mode"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeBinary R10.Form.FieldConf.BinarySwitch
+        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
         , label = "Light ⇔ Dark"
         , helperText = Just "Mode"
         , requiredLabel = Nothing
         , validationSpecs = Nothing
         }
-    , R10.Form.Conf.EntityField
+    , R10.Form.entity.field
         { id = "primaryColor"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeBinary R10.Form.FieldConf.BinarySwitch
+        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
         , label = "Pink ⇔ Blue"
         , helperText = Just "Primary Color"
         , requiredLabel = Nothing
         , validationSpecs = Nothing
         }
-    , R10.Form.Conf.EntityField
+    , R10.Form.entity.field
         { id = "explain"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeBinary R10.Form.FieldConf.BinarySwitch
+        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
         , label = "OFF ⇔ ON"
         , helperText = Just "Explain"
         , requiredLabel = Nothing
         , validationSpecs = Nothing
         }
-    , R10.Form.Conf.EntityField
+    , R10.Form.entity.field
         { id = "width"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeBinary R10.Form.FieldConf.BinarySwitch
+        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
         , label = "Fill ⇔ Shrink"
         , helperText = Just "Width"
         , requiredLabel = Nothing
@@ -160,7 +157,7 @@ formConf =
     ]
 
 
-formView : R10.Form.State.State -> (R10.Form.Msg.Msg -> msg) -> List (Element msg)
+formView : R10.Form.State -> (R10.Form.Msg.Msg -> msg) -> List (Element msg)
 formView formState msgMapper =
     R10.Form.view
         { conf = formConf
@@ -383,7 +380,7 @@ view model =
             --
             -- type alias Data msg =
             --     { doSomething : msg
-            --     , formState : R10.Form.State.State
+            --     , formState : R10.Form.State
             --     , msgMapper : R10.Form.Msg.Msg -> msg
             --     , theme : R10.Theme.Theme
             --     , widthMode : Attribute msg
@@ -491,7 +488,7 @@ links =
 
 type alias Data msg =
     { doSomething : msg
-    , formState : R10.Form.State.State
+    , formState : R10.Form.State
     , msgMapper : R10.Form.Msg.Msg -> msg
     , theme : R10.Theme.Theme
     , widthMode : Attribute msg
@@ -741,12 +738,12 @@ components =
     ]
 
 
-v01 : R10.Form.Conf.Conf
+v01 : R10.Form.Conf
 v01 =
-    [ R10.Form.Conf.EntityField
+    [ R10.Form.entity.field
         { id = "userId"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeText R10.Form.FieldConf.TextUsername
+        , type_ = R10.Form.fieldType.text R10.Form.text.username
         , label = "Label"
         , helperText = Nothing
         , requiredLabel = Just "Required"
@@ -754,26 +751,26 @@ v01 =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.FieldConf.NoIcon
+                , validationIcon = R10.Form.validationIcon.noIcon
                 , validation =
-                    R10.Form.FieldConf.AllOf
-                        [ R10.Form.FieldConf.Required
-                        , R10.Form.FieldConf.MinLength 6
-                        , R10.Form.FieldConf.MaxLength 128
-                        , R10.Form.FieldConf.WithMsg { ok = "INVALID_FORMAT_INVALID_CHARACTERS", err = "INVALID_FORMAT_INVALID_CHARACTERS" }
-                            (R10.Form.FieldConf.Regex "^((?!(/|\\\\))[\\x21-\\x7F])+$")
+                    R10.Form.validation.allOf
+                        [ R10.Form.validation.required
+                        , R10.Form.validation.minLength 6
+                        , R10.Form.validation.maxLength 128
+                        , R10.Form.validation.withMsg { ok = "INVALID_FORMAT_INVALID_CHARACTERS", err = "INVALID_FORMAT_INVALID_CHARACTERS" }
+                            (R10.Form.validation.regex "^((?!(/|\\\\))[\\x21-\\x7F])+$")
                         ]
                 }
         }
     ]
 
 
-v11 : R10.Form.Conf.Conf
+v11 : R10.Form.Conf
 v11 =
-    [ R10.Form.Conf.EntityField
+    [ R10.Form.entity.field
         { id = "password"
         , idDom = Nothing
-        , type_ = R10.Form.FieldConf.TypeText R10.Form.FieldConf.TextPasswordCurrent
+        , type_ = R10.Form.fieldType.text R10.Form.text.passwordCurrent
         , label = "Label"
         , helperText = Nothing
         , requiredLabel = Just "Required"
@@ -781,8 +778,8 @@ v11 =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.FieldConf.NoIcon
-                , validation = R10.Form.FieldConf.Required
+                , validationIcon = R10.Form.validationIcon.noIcon
+                , validation = R10.Form.validation.required
                 }
         }
     ]

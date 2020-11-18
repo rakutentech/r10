@@ -22,7 +22,7 @@ import Pages.UIFormComponentsStates
 import Pages.UIFormComponentsText
 import Pages.UIFormIntroduction
 import R10.Footer
-import R10.Form.MakerForView
+import R10.Form
 import R10.Header
 import R10.I18n
 import R10.Language
@@ -554,7 +554,7 @@ css =
         [ cssSkipLink
         , cssCommon
         , cssMarkdown
-        , R10.Form.MakerForView.extraCss (Just <| Pages.Shared.Utils.toFormPalette)
+        , R10.Form.extraCss (Just <| Pages.Shared.Utils.toFormPalette)
         ]
 
 

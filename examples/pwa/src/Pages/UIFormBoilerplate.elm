@@ -14,10 +14,7 @@ import Pages.Shared.Utils
 import R10.Button
 import R10.Color
 import R10.Form
-import R10.Form.Conf exposing (..)
-import R10.Form.FieldConf exposing (..)
 import R10.Form.Msg
-import R10.Form.State
 import R10.Form.Update
 import R10.Form.Validation
 import R10.Language
@@ -61,10 +58,10 @@ init : Model
 init =
     { form =
         { conf =
-            [ EntityField
+            [ R10.Form.entity.field
                 { id = "email"
                 , idDom = Nothing
-                , type_ = TypeText TextEmail
+                , type_ = R10.Form.fieldType.text R10.Form.text.email
                 , label = "Email"
                 , helperText = Just "Helper text for Email"
                 , requiredLabel = Just "(required)"
@@ -72,20 +69,20 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = NoIcon
+                        , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            AllOf
+                            R10.Form.validation.allOf
                                 [ R10.Form.Validation.commonValidation.email
-                                , MinLength 5
-                                , MaxLength 50
-                                , Required
+                                , R10.Form.validation.minLength 5
+                                , R10.Form.validation.maxLength 50
+                                , R10.Form.validation.required
                                 ]
                         }
                 }
-            , EntityField
+            , R10.Form.entity.field
                 { id = "password"
                 , idDom = Nothing
-                , type_ = TypeText TextPasswordNew
+                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
                 , label = "Password"
                 , helperText = Just "Helper text for Password"
                 , requiredLabel = Just "(required)"
@@ -93,20 +90,20 @@ init =
                     Just
                         { showPassedValidationMessages = True
                         , hidePassedValidationStyle = False
-                        , validationIcon = NoIcon
+                        , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            AllOf
+                            R10.Form.validation.allOf
                                 [ R10.Form.Validation.commonValidation.password
-                                , MinLength 5
-                                , MaxLength 50
-                                , Required
+                                , R10.Form.validation.minLength 5
+                                , R10.Form.validation.maxLength 50
+                                , R10.Form.validation.required
                                 ]
                         }
                 }
-            , EntityField
+            , R10.Form.entity.field
                 { id = "password_repeat"
                 , idDom = Nothing
-                , type_ = TypeText TextPasswordNew
+                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
                 , label = "Repeat Password"
                 , helperText = Just "Helper text for Repeat  Password"
                 , requiredLabel = Just "(required)"
@@ -114,19 +111,24 @@ init =
                     Just
                         { showPassedValidationMessages = True
                         , hidePassedValidationStyle = False
-                        , validationIcon = NoIcon
+                        , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            AllOf
+                            R10.Form.validation.allOf
                                 [ R10.Form.Validation.commonValidation.password
-                                , MinLength 5
-                                , MaxLength 50
-                                , Required
-                                , WithMsg { ok = "Passwords are the same", err = "Passwords are not the same" } <| Dependant "password" Equal
+                                , R10.Form.validation.minLength 5
+                                , R10.Form.validation.maxLength 50
+                                , R10.Form.validation.required
+                                , R10.Form.validation.withMsg
+                                    { ok = "Passwords are the same"
+                                    , err = "Passwords are not the same"
+                                    }
+                                  <|
+                                    R10.Form.validation.dependant "password" R10.Form.validation.equal
                                 ]
                         }
                 }
             ]
-        , state = R10.Form.State.init
+        , state = R10.Form.initState
         }
     }
 
@@ -183,7 +185,7 @@ init : a -> b -> ( Model, Cmd msg1, Cmd msg2 )
 init _ _ =
     ( { form =
             { conf =
-                [ EntityField
+                [ R10.Form.entity.field
                     { id = "email"
                     , type_ = TypeText TextEmail
                     , label = "Email"
@@ -193,9 +195,9 @@ init _ _ =
                     , maxLength = Just 50
                     , regexValidations = R10.Form.Validation.commonValidation.email
                     }
-                , EntityField
+                , R10.Form.entity.field
                     { id = "password"
-                    , type_ = TypeText TextPasswordNew
+                    , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
                     , label = "Password"
                     , helperText = Just "Helper text for Password"
                     , required = True

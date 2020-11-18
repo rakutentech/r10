@@ -163,7 +163,7 @@ main =
 
 # Form Example
 
-![Form Exmaple](https://r10.netlify.app/images/form.png)
+![Form Example](https://r10.netlify.app/images/form.png)
 
 This is an example of code to create a form ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm)):
 

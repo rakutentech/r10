@@ -8,10 +8,8 @@ import Element.Font as Font
 import Element.Input
 import Html.Attributes
 import R10.Button
-import R10.Color.Primary
+import R10.Card
 import R10.Form
-import R10.FormComponents.Button
-import R10.FormComponents.Style
 import R10.Mode
 import R10.Theme
 
@@ -26,7 +24,7 @@ title =
 
 
 type alias Model =
-    { formState : R10.Form.State.State
+    { formState : R10.Form.State
     , theme : R10.Theme.Theme
     }
 

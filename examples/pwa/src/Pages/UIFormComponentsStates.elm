@@ -13,8 +13,8 @@ import Element.Border as Border
 import Element.Font as Font
 import Pages.Shared.Utils
 import R10.Form
+import R10.FormComponents
 import R10.FormComponents.Binary
-import R10.FormComponents.Style
 import R10.FormComponents.Text
 import R10.FormComponents.Validations
 import R10.Language
@@ -331,7 +331,7 @@ viewJoinedTable =
                                                                     , disabled = disabled_
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
-                                                                    , style = R10.FormComponents.Style.Filled
+                                                                    , style = R10.FormComponents.style.filled
                                                                     , palette = Pages.Shared.Utils.toFormPalette
                                                                     }
                                                             , el (attrsElCell 2) <|
@@ -363,7 +363,7 @@ viewJoinedTable =
                                                                     , disabled = disabled_
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
-                                                                    , style = R10.FormComponents.Style.Outlined
+                                                                    , style = R10.FormComponents.style.outlined
                                                                     , palette = Pages.Shared.Utils.toFormPalette
                                                                     }
                                                             , el (attrsElCell 1) <|
@@ -541,7 +541,7 @@ viewTextTable =
                                                                     , disabled = disabled_
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
-                                                                    , style = R10.FormComponents.Style.Filled
+                                                                    , style = R10.FormComponents.style.filled
                                                                     , palette = Pages.Shared.Utils.toFormPalette
                                                                     }
                                                             , el (attrsCell ++ [ width <| px 250, Font.alignLeft ]) <|
@@ -568,7 +568,7 @@ viewTextTable =
                                                                     , disabled = disabled_
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
-                                                                    , style = R10.FormComponents.Style.Outlined
+                                                                    , style = R10.FormComponents.style.outlined
                                                                     , palette = Pages.Shared.Utils.toFormPalette
                                                                     }
                                                             , el attrsCell <| text <| R10.Form.boolToString focused_

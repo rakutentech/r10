@@ -15,7 +15,7 @@ import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
 import R10.Form
-import R10.FormComponents.UI.Palette
+import R10.FormComponents
 import R10.Language
 
 
@@ -130,7 +130,7 @@ operationsTable formState =
         }
 
 
-checkbox : R10.FormComponents.UI.Palette.Palette -> R10.Form.State -> (R10.Form.Msg -> msg) -> Int -> List (Element msg)
+checkbox : R10.FormComponents.Palette -> R10.Form.State -> (R10.Form.Msg -> msg) -> Int -> List (Element msg)
 checkbox palette state msgTransformer index =
     let
         initFieldConf : R10.Form.FieldConf
@@ -226,7 +226,7 @@ To get the list of checked indexes:
 
 ### Working demo
 """ ]
-    , row [ width fill ]
+    , row [ width fill, spacing 20 ]
         [ operationsTable model.formState
         , column [ width fill, alignTop, Font.family [ Font.monospace ] ]
             [ paragraph []

@@ -1,4 +1,4 @@
-module Pages.Examples exposing
+module Pages.Overview exposing
     ( Model
     , Msg
     , init
@@ -24,8 +24,9 @@ import R10.Color.AttrsBorder
 import R10.Color.AttrsFont
 import R10.Color.Svg
 import R10.Color.Utils
+import R10.FontSize
 import R10.Form
-import R10.FormComponents.Style
+import R10.FormComponents
 import R10.I18n
 import R10.Language
 import R10.LanguageSelector
@@ -352,17 +353,13 @@ formConf =
 
 view : Model -> { x : Int, y : Int } -> { x : Int, y : Int } -> List (Element Msg)
 view model mouse windowSize =
-    let
-        theme =
-            model.theme
-    in
     [ titleSection model.theme "Palettes"
     , titleSubSection model.theme "Palette Base"
-    , twoPalettes theme R10.Color.listBase
+    , twoPalettes model.theme R10.Color.listBase
     , titleSubSection model.theme "Palette Primary"
-    , twoPalettes theme R10.Color.listPrimary
+    , twoPalettes model.theme R10.Color.listPrimary
     , titleSubSection model.theme "Palette Derived"
-    , twoPalettes theme R10.Color.listDerived
+    , twoPalettes model.theme R10.Color.listDerived
     , titleSection model.theme "Buttons"
     , column
         [ padding 20
@@ -448,7 +445,7 @@ Forms have two different styles: **Outlined** and **Filled**.
                     MsgForm
                     { maker = Nothing
                     , translator = Nothing
-                    , style = R10.FormComponents.Style.Filled
+                    , style = R10.FormComponents.style.filled
                     , palette = Nothing
                     }
         ]
@@ -527,24 +524,30 @@ R10.Okaimonopanda.view
     , f R10.Svg.Lists.listIconsExtra 30
     , titleSubSection model.theme "Others"
     , f R10.Svg.Lists.listOthers 200
-    , el
+    , footer model.theme
+    ]
+
+
+footer : R10.Theme.Theme -> Element Msg
+footer theme =
+    el
         [ htmlAttribute <| Html.Attributes.style "position" "fixed"
         , htmlAttribute <| Html.Attributes.style "bottom" "0"
         , htmlAttribute <| Html.Attributes.style "left" "0"
         , padding 10
         , width fill
         , R10.Color.AttrsBackground.normal theme
-        , R10.Color.AttrsFont.normal model.theme
+        , R10.Color.AttrsFont.normal theme
         , Border.color <| rgba 0 0 0 0.05
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , Border.shadow { offset = ( 0, 0 ), size = 2, blur = 10, color = rgba 0 0 0 0.05 }
         ]
-      <|
+    <|
         wrappedRow [ spacing 10, centerX ] <|
             List.map
                 (\{ color, name, type_ } ->
                     R10.Button.primary
-                        [ width shrink, padding 16 ]
+                        [ width shrink, padding 10, R10.FontSize.xxsmall ]
                         { label =
                             el
                                 [ alpha <|
@@ -565,14 +568,13 @@ R10.Okaimonopanda.view
                 (R10.Color.listPrimary defaultTheme)
                 ++ List.map
                     (\mode ->
-                        R10.Button.secondary [ width shrink ]
+                        R10.Button.quaternary [ width shrink ]
                             { label = text <| R10.Mode.toString mode
                             , libu = R10.Libu.Bu <| Just <| ChangeMode mode
                             , theme = theme
                             }
                     )
                     [ R10.Mode.Light, R10.Mode.Dark ]
-    ]
 
 
 f : (Int -> Color.Color -> List ( Element msg, String )) -> Int -> Element msg

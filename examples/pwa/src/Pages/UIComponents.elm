@@ -20,7 +20,7 @@ import R10.Button
 import R10.Color
 import R10.Color.Utils
 import R10.Form
-import R10.FormComponents.Style
+import R10.FormComponents
 import R10.Language
 import R10.Libu
 import R10.Link
@@ -670,7 +670,7 @@ components =
                         msgMapper
                         { maker = Nothing
                         , translator = Nothing
-                        , style = R10.FormComponents.Style.Filled
+                        , style = R10.FormComponents.style.filled
                         , palette = Nothing
                         }
       , componentAsStringCode = """Form.viewWith
@@ -680,7 +680,7 @@ components =
     msgMapper
     { maker = Nothing
     , translator = Nothing
-    , style = R10.FormComponents.Style.Filled
+    , style = R10.FormComponents.style.filled
     , palette = Nothing
     }"""
       }
@@ -718,7 +718,7 @@ components =
                         msgMapper
                         { maker = Nothing
                         , translator = Nothing
-                        , style = R10.FormComponents.Style.Filled
+                        , style = R10.FormComponents.style.filled
                         , palette = Nothing
                         }
       , componentAsStringCode = """Form.viewWith
@@ -728,7 +728,7 @@ components =
     msgMapper
     { maker = Nothing
     , translator = Nothing
-    , style = R10.FormComponents.Style.Filled
+    , style = R10.FormComponents.style.filled
     , palette = Nothing
     }"""
       }

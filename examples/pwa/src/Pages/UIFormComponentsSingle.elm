@@ -18,12 +18,9 @@ import Markdown
 import Pages.Shared.Utils
 import R10.Color.Utils
 import R10.Form
+import R10.FormComponents
 import R10.FormComponents.IconButton
-import R10.FormComponents.Single
 import R10.FormComponents.Single.Common
-import R10.FormComponents.Style
-import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
 import R10.Language
 import R10.Svg.IconsExtra
@@ -49,7 +46,7 @@ title =
 
 
 type alias Model =
-    { singleModel : R10.FormComponents.Single.Common.Model
+    { singleModel : R10.FormComponents.SingleModel
     , disabled : Bool
     , helperShow : Bool
     , helperText : String
@@ -61,13 +58,13 @@ type alias Model =
     , selectOptionHeight : Int
     , maxDisplayCount : Int
     , trailingIcon : Maybe Icon
-    , type_ : R10.FormComponents.Single.Common.TypeSingle
+    , type_ : R10.FormComponents.SingleType
     , validation : R10.FormComponents.Validations.Validation
-    , fieldOptions : List R10.FormComponents.Single.Common.FieldOption
+    , fieldOptions : List R10.FormComponents.SingleFieldOption
     }
 
 
-typeToString : R10.FormComponents.Single.Common.TypeSingle -> String
+typeToString : R10.FormComponents.SingleType -> String
 typeToString textType =
     case textType of
         R10.FormComponents.Single.Common.SingleCombobox ->
@@ -110,13 +107,13 @@ type Icon
     | Pause
 
 
-toIconEl : R10.FormComponents.UI.Palette.Palette -> Icon -> Element Msg
+toIconEl : R10.FormComponents.Palette -> Icon -> Element Msg
 toIconEl palette leadingIcon =
     case leadingIcon of
         Play ->
             R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Play
-                , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 24
+                , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 24
                 , palette = palette
                 , size = 24
                 }
@@ -124,7 +121,7 @@ toIconEl palette leadingIcon =
         Pause ->
             R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Pause
-                , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 30
+                , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 30
                 , palette = palette
                 , size = 30
                 }
@@ -132,7 +129,7 @@ toIconEl palette leadingIcon =
 
 init : Model
 init =
-    { singleModel = R10.FormComponents.Single.Common.init
+    { singleModel = R10.FormComponents.initSingle
     , disabled = False
     , helperShow = True
     , helperText = """Helper text ([Markdown](https://en.wikipedia.org/wiki/Markdown))"""
@@ -144,7 +141,7 @@ init =
     , selectOptionHeight = 36
     , maxDisplayCount = 5
     , trailingIcon = Nothing
-    , type_ = R10.FormComponents.Single.Common.SingleCombobox
+    , type_ = R10.FormComponents.typeSingle.combobox
     , validation = R10.FormComponents.Validations.NotYetValidated
     , fieldOptions = generateFieldOptions 4
     }
@@ -153,7 +150,7 @@ init =
 type Msg
     = -- component MSGs
       NoOp
-    | OnSingleMsg R10.FormComponents.Single.Common.Msg
+    | OnSingleMsg R10.FormComponents.SingleMsg
       -- page MSGs
     | ChangeFieldOptionLen String
     | ChangeHelperText String
@@ -197,7 +194,7 @@ update msg model =
         OnSingleMsg singleMsg ->
             let
                 ( singleModel, singleCmd ) =
-                    R10.FormComponents.Single.update singleMsg model.singleModel
+                    R10.FormComponents.updateSingle singleMsg model.singleModel
             in
             ( { model | singleModel = singleModel }, Cmd.map OnSingleMsg singleCmd )
 
@@ -379,7 +376,7 @@ The messages on the right are all the messages that are fired by the component.
     , column [ width fill ]
         [ row
             [ spacing 50 ]
-            [ R10.FormComponents.Single.viewCustom
+            [ R10.FormComponents.viewSingleCustom
                 []
                 model.singleModel
                 { validation = model.validation
@@ -398,16 +395,16 @@ The messages on the right are all the messages that are fired by the component.
 
                     else
                         Nothing
-                , style = R10.FormComponents.Style.Outlined
+                , style = R10.FormComponents.style.outlined
                 , key = ""
                 , palette = palette
                 , singleType = model.type_
                 , fieldOptions = model.fieldOptions
-                , searchFn = R10.FormComponents.Single.defaultSearchFn
+                , searchFn = R10.FormComponents.defaultSearchFn
                 , toOptionEl =
-                    R10.FormComponents.Single.defaultToOptionEl
+                    R10.FormComponents.defaultToOptionEl
                         { search = model.singleModel.search
-                        , msgOnSelect = R10.FormComponents.Single.Common.OnOptionSelect >> OnSingleMsg
+                        , msgOnSelect = R10.FormComponents.singleMsg.onOptionSelect >> OnSingleMsg
                         }
                 , selectOptionHeight = model.selectOptionHeight
                 , maxDisplayCount = model.maxDisplayCount
@@ -416,14 +413,14 @@ The messages on the right are all the messages that are fired by the component.
                     model.trailingIcon
                         |> Maybe.map (toIconEl palette)
                         |> Maybe.withDefault
-                            (R10.FormComponents.Single.defaultTrailingIcon
+                            (R10.FormComponents.defaultTrailingIcon
                                 { opened = model.singleModel.opened
                                 , palette = palette
                                 }
                             )
                         |> Just
                 }
-            , R10.FormComponents.Single.viewCustom
+            , R10.FormComponents.viewSingleCustom
                 []
                 model.singleModel
                 { validation = model.validation
@@ -442,16 +439,16 @@ The messages on the right are all the messages that are fired by the component.
 
                     else
                         Nothing
-                , style = R10.FormComponents.Style.Filled
+                , style = R10.FormComponents.style.filled
                 , key = ""
                 , palette = palette
                 , singleType = model.type_
                 , fieldOptions = model.fieldOptions
-                , searchFn = R10.FormComponents.Single.defaultSearchFn
+                , searchFn = R10.FormComponents.defaultSearchFn
                 , toOptionEl =
-                    R10.FormComponents.Single.defaultToOptionEl
+                    R10.FormComponents.defaultToOptionEl
                         { search = model.singleModel.search
-                        , msgOnSelect = R10.FormComponents.Single.Common.OnOptionSelect >> OnSingleMsg
+                        , msgOnSelect = R10.FormComponents.singleMsg.onOptionSelect >> OnSingleMsg
                         }
                 , selectOptionHeight = model.selectOptionHeight
                 , maxDisplayCount = model.maxDisplayCount
@@ -460,7 +457,7 @@ The messages on the right are all the messages that are fired by the component.
                     model.trailingIcon
                         |> Maybe.map (toIconEl palette)
                         |> Maybe.withDefault
-                            (R10.FormComponents.Single.defaultTrailingIcon
+                            (R10.FormComponents.defaultTrailingIcon
                                 { opened = model.singleModel.opened
                                 , palette = palette
                                 }

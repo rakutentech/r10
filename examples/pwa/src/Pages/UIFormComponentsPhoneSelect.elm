@@ -13,12 +13,8 @@ import Element.Border as Border
 import Html exposing (Html)
 import Html.Attributes
 import Pages.Shared.Utils
-import R10.FormComponents.IconButton
-import R10.FormComponents.Single
+import R10.FormComponents
 import R10.FormComponents.Single.Common
-import R10.FormComponents.Style
-import R10.FormComponents.UI
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
 import R10.Language
 import R10.SimpleMarkdown
@@ -27,33 +23,33 @@ import R10.SimpleMarkdown
 title : R10.Language.Translations
 title =
     { key = "title"
-    , en_us = "Forms - Phone Select"
-    , ja_jp = "Forms - Phone Select"
-    , zh_tw = "Forms - Phone Select"
-    , es_es = "Forms - Phone Select"
-    , fr_fr = "Forms - Phone Select"
-    , de_de = "Forms - Phone Select"
-    , it_it = "Forms - Phone Select"
-    , nl_nl = "Forms - Phone Select"
-    , pt_pt = "Forms - Phone Select"
-    , nb_no = "Forms - Phone Select"
-    , fi_fl = "Forms - Phone Select"
-    , da_dk = "Forms - Phone Select"
-    , sv_se = "Forms - Phone Select"
+    , en_us = "Forms - Phone Selector"
+    , ja_jp = "Forms - Phone Selector"
+    , zh_tw = "Forms - Phone Selector"
+    , es_es = "Forms - Phone Selector"
+    , fr_fr = "Forms - Phone Selector"
+    , de_de = "Forms - Phone Selector"
+    , it_it = "Forms - Phone Selector"
+    , nl_nl = "Forms - Phone Selector"
+    , pt_pt = "Forms - Phone Selector"
+    , nb_no = "Forms - Phone Selector"
+    , fi_fl = "Forms - Phone Selector"
+    , da_dk = "Forms - Phone Selector"
+    , sv_se = "Forms - Phone Selector"
     }
 
 
 type alias Model =
-    { singleModel : R10.FormComponents.Single.Common.Model
+    { singleModel : R10.FormComponents.SingleModel
     , disabled : Bool
     , messages : List String
     , validation : R10.FormComponents.Validations.Validation
     }
 
 
-getFlagButton : R10.FormComponents.UI.Palette.Palette -> String -> Element Msg
+getFlagButton : R10.FormComponents.Palette -> String -> Element Msg
 getFlagButton palette label =
-    R10.FormComponents.IconButton.view []
+    R10.FormComponents.viewIconButton []
         { msgOnClick = Just <| FlagClick
         , icon = getFlagIcon label
         , palette = palette
@@ -107,8 +103,8 @@ viewOptionEl _ { search, msgOnOptionSelect } { label, value } =
     let
         insertPositions =
             String.indexes
-                (search |> R10.FormComponents.Single.normalizeString)
-                (label |> R10.FormComponents.Single.normalizeString)
+                (search |> R10.FormComponents.normalizeString)
+                (label |> R10.FormComponents.normalizeString)
                 |> List.concatMap (\idx -> [ idx, idx + String.length search ])
 
         withBold =
@@ -116,12 +112,12 @@ viewOptionEl _ { search, msgOnOptionSelect } { label, value } =
                 label
 
             else
-                R10.FormComponents.Single.insertBold insertPositions label
+                R10.FormComponents.insertBold insertPositions label
     in
     row
         [ width fill
         , height fill
-        , R10.FormComponents.UI.onClickWithStopPropagation <| msgOnOptionSelect value
+        , R10.FormComponents.onClickWithStopPropagation <| msgOnOptionSelect value
         , pointer
         , paddingEach { top = 0, right = 0, bottom = 0, left = 12 }
         , spacing 8
@@ -145,7 +141,7 @@ init =
 
 
 type Msg
-    = OnSingleMsg R10.FormComponents.Single.Common.Msg
+    = OnSingleMsg R10.FormComponents.SingleMsg
     | FlagClick
     | OnOptionSelect String
     | RotateValidation
@@ -191,7 +187,7 @@ update msg model =
             else
                 let
                     ( selectState, selectCmd ) =
-                        R10.FormComponents.Single.update singleMsg model.singleModel
+                        R10.FormComponents.updateSingle singleMsg model.singleModel
                 in
                 ( { model | singleModel = selectState }, Cmd.map OnSingleMsg selectCmd )
 
@@ -251,7 +247,7 @@ view model =
     [ row
         [ height (fill |> minimum 200)
         ]
-        [ R10.FormComponents.Single.viewCustom
+        [ R10.FormComponents.viewSingleCustom
             []
             model.singleModel
             { validation = model.validation
@@ -260,12 +256,12 @@ view model =
             , helperText = Nothing
             , disabled = model.disabled
             , requiredLabel = Nothing
-            , style = R10.FormComponents.Style.Filled
+            , style = R10.FormComponents.style.filled
             , key = ""
             , palette = palette
-            , singleType = R10.FormComponents.Single.Common.SingleCombobox
+            , singleType = R10.FormComponents.typeSingle.combobox
             , fieldOptions = fieldOptions
-            , searchFn = R10.FormComponents.Single.defaultSearchFn
+            , searchFn = R10.FormComponents.defaultSearchFn
             , toOptionEl =
                 viewOptionEl palette
                     { search = model.singleModel.search

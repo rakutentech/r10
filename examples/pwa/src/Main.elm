@@ -10,7 +10,7 @@ import Element.Font as Font
 import Html
 import Html.Attributes
 import Json.Decode
-import Pages.Examples
+import Pages.Overview
 import Pages.Shared.Utils
 import Pages.Top
 import Pages.UIComponents
@@ -81,7 +81,7 @@ type alias Model =
     , header : R10.Header.Model
 
     -- PAGES
-    , pageExamples : Pages.Examples.Model
+    , pageExamples : Pages.Overview.Model
     , pageExample1 : Pages.UIFormBoilerplate.Model
     , pageExample2 : Pages.UIFormBoilerplate2.Model
     , pageExample3 : Pages.UIFormComponentsPhoneSelect.Model
@@ -143,7 +143,7 @@ init flags =
                 , session = R10.Header.SessionNotRequired
                 , supportedLanguageList = languageSupportedList
             }
-      , pageExamples = Pages.Examples.init
+      , pageExamples = Pages.Overview.init
       , pageExample1 = Pages.UIFormBoilerplate.init
       , pageExample2 = Pages.UIFormBoilerplate2.init
       , pageExample3 = Pages.UIFormComponentsPhoneSelect.init
@@ -210,7 +210,7 @@ type Msg
     | OnChangeIsTop Bool
     | MouseMove Position
     | Header R10.Header.Msg
-    | PagesExamples Pages.Examples.Msg
+    | PagesExamples Pages.Overview.Msg
     | PagesExample1 Pages.UIFormBoilerplate.Msg
     | PagesExample2 Pages.UIFormBoilerplate2.Msg
     | PagesExample3 Pages.UIFormComponentsPhoneSelect.Msg
@@ -237,7 +237,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         PagesExamples pageMsg ->
-            ( { model | pageExamples = Pages.Examples.update pageMsg model.pageExamples }, Cmd.none )
+            ( { model | pageExamples = Pages.Overview.update pageMsg model.pageExamples }, Cmd.none )
 
         PagesExample1 pageMsg ->
             ( { model | pageExample1 = Pages.UIFormBoilerplate.update pageMsg model.pageExample1 }, Cmd.none )
@@ -379,7 +379,7 @@ view model =
                             -- of the panda in the page
                             { mouse | y = mouse.y - 7000 }
                     in
-                    mainLayout model Pages.Examples.title (List.map (map PagesExamples) (Pages.Examples.view model.pageExamples mouseCorrected model.windowSize))
+                    mainLayout model Pages.Overview.title (List.map (map PagesExamples) (Pages.Overview.view model.pageExamples mouseCorrected model.windowSize))
 
                 RouteExample1 lang ->
                     mainLayout model Pages.UIFormBoilerplate.title (List.map (map PagesExample1) (Pages.UIFormBoilerplate.view model.pageExample1))
@@ -583,7 +583,6 @@ cssMarkdown =
     line-height: 1.7em;}
 .markdown p {margin: 20px 0 !important}
 .markdown pre {margin: 20px 0; line-height: 20px; background-color: #eee; padding: 20px;}
-.markdown img {width: 100%;}
 
 .markdown a {
     color: rgb(17, 123, 180);
@@ -745,6 +744,7 @@ routesList =
     , RouteExample3
     , RouteExample4
     , RouteExample6
+    , RouteExample5
     ]
 
 
@@ -764,56 +764,56 @@ routeDetails route =
             }
 
         RouteExamples language ->
-            { title = Pages.Examples.title
-            , routeLabel = "examples"
+            { title = Pages.Overview.title
+            , routeLabel = "Overview"
             , language = language
             }
 
         RouteExample1 language ->
             { title = Pages.UIFormBoilerplate.title
-            , routeLabel = "example1"
+            , routeLabel = "Forms_Boilerplate"
             , language = language
             }
 
         RouteExample2 language ->
             { title = Pages.UIFormBoilerplate2.title
-            , routeLabel = "example2"
+            , routeLabel = "Forms_Bolierplate_2"
             , language = language
             }
 
         RouteExample3 language ->
             { title = Pages.UIFormComponentsPhoneSelect.title
-            , routeLabel = "example3"
+            , routeLabel = "Forms_PhoneSelector"
             , language = language
             }
 
         RouteExample4 language ->
             { title = Pages.UIFormComponentsSingle.title
-            , routeLabel = "example4"
+            , routeLabel = "Forms_Single"
             , language = language
             }
 
         RouteExample5 language ->
             { title = Pages.UIFormComponentsStates.title
-            , routeLabel = "example5"
+            , routeLabel = "Forms_States"
             , language = language
             }
 
         RouteExample6 language ->
             { title = Pages.UIFormComponentsText.title
-            , routeLabel = "example6"
+            , routeLabel = "Forms_Text"
             , language = language
             }
 
         RouteExample7 language ->
             { title = Pages.UIFormIntroduction.title
-            , routeLabel = "example7"
+            , routeLabel = "Forms"
             , language = language
             }
 
         RouteExample8 language ->
             { title = Pages.UIComponents.title
-            , routeLabel = "example8"
+            , routeLabel = "UI_Components"
             , language = language
             }
 

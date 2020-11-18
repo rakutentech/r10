@@ -18,11 +18,9 @@ import Markdown
 import Pages.Shared.Utils
 import R10.Color.Utils
 import R10.Form
+import R10.FormComponents
 import R10.FormComponents.IconButton
-import R10.FormComponents.Style
 import R10.FormComponents.Text
-import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
 import R10.Language
 import R10.Svg.IconsExtra
@@ -108,13 +106,13 @@ type Icon
     | Pause
 
 
-toIconEl : R10.FormComponents.UI.Palette.Palette -> Icon -> Element Msg
+toIconEl : R10.FormComponents.Palette -> Icon -> Element Msg
 toIconEl palette leadingIcon =
     case leadingIcon of
         Play ->
             R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Play
-                , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 24
+                , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 24
                 , palette = palette
                 , size = 24
                 }
@@ -122,7 +120,7 @@ toIconEl palette leadingIcon =
         Pause ->
             R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Pause
-                , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.UI.Color.label palette |> R10.Color.Utils.elementColorToColor) 30
+                , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 30
                 , palette = palette
                 , size = 30
                 }
@@ -359,7 +357,7 @@ The messages on the right are all the messages that are fired by the component.
                         Nothing
                 , textType = model.textType
                 , idDom = Nothing
-                , style = R10.FormComponents.Style.Outlined
+                , style = R10.FormComponents.style.outlined
                 , palette = palette
 
                 -- Stuff that change during
@@ -404,7 +402,7 @@ The messages on the right are all the messages that are fired by the component.
                         Nothing
                 , textType = model.textType
                 , idDom = Nothing
-                , style = R10.FormComponents.Style.Filled
+                , style = R10.FormComponents.style.filled
                 , palette = palette
 
                 -- Stuff that change during

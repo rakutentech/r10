@@ -40,9 +40,8 @@ main =
                    ]
             )
             [ R10.Svg.Logos.rakuten [] (R10.Color.Svg.logo theme) 32
-            , R10.Paragraph.normalMarkdown [] theme "This is an example of a view made with **Elm**, **elm-ui** and [R10](https://package.elm-lang.org/packages/rakutentech/r10/latest/)."
+            , R10.Paragraph.normalMarkdown [] theme "This is an example of a view made with [Elm](https://elm-lang.org/), [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) and [R10](https://package.elm-lang.org/packages/rakutentech/r10/latest/) ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleView/src/Main.elm))."
             , el [ Font.size 60, centerX, padding 10 ] <| text "🎉"
-            , R10.Paragraph.normalMarkdown [] theme "Find the source code of this view in the [README of the R10 package](https://package.elm-lang.org/packages/rakutentech/r10/latest/)."
             , R10.Button.primary []
                 { label =
                     row [ spacing 15, centerX ]

@@ -1,4 +1,4 @@
-module Form.Conf exposing
+module R10.Form.Conf exposing
     ( Conf
     , Entity(..)
     , EntityId
@@ -10,10 +10,10 @@ module Form.Conf exposing
     , toString
     )
 
-import Form.FieldConf
 import Json.Decode as D
 import Json.Encode as E
 import Json.Encode.Extra as E
+import R10.Form.FieldConf
 
 
 type alias EntityId =
@@ -23,7 +23,7 @@ type alias EntityId =
 type alias TextConf =
     { title : String
     , helperText : Maybe String
-    , validationSpecs : Maybe Form.FieldConf.ValidationSpecs
+    , validationSpecs : Maybe R10.Form.FieldConf.ValidationSpecs
     }
 
 
@@ -33,7 +33,7 @@ type Entity
     | EntityWithBorder EntityId (List Entity)
     | EntityWithTabs EntityId (List ( String, Entity ))
     | EntityMulti EntityId (List Entity)
-    | EntityField Form.FieldConf.FieldConf
+    | EntityField R10.Form.FieldConf.FieldConf
     | EntityTitle EntityId TextConf
     | EntitySubTitle EntityId TextConf
 
@@ -141,7 +141,7 @@ encoderGenericTitle titleConf string =
           , E.object
                 [ ( "Title", E.string titleConf.title )
                 , ( "HelperText", E.maybe E.string titleConf.helperText )
-                , ( "ValidationSpecs", E.maybe Form.FieldConf.encodeValidationSpecs titleConf.validationSpecs )
+                , ( "ValidationSpecs", E.maybe R10.Form.FieldConf.encodeValidationSpecs titleConf.validationSpecs )
                 ]
           )
         ]
@@ -157,7 +157,7 @@ decoderGenericTitle typeConstructor string =
                 TextConf
                 (D.field "Title" D.string)
                 (D.field "HelperText" (D.maybe D.string))
-                (D.field "ValidationSpecs" (D.maybe Form.FieldConf.decoderValidationSpecs))
+                (D.field "ValidationSpecs" (D.maybe R10.Form.FieldConf.decoderValidationSpecs))
         )
 
 
@@ -186,7 +186,7 @@ encoderEntity entity2 =
             encoderGenericTitle titleConf "EntitySubTitle"
 
         EntityField fieldConf ->
-            Form.FieldConf.encoderFieldConf fieldConf
+            R10.Form.FieldConf.encoderFieldConf fieldConf
 
 
 decoderEntity : D.Decoder Entity
@@ -199,7 +199,7 @@ decoderEntity =
         , decoderGenericEntity EntityMulti "EntityMulti"
         , decoderGenericTitle EntityTitle "EntityTitle"
         , decoderGenericTitle EntitySubTitle "EntitySubTitle"
-        , D.map EntityField Form.FieldConf.decoderFieldConf
+        , D.map EntityField R10.Form.FieldConf.decoderFieldConf
         ]
 
 

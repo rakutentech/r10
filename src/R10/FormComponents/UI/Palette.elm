@@ -1,4 +1,4 @@
-module FormComponents.UI.Palette exposing
+module R10.FormComponents.UI.Palette exposing
     ( Palette
     , black
     , crimson

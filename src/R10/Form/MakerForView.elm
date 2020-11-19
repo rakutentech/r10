@@ -1,4 +1,4 @@
-module Form.MakerForView exposing
+module R10.Form.MakerForView exposing
     ( MakerArgs
     , Outcome
     , extraCss
@@ -11,25 +11,25 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
-import Form.Conf
-import Form.Converter exposing (fromFormValidationIconToComponentValidationIcon)
-import Form.Dict
-import Form.FieldConf exposing (ValidationIcon(..))
-import Form.FieldState exposing (ValidationOutcome(..))
-import Form.Helpers
-import Form.Key
-import Form.Msg
-import Form.State
-import Form.Update
-import FormComponents.Binary
-import FormComponents.ExtraCss
-import FormComponents.Single
-import FormComponents.Style
-import FormComponents.Text
-import FormComponents.UI
-import FormComponents.UI.Color
-import FormComponents.UI.Palette
-import FormComponents.Validations
+import R10.Form.Conf
+import R10.Form.Converter exposing (fromFormValidationIconToComponentValidationIcon)
+import R10.Form.Dict
+import R10.Form.FieldConf exposing (ValidationIcon(..))
+import R10.Form.FieldState exposing (ValidationOutcome(..))
+import R10.Form.Helpers
+import R10.Form.Key
+import R10.Form.Msg
+import R10.Form.State
+import R10.Form.Update
+import R10.FormComponents.Binary
+import R10.FormComponents.ExtraCss
+import R10.FormComponents.Single
+import R10.FormComponents.Style
+import R10.FormComponents.Text
+import R10.FormComponents.UI
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Validations
 import Html.Attributes
 
 
@@ -42,7 +42,7 @@ import Html.Attributes
 
 
 type alias Outcome =
-    Element Form.Msg.Msg
+    Element R10.Form.Msg.Msg
 
 
 
@@ -54,14 +54,14 @@ type alias Outcome =
 
 
 type alias ArgsForFields =
-    { fieldConf : Form.FieldConf.FieldConf
-    , fieldState : Form.FieldState.FieldState
+    { fieldConf : R10.Form.FieldConf.FieldConf
+    , fieldState : R10.Form.FieldState.FieldState
     , focused : Bool
     , active : Bool
-    , key : Form.Key.Key
-    , translator : Form.FieldConf.ValidationCode -> String
-    , style : FormComponents.Style.Style
-    , palette : FormComponents.UI.Palette.Palette
+    , key : R10.Form.Key.Key
+    , translator : R10.Form.FieldConf.ValidationCode -> String
+    , style : R10.FormComponents.Style.Style
+    , palette : R10.FormComponents.UI.Palette.Palette
     }
 
 
@@ -75,77 +75,77 @@ spacingGeneric =
     spacingXY 15 25
 
 
-extraCss : Maybe FormComponents.UI.Palette.Palette -> String
+extraCss : Maybe R10.FormComponents.UI.Palette.Palette -> String
 extraCss maybePalette =
     let
-        palette : FormComponents.UI.Palette.Palette
+        palette : R10.FormComponents.UI.Palette.Palette
         palette =
-            Maybe.withDefault FormComponents.UI.Palette.light maybePalette
+            Maybe.withDefault R10.FormComponents.UI.Palette.light maybePalette
     in
-    FormComponents.ExtraCss.extraCss palette
+    R10.FormComponents.ExtraCss.extraCss palette
 
 
-isFocused : Form.Key.Key -> Maybe String -> Bool
+isFocused : R10.Form.Key.Key -> Maybe String -> Bool
 isFocused key focused =
     case focused of
         Just focused_x ->
-            focused_x == Form.Key.toString key
+            focused_x == R10.Form.Key.toString key
 
         Nothing ->
             False
 
 
-isActive : Form.Key.Key -> Maybe String -> Bool
+isActive : R10.Form.Key.Key -> Maybe String -> Bool
 isActive key active =
     case active of
         Just active_x ->
-            active_x == Form.Key.toString key
+            active_x == R10.Form.Key.toString key
 
         Nothing ->
             False
 
 
-getEntityKey : MakerArgs -> Form.Conf.Entity -> Form.Key.Key
+getEntityKey : MakerArgs -> R10.Form.Conf.Entity -> R10.Form.Key.Key
 getEntityKey args entity =
     let
         id : String
         id =
             case entity of
-                Form.Conf.EntityWrappable entityId _ ->
+                R10.Form.Conf.EntityWrappable entityId _ ->
                     entityId
 
-                Form.Conf.EntityWithBorder entityId _ ->
+                R10.Form.Conf.EntityWithBorder entityId _ ->
                     entityId
 
-                Form.Conf.EntityNormal entityId _ ->
+                R10.Form.Conf.EntityNormal entityId _ ->
                     entityId
 
-                Form.Conf.EntityWithTabs entityId _ ->
+                R10.Form.Conf.EntityWithTabs entityId _ ->
                     entityId
 
-                Form.Conf.EntityMulti entityId _ ->
+                R10.Form.Conf.EntityMulti entityId _ ->
                     entityId
 
-                Form.Conf.EntityField fieldConf ->
+                R10.Form.Conf.EntityField fieldConf ->
                     fieldConf.id
 
-                Form.Conf.EntityTitle entityId _ ->
+                R10.Form.Conf.EntityTitle entityId _ ->
                     entityId
 
-                Form.Conf.EntitySubTitle entityId _ ->
+                R10.Form.Conf.EntitySubTitle entityId _ ->
                     entityId
     in
-    Form.Key.composeKey args.key id
+    R10.Form.Key.composeKey args.key id
 
 
-getFieldConfig : Form.Conf.Entity -> Form.FieldConf.FieldConf
+getFieldConfig : R10.Form.Conf.Entity -> R10.Form.FieldConf.FieldConf
 getFieldConfig entity =
     case entity of
-        Form.Conf.EntityField fieldConf ->
+        R10.Form.Conf.EntityField fieldConf ->
             fieldConf
 
         _ ->
-            Form.FieldConf.init
+            R10.Form.FieldConf.init
 
 
 
@@ -158,11 +158,11 @@ getFieldConfig entity =
 
 viewText :
     ArgsForFields
-    -> Form.FieldConf.TypeText
-    -> Form.Conf.Conf
-    -> Element Form.Msg.Msg
+    -> R10.Form.FieldConf.TypeText
+    -> R10.Form.Conf.Conf
+    -> Element R10.Form.Msg.Msg
 viewText args textType formConf =
-    FormComponents.Text.view
+    R10.FormComponents.Text.view
         [ width
             (fill
                 |> minimum 300
@@ -174,7 +174,7 @@ viewText args textType formConf =
         { value = args.fieldState.value
         , focused = args.focused
         , validation =
-            Form.Converter.fromFieldStateValidationToComponentValidation
+            R10.Form.Converter.fromFieldStateValidationToComponentValidation
                 args.fieldConf.validationSpecs
                 args.fieldState.validation
                 args.translator
@@ -183,11 +183,11 @@ viewText args textType formConf =
         , trailingIcon = Nothing
 
         -- Messages
-        , msgOnChange = Form.Msg.ChangeValue args.key args.fieldConf formConf
-        , msgOnFocus = Form.Msg.GetFocus args.key
-        , msgOnLoseFocus = Just <| Form.Msg.LoseFocus args.key args.fieldConf
-        , msgOnTogglePasswordShow = Just <| Form.Msg.TogglePasswordShow args.key
-        , msgOnEnter = Just <| Form.Msg.Submit formConf
+        , msgOnChange = R10.Form.Msg.ChangeValue args.key args.fieldConf formConf
+        , msgOnFocus = R10.Form.Msg.GetFocus args.key
+        , msgOnLoseFocus = Just <| R10.Form.Msg.LoseFocus args.key args.fieldConf
+        , msgOnTogglePasswordShow = Just <| R10.Form.Msg.TogglePasswordShow args.key
+        , msgOnEnter = Just <| R10.Form.Msg.Submit formConf
 
         -- Stuff that doesn't change
         , label = args.fieldConf.label
@@ -199,7 +199,7 @@ viewText args textType formConf =
         , palette = args.palette
 
         -- Specific
-        , textType = Form.Converter.textTypeFromFieldConfToComponent textType
+        , textType = R10.Form.Converter.textTypeFromFieldConfToComponent textType
         }
 
 
@@ -213,20 +213,20 @@ viewText args textType formConf =
 
 viewBinary :
     ArgsForFields
-    -> Form.FieldConf.TypeBinary
-    -> Form.Conf.Conf
-    -> Element Form.Msg.Msg
+    -> R10.Form.FieldConf.TypeBinary
+    -> R10.Form.Conf.Conf
+    -> Element R10.Form.Msg.Msg
 viewBinary args typeBinary formConf =
     let
         value : Bool
         value =
-            Form.Helpers.stringToBool args.fieldState.value
+            R10.Form.Helpers.stringToBool args.fieldState.value
 
-        msgOnClick : Form.Msg.Msg
+        msgOnClick : R10.Form.Msg.Msg
         msgOnClick =
-            Form.Msg.ChangeValue args.key args.fieldConf formConf (Form.Helpers.boolToString <| not value)
+            R10.Form.Msg.ChangeValue args.key args.fieldConf formConf (R10.Form.Helpers.boolToString <| not value)
     in
-    FormComponents.Binary.view
+    R10.FormComponents.Binary.view
         [ width
             (fill
                 |> minimum 300
@@ -237,15 +237,15 @@ viewBinary args typeBinary formConf =
         { value = value
         , focused = args.focused
         , validation =
-            Form.Converter.fromFieldStateValidationToComponentValidation
+            R10.Form.Converter.fromFieldStateValidationToComponentValidation
                 args.fieldConf.validationSpecs
                 args.fieldState.validation
                 args.translator
 
         -- Messages
         , msgOnChange = \_ -> msgOnClick
-        , msgOnFocus = Form.Msg.GetFocus args.key
-        , msgOnLoseFocus = Form.Msg.LoseFocus args.key args.fieldConf
+        , msgOnFocus = R10.Form.Msg.GetFocus args.key
+        , msgOnLoseFocus = R10.Form.Msg.LoseFocus args.key args.fieldConf
         , msgOnClick = msgOnClick
 
         -- Stuff that doesn't change
@@ -255,7 +255,7 @@ viewBinary args typeBinary formConf =
         , palette = args.palette
 
         -- Specific stuff
-        , typeBinary = Form.Converter.binaryTypeFromFieldConfToComponent typeBinary
+        , typeBinary = R10.Form.Converter.binaryTypeFromFieldConfToComponent typeBinary
         }
 
 
@@ -269,12 +269,12 @@ viewBinary args typeBinary formConf =
 
 viewSingleSelection :
     ArgsForFields
-    -> Form.FieldConf.TypeSingle
-    -> List Form.FieldConf.FieldOption
-    -> Form.Conf.Conf
-    -> Element.Element Form.Msg.Msg
+    -> R10.Form.FieldConf.TypeSingle
+    -> List R10.Form.FieldConf.FieldOption
+    -> R10.Form.Conf.Conf
+    -> Element.Element R10.Form.Msg.Msg
 viewSingleSelection args singleType fieldOptions formConf =
-    FormComponents.Single.view
+    R10.FormComponents.Single.view
         [ width
             (fill
                 |> minimum 300
@@ -290,13 +290,13 @@ viewSingleSelection args singleType fieldOptions formConf =
         , opened = args.active
         }
         { validation =
-            Form.Converter.fromFieldStateValidationToComponentValidation
+            R10.Form.Converter.fromFieldStateValidationToComponentValidation
                 args.fieldConf.validationSpecs
                 args.fieldState.validation
                 args.translator
 
         -- Message mapper
-        , toMsg = Form.Msg.OnSingleMsg args.key args.fieldConf formConf
+        , toMsg = R10.Form.Msg.OnSingleMsg args.key args.fieldConf formConf
 
         -- Stuff that doesn't change
         , label = args.fieldConf.label
@@ -304,11 +304,11 @@ viewSingleSelection args singleType fieldOptions formConf =
         , disabled = args.fieldState.disabled
         , requiredLabel = args.fieldConf.requiredLabel
         , style = args.style
-        , key = Form.Key.toString args.key
+        , key = R10.Form.Key.toString args.key
         , palette = args.palette
 
         -- Specific
-        , singleType = Form.Converter.singleTypeFromFieldConfToComponent singleType
+        , singleType = R10.Form.Converter.singleTypeFromFieldConfToComponent singleType
         , fieldOptions = fieldOptions
         }
 
@@ -323,8 +323,8 @@ viewSingleSelection args singleType fieldOptions formConf =
 
 viewEntityNormal :
     MakerArgs
-    -> List Form.Conf.Entity
-    -> Form.Conf.Conf
+    -> List R10.Form.Conf.Entity
+    -> R10.Form.Conf.Conf
     -> List Outcome
 viewEntityNormal args entities formConf =
     [ el
@@ -347,8 +347,8 @@ viewEntityNormal args entities formConf =
 
 viewEntityWrappable :
     MakerArgs
-    -> List Form.Conf.Entity
-    -> Form.Conf.Conf
+    -> List R10.Form.Conf.Entity
+    -> R10.Form.Conf.Conf
     -> List Outcome
 viewEntityWrappable args entities formConf =
     [ wrappedRow
@@ -364,8 +364,8 @@ viewEntityWrappable args entities formConf =
 
 viewEntityWithBorder :
     MakerArgs
-    -> List Form.Conf.Entity
-    -> Form.Conf.Conf
+    -> List R10.Form.Conf.Entity
+    -> R10.Form.Conf.Conf
     -> List Outcome
 viewEntityWithBorder args entities formConf =
     [ el
@@ -373,7 +373,7 @@ viewEntityWithBorder args entities formConf =
          , width fill
          , height fill
          ]
-            ++ FormComponents.UI.borderEntityWithBorder args.palette
+            ++ R10.FormComponents.UI.borderEntityWithBorder args.palette
         )
       <|
         column
@@ -390,19 +390,19 @@ viewEntityWithBorder args entities formConf =
 
 viewTab :
     MakerArgs
-    -> Form.FieldState.FieldState
+    -> R10.Form.FieldState.FieldState
     ->
         { index : Int
         , selected : Bool
         , label : String
-        , entity : Form.Conf.Entity
+        , entity : R10.Form.Conf.Entity
         }
-    -> Element Form.Msg.Msg
+    -> Element R10.Form.Msg.Msg
 viewTab args fieldState { index, selected, entity, label } =
     let
         valid : Bool
         valid =
-            Form.Update.isExistingFormFieldsValid [ entity ] args.formState
+            R10.Form.Update.isExistingFormFieldsValid [ entity ] args.formState
 
         { opacity, clickOverlay } =
             if fieldState.disabled then
@@ -414,29 +414,29 @@ viewTab args fieldState { index, selected, entity, label } =
                 { opacity = 1
                 , clickOverlay =
                     el
-                        [ Events.onClick <| Form.Msg.ChangeTab args.key (Form.Conf.getId entity)
+                        [ Events.onClick <| R10.Form.Msg.ChangeTab args.key (R10.Form.Conf.getId entity)
                         , pointer
                         , width fill
                         , height fill
                         , htmlAttribute <| Html.Attributes.class <| "ripple"
-                        , mouseOver [ Background.color <| FormComponents.UI.Color.mouseOverSurface args.palette ]
+                        , mouseOver [ Background.color <| R10.FormComponents.UI.Color.mouseOverSurface args.palette ]
                         ]
                         none
                 }
 
         { circleBackground, circleBorder, circleText, labelText } =
             if selected then
-                { circleBackground = FormComponents.UI.Color.surfaceA opacity args.palette
-                , circleBorder = FormComponents.UI.Color.primaryA opacity args.palette
-                , circleText = FormComponents.UI.Color.primaryA opacity args.palette
-                , labelText = FormComponents.UI.Color.primaryA opacity args.palette
+                { circleBackground = R10.FormComponents.UI.Color.surfaceA opacity args.palette
+                , circleBorder = R10.FormComponents.UI.Color.primaryA opacity args.palette
+                , circleText = R10.FormComponents.UI.Color.primaryA opacity args.palette
+                , labelText = R10.FormComponents.UI.Color.primaryA opacity args.palette
                 }
 
             else
-                { circleBackground = FormComponents.UI.Color.surfaceA opacity args.palette
-                , circleBorder = FormComponents.UI.Color.labelA opacity args.palette
-                , circleText = FormComponents.UI.Color.labelA opacity args.palette
-                , labelText = FormComponents.UI.Color.labelA opacity args.palette
+                { circleBackground = R10.FormComponents.UI.Color.surfaceA opacity args.palette
+                , circleBorder = R10.FormComponents.UI.Color.labelA opacity args.palette
+                , circleText = R10.FormComponents.UI.Color.labelA opacity args.palette
+                , labelText = R10.FormComponents.UI.Color.labelA opacity args.palette
                 }
     in
     el
@@ -445,7 +445,7 @@ viewTab args fieldState { index, selected, entity, label } =
         ]
     <|
         row
-            [ Background.color <| FormComponents.UI.Color.surface args.palette
+            [ Background.color <| R10.FormComponents.UI.Color.surface args.palette
             , paddingXY 8 24
             , spacing 8
             , Font.color <| labelText
@@ -455,10 +455,10 @@ viewTab args fieldState { index, selected, entity, label } =
                 [ inFront <|
                     el
                         [ height fill
-                        , Background.color <| FormComponents.UI.Color.surface args.palette
+                        , Background.color <| R10.FormComponents.UI.Color.surface args.palette
                         ]
                     <|
-                        FormComponents.UI.showValidationIcon_
+                        R10.FormComponents.UI.showValidationIcon_
                             { maybeValid = Just valid
                             , displayValidation = True
                             , palette = args.palette
@@ -488,7 +488,7 @@ viewTab args fieldState { index, selected, entity, label } =
                 , el
                     ([ Font.size 11
                      , clip
-                     , Font.color <| FormComponents.UI.Color.error args.palette
+                     , Font.color <| R10.FormComponents.UI.Color.error args.palette
                      , htmlAttribute <| Html.Attributes.style "transition" "all 0.15s ease-out"
                      ]
                         ++ (if valid then
@@ -510,8 +510,8 @@ viewTab args fieldState { index, selected, entity, label } =
 
 viewEntityWithTabs :
     MakerArgs
-    -> List ( String, Form.Conf.Entity )
-    -> Form.Conf.Conf
+    -> List ( String, R10.Form.Conf.Entity )
+    -> R10.Form.Conf.Conf
     -> List Outcome
 viewEntityWithTabs args titleEntityList formConf =
     let
@@ -519,15 +519,15 @@ viewEntityWithTabs args titleEntityList formConf =
         paddingPx =
             8
 
-        firstEntity : Maybe ( String, Form.Conf.Entity )
+        firstEntity : Maybe ( String, R10.Form.Conf.Entity )
         firstEntity =
             List.head titleEntityList
 
-        maybeSelectedEntity : Maybe ( String, Form.Conf.Entity )
+        maybeSelectedEntity : Maybe ( String, R10.Form.Conf.Entity )
         maybeSelectedEntity =
-            case Form.Dict.get args.key args.formState.activeTabs of
+            case R10.Form.Dict.get args.key args.formState.activeTabs of
                 Just key_ ->
-                    case List.head <| List.filter (\( _, entity ) -> Form.Conf.getId entity == key_) titleEntityList of
+                    case List.head <| List.filter (\( _, entity ) -> R10.Form.Conf.getId entity == key_) titleEntityList of
                         Just entity_ ->
                             Just entity_
 
@@ -554,7 +554,7 @@ viewEntityWithTabs args titleEntityList formConf =
                         el
                             [ width fill
                             , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                            , Border.color <| FormComponents.UI.Color.container args.palette
+                            , Border.color <| R10.FormComponents.UI.Color.container args.palette
                             ]
                             none
                 ]
@@ -569,19 +569,19 @@ viewEntityWithTabs args titleEntityList formConf =
                             List.indexedMap
                                 (\index ( label, entity ) ->
                                     let
-                                        newKey : Form.Key.Key
+                                        newKey : R10.Form.Key.Key
                                         newKey =
-                                            Form.Key.composeKey args.key (Form.Conf.getId entity)
+                                            R10.Form.Key.composeKey args.key (R10.Form.Conf.getId entity)
 
-                                        fieldState : Form.FieldState.FieldState
+                                        fieldState : R10.Form.FieldState.FieldState
                                         fieldState =
-                                            Maybe.withDefault Form.FieldState.init <|
-                                                Form.Dict.get newKey args.formState.fieldsState
+                                            Maybe.withDefault R10.Form.FieldState.init <|
+                                                R10.Form.Dict.get newKey args.formState.fieldsState
                                     in
                                     [ viewTab args
                                         fieldState
                                         { index = index
-                                        , selected = Form.Conf.getId selectedEntity == Form.Conf.getId entity
+                                        , selected = R10.Form.Conf.getId selectedEntity == R10.Form.Conf.getId entity
                                         , label = label
                                         , entity = entity
                                         }
@@ -606,10 +606,10 @@ viewEntityMultiHelper :
     MakerArgs
     -> Int
     -> Int
-    -> Form.Key.Key
-    -> List Form.Conf.Entity
-    -> Form.Conf.Conf
-    -> List (Element Form.Msg.Msg)
+    -> R10.Form.Key.Key
+    -> List R10.Form.Conf.Entity
+    -> R10.Form.Conf.Conf
+    -> List (Element R10.Form.Msg.Msg)
 viewEntityMultiHelper args quantity index newKey entities formConf =
     let
         iconSize : Int
@@ -622,7 +622,7 @@ viewEntityMultiHelper args quantity index newKey entities formConf =
                 { offset = ( 0, 0 )
                 , size = size_
                 , blur = 0
-                , color = FormComponents.UI.Color.labelA a args.palette
+                , color = R10.FormComponents.UI.Color.labelA a args.palette
                 }
 
         buttonAttrs : List (Attr () msg)
@@ -635,18 +635,18 @@ viewEntityMultiHelper args quantity index newKey entities formConf =
             , width <| px 28
             , height fill
             , shadow 10 0
-            , Border.color <| FormComponents.UI.Color.containerA 0.5 args.palette
-            , mouseOver <| [ Border.color <| FormComponents.UI.Color.containerA 1 args.palette ]
-            , focused <| [ alpha 1, shadow 1 1, Border.color <| FormComponents.UI.Color.containerA 1 args.palette ]
+            , Border.color <| R10.FormComponents.UI.Color.containerA 0.5 args.palette
+            , mouseOver <| [ Border.color <| R10.FormComponents.UI.Color.containerA 1 args.palette ]
+            , focused <| [ alpha 1, shadow 1 1, Border.color <| R10.FormComponents.UI.Color.containerA 1 args.palette ]
             ]
 
         plusColor : Color
         plusColor =
-            FormComponents.UI.Color.label args.palette
+            R10.FormComponents.UI.Color.label args.palette
 
         removeColor : Color
         removeColor =
-            FormComponents.UI.Color.label args.palette
+            R10.FormComponents.UI.Color.label args.palette
 
         iconCommonAttrs : Int -> Int -> Color -> Float -> List (Attribute msg)
         iconCommonAttrs widthPx heightPx color rotateDeg =
@@ -660,7 +660,7 @@ viewEntityMultiHelper args quantity index newKey entities formConf =
             , rotate <| degrees rotateDeg
             ]
 
-        buttonToAddEntity : Element Form.Msg.Msg
+        buttonToAddEntity : Element R10.Form.Msg.Msg
         buttonToAddEntity =
             Input.button buttonAttrs
                 { label =
@@ -672,10 +672,10 @@ viewEntityMultiHelper args quantity index newKey entities formConf =
                         ]
                     <|
                         none
-                , onPress = Just <| Form.Msg.AddEntity args.key
+                , onPress = Just <| R10.Form.Msg.AddEntity args.key
                 }
 
-        buttonToRemoveEntity : Form.Key.Key -> Element Form.Msg.Msg
+        buttonToRemoveEntity : R10.Form.Key.Key -> Element R10.Form.Msg.Msg
         buttonToRemoveEntity key_ =
             Input.button buttonAttrs
                 { label =
@@ -688,7 +688,7 @@ viewEntityMultiHelper args quantity index newKey entities formConf =
                         ]
                     <|
                         none
-                , onPress = Just <| Form.Msg.RemoveEntity key_
+                , onPress = Just <| R10.Form.Msg.RemoveEntity key_
                 }
     in
     [ row [ spacing 10, width fill ]
@@ -704,14 +704,14 @@ viewEntityMultiHelper args quantity index newKey entities formConf =
 
 viewEntityMulti :
     MakerArgs
-    -> List Form.Conf.Entity
-    -> Form.Conf.Conf
+    -> List R10.Form.Conf.Entity
+    -> R10.Form.Conf.Conf
     -> List Outcome
 viewEntityMulti args entities formConf =
     let
-        activeKeys : List Form.Key.Key
+        activeKeys : List R10.Form.Key.Key
         activeKeys =
-            Form.Helpers.getMultiActiveKeys args.key args.formState
+            R10.Form.Helpers.getMultiActiveKeys args.key args.formState
 
         quantity : Int
         quantity =
@@ -729,19 +729,19 @@ viewEntityMulti args entities formConf =
 
 viewEntityField :
     MakerArgs
-    -> Form.FieldConf.FieldConf
-    -> Form.Conf.Conf
+    -> R10.Form.FieldConf.FieldConf
+    -> R10.Form.Conf.Conf
     -> List Outcome
 viewEntityField args fieldConf formConf =
     let
-        newKey : Form.Key.Key
+        newKey : R10.Form.Key.Key
         newKey =
-            Form.Key.composeKey args.key fieldConf.id
+            R10.Form.Key.composeKey args.key fieldConf.id
 
-        fieldState : Form.FieldState.FieldState
+        fieldState : R10.Form.FieldState.FieldState
         fieldState =
-            Maybe.withDefault Form.FieldState.init <|
-                Form.Dict.get newKey args.formState.fieldsState
+            Maybe.withDefault R10.Form.FieldState.init <|
+                R10.Form.Dict.get newKey args.formState.fieldsState
 
         focused : Bool
         focused =
@@ -774,27 +774,27 @@ viewEntityField args fieldConf formConf =
             , palette = args.palette
             }
 
-        field : Element Form.Msg.Msg
+        field : Element R10.Form.Msg.Msg
         field =
             case fieldConf.type_ of
-                Form.FieldConf.TypeText typeText ->
+                R10.Form.FieldConf.TypeText typeText ->
                     viewText args2 typeText formConf
 
-                Form.FieldConf.TypeBinary typeBinary ->
+                R10.Form.FieldConf.TypeBinary typeBinary ->
                     viewBinary args2 typeBinary formConf
 
-                Form.FieldConf.TypeSingle typeSingle options ->
+                R10.Form.FieldConf.TypeSingle typeSingle options ->
                     viewSingleSelection args2 typeSingle options formConf
 
-                Form.FieldConf.TypeMulti _ _ ->
+                R10.Form.FieldConf.TypeMulti _ _ ->
                     text "TODO"
     in
     [ field ]
 
 
 viewEntityTitle :
-    FormComponents.UI.Palette.Palette
-    -> Form.Conf.TextConf
+    R10.FormComponents.UI.Palette.Palette
+    -> R10.Form.Conf.TextConf
     -> List Outcome
 viewEntityTitle palette titleConf =
     [ column
@@ -802,31 +802,31 @@ viewEntityTitle palette titleConf =
         , paddingEach { top = 40, right = 0, bottom = 0, left = 0 }
         , width fill
         ]
-        [ paragraph [ FormComponents.UI.fontSizeTitle ] [ text titleConf.title ]
-        , FormComponents.UI.viewHelperText palette [] titleConf.helperText
+        [ paragraph [ R10.FormComponents.UI.fontSizeTitle ] [ text titleConf.title ]
+        , R10.FormComponents.UI.viewHelperText palette [] titleConf.helperText
         ]
     ]
 
 
 viewEntitySubTitle :
-    FormComponents.UI.Palette.Palette
-    -> Form.Conf.TextConf
+    R10.FormComponents.UI.Palette.Palette
+    -> R10.Form.Conf.TextConf
     -> List Outcome
 viewEntitySubTitle palette titleConf =
     [ column
-        [ spacing FormComponents.UI.genericSpacing
+        [ spacing R10.FormComponents.UI.genericSpacing
         , width fill
         ]
-        [ paragraph [ FormComponents.UI.fontSizeSubTitle ] [ text titleConf.title ]
-        , FormComponents.UI.viewHelperText palette [ alpha 0.5, Font.size 14, paddingEach { top = FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ] titleConf.helperText
+        [ paragraph [ R10.FormComponents.UI.fontSizeSubTitle ] [ text titleConf.title ]
+        , R10.FormComponents.UI.viewHelperText palette [ alpha 0.5, Font.size 14, paddingEach { top = R10.FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ] titleConf.helperText
         ]
     ]
 
 
-viewWithValidationMessage : MakerArgs -> Form.Conf.Entity -> List (Element msg) -> List (Element msg)
+viewWithValidationMessage : MakerArgs -> R10.Form.Conf.Entity -> List (Element msg) -> List (Element msg)
 viewWithValidationMessage args entity listEl =
     let
-        validationIcon : FormComponents.Validations.ValidationIcon
+        validationIcon : R10.FormComponents.Validations.ValidationIcon
         validationIcon =
             getFieldConfig entity
                 |> .validationSpecs
@@ -836,11 +836,11 @@ viewWithValidationMessage args entity listEl =
     in
     [ column [ width fill, height fill ] <|
         listEl
-            ++ [ FormComponents.Validations.viewValidation args.palette validationIcon <|
-                    Form.Converter.fromFieldStateValidationToComponentValidation
+            ++ [ R10.FormComponents.Validations.viewValidation args.palette validationIcon <|
+                    R10.Form.Converter.fromFieldStateValidationToComponentValidation
                         (getFieldConfig entity |> .validationSpecs)
-                        (Form.Dict.get (getEntityKey args entity) args.formState.fieldsState
-                            |> Maybe.withDefault Form.FieldState.init
+                        (R10.Form.Dict.get (getEntityKey args entity) args.formState.fieldsState
+                            |> Maybe.withDefault R10.Form.FieldState.init
                         ).validation
                         args.translator
                ]
@@ -856,17 +856,17 @@ viewWithValidationMessage args entity listEl =
 
 
 type alias MakerArgs =
-    { key : Form.Key.Key
-    , formState : Form.State.State
-    , translator : Form.FieldConf.ValidationCode -> String
-    , style : FormComponents.Style.Style
-    , palette : FormComponents.UI.Palette.Palette
+    { key : R10.Form.Key.Key
+    , formState : R10.Form.State.State
+    , translator : R10.Form.FieldConf.ValidationCode -> String
+    , style : R10.FormComponents.Style.Style
+    , palette : R10.FormComponents.UI.Palette.Palette
     }
 
 
 maker :
     MakerArgs
-    -> Form.Conf.Conf
+    -> R10.Form.Conf.Conf
     -> List Outcome
 maker args formConf =
     maker_ args formConf formConf
@@ -874,8 +874,8 @@ maker args formConf =
 
 maker_ :
     MakerArgs
-    -> Form.Conf.Conf
-    -> Form.Conf.Conf
+    -> R10.Form.Conf.Conf
+    -> R10.Form.Conf.Conf
     -> List Outcome
 maker_ args branchConfig rootFormConf =
     --
@@ -888,28 +888,28 @@ maker_ args branchConfig rootFormConf =
     List.map
         (\entity ->
             (case entity of
-                Form.Conf.EntityWrappable entityId entities ->
-                    viewEntityWrappable { args | key = Form.Key.composeKey args.key entityId } entities rootFormConf
+                R10.Form.Conf.EntityWrappable entityId entities ->
+                    viewEntityWrappable { args | key = R10.Form.Key.composeKey args.key entityId } entities rootFormConf
 
-                Form.Conf.EntityWithBorder entityId entities ->
-                    viewEntityWithBorder { args | key = Form.Key.composeKey args.key entityId } entities rootFormConf
+                R10.Form.Conf.EntityWithBorder entityId entities ->
+                    viewEntityWithBorder { args | key = R10.Form.Key.composeKey args.key entityId } entities rootFormConf
 
-                Form.Conf.EntityNormal entityId entities ->
-                    viewEntityNormal { args | key = Form.Key.composeKey args.key entityId } entities rootFormConf
+                R10.Form.Conf.EntityNormal entityId entities ->
+                    viewEntityNormal { args | key = R10.Form.Key.composeKey args.key entityId } entities rootFormConf
 
-                Form.Conf.EntityWithTabs entityId titleEntityList ->
-                    viewEntityWithTabs { args | key = Form.Key.composeKey args.key entityId } titleEntityList rootFormConf
+                R10.Form.Conf.EntityWithTabs entityId titleEntityList ->
+                    viewEntityWithTabs { args | key = R10.Form.Key.composeKey args.key entityId } titleEntityList rootFormConf
 
-                Form.Conf.EntityMulti entityId entities ->
-                    viewEntityMulti { args | key = Form.Key.composeKey args.key entityId } entities rootFormConf
+                R10.Form.Conf.EntityMulti entityId entities ->
+                    viewEntityMulti { args | key = R10.Form.Key.composeKey args.key entityId } entities rootFormConf
 
-                Form.Conf.EntityField fieldConf ->
+                R10.Form.Conf.EntityField fieldConf ->
                     viewEntityField args fieldConf rootFormConf
 
-                Form.Conf.EntityTitle _ titleConf ->
+                R10.Form.Conf.EntityTitle _ titleConf ->
                     viewEntityTitle args.palette titleConf
 
-                Form.Conf.EntitySubTitle _ titleConf ->
+                R10.Form.Conf.EntitySubTitle _ titleConf ->
                     viewEntitySubTitle args.palette titleConf
             )
                 |> viewWithValidationMessage args entity

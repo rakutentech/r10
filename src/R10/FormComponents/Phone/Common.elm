@@ -1,4 +1,4 @@
-module FormComponents.Phone.Common exposing
+module R10.FormComponents.Phone.Common exposing
     ( Args
     , FieldOption
     , Model
@@ -9,10 +9,10 @@ module FormComponents.Phone.Common exposing
     )
 
 import Element exposing (..)
-import FormComponents.Phone.Country exposing (Country)
-import FormComponents.Style
-import FormComponents.UI.Palette
-import FormComponents.Validations
+import R10.FormComponents.Phone.Country exposing (Country)
+import R10.FormComponents.Style
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Validations
 import Time
 
 
@@ -63,7 +63,7 @@ type alias FieldOption =
 
 type alias Args msg =
     -- Stuff that change
-    { validation : FormComponents.Validations.Validation
+    { validation : R10.FormComponents.Validations.Validation
 
     ---- Messages
     , toMsg : Msg -> msg
@@ -73,9 +73,9 @@ type alias Args msg =
     , helperText : Maybe String
     , disabled : Bool
     , requiredLabel : Maybe String
-    , style : FormComponents.Style.Style
+    , style : R10.FormComponents.Style.Style
     , key : String
-    , palette : FormComponents.UI.Palette.Palette
+    , palette : R10.FormComponents.UI.Palette.Palette
 
     -- Specific
     , countryOptions : List Country

@@ -1,4 +1,4 @@
-module FormComponents.UI exposing
+module R10.FormComponents.UI exposing
     ( borderEntityWithBorder
     , fontSizeSubTitle
     , fontSizeTitle
@@ -24,12 +24,12 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import FormComponents.Style
-import FormComponents.UI.Color
-import FormComponents.UI.Const
-import FormComponents.UI.Icon
-import FormComponents.UI.Palette
-import FormComponents.Utils.SimpleMarkdown
+import R10.FormComponents.Style
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Const
+import R10.FormComponents.UI.Icon
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Utils.SimpleMarkdown
 import Html
 import Html.Attributes
 import Html.Events
@@ -37,10 +37,10 @@ import Json.Decode
 import Svg
 
 
-borderEntityWithBorder : FormComponents.UI.Palette.Palette -> List (Attribute msg)
+borderEntityWithBorder : R10.FormComponents.UI.Palette.Palette -> List (Attribute msg)
 borderEntityWithBorder palette =
     [ Border.width 1
-    , Border.color <| FormComponents.UI.Color.container palette
+    , Border.color <| R10.FormComponents.UI.Color.container palette
     , Border.rounded 5
     ]
 
@@ -60,18 +60,18 @@ genericSpacing =
     8
 
 
-viewHelperText : FormComponents.UI.Palette.Palette -> List (Attr () msg) -> Maybe String -> Element msg
+viewHelperText : R10.FormComponents.UI.Palette.Palette -> List (Attr () msg) -> Maybe String -> Element msg
 viewHelperText palette attrs maybeHelperText =
     case maybeHelperText of
         Just helperText ->
             -- styles inspired by from https://material.io/components/text-fields/#specs
             paragraph
-                ([ Font.color (FormComponents.UI.Color.label palette) ]
+                ([ Font.color (R10.FormComponents.UI.Color.label palette) ]
                     ++ attrs
                 )
             <|
-                FormComponents.Utils.SimpleMarkdown.elementMarkdownAdvanced
-                    { link = [ Font.color <| FormComponents.UI.Color.primary palette ] }
+                R10.FormComponents.Utils.SimpleMarkdown.elementMarkdownAdvanced
+                    { link = [ Font.color <| R10.FormComponents.UI.Color.primary palette ] }
                     helperText
 
         Nothing ->
@@ -88,22 +88,22 @@ iconWidth icon =
             0
 
 
-getTextfieldPaddingEach : { a | style : FormComponents.Style.Style, trailingIcon : Maybe b, leadingIcon : Maybe c } -> { top : Int, right : Int, bottom : Int, left : Int }
+getTextfieldPaddingEach : { a | style : R10.FormComponents.Style.Style, trailingIcon : Maybe b, leadingIcon : Maybe c } -> { top : Int, right : Int, bottom : Int, left : Int }
 getTextfieldPaddingEach args =
     let
         paddingCenterY : Int
         paddingCenterY =
-            ceiling <| (FormComponents.UI.Const.inputTextHeight - FormComponents.UI.Const.inputTextFontSize) / 2
+            ceiling <| (R10.FormComponents.UI.Const.inputTextHeight - R10.FormComponents.UI.Const.inputTextFontSize) / 2
     in
     case args.style of
-        FormComponents.Style.Filled ->
-            { top = paddingCenterY + FormComponents.UI.Const.inputTextFilledDown
+        R10.FormComponents.Style.Filled ->
+            { top = paddingCenterY + R10.FormComponents.UI.Const.inputTextFilledDown
             , right = 0 + iconWidth args.trailingIcon
-            , bottom = paddingCenterY - FormComponents.UI.Const.inputTextFilledDown
+            , bottom = paddingCenterY - R10.FormComponents.UI.Const.inputTextFilledDown
             , left = 0 + iconWidth args.leadingIcon
             }
 
-        FormComponents.Style.Outlined ->
+        R10.FormComponents.Style.Outlined ->
             { top = paddingCenterY
             , right = max 16 (iconWidth args.trailingIcon)
             , bottom = paddingCenterY
@@ -126,25 +126,25 @@ icons :
     , validation_error_ : String -> Int -> Svg.Svg msg13
     }
 icons =
-    { checkBold_ = FormComponents.UI.Icon.checkBold_
-    , combobox_arrow_ = FormComponents.UI.Icon.keyboardArrowDown
-    , eye_ban_l_ = FormComponents.UI.Icon.eye_ban_l_
-    , eye_l_ = FormComponents.UI.Icon.eye_l_
-    , grid = FormComponents.UI.Icon.grid
-    , notice_generic_l_ = FormComponents.UI.Icon.notice_generic_l_
-    , search_ = FormComponents.UI.Icon.search_
-    , sign_warning_f_ = FormComponents.UI.Icon.sign_warning_f_
-    , sign_warning_l_ = FormComponents.UI.Icon.sign_warning_l_
-    , validation_check_ = FormComponents.UI.Icon.validation_check_
-    , validation_clear_ = FormComponents.UI.Icon.validation_clear_
-    , validation_error_ = FormComponents.UI.Icon.validation_error_
+    { checkBold_ = R10.FormComponents.UI.Icon.checkBold_
+    , combobox_arrow_ = R10.FormComponents.UI.Icon.keyboardArrowDown
+    , eye_ban_l_ = R10.FormComponents.UI.Icon.eye_ban_l_
+    , eye_l_ = R10.FormComponents.UI.Icon.eye_l_
+    , grid = R10.FormComponents.UI.Icon.grid
+    , notice_generic_l_ = R10.FormComponents.UI.Icon.notice_generic_l_
+    , search_ = R10.FormComponents.UI.Icon.search_
+    , sign_warning_f_ = R10.FormComponents.UI.Icon.sign_warning_f_
+    , sign_warning_l_ = R10.FormComponents.UI.Icon.sign_warning_l_
+    , validation_check_ = R10.FormComponents.UI.Icon.validation_check_
+    , validation_clear_ = R10.FormComponents.UI.Icon.validation_clear_
+    , validation_error_ = R10.FormComponents.UI.Icon.validation_error_
     }
 
 
 getTextfieldBorderSizeOffset :
     { a
         | focused : Bool
-        , style : FormComponents.Style.Style
+        , style : R10.FormComponents.Style.Style
         , valid : Maybe Bool
         , displayValidation : Bool
     }
@@ -156,16 +156,16 @@ getTextfieldBorderSizeOffset { focused, style, valid, displayValidation } =
             displayValidation && valid == Just False
     in
     case ( validationActive || focused, style ) of
-        ( True, FormComponents.Style.Filled ) ->
+        ( True, R10.FormComponents.Style.Filled ) ->
             { size = 0, offset = ( 0, -2 ) }
 
-        ( True, FormComponents.Style.Outlined ) ->
+        ( True, R10.FormComponents.Style.Outlined ) ->
             { size = 2, offset = ( 0, 0 ) }
 
-        ( False, FormComponents.Style.Filled ) ->
+        ( False, R10.FormComponents.Style.Filled ) ->
             { size = 0, offset = ( 0, -1 ) }
 
-        ( False, FormComponents.Style.Outlined ) ->
+        ( False, R10.FormComponents.Style.Outlined ) ->
             { size = 1, offset = ( 0, 0 ) }
 
 
@@ -173,11 +173,11 @@ getBorderColor :
     { a
         | focused : Bool
         , disabled : Bool
-        , style : FormComponents.Style.Style
+        , style : R10.FormComponents.Style.Style
         , valid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
-        , palette : FormComponents.UI.Palette.Palette
+        , palette : R10.FormComponents.UI.Palette.Palette
     }
     -> Color
 getBorderColor { disabled, focused, style, valid, displayValidation, isMouseOver, palette } =
@@ -195,62 +195,62 @@ getBorderColor { disabled, focused, style, valid, displayValidation, isMouseOver
                 0.5
     in
     case style of
-        FormComponents.Style.Filled ->
+        R10.FormComponents.Style.Filled ->
             case ( displayValidation, valid, focused ) of
                 --( True, Just True, _ ) ->
-                --    FormComponents.UI.Color.successA alpha palette
+                --    R10.FormComponents.UI.Color.successA alpha palette
                 ( True, Just False, _ ) ->
-                    FormComponents.UI.Color.errorA alpha palette
+                    R10.FormComponents.UI.Color.errorA alpha palette
 
                 ( _, _, _ ) ->
-                    FormComponents.UI.Color.onSurfaceA (0.3 * alpha) palette
+                    R10.FormComponents.UI.Color.onSurfaceA (0.3 * alpha) palette
 
-        FormComponents.Style.Outlined ->
+        R10.FormComponents.Style.Outlined ->
             case ( displayValidation, valid, focused ) of
                 ( True, Just False, _ ) ->
-                    FormComponents.UI.Color.errorA alpha palette
+                    R10.FormComponents.UI.Color.errorA alpha palette
 
                 ( _, _, True ) ->
-                    FormComponents.UI.Color.primaryA alpha palette
+                    R10.FormComponents.UI.Color.primaryA alpha palette
 
                 ( _, _, False ) ->
-                    FormComponents.UI.Color.containerA alpha palette
+                    R10.FormComponents.UI.Color.containerA alpha palette
 
 
 textfieldLabelColor :
     { a
         | focused : Bool
-        , style : FormComponents.Style.Style
+        , style : R10.FormComponents.Style.Style
         , valid : Maybe Bool
         , displayValidation : Bool
-        , palette : FormComponents.UI.Palette.Palette
+        , palette : R10.FormComponents.UI.Palette.Palette
     }
     -> Color
 textfieldLabelColor { focused, style, valid, displayValidation, palette } =
     case style of
-        FormComponents.Style.Filled ->
+        R10.FormComponents.Style.Filled ->
             case ( displayValidation, valid, focused ) of
                 --( True, Just True, True ) ->
-                --    FormComponents.UI.Color.success palette
+                --    R10.FormComponents.UI.Color.success palette
                 ( True, Just False, True ) ->
-                    FormComponents.UI.Color.error palette
+                    R10.FormComponents.UI.Color.error palette
 
                 ( _, _, _ ) ->
-                    FormComponents.UI.Color.label palette
+                    R10.FormComponents.UI.Color.label palette
 
-        FormComponents.Style.Outlined ->
+        R10.FormComponents.Style.Outlined ->
             case ( displayValidation, valid, focused ) of
                 ( True, Just False, True ) ->
-                    FormComponents.UI.Color.error palette
+                    R10.FormComponents.UI.Color.error palette
 
                 ( _, _, True ) ->
-                    FormComponents.UI.Color.primary palette
+                    R10.FormComponents.UI.Color.primary palette
 
                 ( _, _, False ) ->
-                    FormComponents.UI.Color.label palette
+                    R10.FormComponents.UI.Color.label palette
 
 
-getSelectShadowColor : FormComponents.UI.Palette.Palette -> Bool -> Bool -> Color
+getSelectShadowColor : R10.FormComponents.UI.Palette.Palette -> Bool -> Bool -> Color
 getSelectShadowColor palette focused mouseOver =
     let
         alpha : Float
@@ -268,10 +268,10 @@ getSelectShadowColor palette focused mouseOver =
                 ( False, False ) ->
                     0
     in
-    FormComponents.UI.Color.primaryA alpha palette
+    R10.FormComponents.UI.Color.primaryA alpha palette
 
 
-viewSelectShadow : { a | palette : FormComponents.UI.Palette.Palette, focused : Bool, disabled : Bool } -> Element msg -> Element msg
+viewSelectShadow : { a | palette : R10.FormComponents.UI.Palette.Palette, focused : Bool, disabled : Bool } -> Element msg -> Element msg
 viewSelectShadow { palette, focused, disabled } element =
     el
         ([ width <| px 40
@@ -355,8 +355,8 @@ labelBuilder :
         , trailingIcon : Maybe (Element msg)
         , valid : Maybe Bool
         , displayValidation : Bool
-        , style : FormComponents.Style.Style
-        , palette : FormComponents.UI.Palette.Palette
+        , style : R10.FormComponents.Style.Style
+        , palette : R10.FormComponents.UI.Palette.Palette
     }
     -> Element msg
 labelBuilder args =
@@ -384,24 +384,24 @@ labelBuilder args =
         notchClearance : Int
         notchClearance =
             case args.style of
-                FormComponents.Style.Filled ->
+                R10.FormComponents.Style.Filled ->
                     0
 
-                FormComponents.Style.Outlined ->
+                R10.FormComponents.Style.Outlined ->
                     3
 
         notch : Element msg
         notch =
             case args.style of
-                FormComponents.Style.Filled ->
+                R10.FormComponents.Style.Filled ->
                     none
 
-                FormComponents.Style.Outlined ->
+                R10.FormComponents.Style.Outlined ->
                     el
                         [ htmlAttribute (Html.Attributes.style "transition" "all 0.15s")
                         , height <| px 2
                         , width fill
-                        , Background.color <| FormComponents.UI.Color.surface args.palette
+                        , Background.color <| R10.FormComponents.UI.Color.surface args.palette
                         , alpha
                             (if labelIsAbove then
                                 1
@@ -416,14 +416,14 @@ labelBuilder args =
         labelAboveAttrs =
             if labelIsAbove then
                 case args.style of
-                    FormComponents.Style.Filled ->
+                    R10.FormComponents.Style.Filled ->
                         [ moveUp 28, moveRight 0 ]
 
-                    FormComponents.Style.Outlined ->
+                    R10.FormComponents.Style.Outlined ->
                         [ moveUp 21, Font.size 12, moveRight 0 ]
 
             else
-                [ moveUp 0, moveRight labelBelowLeftPadding, Font.size FormComponents.UI.Const.inputTextFontSize ]
+                [ moveUp 0, moveRight labelBelowLeftPadding, Font.size R10.FormComponents.UI.Const.inputTextFontSize ]
 
         requiredEl : Element msg
         requiredEl =
@@ -470,7 +470,7 @@ labelBuilder args =
             labelEl
 
 
-showValidationIcon_ : { a | maybeValid : Maybe Bool, displayValidation : Bool, palette : FormComponents.UI.Palette.Palette } -> Element msg
+showValidationIcon_ : { a | maybeValid : Maybe Bool, displayValidation : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
 showValidationIcon_ { maybeValid, displayValidation, palette } =
     let
         widthPx : Int
@@ -490,5 +490,5 @@ showValidationIcon_ { maybeValid, displayValidation, palette } =
     <|
         html <|
             icons.sign_warning_f_
-                (FormComponents.UI.Color.toCssString <| FormComponents.UI.Color.error palette)
+                (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.error palette)
                 24

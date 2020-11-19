@@ -1,8 +1,8 @@
-module FormComponents.Phone.Update exposing (..)
+module R10.FormComponents.Phone.Update exposing (..)
 
 import Browser.Dom
-import FormComponents.Phone.Common as Common
-import FormComponents.Phone.Country exposing (Country)
+import R10.FormComponents.Phone.Common as Common
+import R10.FormComponents.Phone.Country exposing (Country)
 import List.Extra
 import Regex
 import Set
@@ -84,7 +84,7 @@ extractCountry untrimmedString =
         List.range 2 7
             |> List.reverse
             |> List.map (\i -> String.left i str)
-            |> List.map FormComponents.Phone.Country.fromCountryCode
+            |> List.map R10.FormComponents.Phone.Country.fromCountryCode
             |> List.filterMap identity
             |> List.head
 
@@ -235,7 +235,7 @@ getNextNewSelectAndY :
     -> { b | countryOptions : List Country, selectOptionHeight : Int, maxDisplayCount : Int }
     -> ( Country, Float )
 getNextNewSelectAndY model args =
-    getNewSelectAndY_ 1 0 FormComponents.Phone.Country.listHead model args
+    getNewSelectAndY_ 1 0 R10.FormComponents.Phone.Country.listHead model args
 
 
 getPrevNewSelectAndY :
@@ -243,7 +243,7 @@ getPrevNewSelectAndY :
     -> { b | countryOptions : List Country, selectOptionHeight : Int, maxDisplayCount : Int }
     -> ( Country, Float )
 getPrevNewSelectAndY model args =
-    getNewSelectAndY_ -1 (List.length args.countryOptions - 1) FormComponents.Phone.Country.listTail model args
+    getNewSelectAndY_ -1 (List.length args.countryOptions - 1) R10.FormComponents.Phone.Country.listTail model args
 
 
 getNewSelectAndY_ :
@@ -337,7 +337,7 @@ update msg model =
                         else
                             case
                                 args.countryOptions
-                                    |> List.map (\country -> ( country, country |> FormComponents.Phone.Country.toString |> normalizeString ))
+                                    |> List.map (\country -> ( country, country |> R10.FormComponents.Phone.Country.toString |> normalizeString ))
                                     |> List.Extra.find (Tuple.second >> String.startsWith (normalizeString newSearch))
                                     |> Maybe.map Tuple.first
                             of
@@ -382,7 +382,7 @@ update msg model =
                 newCode : String
                 newCode =
                     newCountry
-                        |> FormComponents.Phone.Country.toCountryCode
+                        |> R10.FormComponents.Phone.Country.toCountryCode
 
                 newValue : String
                 newValue =
@@ -391,7 +391,7 @@ update msg model =
                             let
                                 oldCode : String
                                 oldCode =
-                                    FormComponents.Phone.Country.toCountryCode oldCountry
+                                    R10.FormComponents.Phone.Country.toCountryCode oldCountry
                             in
                             model.value
                                 |> String.replace " " ""

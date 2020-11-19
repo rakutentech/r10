@@ -1,4 +1,4 @@
-module FormComponents.Text exposing
+module R10.FormComponents.Text exposing
     ( Args
     , TextType(..)
     , extraCss
@@ -12,13 +12,13 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
-import FormComponents.IconButton
-import FormComponents.Style
-import FormComponents.UI
-import FormComponents.UI.Color
-import FormComponents.UI.Const as Constants
-import FormComponents.UI.Palette
-import FormComponents.Validations
+import R10.FormComponents.IconButton
+import R10.FormComponents.Style
+import R10.FormComponents.UI
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Const as Constants
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Validations
 import Html.Attributes
 import Regex
 
@@ -33,20 +33,20 @@ type TextType
     | TextWithPattern String
 
 
-viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : FormComponents.UI.Palette.Palette } -> Element msg
+viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
 viewShowHidePasswordButton { msgOnTogglePasswordShow, showPassword, palette } =
     let
         icon : Element msg
         icon =
             if showPassword then
-                html <| FormComponents.UI.icons.eye_ban_l_ (FormComponents.UI.Color.label palette |> FormComponents.UI.Color.toCssString) 24
+                html <| R10.FormComponents.UI.icons.eye_ban_l_ (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString) 24
 
             else
-                html <| FormComponents.UI.icons.eye_l_ (FormComponents.UI.Color.label palette |> FormComponents.UI.Color.toCssString) 24
+                html <| R10.FormComponents.UI.icons.eye_l_ (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString) 24
     in
     case msgOnTogglePasswordShow of
         Just msgOnTogglePasswordShow_ ->
-            FormComponents.IconButton.view [] { palette = palette, icon = icon, msgOnClick = Just msgOnTogglePasswordShow_, size = 24 }
+            R10.FormComponents.IconButton.view [] { palette = palette, icon = icon, msgOnClick = Just msgOnTogglePasswordShow_, size = 24 }
 
         Nothing ->
             none
@@ -61,7 +61,7 @@ type alias Args msg =
     { -- Stuff that change
       value : String
     , focused : Bool
-    , validation : FormComponents.Validations.Validation
+    , validation : R10.FormComponents.Validations.Validation
     , showPassword : Bool
     , leadingIcon : Maybe (Element msg)
     , trailingIcon : Maybe (Element msg)
@@ -79,8 +79,8 @@ type alias Args msg =
     , disabled : Bool
     , requiredLabel : Maybe String
     , idDom : Maybe String
-    , style : FormComponents.Style.Style
-    , palette : FormComponents.UI.Palette.Palette
+    , style : R10.FormComponents.Style.Style
+    , palette : R10.FormComponents.UI.Palette.Palette
 
     -- Specific
     , textType : TextType
@@ -90,8 +90,8 @@ type alias Args msg =
 getBorder :
     { a
         | focused : Bool
-        , style : FormComponents.Style.Style
-        , palette : FormComponents.UI.Palette.Palette
+        , style : R10.FormComponents.Style.Style
+        , palette : R10.FormComponents.UI.Palette.Palette
         , valid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
@@ -101,13 +101,13 @@ getBorder :
 getBorder args =
     let
         { offset, size } =
-            FormComponents.UI.getTextfieldBorderSizeOffset args
+            R10.FormComponents.UI.getTextfieldBorderSizeOffset args
     in
     Border.innerShadow
         { offset = offset
         , size = size
         , blur = 0
-        , color = FormComponents.UI.getBorderColor args
+        , color = R10.FormComponents.UI.getBorderColor args
         }
 
 
@@ -121,9 +121,9 @@ viewBehindPattern :
         , msgOnEnter : Maybe msg
         , msgOnFocus : msg
         , msgOnLoseFocus : Maybe msg
-        , palette : FormComponents.UI.Palette.Palette
+        , palette : R10.FormComponents.UI.Palette.Palette
         , showPassword : Bool
-        , style : FormComponents.Style.Style
+        , style : R10.FormComponents.Style.Style
         , textType : TextType
         , trailingIcon : Maybe (Element msg)
         , value : String
@@ -291,7 +291,7 @@ view attrs extraInputAttrs args =
     let
         valid : Maybe Bool
         valid =
-            FormComponents.Validations.isValid args.validation
+            R10.FormComponents.Validations.isValid args.validation
 
         displayValidation : Bool
         displayValidation =
@@ -309,13 +309,13 @@ view attrs extraInputAttrs args =
             , msgOnFocus : msg
             , msgOnLoseFocus : Maybe msg
             , msgOnTogglePasswordShow : Maybe msg
-            , palette : FormComponents.UI.Palette.Palette
+            , palette : R10.FormComponents.UI.Palette.Palette
             , requiredLabel : Maybe String
             , showPassword : Bool
-            , style : FormComponents.Style.Style
+            , style : R10.FormComponents.Style.Style
             , textType : TextType
             , trailingIcon : Maybe (Element msg)
-            , validation : FormComponents.Validations.Validation
+            , validation : R10.FormComponents.Validations.Validation
             , value : String
             }
         newArgs =
@@ -329,7 +329,7 @@ view attrs extraInputAttrs args =
 
                     else
                         Just <|
-                            FormComponents.UI.showValidationIcon_
+                            R10.FormComponents.UI.showValidationIcon_
                                 { maybeValid = valid
                                 , displayValidation = displayValidation
                                 , palette = args.palette
@@ -343,9 +343,9 @@ view attrs extraInputAttrs args =
             , isMouseOver : Bool
             , label : String
             , leadingIcon : Maybe (Element msg)
-            , palette : FormComponents.UI.Palette.Palette
+            , palette : R10.FormComponents.UI.Palette.Palette
             , requiredLabel : Maybe String
-            , style : FormComponents.Style.Style
+            , style : R10.FormComponents.Style.Style
             , trailingIcon : Maybe (Element msg)
             , valid : Maybe Bool
             , value : String
@@ -371,7 +371,7 @@ view attrs extraInputAttrs args =
            -- If there is spacing and no error, it will appear as a double spacing.
            spacing 0
          , width (fill |> minimum 150)
-         , inFront <| FormComponents.UI.labelBuilder styleArgs
+         , inFront <| R10.FormComponents.UI.labelBuilder styleArgs
          ]
             ++ (if newArgs.disabled then
                     [ alpha 0.6 ]
@@ -385,10 +385,10 @@ view attrs extraInputAttrs args =
             [ getBorder styleArgs
             , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
             , case newArgs.style of
-                FormComponents.Style.Filled ->
+                R10.FormComponents.Style.Filled ->
                     Border.rounded 0
 
-                FormComponents.Style.Outlined ->
+                R10.FormComponents.Style.Outlined ->
                     Border.rounded 5
             , height <|
                 px <|
@@ -406,11 +406,11 @@ view attrs extraInputAttrs args =
                             []
                    )
                 ++ extraInputAttrs
-        , FormComponents.UI.viewHelperText newArgs.palette
+        , R10.FormComponents.UI.viewHelperText newArgs.palette
             [ spacing 2
             , alpha 0.5
             , Font.size 14
-            , paddingEach { top = FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
+            , paddingEach { top = R10.FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
             ]
             newArgs.helperText
         ]
@@ -426,9 +426,9 @@ viewInput :
         , msgOnEnter : Maybe msg
         , msgOnFocus : msg
         , msgOnLoseFocus : Maybe msg
-        , palette : FormComponents.UI.Palette.Palette
+        , palette : R10.FormComponents.UI.Palette.Palette
         , showPassword : Bool
-        , style : FormComponents.Style.Style
+        , style : R10.FormComponents.Style.Style
         , textType : TextType
         , trailingIcon : Maybe (Element msg)
         , value : String
@@ -446,10 +446,10 @@ viewInput args extraAttr =
             [ -- in order to icon to be aligned with the input, move icon down
               moveDown <|
                 case args.style of
-                    FormComponents.Style.Filled ->
+                    R10.FormComponents.Style.Filled ->
                         8
 
-                    FormComponents.Style.Outlined ->
+                    R10.FormComponents.Style.Outlined ->
                         0
             , centerY
             , paddingXY 8 0
@@ -457,7 +457,7 @@ viewInput args extraAttr =
 
         paddingValues : { top : Int, right : Int, bottom : Int, left : Int }
         paddingValues =
-            FormComponents.UI.getTextfieldPaddingEach args
+            R10.FormComponents.UI.getTextfieldPaddingEach args
 
         paddingOffset =
             12
@@ -472,8 +472,8 @@ viewInput args extraAttr =
             , width fill
             , Font.size Constants.inputTextFontSize
             , Border.width 0
-            , Background.color <| FormComponents.UI.Color.transparent
-            , Font.color <| FormComponents.UI.Color.font args.palette
+            , Background.color <| R10.FormComponents.UI.Color.transparent
+            , Font.color <| R10.FormComponents.UI.Color.font args.palette
             , Events.onFocus args.msgOnFocus
 
             -- Remove part of the top padding and re-apply it as a margin,
@@ -489,7 +489,7 @@ viewInput args extraAttr =
             ]
                 ++ (case args.msgOnEnter of
                         Just msgOnEnter_ ->
-                            [ htmlAttribute <| FormComponents.UI.onEnter msgOnEnter_ ]
+                            [ htmlAttribute <| R10.FormComponents.UI.onEnter msgOnEnter_ ]
 
                         Nothing ->
                             []

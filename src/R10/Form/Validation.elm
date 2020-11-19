@@ -1,14 +1,14 @@
-module Form.Validation exposing
+module R10.Form.Validation exposing
     ( commonValidation
     , validate
     )
 
 import Dict
-import Form.FieldConf exposing (Validation(..))
-import Form.FieldState exposing (ValidationOutcome(..))
-import Form.Key
-import Form.State
-import Form.ValidationCode exposing (validationCodes)
+import R10.Form.FieldConf exposing (Validation(..))
+import R10.Form.FieldState exposing (ValidationOutcome(..))
+import R10.Form.Key
+import R10.Form.State
+import R10.Form.ValidationCode exposing (validationCodes)
 import Regex
 
 
@@ -32,7 +32,7 @@ runRegex pattern value =
             NotValid
 
 
-isValid : Form.FieldState.ValidationOutcome -> Bool
+isValid : R10.Form.FieldState.ValidationOutcome -> Bool
 isValid outcome =
     case outcome of
         MessageOk _ _ ->
@@ -42,7 +42,7 @@ isValid outcome =
             False
 
 
-toMessageOk : Form.FieldState.ValidationOutcome -> Form.FieldState.ValidationOutcome
+toMessageOk : R10.Form.FieldState.ValidationOutcome -> R10.Form.FieldState.ValidationOutcome
 toMessageOk outcome =
     case outcome of
         MessageOk _ _ ->
@@ -52,7 +52,7 @@ toMessageOk outcome =
             MessageOk msg payload
 
 
-toMessageErr : Form.FieldState.ValidationOutcome -> Form.FieldState.ValidationOutcome
+toMessageErr : R10.Form.FieldState.ValidationOutcome -> R10.Form.FieldState.ValidationOutcome
 toMessageErr outcome =
     case outcome of
         MessageOk msg payload ->
@@ -62,12 +62,12 @@ toMessageErr outcome =
             outcome
 
 
-validateDependant : String -> Form.Key.KeyAsString -> Form.State.State -> Validation -> Maybe Form.FieldState.ValidationOutcome
+validateDependant : String -> R10.Form.Key.KeyAsString -> R10.Form.State.State -> Validation -> Maybe R10.Form.FieldState.ValidationOutcome
 validateDependant value dependantKey formState validation =
     let
-        newKey : Form.Key.Key
+        newKey : R10.Form.Key.Key
         newKey =
-            dependantKey |> Form.Key.fromString
+            dependantKey |> R10.Form.Key.fromString
 
         newContextValue : String
         newContextValue =
@@ -78,7 +78,7 @@ validateDependant value dependantKey formState validation =
     validateValidationSpecs newKey newContextValue formState validation
 
 
-validateEqual : String -> Form.Key.KeyAsString -> Form.State.State -> Form.FieldState.ValidationOutcome
+validateEqual : String -> R10.Form.Key.KeyAsString -> R10.Form.State.State -> R10.Form.FieldState.ValidationOutcome
 validateEqual value dependantKey formState =
     let
         dependantValue : String
@@ -88,70 +88,70 @@ validateEqual value dependantKey formState =
                 |> Maybe.withDefault ""
     in
     if value == dependantValue then
-        Form.FieldState.MessageOk validationCodes.equalInvalid []
+        R10.Form.FieldState.MessageOk validationCodes.equalInvalid []
 
     else
-        Form.FieldState.MessageErr validationCodes.equalInvalid []
+        R10.Form.FieldState.MessageErr validationCodes.equalInvalid []
 
 
-validateNot : Form.Key.Key -> String -> Form.State.State -> Validation -> Maybe Form.FieldState.ValidationOutcome
+validateNot : R10.Form.Key.Key -> String -> R10.Form.State.State -> Validation -> Maybe R10.Form.FieldState.ValidationOutcome
 validateNot key value formState validation =
     let
-        outcome : Maybe Form.FieldState.ValidationOutcome
+        outcome : Maybe R10.Form.FieldState.ValidationOutcome
         outcome =
             validateValidationSpecs key value formState validation
     in
     case outcome of
-        Just (Form.FieldState.MessageOk a b) ->
-            Just <| Form.FieldState.MessageErr a b
+        Just (R10.Form.FieldState.MessageOk a b) ->
+            Just <| R10.Form.FieldState.MessageErr a b
 
-        Just (Form.FieldState.MessageErr a b) ->
-            Just <| Form.FieldState.MessageOk a b
+        Just (R10.Form.FieldState.MessageErr a b) ->
+            Just <| R10.Form.FieldState.MessageOk a b
 
         Nothing ->
             Nothing
 
 
-validateAllOf : Form.Key.Key -> String -> Form.State.State -> List Validation -> Form.FieldState.ValidationOutcome
+validateAllOf : R10.Form.Key.Key -> String -> R10.Form.State.State -> List Validation -> R10.Form.FieldState.ValidationOutcome
 validateAllOf key value formState validations =
     let
-        messages : List Form.FieldState.ValidationOutcome
+        messages : List R10.Form.FieldState.ValidationOutcome
         messages =
             List.map (validateValidationSpecs key value formState) validations
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
-        Form.FieldState.MessageOk validationCodes.allOf []
+        R10.Form.FieldState.MessageOk validationCodes.allOf []
 
     else if List.all isValid messages then
-        Form.FieldState.MessageOk validationCodes.allOf []
+        R10.Form.FieldState.MessageOk validationCodes.allOf []
 
     else
-        Form.FieldState.MessageErr validationCodes.allOf []
+        R10.Form.FieldState.MessageErr validationCodes.allOf []
 
 
-validateOneOf : Form.Key.Key -> String -> Form.State.State -> List Validation -> Form.FieldState.ValidationOutcome
+validateOneOf : R10.Form.Key.Key -> String -> R10.Form.State.State -> List Validation -> R10.Form.FieldState.ValidationOutcome
 validateOneOf key value formState validations =
     let
-        messages : List Form.FieldState.ValidationOutcome
+        messages : List R10.Form.FieldState.ValidationOutcome
         messages =
             List.map (validateValidationSpecs key value formState) validations
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
-        Form.FieldState.MessageOk validationCodes.oneOf []
+        R10.Form.FieldState.MessageOk validationCodes.oneOf []
 
     else if List.any isValid messages then
-        Form.FieldState.MessageOk validationCodes.oneOf []
+        R10.Form.FieldState.MessageOk validationCodes.oneOf []
 
     else
-        Form.FieldState.MessageErr validationCodes.oneOf []
+        R10.Form.FieldState.MessageErr validationCodes.oneOf []
 
 
-validateWithMsg : Form.Key.Key -> String -> Form.FieldConf.ValidationMessage -> Form.State.State -> Validation -> Maybe Form.FieldState.ValidationOutcome
+validateWithMsg : R10.Form.Key.Key -> String -> R10.Form.FieldConf.ValidationMessage -> R10.Form.State.State -> Validation -> Maybe R10.Form.FieldState.ValidationOutcome
 validateWithMsg key value msg formState validation =
     let
-        maybeMessage : Maybe Form.FieldState.ValidationOutcome
+        maybeMessage : Maybe R10.Form.FieldState.ValidationOutcome
         maybeMessage =
             validateValidationSpecs key value formState validation
     in
@@ -167,53 +167,53 @@ validateWithMsg key value msg formState validation =
                 Just <| MessageErr msg.err []
 
 
-validateRequired : String -> Form.FieldState.ValidationOutcome
+validateRequired : String -> R10.Form.FieldState.ValidationOutcome
 validateRequired value =
     if String.isEmpty value then
-        Form.FieldState.MessageErr validationCodes.required []
+        R10.Form.FieldState.MessageErr validationCodes.required []
 
     else
-        Form.FieldState.MessageOk validationCodes.required []
+        R10.Form.FieldState.MessageOk validationCodes.required []
 
 
-validateEmpty : String -> Form.FieldState.ValidationOutcome
+validateEmpty : String -> R10.Form.FieldState.ValidationOutcome
 validateEmpty value =
     if String.isEmpty value then
-        Form.FieldState.MessageOk validationCodes.empty []
+        R10.Form.FieldState.MessageOk validationCodes.empty []
 
     else
-        Form.FieldState.MessageErr validationCodes.empty []
+        R10.Form.FieldState.MessageErr validationCodes.empty []
 
 
-validateMinLength : String -> Int -> Form.FieldState.ValidationOutcome
+validateMinLength : String -> Int -> R10.Form.FieldState.ValidationOutcome
 validateMinLength value length =
     if String.length value < length then
-        Form.FieldState.MessageErr validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
+        R10.Form.FieldState.MessageErr validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
 
     else
-        Form.FieldState.MessageOk validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
+        R10.Form.FieldState.MessageOk validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
 
 
-validateMaxLength : String -> Int -> Form.FieldState.ValidationOutcome
+validateMaxLength : String -> Int -> R10.Form.FieldState.ValidationOutcome
 validateMaxLength value length =
     if String.length value > length then
-        Form.FieldState.MessageErr validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
+        R10.Form.FieldState.MessageErr validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
 
     else
-        Form.FieldState.MessageOk validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
+        R10.Form.FieldState.MessageOk validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
 
 
-validateRegex : String -> String -> Form.FieldState.ValidationOutcome
+validateRegex : String -> String -> R10.Form.FieldState.ValidationOutcome
 validateRegex value regex =
     case runRegex regex value of
         Valid ->
-            Form.FieldState.MessageOk validationCodes.formatInvalid []
+            R10.Form.FieldState.MessageOk validationCodes.formatInvalid []
 
         NotValid ->
-            Form.FieldState.MessageErr validationCodes.formatInvalid []
+            R10.Form.FieldState.MessageErr validationCodes.formatInvalid []
 
 
-skipValidationIfEmpty : String -> Form.FieldState.ValidationOutcome -> Maybe Form.FieldState.ValidationOutcome
+skipValidationIfEmpty : String -> R10.Form.FieldState.ValidationOutcome -> Maybe R10.Form.FieldState.ValidationOutcome
 skipValidationIfEmpty value validationOutcome =
     if String.isEmpty value then
         Nothing
@@ -222,7 +222,7 @@ skipValidationIfEmpty value validationOutcome =
         Just validationOutcome
 
 
-validateValidationSpecs : Form.Key.Key -> String -> Form.State.State -> Validation -> Maybe Form.FieldState.ValidationOutcome
+validateValidationSpecs : R10.Form.Key.Key -> String -> R10.Form.State.State -> Validation -> Maybe R10.Form.FieldState.ValidationOutcome
 validateValidationSpecs key value formState validation =
     case validation of
         WithMsg msg validation_ ->
@@ -266,14 +266,14 @@ validateValidationSpecs key value formState validation =
             Nothing
 
 
-validate : Form.Key.Key -> Maybe Form.FieldConf.ValidationSpecs -> Form.State.State -> Form.FieldState.FieldState -> Form.FieldState.FieldState
+validate : R10.Form.Key.Key -> Maybe R10.Form.FieldConf.ValidationSpecs -> R10.Form.State.State -> R10.Form.FieldState.FieldState -> R10.Form.FieldState.FieldState
 validate key maybeValidationSpec formState state =
     { state
         | validation =
             (maybeValidationSpec |> Maybe.map .validation |> Maybe.withDefault [ NoValidation ])
                 |> List.map (validateValidationSpecs key state.value formState)
                 |> List.filterMap identity
-                |> Form.FieldState.Validated
+                |> R10.Form.FieldState.Validated
     }
 
 
@@ -325,7 +325,7 @@ commonValidation :
     }
 commonValidation =
     { phoneNumber =
-        Form.FieldConf.WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
+        R10.Form.FieldConf.WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
             Regex commonRegularExpression.phoneNumber
     , email =
         WithMsg { ok = validationCodes.emailFormatInvalid, err = validationCodes.emailFormatInvalid } <|

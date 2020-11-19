@@ -1,4 +1,4 @@
-module FormComponents.Single.Combobox exposing (view)
+module R10.FormComponents.Single.Combobox exposing (view)
 
 import Element exposing (..)
 import Element.Background as Background
@@ -6,16 +6,16 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Keyed as Keyed
-import FormComponents.Single.Common as Common
-import FormComponents.Single.Update
-import FormComponents.Style
-import FormComponents.Text
-import FormComponents.UI
-import FormComponents.UI.Color
-import FormComponents.UI.Palette
-import FormComponents.Utils
-import FormComponents.Utils.FocusOut
-import FormComponents.Validations
+import R10.FormComponents.Single.Common as Common
+import R10.FormComponents.Single.Update
+import R10.FormComponents.Style
+import R10.FormComponents.Text
+import R10.FormComponents.UI
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Utils
+import R10.FormComponents.Utils.FocusOut
+import R10.FormComponents.Validations
 import Html.Attributes
 import Html.Events
 import List.Extra
@@ -59,12 +59,12 @@ getMsgOnInputClick model args filteredOptions =
     let
         selectedOptionIndex : Int
         selectedOptionIndex =
-            FormComponents.Single.Update.getOptionIndex filteredOptions model.value
+            R10.FormComponents.Single.Update.getOptionIndex filteredOptions model.value
                 |> Maybe.withDefault -1
 
         selectedY : Float
         selectedY =
-            FormComponents.Single.Update.getOptionY model.scroll args selectedOptionIndex (List.length filteredOptions)
+            R10.FormComponents.Single.Update.getOptionY model.scroll args selectedOptionIndex (List.length filteredOptions)
     in
     Common.OnInputClick selectedY
 
@@ -91,13 +91,13 @@ viewComboboxDropdown model args filteredOptions =
 
         visibleMoveDown : Float
         visibleMoveDown =
-            toFloat (FormComponents.Single.Update.dropdownHingeHeight + max 0 visibleFrom * args.selectOptionHeight)
+            toFloat (R10.FormComponents.Single.Update.dropdownHingeHeight + max 0 visibleFrom * args.selectOptionHeight)
 
         visibleOptions : List ( String, Element msg )
         visibleOptions =
             if List.length filteredOptions > 0 then
                 filteredOptions
-                    |> FormComponents.Utils.listSlice visibleFrom visibleTo
+                    |> R10.FormComponents.Utils.listSlice visibleFrom visibleTo
                     |> List.map (\opt -> ( opt.value, viewComboboxOption model.value model.select args opt ))
 
             else
@@ -113,26 +113,26 @@ viewComboboxDropdown model args filteredOptions =
     in
     el
         [ width fill
-        , height <| px <| FormComponents.Single.Update.getDropdownHeight args optionsCount
+        , height <| px <| R10.FormComponents.Single.Update.getDropdownHeight args optionsCount
         , htmlAttribute <| Html.Attributes.style "z-index" "1"
         , htmlAttribute <| Html.Attributes.tabindex 0
         , htmlAttribute <| Html.Attributes.style "overscroll-behavior" "contain"
-        , htmlAttribute <| FormComponents.UI.onScroll <| (args.toMsg << Common.OnScroll)
+        , htmlAttribute <| R10.FormComponents.UI.onScroll <| (args.toMsg << Common.OnScroll)
         , htmlAttribute <| Html.Attributes.id <| Common.dropdownContentId <| args.key
-        , Font.color <| FormComponents.UI.Color.font args.palette
-        , Background.color <| FormComponents.UI.Color.surface args.palette
-        , paddingXY 0 FormComponents.Single.Update.dropdownHingeHeight
+        , Font.color <| R10.FormComponents.UI.Color.font args.palette
+        , Background.color <| R10.FormComponents.UI.Color.surface args.palette
+        , paddingXY 0 R10.FormComponents.Single.Update.dropdownHingeHeight
         , scrollbarX
         , Border.rounded
             (case args.style of
-                FormComponents.Style.Filled ->
+                R10.FormComponents.Style.Filled ->
                     0
 
-                FormComponents.Style.Outlined ->
+                R10.FormComponents.Style.Outlined ->
                     8
             )
         , Border.shadow
-            { color = FormComponents.UI.Color.onSurfaceA 0.1 args.palette
+            { color = R10.FormComponents.UI.Color.onSurfaceA 0.1 args.palette
             , offset = ( 0, 0 )
             , blur = 3
             , size = 1
@@ -144,13 +144,13 @@ viewComboboxDropdown model args filteredOptions =
         el [ height <| px contentHeight, width fill ] none
 
 
-comboboxOptionNoResults : { a | palette : FormComponents.UI.Palette.Palette, selectOptionHeight : Int } -> Element msg
+comboboxOptionNoResults : { a | palette : R10.FormComponents.UI.Palette.Palette, selectOptionHeight : Int } -> Element msg
 comboboxOptionNoResults { palette, selectOptionHeight } =
     el
         [ width fill
         , height <| px selectOptionHeight
         , paddingEach { top = 0, right = 0, bottom = 0, left = 12 }
-        , Font.color <| FormComponents.UI.Color.onSurfaceA 0.5 palette
+        , Font.color <| R10.FormComponents.UI.Color.onSurfaceA 0.5 palette
         ]
     <|
         el [ centerY ] <|
@@ -171,24 +171,24 @@ viewComboboxOption value select args opt =
         getBackgroundColor : Color
         getBackgroundColor =
             if isActiveValue && isSelected_ then
-                FormComponents.UI.Color.primaryVariantA 0.13 args.palette
+                R10.FormComponents.UI.Color.primaryVariantA 0.13 args.palette
 
             else if isActiveValue then
-                FormComponents.UI.Color.primaryVariantA 0.07 args.palette
+                R10.FormComponents.UI.Color.primaryVariantA 0.07 args.palette
 
             else if isSelected_ then
-                FormComponents.UI.Color.onSurfaceA 0.07 args.palette
+                R10.FormComponents.UI.Color.onSurfaceA 0.07 args.palette
 
             else
-                FormComponents.UI.Color.onSurfaceA 0 args.palette
+                R10.FormComponents.UI.Color.onSurfaceA 0 args.palette
 
         getShadowColor : Color
         getShadowColor =
             if isActiveValue then
-                FormComponents.UI.Color.primaryVariantA 0.1 args.palette
+                R10.FormComponents.UI.Color.primaryVariantA 0.1 args.palette
 
             else
-                FormComponents.UI.Color.onSurfaceA 0.05 args.palette
+                R10.FormComponents.UI.Color.onSurfaceA 0.05 args.palette
     in
     el
         [ width fill
@@ -224,13 +224,13 @@ view attrs model args =
             , msgOnFocus : msg
             , msgOnLoseFocus : Maybe msg
             , msgOnTogglePasswordShow : Maybe a
-            , palette : FormComponents.UI.Palette.Palette
+            , palette : R10.FormComponents.UI.Palette.Palette
             , requiredLabel : Maybe String
             , showPassword : Bool
-            , style : FormComponents.Style.Style
-            , textType : FormComponents.Text.TextType
+            , style : R10.FormComponents.Style.Style
+            , textType : R10.FormComponents.Text.TextType
             , trailingIcon : Maybe (Element msg)
-            , validation : FormComponents.Validations.Validation
+            , validation : R10.FormComponents.Validations.Validation
             , value : String
             }
         textArgs =
@@ -245,7 +245,7 @@ view attrs model args =
             , palette = args.palette
             , style = args.style
             , showPassword = False
-            , textType = FormComponents.Text.TextPlain
+            , textType = R10.FormComponents.Text.TextPlain
             , leadingIcon = args.leadingIcon
             , trailingIcon = args.trailingIcon
             , value = displayValue
@@ -263,19 +263,19 @@ view attrs model args =
                         []
 
                     else
-                        [ Font.color <| FormComponents.UI.Color.fontA 0.6 args.palette ]
+                        [ Font.color <| R10.FormComponents.UI.Color.fontA 0.6 args.palette ]
                    )
     in
-    FormComponents.Text.view
+    R10.FormComponents.Text.view
         ([ htmlAttribute <|
             Html.Events.on "focusout"
-                (FormComponents.Utils.FocusOut.onFocusOut (Common.dropdownContentId args.key) <|
+                (R10.FormComponents.Utils.FocusOut.onFocusOut (Common.dropdownContentId args.key) <|
                     args.toMsg <|
                         Common.OnLoseFocus model.value
                 )
          , htmlAttribute <|
-            FormComponents.UI.onKeyPressBatch <|
-                [ ( FormComponents.UI.keyCode.down
+            R10.FormComponents.UI.onKeyPressBatch <|
+                [ ( R10.FormComponents.UI.keyCode.down
                   , Common.OnArrowDown
                         { selectOptionHeight = args.selectOptionHeight
                         , maxDisplayCount = args.maxDisplayCount
@@ -283,7 +283,7 @@ view attrs model args =
                         }
                         |> args.toMsg
                   )
-                , ( FormComponents.UI.keyCode.up
+                , ( R10.FormComponents.UI.keyCode.up
                   , Common.OnArrowUp
                         { selectOptionHeight = args.selectOptionHeight
                         , maxDisplayCount = args.maxDisplayCount
@@ -293,10 +293,10 @@ view attrs model args =
                   )
                 ]
                     ++ (if model.opened then
-                            [ ( FormComponents.UI.keyCode.esc
+                            [ ( R10.FormComponents.UI.keyCode.esc
                               , args.toMsg Common.OnEsc
                               )
-                            , ( FormComponents.UI.keyCode.enter
+                            , ( R10.FormComponents.UI.keyCode.enter
                               , args.toMsg <|
                                     Common.OnOptionSelect <|
                                         Common.getSelectedOrFirst filteredOptions model.value model.select

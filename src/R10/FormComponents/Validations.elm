@@ -1,4 +1,4 @@
-module FormComponents.Validations exposing
+module R10.FormComponents.Validations exposing
     ( Validation(..)
     , ValidationIcon(..)
     , ValidationMessage(..)
@@ -10,9 +10,9 @@ module FormComponents.Validations exposing
 
 import Element exposing (..)
 import Element.Font as Font
-import FormComponents.UI exposing (icons)
-import FormComponents.UI.Color
-import FormComponents.UI.Palette
+import R10.FormComponents.UI exposing (icons)
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Palette
 import Html
 import Html.Attributes
 
@@ -79,7 +79,7 @@ extraCss =
     ".markdown p {margin: 0}"
 
 
-viewValidationIcon : FormComponents.UI.Palette.Palette -> ValidationIcon -> { validIcon : Element msg, invalidIcon : Element msg }
+viewValidationIcon : R10.FormComponents.UI.Palette.Palette -> ValidationIcon -> { validIcon : Element msg, invalidIcon : Element msg }
 viewValidationIcon palette validationIcon =
     let
         iconContainer : Html.Html msg -> Element msg
@@ -93,39 +93,39 @@ viewValidationIcon palette validationIcon =
             }
 
         ClearOrCheck ->
-            { invalidIcon = iconContainer <| icons.validation_clear_ (FormComponents.UI.Color.toCssString <| FormComponents.UI.Color.error palette) 24
-            , validIcon = iconContainer <| icons.validation_check_ (FormComponents.UI.Color.toCssString <| FormComponents.UI.Color.success palette) 24
+            { invalidIcon = iconContainer <| icons.validation_clear_ (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.error palette) 24
+            , validIcon = iconContainer <| icons.validation_check_ (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.success palette) 24
             }
 
         ErrorOrCheck ->
-            { invalidIcon = iconContainer <| icons.validation_error_ (FormComponents.UI.Color.toCssString <| FormComponents.UI.Color.error palette) 24
-            , validIcon = iconContainer <| icons.validation_check_ (FormComponents.UI.Color.toCssString <| FormComponents.UI.Color.success palette) 24
+            { invalidIcon = iconContainer <| icons.validation_error_ (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.error palette) 24
+            , validIcon = iconContainer <| icons.validation_check_ (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.success palette) 24
             }
 
 
-viewValidationMessage : FormComponents.UI.Palette.Palette -> ValidationIcon -> ValidationMessage -> Element msg
+viewValidationMessage : R10.FormComponents.UI.Palette.Palette -> ValidationIcon -> ValidationMessage -> Element msg
 viewValidationMessage palette validationIcon validationMessage =
     case validationMessage of
         MessageOk string ->
             row [ width fill, height fill, spacing 4 ]
                 [ .validIcon <| viewValidationIcon palette validationIcon
-                , FormComponents.UI.viewHelperText
+                , R10.FormComponents.UI.viewHelperText
                     palette
-                    [ Font.color <| FormComponents.UI.Color.success palette ]
+                    [ Font.color <| R10.FormComponents.UI.Color.success palette ]
                     (Just string)
                 ]
 
         MessageErr string ->
             row [ width fill, height fill, spacing 4 ]
                 [ .invalidIcon <| viewValidationIcon palette validationIcon
-                , FormComponents.UI.viewHelperText
+                , R10.FormComponents.UI.viewHelperText
                     palette
-                    [ Font.color <| FormComponents.UI.Color.error palette ]
+                    [ Font.color <| R10.FormComponents.UI.Color.error palette ]
                     (Just string)
                 ]
 
 
-viewValidation : FormComponents.UI.Palette.Palette -> ValidationIcon -> Validation -> Element msg
+viewValidation : R10.FormComponents.UI.Palette.Palette -> ValidationIcon -> Validation -> Element msg
 viewValidation palette validationIcon validation =
     case validation of
         NotYetValidated ->
@@ -175,7 +175,7 @@ animatedList elements =
          , transition
          ]
             ++ (if List.length elements > 0 then
-                    [ paddingEach { top = FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ]
+                    [ paddingEach { top = R10.FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ]
 
                 else
                     [ padding 0 ]

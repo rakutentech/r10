@@ -1,4 +1,4 @@
-module FormComponents.Single.Radio exposing (viewRadio)
+module R10.FormComponents.Single.Radio exposing (viewRadio)
 
 import Element exposing (..)
 import Element.Background as Background
@@ -6,10 +6,10 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
-import FormComponents.Single.Common as Common
-import FormComponents.UI
-import FormComponents.UI.Color
-import FormComponents.UI.Palette
+import R10.FormComponents.Single.Common as Common
+import R10.FormComponents.UI
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Palette
 import Html.Attributes
 
 
@@ -29,7 +29,7 @@ isSelected optionState =
 viewRadioOption :
     { a
         | disabled : Bool
-        , palette : FormComponents.UI.Palette.Palette
+        , palette : R10.FormComponents.UI.Palette.Palette
         , focused : Bool
         , value : String
         , label : String
@@ -42,26 +42,26 @@ viewRadioOption { disabled, palette, focused, value, label } optionState =
             case ( isSelected optionState, disabled ) of
                 ( True, True ) ->
                     { innerCircleSize = 10
-                    , innerCircleColor = FormComponents.UI.Color.primaryA 0.5 palette
-                    , outerCircleColor = FormComponents.UI.Color.primaryA 0.5 palette
+                    , innerCircleColor = R10.FormComponents.UI.Color.primaryA 0.5 palette
+                    , outerCircleColor = R10.FormComponents.UI.Color.primaryA 0.5 palette
                     }
 
                 ( True, False ) ->
                     { innerCircleSize = 10
-                    , innerCircleColor = FormComponents.UI.Color.primaryA 1 palette
-                    , outerCircleColor = FormComponents.UI.Color.primaryA 1 palette
+                    , innerCircleColor = R10.FormComponents.UI.Color.primaryA 1 palette
+                    , outerCircleColor = R10.FormComponents.UI.Color.primaryA 1 palette
                     }
 
                 ( False, True ) ->
                     { innerCircleSize = 0
-                    , innerCircleColor = FormComponents.UI.Color.primaryA 0 palette
-                    , outerCircleColor = FormComponents.UI.Color.containerA 0.5 palette
+                    , innerCircleColor = R10.FormComponents.UI.Color.primaryA 0 palette
+                    , outerCircleColor = R10.FormComponents.UI.Color.containerA 0.5 palette
                     }
 
                 ( False, False ) ->
                     { innerCircleSize = 0
-                    , innerCircleColor = FormComponents.UI.Color.primaryA 0 palette
-                    , outerCircleColor = FormComponents.UI.Color.containerA 1 palette
+                    , innerCircleColor = R10.FormComponents.UI.Color.primaryA 0 palette
+                    , outerCircleColor = R10.FormComponents.UI.Color.containerA 1 palette
                     }
 
         innerCircle : Element msg
@@ -104,7 +104,7 @@ viewRadioOption { disabled, palette, focused, value, label } optionState =
                     []
                )
         )
-        [ FormComponents.UI.viewSelectShadow
+        [ R10.FormComponents.UI.viewSelectShadow
             { palette = palette
             , focused = focused && isSelected optionState
             , disabled = disabled
@@ -128,7 +128,7 @@ viewRadioOptions args focused fieldOption =
         )
 
 
-viewRadioLabel : FormComponents.UI.Palette.Palette -> String -> Maybe String -> Element msg
+viewRadioLabel : R10.FormComponents.UI.Palette.Palette -> String -> Maybe String -> Element msg
 viewRadioLabel palette label helperText =
     if label == "" then
         none
@@ -136,15 +136,15 @@ viewRadioLabel palette label helperText =
     else
         column
             [ paddingEach { top = 10, right = 0, bottom = 24, left = 10 }
-            , FormComponents.UI.fontSizeSubTitle
-            , spacing FormComponents.UI.genericSpacing
+            , R10.FormComponents.UI.fontSizeSubTitle
+            , spacing R10.FormComponents.UI.genericSpacing
             ]
             [ paragraph [] [ text label ]
-            , FormComponents.UI.viewHelperText
+            , R10.FormComponents.UI.viewHelperText
                 palette
                 [ Font.size 14
                 , alpha 0.5
-                , paddingEach { top = FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
+                , paddingEach { top = R10.FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
                 ]
                 helperText
             ]

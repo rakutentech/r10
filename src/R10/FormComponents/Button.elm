@@ -1,4 +1,4 @@
-module FormComponents.Button exposing
+module R10.FormComponents.Button exposing
     ( Args
     , Button(..)
     , view
@@ -9,10 +9,10 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
-import FormComponents.Style
-import FormComponents.UI
-import FormComponents.UI.Color
-import FormComponents.UI.Palette
+import R10.FormComponents.Style
+import R10.FormComponents.UI
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Palette
 import Html.Attributes
 
 
@@ -113,10 +113,10 @@ getHeight args =
 getBorderRadius : Args msg -> number
 getBorderRadius args =
     case args.style of
-        FormComponents.Style.Filled ->
+        R10.FormComponents.Style.Filled ->
             0
 
-        FormComponents.Style.Outlined ->
+        R10.FormComponents.Style.Outlined ->
             case args.type_ of
                 Icon ->
                     2
@@ -130,19 +130,19 @@ getBackgroundColor args =
     case args.type_ of
         Contained ->
             if args.disabled then
-                FormComponents.UI.Color.onSurfaceA 0.24 args.palette
+                R10.FormComponents.UI.Color.onSurfaceA 0.24 args.palette
 
             else
-                FormComponents.UI.Color.primary args.palette
+                R10.FormComponents.UI.Color.primary args.palette
 
         Outlined ->
-            FormComponents.UI.Color.primaryA 0 args.palette
+            R10.FormComponents.UI.Color.primaryA 0 args.palette
 
         Text ->
-            FormComponents.UI.Color.primaryA 0 args.palette
+            R10.FormComponents.UI.Color.primaryA 0 args.palette
 
         Icon ->
-            FormComponents.UI.Color.surface args.palette
+            R10.FormComponents.UI.Color.surface args.palette
 
 
 getFontColor : Args msg -> Color
@@ -150,47 +150,47 @@ getFontColor args =
     case args.type_ of
         Contained ->
             if args.disabled then
-                FormComponents.UI.Color.font args.palette
+                R10.FormComponents.UI.Color.font args.palette
 
             else
-                FormComponents.UI.Color.onPrimary args.palette
+                R10.FormComponents.UI.Color.onPrimary args.palette
 
         Outlined ->
             if args.disabled then
-                FormComponents.UI.Color.font args.palette
+                R10.FormComponents.UI.Color.font args.palette
 
             else
-                FormComponents.UI.Color.primary args.palette
+                R10.FormComponents.UI.Color.primary args.palette
 
         Text ->
             if args.disabled then
-                FormComponents.UI.Color.font args.palette
+                R10.FormComponents.UI.Color.font args.palette
 
             else
-                FormComponents.UI.Color.primary args.palette
+                R10.FormComponents.UI.Color.primary args.palette
 
         Icon ->
-            FormComponents.UI.Color.font args.palette
+            R10.FormComponents.UI.Color.font args.palette
 
 
 getBorderColor : Args msg -> Color
 getBorderColor args =
     case args.type_ of
         Contained ->
-            FormComponents.UI.Color.primaryA 0 args.palette
+            R10.FormComponents.UI.Color.primaryA 0 args.palette
 
         Outlined ->
             if args.disabled then
-                FormComponents.UI.Color.onSurfaceA 0.5 args.palette
+                R10.FormComponents.UI.Color.onSurfaceA 0.5 args.palette
 
             else
-                FormComponents.UI.Color.primary args.palette
+                R10.FormComponents.UI.Color.primary args.palette
 
         Text ->
-            FormComponents.UI.Color.primaryA 0 args.palette
+            R10.FormComponents.UI.Color.primaryA 0 args.palette
 
         Icon ->
-            FormComponents.UI.Color.background args.palette
+            R10.FormComponents.UI.Color.background args.palette
 
 
 getAccentColor : Args msg -> Bool -> Bool -> Color
@@ -209,16 +209,16 @@ getAccentColor args isHovered isFocused =
     in
     case args.type_ of
         Contained ->
-            FormComponents.UI.Color.surfaceA (0.08 * opacity) args.palette
+            R10.FormComponents.UI.Color.surfaceA (0.08 * opacity) args.palette
 
         Outlined ->
-            FormComponents.UI.Color.primaryA (0.08 * opacity) args.palette
+            R10.FormComponents.UI.Color.primaryA (0.08 * opacity) args.palette
 
         Text ->
-            FormComponents.UI.Color.onSurfaceA (0.08 * opacity) args.palette
+            R10.FormComponents.UI.Color.onSurfaceA (0.08 * opacity) args.palette
 
         Icon ->
-            FormComponents.UI.Color.onSurfaceA (0.04 * opacity) args.palette
+            R10.FormComponents.UI.Color.onSurfaceA (0.04 * opacity) args.palette
 
 
 getRippleCls : Args msg -> String
@@ -244,8 +244,8 @@ type alias Args msg =
     , icon : Maybe (Element msg)
     , text : String
     , onClick : msg
-    , palette : FormComponents.UI.Palette.Palette
-    , style : FormComponents.Style.Style
+    , palette : R10.FormComponents.UI.Palette.Palette
+    , style : R10.FormComponents.Style.Style
     , disabled : Bool
     }
 
@@ -298,7 +298,7 @@ view attrs args =
 
                     -- button should be activated by any "selection" key or click
                     , htmlAttribute <| Html.Attributes.tabindex 0
-                    , htmlAttribute <| FormComponents.UI.onSelectKey args.onClick
+                    , htmlAttribute <| R10.FormComponents.UI.onSelectKey args.onClick
                     ]
                         ++ attrs
                )

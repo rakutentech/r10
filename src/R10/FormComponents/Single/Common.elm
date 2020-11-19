@@ -1,4 +1,4 @@
-module FormComponents.Single.Common exposing
+module R10.FormComponents.Single.Common exposing
     ( Args
     , FieldOption
     , Model
@@ -13,9 +13,9 @@ module FormComponents.Single.Common exposing
     )
 
 import Element exposing (..)
-import FormComponents.Style
-import FormComponents.UI.Palette
-import FormComponents.Validations
+import R10.FormComponents.Style
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Validations
 
 
 
@@ -69,7 +69,7 @@ type alias FieldOption =
 
 type alias Args msg =
     -- Stuff that change
-    { validation : FormComponents.Validations.Validation
+    { validation : R10.FormComponents.Validations.Validation
 
     ---- Messages
     , toMsg : Msg -> msg
@@ -79,9 +79,9 @@ type alias Args msg =
     , helperText : Maybe String
     , disabled : Bool
     , requiredLabel : Maybe String
-    , style : FormComponents.Style.Style
+    , style : R10.FormComponents.Style.Style
     , key : String
-    , palette : FormComponents.UI.Palette.Palette
+    , palette : R10.FormComponents.UI.Palette.Palette
 
     -- Specific
     , singleType : TypeSingle

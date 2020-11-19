@@ -1,15 +1,15 @@
-module Form.MakerForValues exposing
+module R10.Form.MakerForValues exposing
     ( Outcome
     , maker
     , viewEntityMulti
     )
 
-import Form.Conf
-import Form.Dict
-import Form.FieldState
-import Form.Key
-import Form.State
-import Form.StateForValues
+import R10.Form.Conf
+import R10.Form.Dict
+import R10.Form.FieldState
+import R10.Form.Key
+import R10.Form.State
+import R10.Form.StateForValues
 import Set
 
 
@@ -22,7 +22,7 @@ import Set
 
 
 type alias Outcome =
-    Form.StateForValues.Entity
+    R10.Form.StateForValues.Entity
 
 
 
@@ -34,33 +34,33 @@ type alias Outcome =
 
 
 viewEntityMulti :
-    Form.Key.Key
-    -> Form.State.State
-    -> List Form.Conf.Entity
+    R10.Form.Key.Key
+    -> R10.Form.State.State
+    -> List R10.Form.Conf.Entity
     -> List Outcome
 viewEntityMulti key formState entities =
     let
         quantity : Int
         quantity =
-            Maybe.withDefault 1 <| Form.Dict.get key formState.multiplicableQuantities
+            Maybe.withDefault 1 <| R10.Form.Dict.get key formState.multiplicableQuantities
     in
     List.concat <|
         List.indexedMap
             (\index _ ->
                 let
-                    newKey : Form.Key.Key
+                    newKey : R10.Form.Key.Key
                     newKey =
-                        Form.Key.composeKey key (String.fromInt index)
+                        R10.Form.Key.composeKey key (String.fromInt index)
 
                     removed : Bool
                     removed =
-                        Set.member (Form.Key.toString newKey) formState.removed
+                        Set.member (R10.Form.Key.toString newKey) formState.removed
                 in
                 if removed then
                     []
 
                 else
-                    [ Form.StateForValues.EntityIndex index <| maker newKey formState entities ]
+                    [ R10.Form.StateForValues.EntityIndex index <| maker newKey formState entities ]
             )
             (List.repeat quantity ())
 
@@ -74,9 +74,9 @@ viewEntityMulti key formState entities =
 
 
 maker :
-    Form.Key.Key
-    -> Form.State.State
-    -> Form.Conf.Conf
+    R10.Form.Key.Key
+    -> R10.Form.State.State
+    -> R10.Form.Conf.Conf
     -> List Outcome
 maker key formState formConf =
     --
@@ -90,37 +90,37 @@ maker key formState formConf =
         List.map
             (\entity ->
                 case entity of
-                    Form.Conf.EntityWrappable _ entities ->
+                    R10.Form.Conf.EntityWrappable _ entities ->
                         maker key formState entities
 
-                    Form.Conf.EntityWithBorder _ entities ->
+                    R10.Form.Conf.EntityWithBorder _ entities ->
                         maker key formState entities
 
-                    Form.Conf.EntityNormal _ entities ->
+                    R10.Form.Conf.EntityNormal _ entities ->
                         maker key formState entities
 
-                    Form.Conf.EntityWithTabs _ titleEntityList ->
+                    R10.Form.Conf.EntityWithTabs _ titleEntityList ->
                         maker key formState (titleEntityList |> List.map Tuple.second)
 
-                    Form.Conf.EntityMulti key_ entities ->
-                        [ Form.StateForValues.EntityMulti key_ <| viewEntityMulti key formState entities ]
+                    R10.Form.Conf.EntityMulti key_ entities ->
+                        [ R10.Form.StateForValues.EntityMulti key_ <| viewEntityMulti key formState entities ]
 
-                    Form.Conf.EntityField fieldConf ->
+                    R10.Form.Conf.EntityField fieldConf ->
                         let
-                            newKey : Form.Key.Key
+                            newKey : R10.Form.Key.Key
                             newKey =
-                                Form.Key.composeKey key fieldConf.id
+                                R10.Form.Key.composeKey key fieldConf.id
 
-                            fieldState : Form.FieldState.FieldState
+                            fieldState : R10.Form.FieldState.FieldState
                             fieldState =
-                                Maybe.withDefault Form.FieldState.init <| Form.Dict.get newKey formState.fieldsState
+                                Maybe.withDefault R10.Form.FieldState.init <| R10.Form.Dict.get newKey formState.fieldsState
                         in
-                        [ Form.StateForValues.EntityField fieldConf.id fieldState.value ]
+                        [ R10.Form.StateForValues.EntityField fieldConf.id fieldState.value ]
 
-                    Form.Conf.EntityTitle _ _ ->
+                    R10.Form.Conf.EntityTitle _ _ ->
                         []
 
-                    Form.Conf.EntitySubTitle _ _ ->
+                    R10.Form.Conf.EntitySubTitle _ _ ->
                         []
             )
             formConf

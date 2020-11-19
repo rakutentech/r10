@@ -1,4 +1,4 @@
-module Form.FieldConf exposing
+module R10.Form.FieldConf exposing
     ( FieldConf
     , FieldOption
     , FieldType(..)
@@ -20,7 +20,7 @@ module Form.FieldConf exposing
     , initValidationSpecs
     )
 
-import Form.Key
+import R10.Form.Key
 import Json.Decode as D
 import Json.Encode as E
 import Json.Encode.Extra as E
@@ -36,12 +36,12 @@ type Validation
     = NoValidation
       -- Modifications validations
     | WithMsg ValidationMessage Validation -- MsgOk MsgErr validation; changes message of the validation
-    | Dependant Form.Key.KeyAsString Validation -- changes context of the validation
+    | Dependant R10.Form.Key.KeyAsString Validation -- changes context of the validation
     | OneOf (List Validation) -- Sees set of underlying validation like one rule. Makes all rules valid if ANY of the rules is valid, otherwise make them invalid.
     | AllOf (List Validation) -- Sees set of underlying validation like one rule. Makes all rules valid if ALL of the rules is valid, otherwise make them invalid.
     | Not Validation -- Inverts result of the validation
       -- Current field validations
-    | Equal Form.Key.KeyAsString -- Pass if the value is equal to the value
+    | Equal R10.Form.Key.KeyAsString -- Pass if the value is equal to the value
     | Required
     | Empty -- can be used in combined validations to create rules like "if field X is not empty, then Required" ( OneOf [ Required, Dependant "X"  ] )
     | MinLength Int

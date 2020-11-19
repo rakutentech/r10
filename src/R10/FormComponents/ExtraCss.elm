@@ -1,22 +1,22 @@
-module FormComponents.ExtraCss exposing (extraCss)
+module R10.FormComponents.ExtraCss exposing (extraCss)
 
 import Element
-import FormComponents.Single
-import FormComponents.Text
-import FormComponents.UI.Color
-import FormComponents.UI.Palette
-import FormComponents.Validations
+import R10.FormComponents.Single
+import R10.FormComponents.Text
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Validations
 
 
-extraCss : FormComponents.UI.Palette.Palette -> String
+extraCss : R10.FormComponents.UI.Palette.Palette -> String
 extraCss palette =
-    FormComponents.Text.extraCss
-        ++ FormComponents.Single.extraCss
-        ++ FormComponents.Validations.extraCss
+    R10.FormComponents.Text.extraCss
+        ++ R10.FormComponents.Single.extraCss
+        ++ R10.FormComponents.Validations.extraCss
         ++ ripple
-            (FormComponents.UI.Color.onSurface palette)
-            (FormComponents.UI.Color.primary palette)
-            (FormComponents.UI.Color.onPrimary palette)
+            (R10.FormComponents.UI.Color.onSurface palette)
+            (R10.FormComponents.UI.Color.primary palette)
+            (R10.FormComponents.UI.Color.onPrimary palette)
 
 
 ripple : Element.Color -> Element.Color -> Element.Color -> String
@@ -24,15 +24,15 @@ ripple onSurface primary onPrimary =
     let
         onSurfaceStr : String
         onSurfaceStr =
-            onSurface |> FormComponents.UI.Color.toCssString
+            onSurface |> R10.FormComponents.UI.Color.toCssString
 
         primaryStr : String
         primaryStr =
-            primary |> FormComponents.UI.Color.toCssString
+            primary |> R10.FormComponents.UI.Color.toCssString
 
         onPrimaryStr : String
         onPrimaryStr =
-            onPrimary |> FormComponents.UI.Color.toCssString
+            onPrimary |> R10.FormComponents.UI.Color.toCssString
     in
     rippleStr_ "ripple" onSurfaceStr
         ++ rippleStr_ "ripple-primary" primaryStr

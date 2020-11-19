@@ -1,4 +1,4 @@
-module FormComponents.Single exposing
+module R10.FormComponents.Single exposing
     ( defaultSearchFn
     , defaultToOptionEl
     , defaultTrailingIcon
@@ -11,18 +11,18 @@ module FormComponents.Single exposing
 
 import Element exposing (..)
 import Element.Background as Background
-import FormComponents.IconButton
-import FormComponents.Single.Combobox
-import FormComponents.Single.Common as Common
-import FormComponents.Single.Radio
-import FormComponents.Single.Update
-import FormComponents.Style
-import FormComponents.UI
-import FormComponents.UI.Color
-import FormComponents.UI.Palette
-import FormComponents.Utils
-import FormComponents.Utils.SimpleMarkdown
-import FormComponents.Validations
+import R10.FormComponents.IconButton
+import R10.FormComponents.Single.Combobox
+import R10.FormComponents.Single.Common as Common
+import R10.FormComponents.Single.Radio
+import R10.FormComponents.Single.Update
+import R10.FormComponents.Style
+import R10.FormComponents.UI
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Utils
+import R10.FormComponents.Utils.SimpleMarkdown
+import R10.FormComponents.Validations
 import Html.Attributes
 import String.Extra
 
@@ -66,7 +66,7 @@ defaultToOptionEl { search, msgOnSelect } { label, value } =
     row
         [ width fill
         , height fill
-        , FormComponents.UI.onClickWithStopPropagation <| msgOnSelect value
+        , R10.FormComponents.UI.onClickWithStopPropagation <| msgOnSelect value
         , htmlAttribute <| Html.Attributes.style "z-index" "0"
         , pointer
         , paddingXY 12 0
@@ -75,12 +75,12 @@ defaultToOptionEl { search, msgOnSelect } { label, value } =
         , htmlAttribute <| Html.Attributes.style "mask-image" "linear-gradient(right, rgba(255,255,0,0), rgba(255,255,0, 1) 16px)"
         , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
         ]
-        (withBold |> FormComponents.Utils.SimpleMarkdown.elementMarkdown)
+        (withBold |> R10.FormComponents.Utils.SimpleMarkdown.elementMarkdown)
 
 
-defaultTrailingIcon : { a | opened : Bool, palette : FormComponents.UI.Palette.Palette } -> Element msg
+defaultTrailingIcon : { a | opened : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
 defaultTrailingIcon { opened, palette } =
-    FormComponents.IconButton.view []
+    R10.FormComponents.IconButton.view []
         { msgOnClick = Nothing
         , icon =
             el
@@ -96,8 +96,8 @@ defaultTrailingIcon { opened, palette } =
                 ]
             <|
                 html <|
-                    FormComponents.UI.icons.combobox_arrow_
-                        (FormComponents.UI.Color.label palette |> FormComponents.UI.Color.toCssString)
+                    R10.FormComponents.UI.icons.combobox_arrow_
+                        (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString)
                         24
         , palette = palette
         , size = 24
@@ -117,13 +117,13 @@ normalizeString =
 insertBold : List Int -> String -> String
 insertBold indexes string =
     string
-        |> FormComponents.Utils.stringInsertAtMulti "**" indexes
+        |> R10.FormComponents.Utils.stringInsertAtMulti "**" indexes
         |> String.Extra.surround "**"
 
 
 update : Common.Msg -> Common.Model -> ( Common.Model, Cmd Common.Msg )
 update =
-    FormComponents.Single.Update.update
+    R10.FormComponents.Single.Update.update
 
 
 view :
@@ -136,11 +136,11 @@ view :
         , disabled : Bool
         , requiredLabel : Maybe String
         , key : String
-        , style : FormComponents.Style.Style
-        , palette : FormComponents.UI.Palette.Palette
+        , style : R10.FormComponents.Style.Style
+        , palette : R10.FormComponents.UI.Palette.Palette
         , singleType : Common.TypeSingle
         , fieldOptions : List Common.FieldOption
-        , validation : FormComponents.Validations.Validation
+        , validation : R10.FormComponents.Validations.Validation
         , toMsg : Common.Msg -> msg
         }
     -> Element msg
@@ -173,10 +173,10 @@ view attrs model conf =
     in
     case args.singleType of
         Common.SingleCombobox ->
-            FormComponents.Single.Combobox.view attrs model args
+            R10.FormComponents.Single.Combobox.view attrs model args
 
         Common.SingleRadio ->
-            FormComponents.Single.Radio.viewRadio attrs model args
+            R10.FormComponents.Single.Radio.viewRadio attrs model args
 
 
 viewCustom :
@@ -189,11 +189,11 @@ viewCustom :
         , disabled : Bool
         , requiredLabel : Maybe String
         , key : String
-        , style : FormComponents.Style.Style
-        , palette : FormComponents.UI.Palette.Palette
+        , style : R10.FormComponents.Style.Style
+        , palette : R10.FormComponents.UI.Palette.Palette
         , singleType : Common.TypeSingle
         , fieldOptions : List Common.FieldOption
-        , validation : FormComponents.Validations.Validation
+        , validation : R10.FormComponents.Validations.Validation
         , toMsg : Common.Msg -> msg
         , searchFn : String -> Common.FieldOption -> Bool
         , toOptionEl : Common.FieldOption -> Element msg
@@ -228,7 +228,7 @@ viewCustom attrs model conf =
     in
     case args.singleType of
         Common.SingleCombobox ->
-            FormComponents.Single.Combobox.view attrs model args
+            R10.FormComponents.Single.Combobox.view attrs model args
 
         Common.SingleRadio ->
-            FormComponents.Single.Radio.viewRadio attrs model args
+            R10.FormComponents.Single.Radio.viewRadio attrs model args

@@ -1,4 +1,4 @@
-module FormComponents.Phone exposing
+module R10.FormComponents.Phone exposing
     ( countryOptions
     , defaultTrailingIcon
     , extraCss
@@ -8,16 +8,16 @@ module FormComponents.Phone exposing
 import Element exposing (..)
 import Element.Events as Events
 import Element.Font as Font
-import FormComponents.IconButton
-import FormComponents.Phone.Common as Common
-import FormComponents.Phone.Country exposing (Country)
-import FormComponents.Phone.Update
-import FormComponents.Phone.Views
-import FormComponents.Style
-import FormComponents.UI
-import FormComponents.UI.Color
-import FormComponents.UI.Palette
-import FormComponents.Validations
+import R10.FormComponents.IconButton
+import R10.FormComponents.Phone.Common as Common
+import R10.FormComponents.Phone.Country exposing (Country)
+import R10.FormComponents.Phone.Update
+import R10.FormComponents.Phone.Views
+import R10.FormComponents.Style
+import R10.FormComponents.UI
+import R10.FormComponents.UI.Color
+import R10.FormComponents.UI.Palette
+import R10.FormComponents.Validations
 import Html.Attributes
 
 
@@ -34,9 +34,9 @@ extraCss =
     ""
 
 
-defaultTrailingIcon : { a | opened : Bool, palette : FormComponents.UI.Palette.Palette } -> Element msg
+defaultTrailingIcon : { a | opened : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
 defaultTrailingIcon { opened, palette } =
-    FormComponents.IconButton.view []
+    R10.FormComponents.IconButton.view []
         { msgOnClick = Nothing
         , icon =
             el
@@ -52,8 +52,8 @@ defaultTrailingIcon { opened, palette } =
                 ]
             <|
                 html <|
-                    FormComponents.UI.icons.combobox_arrow_
-                        (FormComponents.UI.Color.label palette |> FormComponents.UI.Color.toCssString)
+                    R10.FormComponents.UI.icons.combobox_arrow_
+                        (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString)
                         24
         , palette = palette
         , size = 24
@@ -66,7 +66,7 @@ defaultTrailingIcon { opened, palette } =
 
 update : Common.Msg -> Common.Model -> ( Common.Model, Cmd Common.Msg )
 update =
-    FormComponents.Phone.Update.update
+    R10.FormComponents.Phone.Update.update
 
 
 getFlagIcon : Int -> Maybe Country -> Element msg
@@ -77,10 +77,10 @@ getFlagIcon size maybeCountry =
         text
             (case maybeCountry of
                 Just country ->
-                    FormComponents.Phone.Country.toFlag country
+                    R10.FormComponents.Phone.Country.toFlag country
 
                 Nothing ->
-                    FormComponents.Phone.Country.emptyFlag
+                    R10.FormComponents.Phone.Country.emptyFlag
             )
 
 
@@ -106,19 +106,19 @@ viewOptionEl { search, msgOnSelect } country =
         , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
         ]
         [ getFlagIcon 24 <| Just country
-        , text (FormComponents.Phone.Country.toString country)
-        , el [ alpha 0.5 ] <| text ("(" ++ FormComponents.Phone.Country.toCountryCode country ++ ")")
+        , text (R10.FormComponents.Phone.Country.toString country)
+        , el [ alpha 0.5 ] <| text ("(" ++ R10.FormComponents.Phone.Country.toCountryCode country ++ ")")
         ]
 
 
-getFlagButton : FormComponents.UI.Palette.Palette -> String -> msg -> Element msg
+getFlagButton : R10.FormComponents.UI.Palette.Palette -> String -> msg -> Element msg
 getFlagButton palette value msg =
-    FormComponents.IconButton.view []
+    R10.FormComponents.IconButton.view []
         { msgOnClick = Just <| msg
         , icon =
             row [ width fill, centerY, centerX, moveLeft 2 ]
                 [ value
-                    |> FormComponents.Phone.Update.extractCountry
+                    |> R10.FormComponents.Phone.Update.extractCountry
                     |> getFlagIcon 20
                     |> el
                         [ width fill
@@ -126,8 +126,8 @@ getFlagButton palette value msg =
                         , centerX
                         , moveDown 2
                         ]
-                , FormComponents.UI.icons.combobox_arrow_
-                    (FormComponents.UI.Color.label palette |> FormComponents.UI.Color.toCssString)
+                , R10.FormComponents.UI.icons.combobox_arrow_
+                    (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString)
                     16
                     |> html
                     |> el
@@ -144,22 +144,22 @@ getFlagButton palette value msg =
 
 countryOptions : List Country
 countryOptions =
-    FormComponents.Phone.Country.list
+    R10.FormComponents.Phone.Country.list
 
 
 view :
     List (Attribute msg)
     -> Common.Model
     ->
-        { validation : FormComponents.Validations.Validation
+        { validation : R10.FormComponents.Validations.Validation
         , toMsg : Common.Msg -> msg
         , label : String
         , helperText : Maybe String
         , disabled : Bool
         , requiredLabel : Maybe String
-        , style : FormComponents.Style.Style
+        , style : R10.FormComponents.Style.Style
         , key : String
-        , palette : FormComponents.UI.Palette.Palette
+        , palette : R10.FormComponents.UI.Palette.Palette
         , countryOptions : Maybe (List Country)
         }
     -> Element msg
@@ -194,7 +194,7 @@ view attrs model conf =
                         conf.palette
                         model.value
                         (conf.toMsg <|
-                            FormComponents.Phone.Update.getMsgOnFlagClick model
+                            R10.FormComponents.Phone.Update.getMsgOnFlagClick model
                                 { key = conf.key
                                 , selectOptionHeight = 36
                                 , maxDisplayCount = 5
@@ -204,4 +204,4 @@ view attrs model conf =
             , trailingIcon = Just <| defaultTrailingIcon { opened = model.opened, palette = conf.palette }
             }
     in
-    FormComponents.Phone.Views.view attrs model args
+    R10.FormComponents.Phone.Views.view attrs model args

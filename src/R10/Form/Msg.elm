@@ -1,14 +1,14 @@
-module Form.Msg exposing
+module R10.Form.Msg exposing
     ( Msg(..)
     , handleChangesSinceLastSubmissions
     , isChangingValues
     , isSubmitted
     )
 
-import Form.Conf
-import Form.FieldConf
-import Form.Key
-import FormComponents.Single.Common
+import R10.Form.Conf
+import R10.Form.FieldConf
+import R10.Form.Key
+import R10.FormComponents.Single.Common
 
 
 
@@ -21,15 +21,15 @@ import FormComponents.Single.Common
 
 type Msg
     = NoOp
-    | GetFocus Form.Key.Key
-    | LoseFocus Form.Key.Key Form.FieldConf.FieldConf
-    | TogglePasswordShow Form.Key.Key
-    | ChangeValue Form.Key.Key Form.FieldConf.FieldConf Form.Conf.Conf String
-    | OnSingleMsg Form.Key.Key Form.FieldConf.FieldConf Form.Conf.Conf FormComponents.Single.Common.Msg
-    | ChangeTab Form.Key.Key String
-    | AddEntity Form.Key.Key
-    | RemoveEntity Form.Key.Key
-    | Submit Form.Conf.Conf
+    | GetFocus R10.Form.Key.Key
+    | LoseFocus R10.Form.Key.Key R10.Form.FieldConf.FieldConf
+    | TogglePasswordShow R10.Form.Key.Key
+    | ChangeValue R10.Form.Key.Key R10.Form.FieldConf.FieldConf R10.Form.Conf.Conf String
+    | OnSingleMsg R10.Form.Key.Key R10.Form.FieldConf.FieldConf R10.Form.Conf.Conf R10.FormComponents.Single.Common.Msg
+    | ChangeTab R10.Form.Key.Key String
+    | AddEntity R10.Form.Key.Key
+    | RemoveEntity R10.Form.Key.Key
+    | Submit R10.Form.Conf.Conf
 
 
 isSubmitted : Msg -> Bool

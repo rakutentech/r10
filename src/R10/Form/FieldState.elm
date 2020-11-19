@@ -1,4 +1,4 @@
-module Form.FieldState exposing
+module R10.Form.FieldState exposing
     ( DictFieldState
     , FieldState
     , Validation(..)
@@ -12,7 +12,7 @@ module Form.FieldState exposing
     )
 
 import Dict
-import Form.FieldConf
+import R10.Form.FieldConf
 import Json.Decode as D
 import Json.Decode.Pipeline exposing (required)
 import Json.Encode as E
@@ -27,8 +27,8 @@ import Json.Encode as E
 
 
 type ValidationOutcome
-    = MessageOk Form.FieldConf.ValidationCode Form.FieldConf.ValidationPayload
-    | MessageErr Form.FieldConf.ValidationCode Form.FieldConf.ValidationPayload
+    = MessageOk R10.Form.FieldConf.ValidationCode R10.Form.FieldConf.ValidationPayload
+    | MessageErr R10.Form.FieldConf.ValidationCode R10.Form.FieldConf.ValidationPayload
 
 
 

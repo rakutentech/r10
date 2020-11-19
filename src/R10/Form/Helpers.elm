@@ -1,4 +1,4 @@
-module Form.Helpers exposing
+module R10.Form.Helpers exposing
     ( boolToString
     , clearFieldValidation
     , getActiveTab
@@ -15,10 +15,10 @@ module Form.Helpers exposing
     )
 
 import Dict
-import Form.Dict
-import Form.FieldState
-import Form.Key
-import Form.State
+import R10.Form.Dict
+import R10.Form.FieldState
+import R10.Form.Key
+import R10.Form.State
 import Set
 
 
@@ -36,40 +36,40 @@ boolToString bool =
         "False"
 
 
-getActiveTab : Form.Key.KeyAsString -> Form.State.State -> Maybe String
+getActiveTab : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe String
 getActiveTab onId formState =
     Dict.get onId formState.activeTabs
 
 
-setActiveTab : Form.Key.KeyAsString -> String -> Form.State.State -> Form.State.State
+setActiveTab : R10.Form.Key.KeyAsString -> String -> R10.Form.State.State -> R10.Form.State.State
 setActiveTab onId newTab formState =
     { formState | activeTabs = Dict.insert onId newTab formState.activeTabs }
 
 
-getField : Form.Key.KeyAsString -> Form.State.State -> Maybe Form.FieldState.FieldState
+getField : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe R10.Form.FieldState.FieldState
 getField key formState =
     Dict.get key formState.fieldsState
 
 
-getFieldValue : Form.Key.KeyAsString -> Form.State.State -> Maybe String
+getFieldValue : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe String
 getFieldValue key formState =
     getField key formState
         |> Maybe.map .value
 
 
-getFieldValueAsBool : Form.Key.KeyAsString -> Form.State.State -> Maybe Bool
+getFieldValueAsBool : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe Bool
 getFieldValueAsBool key formState =
     getFieldValue key formState
         |> Maybe.map stringToBool
 
 
-setFieldDisabled : Form.Key.KeyAsString -> Bool -> Form.State.State -> Form.State.State
+setFieldDisabled : R10.Form.Key.KeyAsString -> Bool -> R10.Form.State.State -> R10.Form.State.State
 setFieldDisabled key isDisabled formState =
     let
-        newFieldsState : Form.FieldState.FieldState
+        newFieldsState : R10.Form.FieldState.FieldState
         newFieldsState =
             Dict.get key formState.fieldsState
-                |> Maybe.withDefault Form.FieldState.init
+                |> Maybe.withDefault R10.Form.FieldState.init
     in
     { formState
         | fieldsState =
@@ -77,13 +77,13 @@ setFieldDisabled key isDisabled formState =
     }
 
 
-setFieldValue : Form.Key.KeyAsString -> String -> Form.State.State -> Form.State.State
+setFieldValue : R10.Form.Key.KeyAsString -> String -> R10.Form.State.State -> R10.Form.State.State
 setFieldValue key value formState =
     let
-        newFieldsState : Form.FieldState.FieldState
+        newFieldsState : R10.Form.FieldState.FieldState
         newFieldsState =
             Dict.get key formState.fieldsState
-                |> Maybe.withDefault Form.FieldState.init
+                |> Maybe.withDefault R10.Form.FieldState.init
     in
     { formState
         | fieldsState =
@@ -91,48 +91,48 @@ setFieldValue key value formState =
     }
 
 
-setMultiplicableQuantities : Form.Key.KeyAsString -> Int -> Form.State.State -> Form.State.State
+setMultiplicableQuantities : R10.Form.Key.KeyAsString -> Int -> R10.Form.State.State -> R10.Form.State.State
 setMultiplicableQuantities multiId quantity state =
     { state
         | multiplicableQuantities = Dict.insert multiId quantity state.multiplicableQuantities
     }
 
 
-setFieldValidationError : Form.Key.KeyAsString -> String -> Form.State.State -> Form.State.State
+setFieldValidationError : R10.Form.Key.KeyAsString -> String -> R10.Form.State.State -> R10.Form.State.State
 setFieldValidationError key value formState =
     let
-        fieldState : Form.FieldState.FieldState
+        fieldState : R10.Form.FieldState.FieldState
         fieldState =
             Dict.get key formState.fieldsState
-                |> Maybe.withDefault Form.FieldState.init
+                |> Maybe.withDefault R10.Form.FieldState.init
 
-        newError : Form.FieldState.ValidationOutcome
+        newError : R10.Form.FieldState.ValidationOutcome
         newError =
-            Form.FieldState.MessageErr value []
+            R10.Form.FieldState.MessageErr value []
 
-        newValidation : Form.FieldState.Validation
+        newValidation : R10.Form.FieldState.Validation
         newValidation =
             case fieldState.validation of
-                Form.FieldState.NotYetValidated ->
-                    Form.FieldState.Validated [ newError ]
+                R10.Form.FieldState.NotYetValidated ->
+                    R10.Form.FieldState.Validated [ newError ]
 
-                Form.FieldState.Validated listValidationOutcome ->
-                    Form.FieldState.Validated <| newError :: listValidationOutcome
+                R10.Form.FieldState.Validated listValidationOutcome ->
+                    R10.Form.FieldState.Validated <| newError :: listValidationOutcome
 
-        newFieldsState : Dict.Dict String Form.FieldState.FieldState
+        newFieldsState : Dict.Dict String R10.Form.FieldState.FieldState
         newFieldsState =
             Dict.insert key { fieldState | validation = newValidation } formState.fieldsState
     in
     { formState | fieldsState = newFieldsState }
 
 
-clearFieldValidation : Form.Key.KeyAsString -> Form.State.State -> Form.State.State
+clearFieldValidation : R10.Form.Key.KeyAsString -> R10.Form.State.State -> R10.Form.State.State
 clearFieldValidation key formState =
     let
-        newFieldsState : Form.FieldState.FieldState
+        newFieldsState : R10.Form.FieldState.FieldState
         newFieldsState =
             Dict.get key formState.fieldsState
-                |> Maybe.withDefault Form.FieldState.init
+                |> Maybe.withDefault R10.Form.FieldState.init
     in
     { formState
         | fieldsState =
@@ -140,26 +140,26 @@ clearFieldValidation key formState =
                 { newFieldsState
                     | validation =
                         case newFieldsState.validation of
-                            Form.FieldState.NotYetValidated ->
-                                Form.FieldState.NotYetValidated
+                            R10.Form.FieldState.NotYetValidated ->
+                                R10.Form.FieldState.NotYetValidated
 
-                            Form.FieldState.Validated _ ->
-                                Form.FieldState.Validated []
+                            R10.Form.FieldState.Validated _ ->
+                                R10.Form.FieldState.Validated []
                 }
                 formState.fieldsState
     }
 
 
-getMultiActiveKeys : Form.Key.Key -> Form.State.State -> List Form.Key.Key
+getMultiActiveKeys : R10.Form.Key.Key -> R10.Form.State.State -> List R10.Form.Key.Key
 getMultiActiveKeys key formState =
     let
         quantity : Int
         quantity =
-            Maybe.withDefault 1 <| Form.Dict.get key formState.multiplicableQuantities
+            Maybe.withDefault 1 <| R10.Form.Dict.get key formState.multiplicableQuantities
 
-        notRemoved : Form.Key.Key -> Bool
+        notRemoved : R10.Form.Key.Key -> Bool
         notRemoved newKey =
-            not <| Set.member (Form.Key.toString newKey) formState.removed
+            not <| Set.member (R10.Form.Key.toString newKey) formState.removed
     in
-    Form.Key.composeMultiKeys key quantity
+    R10.Form.Key.composeMultiKeys key quantity
         |> List.filter notRemoved

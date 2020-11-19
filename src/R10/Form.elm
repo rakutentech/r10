@@ -1,45 +1,63 @@
 module R10.Form exposing
     ( view, viewWithOptions, viewWithPalette
-    , Maker, MakerArgs, Model, Options
-    , extraCss
-    , Conf, Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
-    , FieldConf, TypeSingle, single, fieldType, text, validationIcon, validation, binary, initFieldConf
+    , Options
+    , Maker, MakerArgs
+    , Model, Conf
     , State, initState, stateToString, stringToState
+    , extraCss
+    , Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
+    , FieldConf, TypeSingle, single, fieldType, text, validationIcon, validation, binary, initFieldConf
     , update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
     , Msg, msg
     , keyToString
     , getFieldValueAsBool
     , commonValidation
-    , FieldState
-    , Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
+    , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
     )
 
 {-| Use this stuff if you need to add a form in your page.
 
+
+# Views
+
 @docs view, viewWithOptions, viewWithPalette
 
-@docs Maker, MakerArgs, Model, Options
+
+# View Options
+
+@docs Options
+
+
+# Maker
+
+@docs Maker, MakerArgs
+
+
+# Model
+
+@docs Model, Conf
+
+
+# State
+
+@docs State, initState, stateToString, stringToState
+
+
+# Extra CSS
 
 @docs extraCss
 
 
 # Form related stuff
 
-@docs Conf, Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
+@docs Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
 
 
 # Fields related stuff
 
 @docs FieldConf, TypeSingle, single, fieldType, text, validationIcon, validation, binary, initFieldConf
 
-
-# State related stuff
-
-@docs State, initState, stateToString, stringToState
-
 @docs update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
-
-@docs Model
 
 @docs Msg, msg
 
@@ -49,7 +67,7 @@ module R10.Form exposing
 
 @docs commonValidation
 
-@docs FieldState
+@docs FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
 
 -}
 
@@ -75,12 +93,16 @@ import R10.FormComponents.UI.Palette
 
 {-| -}
 type alias MakerArgs =
-    { key : R10.Form.Key.Key
-    , formState : R10.Form.State.State
-    , translator : R10.Form.FieldConf.ValidationCode -> String
-    , style : R10.FormComponents.Style.Style
-    , palette : R10.FormComponents.UI.Palette.Palette
+    { key : Key
+    , formState : State
+    , translator : ValidationCode -> String
+    , style : R10.FormComponents.Style
+    , palette : R10.FormComponents.Palette
     }
+
+
+type alias ValidationCode =
+    R10.Form.FieldConf.ValidationCode
 
 
 {-| -}
@@ -90,16 +112,21 @@ type alias Maker =
     -> List (Element.Element R10.Form.Msg.Msg)
 
 
-{-| -}
+{-| `style` can be
+
+    * R10.FormComponents.style.filled
+    * R10.FormComponents.style.outlined
+
+-}
 type alias Options =
     { maker : Maybe Maker
-    , translator : Maybe (R10.Form.FieldConf.ValidationCode -> String)
-    , style : R10.FormComponents.Style.Style
-    , palette : Maybe R10.FormComponents.UI.Palette.Palette
+    , translator : Maybe (ValidationCode -> String)
+    , style : R10.FormComponents.Style
+    , palette : Maybe R10.FormComponents.Palette
     }
 
 
-{-| This is the no-configuration version.
+{-| This is the simplest no-configuration version of the view. Just pass
 -}
 view : R10.Form.Shared.Model -> (R10.Form.Msg.Msg -> msg) -> List (Element.Element msg)
 view form msgMapper =
@@ -147,6 +174,7 @@ viewWithOptions form msgMapper args =
 -- EXPOSING STUFF FROM R10.Form.MakerForView
 
 
+{-| -}
 extraCss : Maybe R10.FormComponents.Palette -> String
 extraCss =
     R10.Form.MakerForView.extraCss
@@ -156,22 +184,27 @@ extraCss =
 -- EXPOSING STUFF FROM R10.Form.Conf
 
 
+{-| -}
 type alias Conf =
     R10.Form.Conf.Conf
 
 
+{-| -}
 type alias Entity =
     R10.Form.Conf.Entity
 
 
+{-| -}
 type alias EntityId =
     R10.Form.Conf.EntityId
 
 
+{-| -}
 type alias TextConf =
     R10.Form.Conf.TextConf
 
 
+{-| -}
 entity :
     { field : FieldConf -> Entity
     , multi : EntityId -> List Entity -> Entity
@@ -194,16 +227,19 @@ entity =
     }
 
 
+{-| -}
 initConf : List Entity
 initConf =
     R10.Form.Conf.init
 
 
+{-| -}
 stringToConf : String -> Result Json.Decode.Error Conf
 stringToConf =
     R10.Form.Conf.fromString
 
 
+{-| -}
 confToString : Conf -> String
 confToString =
     R10.Form.Conf.toString
@@ -213,50 +249,62 @@ confToString =
 -- EXPOSING STUFF FROM R10.Form.FieldConf
 
 
+{-| -}
 type alias FieldConf =
     R10.Form.FieldConf.FieldConf
 
 
+{-| -}
 type alias TypeSingle =
     R10.Form.FieldConf.TypeSingle
 
 
+{-| -}
 type alias FieldType =
     R10.Form.FieldConf.FieldType
 
 
+{-| -}
 type alias TypeBinary =
     R10.Form.FieldConf.TypeBinary
 
 
+{-| -}
 type alias TypeMulti =
     R10.Form.FieldConf.TypeMulti
 
 
+{-| -}
 type alias TypeText =
     R10.Form.FieldConf.TypeText
 
 
+{-| -}
 type alias FieldOption =
     R10.Form.FieldConf.FieldOption
 
 
+{-| -}
 type alias ValidationIcon =
     R10.Form.FieldConf.ValidationIcon
 
 
+{-| -}
 type alias Validation =
     R10.Form.FieldConf.Validation
 
 
+{-| -}
 type alias ValidationMessage =
     R10.Form.FieldConf.ValidationMessage
 
 
+{-| -}
 type alias ValidationSpecs =
     R10.Form.FieldConf.ValidationSpecs
 
 
+{-| -}
 fieldType :
     { text : TypeText -> FieldType
     , single : TypeSingle -> List FieldOption -> FieldType
@@ -271,6 +319,7 @@ fieldType =
     }
 
 
+{-| -}
 single :
     { combobox : TypeSingle
     , radio : TypeSingle
@@ -281,6 +330,7 @@ single =
     }
 
 
+{-| -}
 text :
     { plain : TypeText
     , email : TypeText
@@ -301,6 +351,7 @@ text =
     }
 
 
+{-| -}
 validationIcon :
     { clearOrCheck : ValidationIcon
     , errorOrCheck : ValidationIcon
@@ -313,6 +364,7 @@ validationIcon =
     }
 
 
+{-| -}
 validation :
     { allOf : List Validation -> Validation
     , dependant : KeyAsString -> Validation -> Validation
@@ -339,6 +391,7 @@ validation =
     }
 
 
+{-| -}
 binary :
     { checkbox : TypeBinary
     , switch : TypeBinary
@@ -349,6 +402,7 @@ binary =
     }
 
 
+{-| -}
 initFieldConf : R10.Form.FieldConf.FieldConf
 initFieldConf =
     R10.Form.FieldConf.init
@@ -358,6 +412,7 @@ initFieldConf =
 -- EXPOSING STUFF FROM R10.Form.FieldState
 
 
+{-| -}
 type alias FieldState =
     R10.Form.FieldState.FieldState
 
@@ -366,20 +421,48 @@ type alias FieldState =
 -- EXPOSING STUFF FROM R10.Form.State
 
 
+{-| The state is defined as
+
+    type alias State =
+        { fieldsState : Dict KeyAsString FieldState
+        , multiplicableQuantities : Dict KeyAsString Int
+        , activeTabs : Dict KeyAsString String
+        , focused : Maybe KeyAsString
+        , active : Maybe KeyAsString
+        , removed : Set KeyAsString
+        , qtySubmitAttempted : QtySubmitAttempted
+        , changesSinceLastSubmissions : Bool
+        }
+
+Where:
+
+  - `fieldState` is a dictionary containing the states of all fields.
+  - `multiplicableQuantities` is a dictionary containin the quantity of a _multiplicable_ field. A _multiplicable_ field is a field that the user can clone to add extra information.
+  - `activeTabs` describe which tab is active in case tabs are used to group objects of the form.
+  - `focused` is the focused element of the form at the present moment.
+  - `active`... what is `active`?
+  - `removed` contains _multiplicable_ input fields that have been removed by the user.
+  - `qtySubmitAttempted` is the number of times that the user tried to submit the form.
+  - `changesSinceLastSubmissions` is `True` if the user changed something after the last for submission.
+
+-}
 type alias State =
     R10.Form.State.State
 
 
+{-| -}
 initState : State
 initState =
     R10.Form.State.init
 
 
+{-| -}
 stateToString : R10.Form.State.State -> String
 stateToString =
     R10.Form.State.toString
 
 
+{-| -}
 stringToState : String -> Result Json.Decode.Error R10.Form.State.State
 stringToState =
     R10.Form.State.fromString
@@ -389,36 +472,43 @@ stringToState =
 -- EXPOSING STUFF FROM R10.Form.Update
 
 
+{-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update =
     R10.Form.Update.update
 
 
+{-| -}
 shouldShowTheValidationOverview : R10.Form.State.State -> Bool
 shouldShowTheValidationOverview =
     R10.Form.Update.shouldShowTheValidationOverview
 
 
+{-| -}
 allValidationKeysMaker : Conf -> State -> List ( Key, Maybe ValidationSpecs )
 allValidationKeysMaker =
     R10.Form.Update.allValidationKeysMaker
 
 
+{-| -}
 entitiesWithErrors : List ( Key, Maybe ValidationSpecs ) -> Dict.Dict KeyAsString FieldState -> List ( Key, Maybe ValidationSpecs )
 entitiesWithErrors =
     R10.Form.Update.entitiesWithErrors
 
 
+{-| -}
 runOnlyExistingValidations : List ( Key, Maybe ValidationSpecs ) -> State -> Dict.Dict KeyAsString FieldState -> Dict.Dict KeyAsString FieldState
 runOnlyExistingValidations =
     R10.Form.Update.runOnlyExistingValidations
 
 
+{-| -}
 submittable : Conf -> State -> Bool
 submittable =
     R10.Form.Update.submittable
 
 
+{-| -}
 isFormSubmittableAndSubmitted : Conf -> State -> Msg -> Bool
 isFormSubmittableAndSubmitted =
     R10.Form.Update.isFormSubmittableAndSubmitted
@@ -428,10 +518,12 @@ isFormSubmittableAndSubmitted =
 -- EXPOSING STUFF FROM R10.Form.Msg
 
 
+{-| -}
 type alias Msg =
     R10.Form.Msg.Msg
 
 
+{-| -}
 msg : { submit : Conf -> Msg }
 msg =
     { submit = R10.Form.Msg.Submit }
@@ -441,6 +533,14 @@ msg =
 -- EXPOSING STUFF FROM R10.Form.Shared
 
 
+{-| A form is defined by the **configuration** (`R10.Form.Conf`) that contain data about the input fields, radio buttons, etc. and the **state** (`R10.Form.State`), containing instead all the values and other parameters that change during the life of the form.
+
+    type alias Model =
+        { conf : R10.Form.Conf
+        , state : R10.Form.State
+        }
+
+-}
 type alias Model =
     R10.Form.Shared.Model
 
@@ -449,14 +549,17 @@ type alias Model =
 -- EXPOSING STUFF FROM R10.Form.Key
 
 
+{-| -}
 type alias Key =
     R10.Form.Key.Key
 
 
+{-| -}
 type alias KeyAsString =
     R10.Form.Key.KeyAsString
 
 
+{-| -}
 keyToString : Key -> KeyAsString
 keyToString =
     R10.Form.Key.toString
@@ -466,16 +569,19 @@ keyToString =
 -- EXPOSING STUFF FROM R10.Form.Helpers
 
 
+{-| -}
 getFieldValueAsBool : KeyAsString -> State -> Maybe Bool
 getFieldValueAsBool =
     R10.Form.Helpers.getFieldValueAsBool
 
 
+{-| -}
 stringToBool : String -> Bool
 stringToBool =
     R10.Form.Helpers.stringToBool
 
 
+{-| -}
 boolToString : Bool -> String
 boolToString =
     R10.Form.Helpers.boolToString
@@ -485,6 +591,7 @@ boolToString =
 -- EXPOSING STUFF FROM R10.Form.Validation
 
 
+{-| -}
 commonValidation :
     { alphaNumericDash : Validation
     , alphaNumericDashSpace : Validation
@@ -499,21 +606,25 @@ commonValidation =
     R10.Form.Validation.commonValidation
 
 
+{-| -}
 setFieldValue : KeyAsString -> String -> State -> State
 setFieldValue =
     R10.Form.Helpers.setFieldValue
 
 
+{-| -}
 getField : KeyAsString -> State -> Maybe FieldState
 getField =
     R10.Form.Helpers.getField
 
 
+{-| -}
 validate : Key -> Maybe ValidationSpecs -> State -> FieldState -> FieldState
 validate =
     R10.Form.Validation.validate
 
 
+{-| -}
 isChangingValues : Msg -> Bool
 isChangingValues =
     R10.Form.Msg.isChangingValues

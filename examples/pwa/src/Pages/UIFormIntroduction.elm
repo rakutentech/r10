@@ -169,12 +169,11 @@ formsInit =
                             , hidePassedValidationStyle = False
                             , validationIcon = R10.Form.validationIcon.noIcon
                             , validation =
-                                R10.Form.validation.allOf
-                                    [ R10.Form.commonValidation.email
-                                    , R10.Form.validation.minLength 5
-                                    , R10.Form.validation.maxLength 50
-                                    , R10.Form.validation.required
-                                    ]
+                                [ R10.Form.commonValidation.email
+                                , R10.Form.validation.minLength 5
+                                , R10.Form.validation.maxLength 50
+                                , R10.Form.validation.required
+                                ]
                             }
                     }
                 ]
@@ -206,12 +205,11 @@ formsInit =
                                 , hidePassedValidationStyle = False
                                 , validationIcon = R10.Form.validationIcon.noIcon
                                 , validation =
-                                    R10.Form.validation.allOf
-                                        [ R10.Form.commonValidation.email
-                                        , R10.Form.validation.minLength 5
-                                        , R10.Form.validation.maxLength 50
-                                        , R10.Form.validation.required
-                                        ]
+                                    [ R10.Form.commonValidation.email
+                                    , R10.Form.validation.minLength 5
+                                    , R10.Form.validation.maxLength 50
+                                    , R10.Form.validation.required
+                                    ]
                                 }
                         }
                     , R10.Form.entity.field
@@ -318,17 +316,21 @@ formsInit =
         , { title = "Tabs"
           , conf =
                 [ R10.Form.entity.withTabs ""
-                    [ R10.Form.entity.field
-                        { fieldConfInit
-                            | id = "email"
-                            , label = "Email"
-                        }
-                    , R10.Form.entity.field
-                        { fieldConfInit
-                            | id = "password"
-                            , label = "Password"
-                            , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
-                        }
+                    [ ( "string"
+                      , R10.Form.entity.field
+                            { fieldConfInit
+                                | id = "email"
+                                , label = "Email"
+                            }
+                      )
+                    , ( "string"
+                      , R10.Form.entity.field
+                            { fieldConfInit
+                                | id = "password"
+                                , label = "Password"
+                                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+                            }
+                      )
                     ]
                 ]
           , code = """[ R10.Form.entity.withTabs ""
@@ -403,7 +405,7 @@ update msg model =
                             ( form.conf, Json.Decode.errorToString err )
 
                 allKeys =
-                    R10.Form.allValidationKeysMaker { form | conf = newFormConf }
+                    R10.Form.allValidationKeysMaker newFormConf form.state
 
                 -- Re-running existing validations because if the validations rules
                 -- changed in the configuration would only be picked up after changing
@@ -561,7 +563,7 @@ viewRow index model =
                     ++ [ if R10.Form.shouldShowTheValidationOverview form.state then
                             let
                                 allKeys_ =
-                                    R10.Form.allValidationKeysMaker form
+                                    R10.Form.allValidationKeysMaker form.conf form.state
 
                                 allErrors =
                                     R10.Form.entitiesWithErrors allKeys_ form.state.fieldsState

@@ -16,8 +16,6 @@ import Pages.Top
 import Pages.UIComponents
 import Pages.UIFormBoilerplate
 import Pages.UIFormBoilerplate2
-import Pages.UIFormComponentsPhoneSelect
-import Pages.UIFormComponentsSingle
 import Pages.UIFormComponentsStates
 import Pages.UIFormComponentsText
 import Pages.UIFormIntroduction
@@ -84,8 +82,9 @@ type alias Model =
     , pageExamples : Pages.Overview.Model
     , pageExample1 : Pages.UIFormBoilerplate.Model
     , pageExample2 : Pages.UIFormBoilerplate2.Model
-    , pageExample3 : Pages.UIFormComponentsPhoneSelect.Model
-    , pageExample4 : Pages.UIFormComponentsSingle.Model
+
+    -- , pageExample3 : Pages.UIFormComponentsPhoneSelect.Model
+    -- , pageExample4 : Pages.UIFormComponentsSingle.Model
     , pageExample5 : Pages.UIFormComponentsStates.Model
     , pageExample6 : Pages.UIFormComponentsText.Model
     , pageExample7 : Pages.UIFormIntroduction.Model
@@ -146,8 +145,9 @@ init flags =
       , pageExamples = Pages.Overview.init
       , pageExample1 = Pages.UIFormBoilerplate.init
       , pageExample2 = Pages.UIFormBoilerplate2.init
-      , pageExample3 = Pages.UIFormComponentsPhoneSelect.init
-      , pageExample4 = Pages.UIFormComponentsSingle.init
+
+      -- , pageExample3 = Pages.UIFormComponentsPhoneSelect.init
+      -- , pageExample4 = Pages.UIFormComponentsSingle.init
       , pageExample5 = Pages.UIFormComponentsStates.init
       , pageExample6 = Pages.UIFormComponentsText.init
 
@@ -213,8 +213,8 @@ type Msg
     | PagesExamples Pages.Overview.Msg
     | PagesExample1 Pages.UIFormBoilerplate.Msg
     | PagesExample2 Pages.UIFormBoilerplate2.Msg
-    | PagesExample3 Pages.UIFormComponentsPhoneSelect.Msg
-    | PagesExample4 Pages.UIFormComponentsSingle.Msg
+      -- | PagesExample3 Pages.UIFormComponentsPhoneSelect.Msg
+      -- | PagesExample4 Pages.UIFormComponentsSingle.Msg
     | PagesExample5 Pages.UIFormComponentsStates.Msg
     | PagesExample6 Pages.UIFormComponentsText.Msg
     | PagesExample7 Pages.UIFormIntroduction.Msg
@@ -249,20 +249,21 @@ update msg model =
             in
             ( { model | pageExample2 = modelPageExample }, Cmd.map PagesExample2 cmdPageExample )
 
-        PagesExample3 pageMsg ->
-            let
-                ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsPhoneSelect.update pageMsg model.pageExample3
-            in
-            ( { model | pageExample3 = modelPageExample }, Cmd.map PagesExample3 cmdPageExample )
-
-        PagesExample4 pageMsg ->
-            let
-                ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsSingle.update pageMsg model.pageExample4
-            in
-            ( { model | pageExample4 = modelPageExample }, Cmd.map PagesExample4 cmdPageExample )
-
+        --
+        -- PagesExample3 pageMsg ->
+        --     let
+        --         ( modelPageExample, cmdPageExample ) =
+        --             Pages.UIFormComponentsPhoneSelect.update pageMsg model.pageExample3
+        --     in
+        --     ( { model | pageExample3 = modelPageExample }, Cmd.map PagesExample3 cmdPageExample )
+        --
+        -- PagesExample4 pageMsg ->
+        --     let
+        --         ( modelPageExample, cmdPageExample ) =
+        --             Pages.UIFormComponentsSingle.update pageMsg model.pageExample4
+        --     in
+        --     ( { model | pageExample4 = modelPageExample }, Cmd.map PagesExample4 cmdPageExample )
+        --
         PagesExample5 pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
@@ -387,12 +388,13 @@ view model =
                 RouteExample2 lang ->
                     mainLayout model Pages.UIFormBoilerplate2.title (List.map (map PagesExample2) (Pages.UIFormBoilerplate2.view model.pageExample2))
 
-                RouteExample3 lang ->
-                    mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map PagesExample3) (Pages.UIFormComponentsPhoneSelect.view model.pageExample3))
-
-                RouteExample4 lang ->
-                    mainLayout model Pages.UIFormComponentsSingle.title (List.map (map PagesExample4) (Pages.UIFormComponentsSingle.view model.pageExample4))
-
+                --
+                -- RouteExample3 lang ->
+                --     mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map PagesExample3) (Pages.UIFormComponentsPhoneSelect.view model.pageExample3))
+                --
+                -- RouteExample4 lang ->
+                --     mainLayout model Pages.UIFormComponentsSingle.title (List.map (map PagesExample4) (Pages.UIFormComponentsSingle.view model.pageExample4))
+                --
                 RouteExample5 lang ->
                     mainLayout model Pages.UIFormComponentsStates.title (List.map (map PagesExample5) (Pages.UIFormComponentsStates.view model.pageExample5))
 
@@ -716,8 +718,8 @@ type Route
     | RouteExamples R10.Language.Language
     | RouteExample1 R10.Language.Language
     | RouteExample2 R10.Language.Language
-    | RouteExample3 R10.Language.Language
-    | RouteExample4 R10.Language.Language
+      -- | RouteExample3 R10.Language.Language
+      -- | RouteExample4 R10.Language.Language
     | RouteExample5 R10.Language.Language
     | RouteExample6 R10.Language.Language
     | RouteExample7 R10.Language.Language
@@ -741,8 +743,9 @@ routesList =
     , RouteExample7
     , RouteExample1
     , RouteExample2
-    , RouteExample3
-    , RouteExample4
+
+    -- , RouteExample3
+    -- , RouteExample4
     , RouteExample6
     , RouteExample5
     ]
@@ -781,18 +784,19 @@ routeDetails route =
             , language = language
             }
 
-        RouteExample3 language ->
-            { title = Pages.UIFormComponentsPhoneSelect.title
-            , routeLabel = "Forms_PhoneSelector"
-            , language = language
-            }
-
-        RouteExample4 language ->
-            { title = Pages.UIFormComponentsSingle.title
-            , routeLabel = "Forms_Single"
-            , language = language
-            }
-
+        --
+        -- RouteExample3 language ->
+        --     { title = Pages.UIFormComponentsPhoneSelect.title
+        --     , routeLabel = "Forms_PhoneSelector"
+        --     , language = language
+        --     }
+        --
+        -- RouteExample4 language ->
+        --     { title = Pages.UIFormComponentsSingle.title
+        --     , routeLabel = "Forms_Single"
+        --     , language = language
+        --     }
+        --
         RouteExample5 language ->
             { title = Pages.UIFormComponentsStates.title
             , routeLabel = "Forms_States"

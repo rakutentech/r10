@@ -750,13 +750,12 @@ v01 =
                 , hidePassedValidationStyle = True
                 , validationIcon = R10.Form.validationIcon.noIcon
                 , validation =
-                    R10.Form.validation.allOf
-                        [ R10.Form.validation.required
-                        , R10.Form.validation.minLength 6
-                        , R10.Form.validation.maxLength 128
-                        , R10.Form.validation.withMsg { ok = "INVALID_FORMAT_INVALID_CHARACTERS", err = "INVALID_FORMAT_INVALID_CHARACTERS" }
-                            (R10.Form.validation.regex "^((?!(/|\\\\))[\\x21-\\x7F])+$")
-                        ]
+                    [ R10.Form.validation.required
+                    , R10.Form.validation.minLength 6
+                    , R10.Form.validation.maxLength 128
+                    , R10.Form.validation.withMsg { ok = "INVALID_FORMAT_INVALID_CHARACTERS", err = "INVALID_FORMAT_INVALID_CHARACTERS" }
+                        (R10.Form.validation.regex "^((?!(/|\\\\))[\\x21-\\x7F])+$")
+                    ]
                 }
         }
     ]
@@ -776,7 +775,7 @@ v11 =
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
                 , validationIcon = R10.Form.validationIcon.noIcon
-                , validation = R10.Form.validation.required
+                , validation = [ R10.Form.validation.required ]
                 }
         }
     ]

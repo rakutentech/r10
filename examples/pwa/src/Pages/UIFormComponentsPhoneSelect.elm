@@ -169,10 +169,10 @@ update msg model =
             let
                 skipMsg =
                     case singleMsg of
-                        R10.FormComponents.Single.Common.OnArrowUp _ _ ->
+                        R10.FormComponents.Single.Common.OnArrowUp _ ->
                             not model.singleModel.opened
 
-                        R10.FormComponents.Single.Common.OnArrowDown _ _ ->
+                        R10.FormComponents.Single.Common.OnArrowDown _ ->
                             not model.singleModel.opened
 
                         R10.FormComponents.Single.Common.OnInputClick _ ->

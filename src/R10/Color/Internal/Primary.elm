@@ -221,8 +221,10 @@ toColorLight_ color =
             )
 
         Pink ->
-            ( R10.Color.Utils.fromHex "#ff41be"
-            , "Hard coded as #ff41be"
+            -- The pink color changed fromm to #ff008c from #ff41be as
+            -- per Rakuten Mobile request on 2020.11.19
+            ( R10.Color.Utils.fromHex "#ff008c"
+            , "Hard coded as #ff008c"
             )
 
 

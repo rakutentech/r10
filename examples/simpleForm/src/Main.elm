@@ -53,12 +53,11 @@ init =
                         , hidePassedValidationStyle = False
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            R10.Form.validation.allOf
-                                [ R10.Form.commonValidation.email
-                                , R10.Form.validation.minLength 5
-                                , R10.Form.validation.maxLength 50
-                                , R10.Form.validation.required
-                                ]
+                            [ R10.Form.commonValidation.email
+                            , R10.Form.validation.minLength 5
+                            , R10.Form.validation.maxLength 50
+                            , R10.Form.validation.required
+                            ]
                         }
                 }
             , R10.Form.entity.field
@@ -74,11 +73,10 @@ init =
                         , hidePassedValidationStyle = False
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            R10.Form.validation.allOf
-                                [ R10.Form.commonValidation.password
-                                , R10.Form.validation.minLength 8
-                                , R10.Form.validation.required
-                                ]
+                            [ R10.Form.commonValidation.password
+                            , R10.Form.validation.minLength 8
+                            , R10.Form.validation.required
+                            ]
                         }
                 }
             , R10.Form.entity.field
@@ -94,14 +92,13 @@ init =
                         , hidePassedValidationStyle = False
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            R10.Form.validation.allOf
-                                [ R10.Form.validation.withMsg
-                                    { ok = "Passwords are the same"
-                                    , err = "Passwords are not the same"
-                                    }
-                                  <|
-                                    R10.Form.validation.dependant "password" R10.Form.validation.equal
-                                ]
+                            [ R10.Form.validation.withMsg
+                                { ok = "Passwords are the same"
+                                , err = "Passwords are not the same"
+                                }
+                              <|
+                                R10.Form.validation.dependant "password" (R10.Form.validation.equal "password_repeat")
+                            ]
                         }
                 }
             ]

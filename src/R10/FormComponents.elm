@@ -1,12 +1,12 @@
-module R10.FormComponents exposing (Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, updateSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg)
+module R10.FormComponents exposing (Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg)
 
 {-| This is what you need to add a form in your page.
 
-@docs Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, updateSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg
+@docs Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg
 
 -}
 
-import Element
+import Element exposing (..)
 import R10.FormComponents.IconButton
 import R10.FormComponents.Single
 import R10.FormComponents.Single.Common
@@ -41,6 +41,10 @@ type alias SingleFieldOption =
     R10.FormComponents.Single.Common.FieldOption
 
 
+type alias Validation =
+    R10.FormComponents.Validations.Validation
+
+
 style :
     { filled : Style
     , outlined : Style
@@ -51,12 +55,12 @@ style =
     }
 
 
-label : Palette -> Element.Color
+label : Palette -> Color
 label =
     R10.FormComponents.UI.Color.label
 
 
-onClickWithStopPropagation : msg -> Element.Attribute msg
+onClickWithStopPropagation : msg -> Attribute msg
 onClickWithStopPropagation =
     R10.FormComponents.UI.onClickWithStopPropagation
 
@@ -64,25 +68,19 @@ onClickWithStopPropagation =
 viewIconButton :
     List (Element.Attribute msg)
     ->
-        { icon : Element.Element msg
+        { icon : Element msg
         , msgOnClick : Maybe msg
         , palette : Palette
         , size : Int
         }
-    -> Element.Element msg
+    -> Element msg
 viewIconButton =
     R10.FormComponents.IconButton.view
 
 
 viewSingleCustom :
     List (Element.Attribute msg)
-    ->
-        { focused : Bool
-        , opened : Bool
-        , scroll : Float
-        , search : String
-        , value : String
-        }
+    -> SingleModel
     ->
         { disabled : Bool
         , fieldOptions : List SingleFieldOption
@@ -96,13 +94,13 @@ viewSingleCustom :
         , searchFn : String -> SingleFieldOption -> Bool
         , selectOptionHeight : Int
         , singleType : SingleType
-        , style : R10.FormComponents.Style.Style
-        , toMsg : R10.FormComponents.Single.Common.Msg -> msg
-        , toOptionEl : SingleFieldOption -> Element.Element msg
+        , style : Style
+        , toMsg : SingleMsg -> msg
+        , toOptionEl : SingleFieldOption -> Element msg
         , trailingIcon : Maybe (Element.Element msg)
-        , validation : R10.FormComponents.Validations.Validation
+        , validation : Validation
         }
-    -> Element.Element msg
+    -> Element msg
 viewSingleCustom =
     R10.FormComponents.Single.viewCustom
 
@@ -127,9 +125,12 @@ typeSingle =
     }
 
 
-updateSingle : SingleMsg -> SingleModel -> ( SingleModel, Cmd SingleMsg )
-updateSingle =
-    R10.FormComponents.Single.update
+
+--
+-- updateSingle : SingleMsg -> SingleModel -> ( SingleModel, Cmd SingleMsg )
+-- updateSingle =
+--     R10.FormComponents.Single.update
+--
 
 
 normalizeString : String -> String
@@ -145,14 +146,14 @@ insertBold =
 defaultToOptionEl :
     { a | msgOnSelect : String -> msg, search : String }
     -> SingleFieldOption
-    -> Element.Element msg
+    -> Element msg
 defaultToOptionEl =
     R10.FormComponents.Single.defaultToOptionEl
 
 
 defaultTrailingIcon :
     { a | opened : Bool, palette : Palette }
-    -> Element.Element msg
+    -> Element msg
 defaultTrailingIcon =
     R10.FormComponents.Single.defaultTrailingIcon
 

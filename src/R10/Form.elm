@@ -179,7 +179,7 @@ entity :
     , subTitle : EntityId -> TextConf -> Entity
     , title : EntityId -> TextConf -> Entity
     , withBorder : EntityId -> List Entity -> Entity
-    , withTabs : EntityId -> List Entity -> Entity
+    , withTabs : EntityId -> List ( String, Entity ) -> Entity
     , wrappable : EntityId -> List Entity -> Entity
     }
 entity =
@@ -315,8 +315,8 @@ validationIcon =
 
 validation :
     { allOf : List Validation -> Validation
-    , dependant : R10.Form.Key.KeyAsString -> Validation -> Validation
-    , equal : Validation
+    , dependant : KeyAsString -> Validation -> Validation
+    , equal : KeyAsString -> Validation
     , maxLength : Int -> Validation
     , minLength : Int -> Validation
     , noValidation : Validation
@@ -399,7 +399,7 @@ shouldShowTheValidationOverview =
     R10.Form.Update.shouldShowTheValidationOverview
 
 
-allValidationKeysMaker : Model -> List ( Key, Maybe ValidationSpecs )
+allValidationKeysMaker : Conf -> State -> List ( Key, Maybe ValidationSpecs )
 allValidationKeysMaker =
     R10.Form.Update.allValidationKeysMaker
 
@@ -414,12 +414,12 @@ runOnlyExistingValidations =
     R10.Form.Update.runOnlyExistingValidations
 
 
-submittable : Model -> Bool
+submittable : Conf -> State -> Bool
 submittable =
     R10.Form.Update.submittable
 
 
-isFormSubmittableAndSubmitted : Model -> Msg -> Bool
+isFormSubmittableAndSubmitted : Conf -> State -> Msg -> Bool
 isFormSubmittableAndSubmitted =
     R10.Form.Update.isFormSubmittableAndSubmitted
 
@@ -490,6 +490,7 @@ commonValidation :
     , alphaNumericDashSpace : Validation
     , email : Validation
     , hexColor : Validation
+    , numeric : Validation
     , password : Validation
     , phoneNumber : Validation
     , url : Validation
@@ -508,7 +509,7 @@ getField =
     R10.Form.Helpers.getField
 
 
-validate : Maybe ValidationSpecs -> State -> FieldState -> FieldState
+validate : Key -> Maybe ValidationSpecs -> State -> FieldState -> FieldState
 validate =
     R10.Form.Validation.validate
 

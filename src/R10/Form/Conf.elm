@@ -1,4 +1,4 @@
-module R10.Form.Conf exposing
+module Form.Conf exposing
     ( Conf
     , Entity(..)
     , EntityId
@@ -10,10 +10,10 @@ module R10.Form.Conf exposing
     , toString
     )
 
+import Form.FieldConf
 import Json.Decode as D
 import Json.Encode as E
 import Json.Encode.Extra as E
-import R10.Form.FieldConf
 
 
 type alias EntityId =
@@ -23,7 +23,7 @@ type alias EntityId =
 type alias TextConf =
     { title : String
     , helperText : Maybe String
-    , validationSpecs : Maybe R10.Form.FieldConf.ValidationSpecs
+    , validationSpecs : Maybe Form.FieldConf.ValidationSpecs
     }
 
 
@@ -31,9 +31,9 @@ type Entity
     = EntityNormal EntityId (List Entity)
     | EntityWrappable EntityId (List Entity)
     | EntityWithBorder EntityId (List Entity)
-    | EntityWithTabs EntityId (List Entity)
+    | EntityWithTabs EntityId (List ( String, Entity ))
     | EntityMulti EntityId (List Entity)
-    | EntityField R10.Form.FieldConf.FieldConf
+    | EntityField Form.FieldConf.FieldConf
     | EntityTitle EntityId TextConf
     | EntitySubTitle EntityId TextConf
 
@@ -110,12 +110,28 @@ encoderGenericEntity entityId listEntity string =
         ]
 
 
+encoderEntityWithTabs : String -> List ( String, Entity ) -> String -> E.Value
+encoderEntityWithTabs entityId listEntityName string =
+    E.object
+        [ ( "EntityId", E.string entityId )
+        , ( string, E.list (\( a, b ) -> E.list identity [ E.string a, encoderEntity b ]) listEntityName )
+        ]
+
+
 decoderGenericEntity : (EntityId -> List Entity -> Entity) -> String -> D.Decoder Entity
 decoderGenericEntity typeConstructor string =
     D.map2
         typeConstructor
         (D.field "EntityId" D.string)
         (D.field string <| D.list <| D.lazy <| \_ -> decoderEntity)
+
+
+decoderEntityWithTabs : (EntityId -> List ( String, Entity ) -> Entity) -> String -> D.Decoder Entity
+decoderEntityWithTabs typeConstructor string =
+    D.map2
+        typeConstructor
+        (D.field "EntityId" D.string)
+        (D.field string <| D.list <| D.lazy <| \_ -> D.map2 Tuple.pair (D.index 0 D.string) (D.index 1 decoderEntity))
 
 
 encoderGenericTitle : TextConf -> String -> E.Value
@@ -125,7 +141,7 @@ encoderGenericTitle titleConf string =
           , E.object
                 [ ( "Title", E.string titleConf.title )
                 , ( "HelperText", E.maybe E.string titleConf.helperText )
-                , ( "ValidationSpecs", E.maybe R10.Form.FieldConf.encodeValidationSpecs titleConf.validationSpecs )
+                , ( "ValidationSpecs", E.maybe Form.FieldConf.encodeValidationSpecs titleConf.validationSpecs )
                 ]
           )
         ]
@@ -141,7 +157,7 @@ decoderGenericTitle typeConstructor string =
                 TextConf
                 (D.field "Title" D.string)
                 (D.field "HelperText" (D.maybe D.string))
-                (D.field "ValidationSpecs" (D.maybe R10.Form.FieldConf.decoderValidationSpecs))
+                (D.field "ValidationSpecs" (D.maybe Form.FieldConf.decoderValidationSpecs))
         )
 
 
@@ -157,8 +173,8 @@ encoderEntity entity2 =
         EntityWithBorder entityId listEntity ->
             encoderGenericEntity entityId listEntity "EntityWithBorder"
 
-        EntityWithTabs entityId listEntity ->
-            encoderGenericEntity entityId listEntity "EntityWithTabs"
+        EntityWithTabs entityId listNameEntity ->
+            encoderEntityWithTabs entityId listNameEntity "EntityWithTabs"
 
         EntityMulti entityId listEntity ->
             encoderGenericEntity entityId listEntity "EntityMulti"
@@ -170,7 +186,7 @@ encoderEntity entity2 =
             encoderGenericTitle titleConf "EntitySubTitle"
 
         EntityField fieldConf ->
-            R10.Form.FieldConf.encoderFieldConf fieldConf
+            Form.FieldConf.encoderFieldConf fieldConf
 
 
 decoderEntity : D.Decoder Entity
@@ -179,11 +195,11 @@ decoderEntity =
         [ decoderGenericEntity EntityNormal "EntityNormal"
         , decoderGenericEntity EntityWrappable "EntityWrappable"
         , decoderGenericEntity EntityWithBorder "EntityWithBorder"
-        , decoderGenericEntity EntityWithTabs "EntityWithTabs"
+        , decoderEntityWithTabs EntityWithTabs "EntityWithTabs"
         , decoderGenericEntity EntityMulti "EntityMulti"
         , decoderGenericTitle EntityTitle "EntityTitle"
         , decoderGenericTitle EntitySubTitle "EntitySubTitle"
-        , D.map EntityField R10.Form.FieldConf.decoderFieldConf
+        , D.map EntityField Form.FieldConf.decoderFieldConf
         ]
 
 

@@ -1,32 +1,35 @@
-module R10.Form.ValidationCode exposing
+module Form.ValidationCode exposing
     ( fromValidationCodeToMessageWithReplacedValues
     , translator
     , validationCodes
     )
 
 import Dict
-import R10.Form.FieldConf
+import Form.FieldConf
 import Regex
 
 
 validationCodes :
-    { emailFormatInvalid : R10.Form.FieldConf.ValidationCode
-    , emailFormatValid : R10.Form.FieldConf.ValidationCode
-    , equalInvalid : R10.Form.FieldConf.ValidationCode
-    , formatInvalid : R10.Form.FieldConf.ValidationCode
-    , formatInvalidCharactersInvalid : R10.Form.FieldConf.ValidationCode
-    , formatNoNumberInvalid : R10.Form.FieldConf.ValidationCode
-    , formatNoSpecialCharactersInvalid : R10.Form.FieldConf.ValidationCode
-    , formatNoUppercaseInvalid : R10.Form.FieldConf.ValidationCode
-    , formatValid : R10.Form.FieldConf.ValidationCode
-    , hexColorFormatInvalid : R10.Form.FieldConf.ValidationCode
-    , jsonFormatInvalid : R10.Form.FieldConf.ValidationCode
-    , lengthTooLargeInvalid : R10.Form.FieldConf.ValidationCode
-    , lengthTooSmallInvalid : R10.Form.FieldConf.ValidationCode
-    , required : R10.Form.FieldConf.ValidationCode
-    , requiredField : R10.Form.FieldConf.ValidationCode
-    , somethingWrong : R10.Form.FieldConf.ValidationCode
-    , valueInvalid : R10.Form.FieldConf.ValidationCode
+    { emailFormatInvalid : Form.FieldConf.ValidationCode
+    , emailFormatValid : Form.FieldConf.ValidationCode
+    , equalInvalid : Form.FieldConf.ValidationCode
+    , formatInvalid : Form.FieldConf.ValidationCode
+    , formatInvalidCharactersInvalid : Form.FieldConf.ValidationCode
+    , formatNoNumberInvalid : Form.FieldConf.ValidationCode
+    , formatNoSpecialCharactersInvalid : Form.FieldConf.ValidationCode
+    , formatNoUppercaseInvalid : Form.FieldConf.ValidationCode
+    , formatValid : Form.FieldConf.ValidationCode
+    , hexColorFormatInvalid : Form.FieldConf.ValidationCode
+    , jsonFormatInvalid : Form.FieldConf.ValidationCode
+    , lengthTooLargeInvalid : Form.FieldConf.ValidationCode
+    , lengthTooSmallInvalid : Form.FieldConf.ValidationCode
+    , required : Form.FieldConf.ValidationCode
+    , empty : Form.FieldConf.ValidationCode
+    , requiredField : Form.FieldConf.ValidationCode
+    , somethingWrong : Form.FieldConf.ValidationCode
+    , valueInvalid : Form.FieldConf.ValidationCode
+    , allOf : Form.FieldConf.ValidationCode
+    , oneOf : Form.FieldConf.ValidationCode
     }
 validationCodes =
     { emailFormatInvalid = "INVALID_EMAIL_FORMAT"
@@ -43,13 +46,16 @@ validationCodes =
     , lengthTooLargeInvalid = "INVALID_LENGTH_TOO_LARGE"
     , lengthTooSmallInvalid = "INVALID_LENGTH_TOO_SMALL"
     , required = "REQUIRED"
+    , empty = "EMPTY"
     , requiredField = "REQUIRED_FIELD"
     , somethingWrong = "SOMETHING_WENT_WRONG_DURING_VALIDATION"
     , valueInvalid = "INVALID_VALUE"
+    , allOf = "ALL_OF"
+    , oneOf = "ONE_OF"
     }
 
 
-translator : R10.Form.FieldConf.ValidationCode -> String
+translator : Form.FieldConf.ValidationCode -> String
 translator validationCode =
     Dict.fromList
         [ ( validationCodes.emailFormatInvalid
@@ -91,14 +97,26 @@ translator validationCode =
         , ( validationCodes.required
           , "Required"
           )
+        , ( validationCodes.empty
+          , "Empty"
+          )
         , ( validationCodes.requiredField
           , "(Required)"
           )
         , ( validationCodes.somethingWrong
           , "Something wrong"
           )
+        , ( validationCodes.equalInvalid
+          , "Value should be equal"
+          )
         , ( validationCodes.valueInvalid
           , "This is not a valid selection"
+          )
+        , ( validationCodes.allOf
+          , "One of the validations have failed"
+          )
+        , ( validationCodes.oneOf
+          , "All of the validations have failed"
           )
         ]
         |> Dict.get validationCode
@@ -106,9 +124,9 @@ translator validationCode =
 
 
 fromValidationCodeToMessageWithReplacedValues :
-    R10.Form.FieldConf.ValidationCode
-    -> R10.Form.FieldConf.ValidationPayload
-    -> (R10.Form.FieldConf.ValidationCode -> String)
+    Form.FieldConf.ValidationCode
+    -> Form.FieldConf.ValidationPayload
+    -> (Form.FieldConf.ValidationCode -> String)
     -> String
 fromValidationCodeToMessageWithReplacedValues validationCode bracketsArgs translator_ =
     let

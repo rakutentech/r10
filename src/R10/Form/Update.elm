@@ -1,36 +1,40 @@
-module R10.Form.Update exposing
+module Form.Update exposing
     ( allErrorsForView
     , allValidationKeysMaker
     , entitiesWithErrors
+    , entitiesWithErrorsForOnlyExistingValidations
+    , isEntireFormValid
+    , isExistingFormFieldsValid
     , isFormSubmittableAndSubmitted
+    , runAllValidations
     , runOnlyExistingValidations
     , shouldShowTheValidationOverview
     , submit
     , submittable
     , update
+    , validateDirtyFormFields
+    , validateEntireForm
     )
 
-import Browser.Dom
 import Dict
-import R10.Form.Conf
-import R10.Form.Dict
-import R10.Form.FieldConf
-import R10.Form.FieldState
-import R10.Form.Key
-import R10.Form.MakerForValidationKeys
-import R10.Form.Msg
-import R10.Form.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
-import R10.Form.Shared
-import R10.Form.State
-import R10.Form.Validation
-import R10.FormComponents.Single
+import Form.Conf
+import Form.Dict
+import Form.FieldConf
+import Form.FieldState
+import Form.Key
+import Form.MakerForValidationKeys
+import Form.Msg
+import Form.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
+import Form.State
+import Form.Validation
+import FormComponents.Single.Common
+import FormComponents.Single.Update
 import Set
-import Task
 
 
-stateWithDefault : Maybe R10.Form.FieldState.FieldState -> R10.Form.FieldState.FieldState
+stateWithDefault : Maybe Form.FieldState.FieldState -> Form.FieldState.FieldState
 stateWithDefault maybeFieldState =
-    Maybe.withDefault R10.Form.FieldState.init maybeFieldState
+    Maybe.withDefault Form.FieldState.init maybeFieldState
 
 
 
@@ -41,90 +45,164 @@ stateWithDefault maybeFieldState =
 -- ██   ██ ███████ ███████ ██      ███████ ██   ██ ███████
 
 
-helperToggleShowPassword : Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
+{-| Is there no validation error inside the form
+-}
+isEntireFormValid : Form.Conf.Conf -> Form.State.State -> Bool
+isEntireFormValid conf state =
+    let
+        allKeys : List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+        allKeys =
+            allValidationKeysMaker conf state
+
+        fieldsWithErrors_ : List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+        fieldsWithErrors_ =
+            entitiesWithErrors allKeys state.fieldsState
+    in
+    List.head fieldsWithErrors_ == Nothing
+
+
+{-| Is there no validation error inside the form
+-}
+isExistingFormFieldsValid : Form.Conf.Conf -> Form.State.State -> Bool
+isExistingFormFieldsValid conf state =
+    let
+        allKeys : List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+        allKeys =
+            allValidationKeysMaker conf state
+
+        fieldsWithErrors_ : List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+        fieldsWithErrors_ =
+            entitiesWithErrorsForOnlyExistingValidations allKeys state.fieldsState
+    in
+    List.head fieldsWithErrors_ == Nothing
+
+
+{-| Validate the entire form
+-}
+validateEntireForm : Form.Conf.Conf -> Form.State.State -> Form.State.State
+validateEntireForm conf state =
+    let
+        allKeys : List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+        allKeys =
+            allValidationKeysMaker conf state
+
+        newFieldsState : Dict.Dict String Form.FieldState.FieldState
+        newFieldsState =
+            runAllValidations allKeys state state.fieldsState
+    in
+    { state | fieldsState = newFieldsState }
+
+
+{-| Validate the entire form
+-}
+validateDirtyFormFields : Form.Conf.Conf -> Form.State.State -> Form.State.State
+validateDirtyFormFields conf state =
+    let
+        allKeys : List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+        allKeys =
+            allValidationKeysMaker conf state
+
+        newFieldsState : Dict.Dict String Form.FieldState.FieldState
+        newFieldsState =
+            runOnlyExistingValidations allKeys state state.fieldsState
+    in
+    { state | fieldsState = newFieldsState }
+
+
+helperToggleShowPassword : Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
 helperToggleShowPassword maybeFieldState =
     let
-        fieldState : R10.Form.FieldState.FieldState
+        fieldState : Form.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
     Just { fieldState | showPassword = not fieldState.showPassword }
 
 
-helperUpdateValue : String -> Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
+helperUpdateValue : String -> Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
 helperUpdateValue value maybeFieldState =
     let
-        fieldState : R10.Form.FieldState.FieldState
+        fieldState : Form.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
     Just { fieldState | value = value }
 
 
-helperUpdateSearch : String -> Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
+helperUpdateSearch : String -> Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
 helperUpdateSearch value maybeFieldState =
     let
-        fieldState : R10.Form.FieldState.FieldState
+        fieldState : Form.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
     Just { fieldState | search = value }
 
 
-helperUpdateScroll : Float -> Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
+helperUpdateSelect : String -> Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
+helperUpdateSelect value maybeFieldState =
+    let
+        fieldState : Form.FieldState.FieldState
+        fieldState =
+            stateWithDefault maybeFieldState
+    in
+    Just { fieldState | select = value }
+
+
+helperUpdateScroll : Float -> Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
 helperUpdateScroll value maybeScroll =
     let
-        fieldState : R10.Form.FieldState.FieldState
+        fieldState : Form.FieldState.FieldState
         fieldState =
             stateWithDefault maybeScroll
     in
     Just { fieldState | scroll = value }
 
 
-helperUpdateDirty : Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
+helperUpdateDirty : Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
 helperUpdateDirty maybeFieldState =
     let
-        fieldState : R10.Form.FieldState.FieldState
+        fieldState : Form.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
     Just { fieldState | dirty = True }
 
 
-helperLostFocus : Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
+helperLostFocus : Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
 helperLostFocus maybeFieldState =
     let
-        fieldState : R10.Form.FieldState.FieldState
+        fieldState : Form.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
     Just { fieldState | lostFocusOneOrMoreTime = True }
 
 
-helperValidateCreatingFieldsState : Maybe R10.Form.FieldConf.ValidationSpecs -> R10.Form.State.State -> Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
-helperValidateCreatingFieldsState maybeValidationSpec formState maybeFieldState =
+helperValidateCreatingFieldsState : Form.Key.Key -> Maybe Form.FieldConf.ValidationSpecs -> Form.State.State -> Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
+helperValidateCreatingFieldsState key maybeValidationSpec formState maybeFieldState =
     let
-        fieldState : R10.Form.FieldState.FieldState
+        fieldState : Form.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
-    Just <| R10.Form.Validation.validate maybeValidationSpec formState fieldState
+    Just <| Form.Validation.validate key maybeValidationSpec formState fieldState
 
 
-helperValidateWithoutCreatingFieldsState : Maybe R10.Form.FieldConf.ValidationSpecs -> R10.Form.State.State -> Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
-helperValidateWithoutCreatingFieldsState maybeValidationSpec formState maybeFieldState =
-    Maybe.map (R10.Form.Validation.validate maybeValidationSpec formState) maybeFieldState
+helperValidateWithoutCreatingFieldsState : Maybe Form.FieldConf.ValidationSpecs -> Form.State.State -> Form.Key.Key -> Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
+helperValidateWithoutCreatingFieldsState maybeValidationSpec formState key maybeFieldState =
+    Maybe.map (Form.Validation.validate key maybeValidationSpec formState) maybeFieldState
 
 
-helperValidateOnChangeValue : Maybe R10.Form.FieldConf.ValidationSpecs -> QtySubmitAttempted -> R10.Form.State.State -> Maybe R10.Form.FieldState.FieldState -> Maybe R10.Form.FieldState.FieldState
-helperValidateOnChangeValue maybeValidationSpec qtySubmitAttempted formState maybeFieldState =
+helperValidateOnChangeValue : Form.Key.Key -> Maybe Form.FieldConf.ValidationSpecs -> QtySubmitAttempted -> Form.State.State -> Maybe Form.FieldState.FieldState -> Maybe Form.FieldState.FieldState
+helperValidateOnChangeValue key maybeValidationSpec qtySubmitAttempted formState maybeFieldState =
     let
-        fieldState : R10.Form.FieldState.FieldState
+        fieldState : Form.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
     if fieldState.lostFocusOneOrMoreTime || QtySubmitAttempted.toInt qtySubmitAttempted > 0 then
-        helperValidateCreatingFieldsState maybeValidationSpec formState maybeFieldState
+        helperValidateCreatingFieldsState key maybeValidationSpec formState maybeFieldState
 
     else
         maybeFieldState
@@ -136,46 +214,46 @@ helperValidateOnChangeValue maybeValidationSpec qtySubmitAttempted formState may
 --
 
 
-allValidationKeysMaker : R10.Form.Shared.Model -> List R10.Form.MakerForValidationKeys.Outcome
-allValidationKeysMaker form =
-    R10.Form.MakerForValidationKeys.maker R10.Form.Key.empty form.state form.conf
+allValidationKeysMaker : Form.Conf.Conf -> Form.State.State -> List Form.MakerForValidationKeys.Outcome
+allValidationKeysMaker conf state =
+    Form.MakerForValidationKeys.maker Form.Key.empty state conf
 
 
 runAllValidations :
-    List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
-    -> R10.Form.State.State
-    -> Dict.Dict String R10.Form.FieldState.FieldState
-    -> Dict.Dict String R10.Form.FieldState.FieldState
+    List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+    -> Form.State.State
+    -> Dict.Dict String Form.FieldState.FieldState
+    -> Dict.Dict String Form.FieldState.FieldState
 runAllValidations allKeys formState fieldsState =
     -- Validate the entire form, creating new `fieldState` if necessary,
     -- when such fields were not yet touched, for example
     List.foldl
         (\( key, validationSpec ) acc ->
-            R10.Form.Dict.update key (helperValidateCreatingFieldsState validationSpec formState) acc
+            Form.Dict.update key (helperValidateCreatingFieldsState key validationSpec formState) acc
         )
         fieldsState
         allKeys
 
 
 runOnlyExistingValidations :
-    List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
-    -> R10.Form.State.State
-    -> Dict.Dict String R10.Form.FieldState.FieldState
-    -> Dict.Dict String R10.Form.FieldState.FieldState
+    List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+    -> Form.State.State
+    -> Dict.Dict String Form.FieldState.FieldState
+    -> Dict.Dict String Form.FieldState.FieldState
 runOnlyExistingValidations allKeys formState fieldsState =
     -- Validate the entire form, without creating new `fieldState`
     List.foldl
         (\( key, fieldConf ) acc ->
-            R10.Form.Dict.update key (helperValidateWithoutCreatingFieldsState fieldConf formState) acc
+            Form.Dict.update key (helperValidateWithoutCreatingFieldsState fieldConf formState key) acc
         )
         fieldsState
         allKeys
 
 
 entitiesWithErrors :
-    List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
-    -> Dict.Dict String R10.Form.FieldState.FieldState
-    -> List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
+    List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+    -> Dict.Dict String Form.FieldState.FieldState
+    -> List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
 entitiesWithErrors allKeys fieldsState =
     -- Return the list of field that either didn't pass
     -- the validation or were not validated. Used to understand if a form has been
@@ -185,64 +263,80 @@ entitiesWithErrors allKeys fieldsState =
     List.filter
         (\( key, _ ) ->
             let
-                fieldState : R10.Form.FieldState.FieldState
+                fieldState : Form.FieldState.FieldState
                 fieldState =
-                    Maybe.withDefault R10.Form.FieldState.init <| R10.Form.Dict.get key fieldsState
+                    Maybe.withDefault Form.FieldState.init <| Form.Dict.get key fieldsState
             in
-            case R10.Form.FieldState.isValid fieldState.validation of
-                R10.Form.FieldState.NotYetValidated2 ->
+            case Form.FieldState.isValid fieldState.validation of
+                Form.FieldState.NotYetValidated2 ->
                     True
 
-                R10.Form.FieldState.NotValid ->
+                Form.FieldState.NotValid ->
                     True
 
-                R10.Form.FieldState.Valid ->
+                Form.FieldState.Valid ->
                     False
         )
         allKeys
 
 
-allErrorsForView : R10.Form.Shared.Model -> List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
-allErrorsForView form =
-    if shouldShowTheValidationOverview form.state then
+entitiesWithErrorsForOnlyExistingValidations :
+    List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+    -> Dict.Dict String Form.FieldState.FieldState
+    -> List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+entitiesWithErrorsForOnlyExistingValidations allKeys fieldsState =
+    List.filter
+        (\( key, _ ) ->
+            let
+                fieldState : Form.FieldState.FieldState
+                fieldState =
+                    Maybe.withDefault Form.FieldState.init <| Form.Dict.get key fieldsState
+            in
+            case Form.FieldState.isValid fieldState.validation of
+                Form.FieldState.NotYetValidated2 ->
+                    False
+
+                Form.FieldState.NotValid ->
+                    True
+
+                Form.FieldState.Valid ->
+                    False
+        )
+        allKeys
+
+
+allErrorsForView : Form.Conf.Conf -> Form.State.State -> List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
+allErrorsForView conf state =
+    if shouldShowTheValidationOverview state then
         let
-            allKeys : List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
+            allKeys : List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
             allKeys =
-                allValidationKeysMaker form
+                allValidationKeysMaker conf state
         in
-        entitiesWithErrors allKeys form.state.fieldsState
+        entitiesWithErrors allKeys state.fieldsState
 
     else
         []
 
 
-shouldShowTheValidationOverview : R10.Form.State.State -> Bool
+shouldShowTheValidationOverview : Form.State.State -> Bool
 shouldShowTheValidationOverview formState =
     QtySubmitAttempted.toInt formState.qtySubmitAttempted > 0 && not formState.changesSinceLastSubmissions
 
 
-submittable : R10.Form.Shared.Model -> Bool
-submittable form =
-    if QtySubmitAttempted.toInt form.state.qtySubmitAttempted == 0 then
+submittable : Form.Conf.Conf -> Form.State.State -> Bool
+submittable conf state =
+    if QtySubmitAttempted.toInt state.qtySubmitAttempted == 0 then
         -- Always submittable if it has never been submitted
         True
 
     else
-        let
-            allKeys : List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
-            allKeys =
-                allValidationKeysMaker form
-
-            fieldsWithErrors_ : List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
-            fieldsWithErrors_ =
-                entitiesWithErrors allKeys form.state.fieldsState
-        in
-        List.length fieldsWithErrors_ == 0
+        isEntireFormValid conf state
 
 
-isFormSubmittableAndSubmitted : R10.Form.Shared.Model -> R10.Form.Msg.Msg -> Bool
-isFormSubmittableAndSubmitted form formMsg =
-    submittable form && R10.Form.Msg.isSubmitted formMsg
+isFormSubmittableAndSubmitted : Form.Conf.Conf -> Form.State.State -> Form.Msg.Msg -> Bool
+isFormSubmittableAndSubmitted conf state formMsg =
+    submittable conf state && Form.Msg.isSubmitted formMsg
 
 
 
@@ -254,35 +348,20 @@ isFormSubmittableAndSubmitted form formMsg =
 
 
 submit :
-    R10.Form.Conf.Conf
-    -> R10.Form.State.State
-    -> R10.Form.State.State
+    Form.Conf.Conf
+    -> Form.State.State
+    -> Form.State.State
 submit conf state =
     let
-        allKeys : List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
-        allKeys =
-            allValidationKeysMaker { conf = conf, state = state }
-
-        newFieldsState : Dict.Dict String R10.Form.FieldState.FieldState
+        newFieldsState : Form.State.State
         newFieldsState =
-            runAllValidations allKeys state state.fieldsState
+            validateEntireForm conf state
 
-        newQtysubmitAttempted : QtySubmitAttempted
-        newQtysubmitAttempted =
+        newQtySubmitAttempted : QtySubmitAttempted
+        newQtySubmitAttempted =
             QtySubmitAttempted.increment state.qtySubmitAttempted
-
-        fieldsWithErrors_ : List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
-        fieldsWithErrors_ =
-            entitiesWithErrors allKeys newFieldsState
-
-        cachedSubmitMe : Bool
-        cachedSubmitMe =
-            List.length fieldsWithErrors_ == 0
     in
-    { state
-        | fieldsState = newFieldsState
-        , qtySubmitAttempted = newQtysubmitAttempted
-    }
+    { newFieldsState | qtySubmitAttempted = newQtySubmitAttempted }
 
 
 
@@ -293,188 +372,169 @@ submit conf state =
 --  ██████  ██      ██████  ██   ██    ██    ███████
 
 
-onGetFocus : R10.Form.Key.Key -> R10.Form.State.State -> R10.Form.State.State
+onGetFocus : Form.Key.Key -> Form.State.State -> Form.State.State
 onGetFocus key formState =
     { formState
-        | focused = Just (R10.Form.Key.toString key)
+        | focused = Just (Form.Key.toString key)
     }
 
 
-onLoseFocus : R10.Form.Key.Key -> R10.Form.FieldConf.FieldConf -> R10.Form.State.State -> R10.Form.State.State
+onLoseFocus : Form.Key.Key -> Form.FieldConf.FieldConf -> Form.State.State -> Form.State.State
 onLoseFocus key fieldConf formState =
     { formState
         | focused = Nothing
         , fieldsState =
             formState.fieldsState
-                |> R10.Form.Dict.update key helperLostFocus
-                |> R10.Form.Dict.update key (helperValidateCreatingFieldsState fieldConf.validationSpecs formState)
+                |> Form.Dict.update key helperLostFocus
+                |> Form.Dict.update key (helperValidateCreatingFieldsState key fieldConf.validationSpecs formState)
     }
 
 
-onDeactivate : R10.Form.State.State -> R10.Form.State.State
+onDeactivate : Form.State.State -> Form.State.State
 onDeactivate formState =
     { formState | active = Nothing }
 
 
-onActivate : R10.Form.Key.Key -> R10.Form.State.State -> R10.Form.State.State
+onActivate : Form.Key.Key -> Form.State.State -> Form.State.State
 onActivate key formState =
     { formState
-        | active = Just (R10.Form.Key.toString key)
+        | active = Just (Form.Key.toString key)
     }
 
 
-onScroll : R10.Form.Key.Key -> Float -> R10.Form.State.State -> R10.Form.State.State
+onScroll : Form.Key.Key -> Float -> Form.State.State -> Form.State.State
 onScroll key scroll formState =
-    { formState | fieldsState = formState.fieldsState |> R10.Form.Dict.update key (helperUpdateScroll scroll) }
+    { formState | fieldsState = formState.fieldsState |> Form.Dict.update key (helperUpdateScroll scroll) }
 
 
-onChangeValue : R10.Form.Key.Key -> R10.Form.FieldConf.FieldConf -> R10.Form.Conf.Conf -> String -> R10.Form.State.State -> R10.Form.State.State
+onChangeValue : Form.Key.Key -> Form.FieldConf.FieldConf -> Form.Conf.Conf -> String -> Form.State.State -> Form.State.State
 onChangeValue key fieldConf formConf string formState =
     let
-        newState :
-            { active : Maybe R10.Form.Key.KeyAsString
-            , activeTabs : Dict.Dict R10.Form.Key.KeyAsString String
-            , changesSinceLastSubmissions : Bool
-            , fieldsState : Dict.Dict R10.Form.Key.KeyAsString R10.Form.FieldState.FieldState
-            , focused : Maybe R10.Form.Key.KeyAsString
-            , multiplicableQuantities : Dict.Dict R10.Form.Key.KeyAsString Int
-            , qtySubmitAttempted : QtySubmitAttempted
-            , removed : Set.Set R10.Form.Key.KeyAsString
-            }
+        newState : Form.State.State
         newState =
             { formState
-                | focused = Just (R10.Form.Key.toString key)
+                | focused = Just (Form.Key.toString key)
                 , fieldsState =
                     formState.fieldsState
-                        |> R10.Form.Dict.update key (helperUpdateValue string)
-                        |> R10.Form.Dict.update key helperUpdateDirty
-                        |> R10.Form.Dict.update key (helperValidateOnChangeValue fieldConf.validationSpecs formState.qtySubmitAttempted formState)
+                        |> Form.Dict.update key (helperUpdateValue string)
+                        |> Form.Dict.update key helperUpdateDirty
+                        |> Form.Dict.update key (helperValidateOnChangeValue key fieldConf.validationSpecs formState.qtySubmitAttempted formState)
             }
 
-        allKeys : List ( R10.Form.Key.Key, Maybe R10.Form.FieldConf.ValidationSpecs )
+        allKeys : List ( Form.Key.Key, Maybe Form.FieldConf.ValidationSpecs )
         allKeys =
-            allValidationKeysMaker { conf = formConf, state = newState }
+            allValidationKeysMaker formConf newState
     in
     { newState
-        | fieldsState = runOnlyExistingValidations allKeys newState newState.fieldsState
+        | fieldsState =
+            runOnlyExistingValidations allKeys newState newState.fieldsState
     }
 
 
-onChangeSearch : R10.Form.Key.Key -> String -> R10.Form.State.State -> R10.Form.State.State
+onChangeSearch : Form.Key.Key -> String -> Form.State.State -> Form.State.State
 onChangeSearch key string formState =
-    { formState | fieldsState = formState.fieldsState |> R10.Form.Dict.update key (helperUpdateSearch string) }
+    { formState | fieldsState = formState.fieldsState |> Form.Dict.update key (helperUpdateSearch string) }
 
 
-update : R10.Form.Msg.Msg -> R10.Form.State.State -> ( R10.Form.State.State, Cmd R10.Form.Msg.Msg )
+onChangeSelect : Form.Key.Key -> String -> Form.State.State -> Form.State.State
+onChangeSelect key string formState =
+    { formState | fieldsState = formState.fieldsState |> Form.Dict.update key (helperUpdateSelect string) }
+
+
+update : Form.Msg.Msg -> Form.State.State -> ( Form.State.State, Cmd Form.Msg.Msg )
 update msg formStateBeforeHandleChangesSinceLastSubmissions =
     let
-        formState : R10.Form.State.State
+        formState : Form.State.State
         formState =
             { formStateBeforeHandleChangesSinceLastSubmissions
                 | changesSinceLastSubmissions =
-                    R10.Form.Msg.handleChangesSinceLastSubmissions
+                    Form.Msg.handleChangesSinceLastSubmissions
                         formStateBeforeHandleChangesSinceLastSubmissions.changesSinceLastSubmissions
                         msg
             }
     in
     case msg of
-        R10.Form.Msg.NoOp ->
+        Form.Msg.NoOp ->
             ( formState, Cmd.none )
 
-        R10.Form.Msg.Submit formConf ->
+        Form.Msg.Submit formConf ->
             ( submit formConf formState, Cmd.none )
 
-        R10.Form.Msg.GetFocus key ->
+        Form.Msg.GetFocus key ->
             ( onGetFocus key formState
             , Cmd.none
             )
 
-        R10.Form.Msg.TogglePasswordShow key ->
-            ( { formState
-                | fieldsState =
-                    formState.fieldsState
-                        |> R10.Form.Dict.update key helperToggleShowPassword
-              }
-            , Cmd.none
-            )
-
-        R10.Form.Msg.ChangeTab key string ->
-            ( { formState
-                | activeTabs =
-                    formState.activeTabs
-                        |> R10.Form.Dict.insert key string
-              }
-            , Cmd.none
-            )
-
-        R10.Form.Msg.AddEntity key ->
-            let
-                presentQuantity : Int
-                presentQuantity =
-                    Maybe.withDefault 1 <| R10.Form.Dict.get key formState.multiplicableQuantities
-            in
-            ( { formState
-                | multiplicableQuantities =
-                    formState.multiplicableQuantities
-                        |> R10.Form.Dict.insert key (presentQuantity + 1)
-              }
-            , Cmd.none
-            )
-
-        R10.Form.Msg.RemoveEntity key ->
-            ( { formState
-                | removed =
-                    formState.removed
-                        |> Set.insert (R10.Form.Key.toString key)
-              }
-            , Cmd.none
-            )
-
-        R10.Form.Msg.LoseFocus key fieldConf ->
+        Form.Msg.LoseFocus key fieldConf ->
             ( onLoseFocus key fieldConf formState
             , Cmd.none
             )
 
-        R10.Form.Msg.ChangeValue key fieldConf formConf string ->
-            ( onChangeValue key fieldConf formConf string formState, Cmd.none )
-
-        R10.Form.Msg.ChangeSelection key fieldConf formConf string newY ->
-            ( onChangeValue key fieldConf formConf string formState
-            , Task.attempt
-                (always R10.Form.Msg.NoOp)
-                (Browser.Dom.setViewportOf
-                    (R10.FormComponents.Single.dropdownContentId <| R10.Form.Key.toString key)
-                    0
-                    newY
-                )
+        Form.Msg.TogglePasswordShow key ->
+            ( { formState
+                | fieldsState =
+                    formState.fieldsState
+                        |> Form.Dict.update key helperToggleShowPassword
+              }
+            , Cmd.none
             )
 
-        R10.Form.Msg.OnSingleMsg key fieldConf formConf singleMsg ->
+        Form.Msg.ChangeTab key string ->
+            ( { formState
+                | activeTabs =
+                    formState.activeTabs
+                        |> Form.Dict.insert key string
+              }
+            , Cmd.none
+            )
+
+        Form.Msg.AddEntity key ->
             let
-                fieldState : R10.Form.FieldState.FieldState
+                presentQuantity : Int
+                presentQuantity =
+                    Maybe.withDefault 1 <| Form.Dict.get key formState.multiplicableQuantities
+            in
+            ( { formState
+                | multiplicableQuantities =
+                    formState.multiplicableQuantities
+                        |> Form.Dict.insert key (presentQuantity + 1)
+              }
+            , Cmd.none
+            )
+
+        Form.Msg.RemoveEntity key ->
+            ( { formState
+                | removed =
+                    formState.removed
+                        |> Set.insert (Form.Key.toString key)
+              }
+            , Cmd.none
+            )
+
+        Form.Msg.ChangeValue key fieldConf formConf string ->
+            ( onChangeValue key fieldConf formConf string formState, Cmd.none )
+
+        Form.Msg.OnSingleMsg key fieldConf formConf singleMsg ->
+            let
+                fieldState : Form.FieldState.FieldState
                 fieldState =
-                    R10.Form.Dict.get key formState.fieldsState
+                    Form.Dict.get key formState.fieldsState
                         |> stateWithDefault
 
-                singleModel :
-                    { focused : Bool
-                    , opened : Bool
-                    , scroll : Float
-                    , search : String
-                    , value : String
-                    }
+                singleModel : FormComponents.Single.Common.Model
                 singleModel =
                     { value = fieldState.value
                     , search = fieldState.search
+                    , select = fieldState.select
                     , scroll = fieldState.scroll
-                    , focused = formState.focused == Just (R10.Form.Key.toString key)
-                    , opened = formState.active == Just (R10.Form.Key.toString key)
+                    , focused = formState.focused == Just (Form.Key.toString key)
+                    , opened = formState.active == Just (Form.Key.toString key)
                     }
 
                 ( newSingleModel, singleCmd ) =
-                    R10.FormComponents.Single.update singleMsg singleModel
+                    FormComponents.Single.Update.update singleMsg singleModel
 
-                newFormState : R10.Form.State.State
+                newFormState : Form.State.State
                 newFormState =
                     formState
                         |> (if fieldState.value /= newSingleModel.value then
@@ -485,6 +545,12 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
                            )
                         |> (if fieldState.search /= newSingleModel.search then
                                 onChangeSearch key newSingleModel.search
+
+                            else
+                                identity
+                           )
+                        |> (if fieldState.select /= newSingleModel.select then
+                                onChangeSelect key newSingleModel.select
 
                             else
                                 identity
@@ -517,5 +583,5 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
                            )
             in
             ( newFormState
-            , Cmd.map (R10.Form.Msg.OnSingleMsg key fieldConf formConf) singleCmd
+            , Cmd.map (Form.Msg.OnSingleMsg key fieldConf formConf) singleCmd
             )

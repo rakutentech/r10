@@ -1,18 +1,21 @@
-module R10.FormComponents.Single.Common exposing
+module FormComponents.Single.Common exposing
     ( Args
     , FieldOption
     , Model
     , Msg(..)
     , TypeSingle(..)
+    , dropdownContentId
     , getSelectedOrFirst
     , init
-    , isAnyOptionSelected
+    , isAnyOptionLabelMatched
+    , isAnyOptionValueMatched
+    , selectId
     )
 
 import Element exposing (..)
-import R10.FormComponents.Style
-import R10.FormComponents.UI.Palette
-import R10.FormComponents.Validations
+import FormComponents.Style
+import FormComponents.UI.Palette
+import FormComponents.Validations
 
 
 
@@ -24,10 +27,10 @@ type Msg
     | OnFocus String
     | OnLoseFocus String
     | OnScroll Float
-    | OnSearch String String --newSearch newSearch
-    | OnOptionSelect String --newVal
-    | OnArrowUp String Float -- newVal selectionY
-    | OnArrowDown String Float -- newVal selectionY
+    | OnSearch (List FieldOption) String -- newSearch, newSelect
+    | OnOptionSelect String --newValue
+    | OnArrowUp { selectOptionHeight : Int, maxDisplayCount : Int, fieldOptions : List FieldOption } -- newSelect selectionY
+    | OnArrowDown { selectOptionHeight : Int, maxDisplayCount : Int, fieldOptions : List FieldOption } -- newSelect selectionY
     | OnEsc
     | OnInputClick Float -- selectionY
 
@@ -36,6 +39,7 @@ init : Model
 init =
     { value = ""
     , search = ""
+    , select = ""
     , focused = False
     , scroll = 0
     , opened = False
@@ -45,6 +49,7 @@ init =
 type alias Model =
     { value : String
     , search : String
+    , select : String
     , focused : Bool
     , scroll : Float
     , opened : Bool
@@ -64,36 +69,19 @@ type alias FieldOption =
 
 type alias Args msg =
     -- Stuff that change
-    { value : String
-    , search : String
-    , focused : Bool
-    , scroll : Float
-    , active :
-        -- TODO indicates is dropdown open or not? named "active" so other elements of R10.FormComponents can
-        -- use same naming for component specific state. consider renaming?
-        Bool
-    , validation : R10.FormComponents.Validations.Validation
+    { validation : FormComponents.Validations.Validation
 
-    -- Messages
-    , msgNoOp : msg
-    , msgOnFocus : String -> msg
-    , msgOnLoseFocus : String -> msg
-    , msgOnScroll : Float -> msg
-    , msgOnSearch : String -> String -> msg
-    , msgOnOptionSelect : String -> msg
-    , msgOnArrowUp : String -> Float -> msg
-    , msgOnArrowDown : String -> Float -> msg
-    , msgOnEsc : msg
-    , msgOnInputClick : Float -> msg
+    ---- Messages
+    , toMsg : Msg -> msg
 
     -- Stuff that doesn't change
     , label : String
     , helperText : Maybe String
     , disabled : Bool
     , requiredLabel : Maybe String
-    , style : R10.FormComponents.Style.Style
+    , style : FormComponents.Style.Style
     , key : String
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , palette : FormComponents.UI.Palette.Palette
 
     -- Specific
     , singleType : TypeSingle
@@ -107,17 +95,35 @@ type alias Args msg =
     }
 
 
-isAnyOptionSelected : { a | value : String, fieldOptions : List FieldOption } -> Bool
-isAnyOptionSelected { value, fieldOptions } =
+isAnyOptionValueMatched : { a | value : String, fieldOptions : List FieldOption } -> Bool
+isAnyOptionValueMatched { value, fieldOptions } =
     List.any (\option -> option.value == value) fieldOptions
 
 
-getSelectedOrFirst : List FieldOption -> String -> String
-getSelectedOrFirst fieldOptions value =
-    if isAnyOptionSelected { value = value, fieldOptions = fieldOptions } then
+isAnyOptionLabelMatched : { a | value : String, fieldOptions : List FieldOption } -> Bool
+isAnyOptionLabelMatched { value, fieldOptions } =
+    List.any (\option -> option.label == value) fieldOptions
+
+
+getSelectedOrFirst : List FieldOption -> String -> String -> String
+getSelectedOrFirst fieldOptions value select =
+    if not <| String.isEmpty select then
+        select
+
+    else if isAnyOptionValueMatched { value = value, fieldOptions = fieldOptions } then
         value
 
     else
         List.head fieldOptions
             |> Maybe.map .value
             |> Maybe.withDefault ""
+
+
+dropdownContentId : String -> String
+dropdownContentId key =
+    "dropdown-content-" ++ key
+
+
+selectId : String -> String
+selectId key =
+    "dropdown-" ++ key

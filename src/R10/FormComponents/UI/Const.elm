@@ -1,4 +1,4 @@
-module R10.FormComponents.UI.Const exposing
+module FormComponents.UI.Const exposing
     ( inputTextFilledDown
     , inputTextFontSize
     , inputTextHeight
@@ -10,6 +10,8 @@ inputTextHeight =
     -- This need to be at least 50 otherwise the
     -- Chrome auto-suggestion functionality
     -- is covering hiding the lower border
+    --
+    -- https://jira.rakuten-it.com/jira/browse/OMN-1936
     --
     50
 

@@ -1,4 +1,4 @@
-module R10.FormComponents.Utils exposing
+module FormComponents.Utils exposing
     ( listSlice
     , stringInsertAtMulti
     )

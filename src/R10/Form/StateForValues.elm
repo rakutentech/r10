@@ -1,4 +1,4 @@
-module R10.Form.StateForValues exposing
+module Form.StateForValues exposing
     ( Entity(..)
     , EntityId
     , FieldId

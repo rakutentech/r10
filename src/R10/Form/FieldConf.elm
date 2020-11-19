@@ -1,4 +1,4 @@
-module R10.Form.FieldConf exposing
+module Form.FieldConf exposing
     ( FieldConf
     , FieldOption
     , FieldType(..)
@@ -20,26 +20,30 @@ module R10.Form.FieldConf exposing
     , initValidationSpecs
     )
 
+import Form.Key
 import Json.Decode as D
 import Json.Encode as E
 import Json.Encode.Extra as E
-import R10.Form.Key
 
 
 type alias ValidationMessage =
-    { ok : String, err : String }
+    { ok : String
+    , err : String
+    }
 
 
 type Validation
     = NoValidation
       -- Modifications validations
     | WithMsg ValidationMessage Validation -- MsgOk MsgErr validation; changes message of the validation
-    | Dependant R10.Form.Key.KeyAsString Validation -- changes context of the validation
-    | OneOf (List Validation)
-    | AllOf (List Validation)
+    | Dependant Form.Key.KeyAsString Validation -- changes context of the validation
+    | OneOf (List Validation) -- Sees set of underlying validation like one rule. Makes all rules valid if ANY of the rules is valid, otherwise make them invalid.
+    | AllOf (List Validation) -- Sees set of underlying validation like one rule. Makes all rules valid if ALL of the rules is valid, otherwise make them invalid.
+    | Not Validation -- Inverts result of the validation
       -- Current field validations
-    | Equal -- Pass if the value is equal to the value, used for Dependant
+    | Equal Form.Key.KeyAsString -- Pass if the value is equal to the value
     | Required
+    | Empty -- can be used in combined validations to create rules like "if field X is not empty, then Required" ( OneOf [ Required, Dependant "X"  ] )
     | MinLength Int
     | MaxLength Int
     | Regex String
@@ -127,7 +131,7 @@ type alias FieldConf =
 type alias ValidationSpecs =
     { showPassedValidationMessages : Bool
     , hidePassedValidationStyle : Bool
-    , validation : Validation
+    , validation : List Validation
     , validationIcon : ValidationIcon
     }
 
@@ -148,7 +152,7 @@ initValidationSpecs : ValidationSpecs
 initValidationSpecs =
     { showPassedValidationMessages = False
     , hidePassedValidationStyle = False
-    , validation = NoValidation
+    , validation = [ NoValidation ]
     , validationIcon = NoIcon
     }
 
@@ -296,7 +300,7 @@ encodeValidationSpecs validationSpecs =
     E.object
         [ ( "showPassedValidationMessages", E.bool validationSpecs.showPassedValidationMessages )
         , ( "hideCheckmark", E.bool validationSpecs.hidePassedValidationStyle )
-        , ( "validation", encodeValidation validationSpecs.validation )
+        , ( "validation", E.list encodeValidation validationSpecs.validation )
         , ( "validationIcon", encodeValidationIcon validationSpecs.validationIcon )
         ]
 
@@ -306,7 +310,7 @@ decoderValidationSpecs =
     D.map4 ValidationSpecs
         (D.field "showPassedValidationMessages" D.bool)
         (D.field "hideCheckmark" D.bool)
-        (D.field "validation" decoderValidation)
+        (D.field "validation" (D.list decoderValidation))
         (D.field "validationIcon" decoderValidationIcon)
 
 
@@ -341,11 +345,17 @@ encodeValidation validation =
         NoValidation ->
             E.string "no_validation"
 
-        Equal ->
-            E.string "equal"
+        Equal key ->
+            encodeEqual key
+
+        Not validation_ ->
+            encodeNot validation_
 
         Required ->
             E.string "required"
+
+        Empty ->
+            E.string "empty"
 
 
 encodeValidationIcon : ValidationIcon -> E.Value
@@ -530,6 +540,36 @@ decoderRegex =
 
 
 
+-- Equal
+
+
+encodeEqual : String -> E.Value
+encodeEqual key =
+    E.object [ ( "equal", E.string key ) ]
+
+
+decodeEqual : D.Decoder Validation
+decodeEqual =
+    D.map Equal
+        (D.field "equal" D.string)
+
+
+
+-- Not
+
+
+encodeNot : Validation -> E.Value
+encodeNot validation =
+    E.object [ ( "not", encodeValidation validation ) ]
+
+
+decodeNot : D.Decoder Validation
+decodeNot =
+    D.map Not
+        (D.field "validation" decoderValidation)
+
+
+
 --SimpleValidation
 
 
@@ -542,11 +582,11 @@ decodeSimpleValidation =
                     "no_validation" ->
                         D.succeed NoValidation
 
-                    "equal" ->
-                        D.succeed Equal
-
                     "required" ->
                         D.succeed Required
+
+                    "empty" ->
+                        D.succeed Empty
 
                     somethingElse ->
                         D.fail <| "Unknown Validation: " ++ somethingElse ++ ". It should be something like NoValidation."

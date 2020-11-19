@@ -1,4 +1,4 @@
-module R10.Form.QtySubmitAttempted exposing
+module Form.QtySubmitAttempted exposing
     ( QtySubmitAttempted
     , fromInt
     , increment

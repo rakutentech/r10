@@ -1,4 +1,4 @@
-module R10.Form.Converter exposing
+module Form.Converter exposing
     ( binaryTypeFromFieldConfToComponent
     , fromFieldStateValidationToComponentValidation
     , fromFormValidationIconToComponentValidationIcon
@@ -6,13 +6,13 @@ module R10.Form.Converter exposing
     , textTypeFromFieldConfToComponent
     )
 
-import R10.Form.FieldConf
-import R10.Form.FieldState
-import R10.Form.ValidationCode
-import R10.FormComponents.Binary
-import R10.FormComponents.Single.Common
-import R10.FormComponents.Text
-import R10.FormComponents.Validations
+import Form.FieldConf
+import Form.FieldState
+import Form.ValidationCode
+import FormComponents.Binary
+import FormComponents.Single.Common
+import FormComponents.Text
+import FormComponents.Validations
 
 
 
@@ -23,89 +23,89 @@ import R10.FormComponents.Validations
 -- ██      ██    ██ ██  ██ ██  ██  ██  ██      ██   ██    ██    ██      ██   ██
 --  ██████  ██████  ██   ████   ████   ███████ ██   ██    ██    ███████ ██   ██
 --
---  This module R10.helps to convert stuff from form-recursive to form-components
+--  This module helps to convert stuff from form-recursive to form-components
 --
 
 
-binaryTypeFromFieldConfToComponent : R10.Form.FieldConf.TypeBinary -> R10.FormComponents.Binary.TypeBinary
+binaryTypeFromFieldConfToComponent : Form.FieldConf.TypeBinary -> FormComponents.Binary.TypeBinary
 binaryTypeFromFieldConfToComponent typeText =
     case typeText of
-        R10.Form.FieldConf.BinaryCheckbox ->
-            R10.FormComponents.Binary.BinaryCheckbox
+        Form.FieldConf.BinaryCheckbox ->
+            FormComponents.Binary.BinaryCheckbox
 
-        R10.Form.FieldConf.BinarySwitch ->
-            R10.FormComponents.Binary.BinarySwitch
+        Form.FieldConf.BinarySwitch ->
+            FormComponents.Binary.BinarySwitch
 
 
-singleTypeFromFieldConfToComponent : R10.Form.FieldConf.TypeSingle -> R10.FormComponents.Single.Common.TypeSingle
+singleTypeFromFieldConfToComponent : Form.FieldConf.TypeSingle -> FormComponents.Single.Common.TypeSingle
 singleTypeFromFieldConfToComponent typeText =
     case typeText of
-        R10.Form.FieldConf.SingleRadio ->
-            R10.FormComponents.Single.Common.SingleRadio
+        Form.FieldConf.SingleRadio ->
+            FormComponents.Single.Common.SingleRadio
 
-        R10.Form.FieldConf.SingleCombobox ->
-            R10.FormComponents.Single.Common.SingleCombobox
+        Form.FieldConf.SingleCombobox ->
+            FormComponents.Single.Common.SingleCombobox
 
 
-textTypeFromFieldConfToComponent : R10.Form.FieldConf.TypeText -> R10.FormComponents.Text.TextType
+textTypeFromFieldConfToComponent : Form.FieldConf.TypeText -> FormComponents.Text.TextType
 textTypeFromFieldConfToComponent typeText =
     case typeText of
-        R10.Form.FieldConf.TextPlain ->
-            R10.FormComponents.Text.TextPlain
+        Form.FieldConf.TextPlain ->
+            FormComponents.Text.TextPlain
 
-        R10.Form.FieldConf.TextUsername ->
-            R10.FormComponents.Text.TextUsername
+        Form.FieldConf.TextUsername ->
+            FormComponents.Text.TextUsername
 
-        R10.Form.FieldConf.TextEmail ->
-            R10.FormComponents.Text.TextEmail
+        Form.FieldConf.TextEmail ->
+            FormComponents.Text.TextEmail
 
-        R10.Form.FieldConf.TextPasswordCurrent ->
-            R10.FormComponents.Text.TextPasswordCurrent
+        Form.FieldConf.TextPasswordCurrent ->
+            FormComponents.Text.TextPasswordCurrent
 
-        R10.Form.FieldConf.TextPasswordNew ->
-            R10.FormComponents.Text.TextPasswordNew
+        Form.FieldConf.TextPasswordNew ->
+            FormComponents.Text.TextPasswordNew
 
-        R10.Form.FieldConf.TextMultiline ->
-            R10.FormComponents.Text.TextMultiline
+        Form.FieldConf.TextMultiline ->
+            FormComponents.Text.TextMultiline
 
-        R10.Form.FieldConf.TextWithPattern pattern ->
-            R10.FormComponents.Text.TextWithPattern pattern
+        Form.FieldConf.TextWithPattern pattern ->
+            FormComponents.Text.TextWithPattern pattern
 
 
-fromFormValidationIconToComponentValidationIcon : R10.Form.FieldConf.ValidationIcon -> R10.FormComponents.Validations.ValidationIcon
+fromFormValidationIconToComponentValidationIcon : Form.FieldConf.ValidationIcon -> FormComponents.Validations.ValidationIcon
 fromFormValidationIconToComponentValidationIcon formIcon =
     case formIcon of
-        R10.Form.FieldConf.NoIcon ->
-            R10.FormComponents.Validations.NoIcon
+        Form.FieldConf.NoIcon ->
+            FormComponents.Validations.NoIcon
 
-        R10.Form.FieldConf.ClearOrCheck ->
-            R10.FormComponents.Validations.ClearOrCheck
+        Form.FieldConf.ClearOrCheck ->
+            FormComponents.Validations.ClearOrCheck
 
-        R10.Form.FieldConf.ErrorOrCheck ->
-            R10.FormComponents.Validations.ErrorOrCheck
+        Form.FieldConf.ErrorOrCheck ->
+            FormComponents.Validations.ErrorOrCheck
 
 
 fromFieldStateValidationToComponentValidation :
-    Maybe R10.Form.FieldConf.ValidationSpecs
-    -> R10.Form.FieldState.Validation
-    -> (R10.Form.FieldConf.ValidationCode -> String)
-    -> R10.FormComponents.Validations.Validation
+    Maybe Form.FieldConf.ValidationSpecs
+    -> Form.FieldState.Validation
+    -> (Form.FieldConf.ValidationCode -> String)
+    -> FormComponents.Validations.Validation
 fromFieldStateValidationToComponentValidation maybeValidationSpecs validation translator =
     case validation of
-        R10.Form.FieldState.NotYetValidated ->
-            R10.FormComponents.Validations.NotYetValidated
+        Form.FieldState.NotYetValidated ->
+            FormComponents.Validations.NotYetValidated
 
-        R10.Form.FieldState.Validated listValidationOutcome ->
+        Form.FieldState.Validated listValidationOutcome ->
             let
-                listErrValidationOutcome : List R10.Form.FieldState.ValidationOutcome
+                listErrValidationOutcome : List Form.FieldState.ValidationOutcome
                 listErrValidationOutcome =
                     List.filter
                         (\validationOutcome ->
                             case validationOutcome of
-                                R10.Form.FieldState.MessageOk _ _ ->
+                                Form.FieldState.MessageOk _ _ ->
                                     False
 
-                                R10.Form.FieldState.MessageErr _ _ ->
+                                Form.FieldState.MessageErr _ _ ->
                                     True
                         )
                         listValidationOutcome
@@ -123,37 +123,37 @@ fromFieldStateValidationToComponentValidation maybeValidationSpecs validation tr
                         |> Maybe.withDefault False
             in
             if showPassedValidationMessages then
-                R10.FormComponents.Validations.Validated <|
+                FormComponents.Validations.Validated <|
                     List.map
                         (\a -> fromValidationOutcomeToValidationMessage a translator)
                         listValidationOutcome
 
             else if hidePassedValidationStyle && List.length listErrValidationOutcome == 0 then
-                R10.FormComponents.Validations.NotYetValidated
+                FormComponents.Validations.NotYetValidated
 
             else
-                R10.FormComponents.Validations.Validated <|
+                FormComponents.Validations.Validated <|
                     List.map
                         (\err -> fromValidationOutcomeToValidationMessage err translator)
                         listErrValidationOutcome
 
 
 fromValidationOutcomeToValidationMessage :
-    R10.Form.FieldState.ValidationOutcome
-    -> (R10.Form.FieldConf.ValidationCode -> String)
-    -> R10.FormComponents.Validations.ValidationMessage
+    Form.FieldState.ValidationOutcome
+    -> (Form.FieldConf.ValidationCode -> String)
+    -> FormComponents.Validations.ValidationMessage
 fromValidationOutcomeToValidationMessage validationOutcome translator =
     case validationOutcome of
-        R10.Form.FieldState.MessageOk validationCode validationPayload ->
-            R10.FormComponents.Validations.MessageOk <|
-                R10.Form.ValidationCode.fromValidationCodeToMessageWithReplacedValues
+        Form.FieldState.MessageOk validationCode validationPayload ->
+            FormComponents.Validations.MessageOk <|
+                Form.ValidationCode.fromValidationCodeToMessageWithReplacedValues
                     validationCode
                     validationPayload
                     translator
 
-        R10.Form.FieldState.MessageErr validationCode validationPayload ->
-            R10.FormComponents.Validations.MessageErr <|
-                R10.Form.ValidationCode.fromValidationCodeToMessageWithReplacedValues
+        Form.FieldState.MessageErr validationCode validationPayload ->
+            FormComponents.Validations.MessageErr <|
+                Form.ValidationCode.fromValidationCodeToMessageWithReplacedValues
                     validationCode
                     validationPayload
                     translator

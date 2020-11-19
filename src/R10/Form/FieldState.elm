@@ -1,4 +1,4 @@
-module R10.Form.FieldState exposing
+module Form.FieldState exposing
     ( DictFieldState
     , FieldState
     , Validation(..)
@@ -12,9 +12,10 @@ module R10.Form.FieldState exposing
     )
 
 import Dict
+import Form.FieldConf
 import Json.Decode as D
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode as E
-import R10.Form.FieldConf
 
 
 
@@ -26,8 +27,8 @@ import R10.Form.FieldConf
 
 
 type ValidationOutcome
-    = MessageOk R10.Form.FieldConf.ValidationCode R10.Form.FieldConf.ValidationPayload
-    | MessageErr R10.Form.FieldConf.ValidationCode R10.Form.FieldConf.ValidationPayload
+    = MessageOk Form.FieldConf.ValidationCode Form.FieldConf.ValidationPayload
+    | MessageErr Form.FieldConf.ValidationCode Form.FieldConf.ValidationPayload
 
 
 
@@ -49,6 +50,7 @@ type alias FieldState =
     { lostFocusOneOrMoreTime : Bool
     , value : String
     , search : String
+    , select : String
     , scroll : Float
     , dirty : Bool
     , disabled : Bool
@@ -75,6 +77,7 @@ init =
     , showPassword = False
     , value = ""
     , search = ""
+    , select = ""
     , scroll = 0
     , dirty = False
     , disabled = False
@@ -147,15 +150,16 @@ encoderFieldState v =
 decoderFieldState : D.Decoder DictFieldState
 decoderFieldState =
     D.dict
-        (D.map8 FieldState
-            (D.field "lostFocusOneOrMoreTime" D.bool)
-            (D.field "value" D.string)
-            (D.field "search" D.string)
-            (D.field "scroll" D.float)
-            (D.field "dirty" D.bool)
-            (D.field "disabled" D.bool)
-            (D.field "validation" decoderValidation)
-            (D.field "showPassword" D.bool)
+        (D.succeed FieldState
+            |> required "lostFocusOneOrMoreTime" D.bool
+            |> required "value" D.string
+            |> required "search" D.string
+            |> required "select" D.string
+            |> required "scroll" D.float
+            |> required "dirty" D.bool
+            |> required "disabled" D.bool
+            |> required "validation" decoderValidation
+            |> required "showPassword" D.bool
         )
 
 

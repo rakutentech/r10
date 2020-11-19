@@ -1,4 +1,4 @@
-module R10.FormComponents.Text exposing
+module FormComponents.Text exposing
     ( Args
     , TextType(..)
     , extraCss
@@ -12,14 +12,14 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
+import FormComponents.IconButton
+import FormComponents.Style
+import FormComponents.UI
+import FormComponents.UI.Color
+import FormComponents.UI.Const as Constants
+import FormComponents.UI.Palette
+import FormComponents.Validations
 import Html.Attributes
-import R10.FormComponents.IconButton
-import R10.FormComponents.Style
-import R10.FormComponents.UI
-import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Const as Constants
-import R10.FormComponents.UI.Palette
-import R10.FormComponents.Validations
 import Regex
 
 
@@ -33,20 +33,20 @@ type TextType
     | TextWithPattern String
 
 
-viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
+viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : FormComponents.UI.Palette.Palette } -> Element msg
 viewShowHidePasswordButton { msgOnTogglePasswordShow, showPassword, palette } =
     let
         icon : Element msg
         icon =
             if showPassword then
-                html <| R10.FormComponents.UI.icons.eye_ban_l_ (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString) 24
+                html <| FormComponents.UI.icons.eye_ban_l_ (FormComponents.UI.Color.label palette |> FormComponents.UI.Color.toCssString) 24
 
             else
-                html <| R10.FormComponents.UI.icons.eye_l_ (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString) 24
+                html <| FormComponents.UI.icons.eye_l_ (FormComponents.UI.Color.label palette |> FormComponents.UI.Color.toCssString) 24
     in
     case msgOnTogglePasswordShow of
         Just msgOnTogglePasswordShow_ ->
-            R10.FormComponents.IconButton.view [] { palette = palette, icon = icon, msgOnClick = Just msgOnTogglePasswordShow_, size = 24 }
+            FormComponents.IconButton.view [] { palette = palette, icon = icon, msgOnClick = Just msgOnTogglePasswordShow_, size = 24 }
 
         Nothing ->
             none
@@ -61,7 +61,7 @@ type alias Args msg =
     { -- Stuff that change
       value : String
     , focused : Bool
-    , validation : R10.FormComponents.Validations.Validation
+    , validation : FormComponents.Validations.Validation
     , showPassword : Bool
     , leadingIcon : Maybe (Element msg)
     , trailingIcon : Maybe (Element msg)
@@ -79,8 +79,8 @@ type alias Args msg =
     , disabled : Bool
     , requiredLabel : Maybe String
     , idDom : Maybe String
-    , style : R10.FormComponents.Style.Style
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , style : FormComponents.Style.Style
+    , palette : FormComponents.UI.Palette.Palette
 
     -- Specific
     , textType : TextType
@@ -90,8 +90,8 @@ type alias Args msg =
 getBorder :
     { a
         | focused : Bool
-        , style : R10.FormComponents.Style.Style
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , style : FormComponents.Style.Style
+        , palette : FormComponents.UI.Palette.Palette
         , valid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
@@ -101,13 +101,13 @@ getBorder :
 getBorder args =
     let
         { offset, size } =
-            R10.FormComponents.UI.getTextfieldBorderSizeOffset args
+            FormComponents.UI.getTextfieldBorderSizeOffset args
     in
     Border.innerShadow
         { offset = offset
         , size = size
         , blur = 0
-        , color = R10.FormComponents.UI.getBorderColor args
+        , color = FormComponents.UI.getBorderColor args
         }
 
 
@@ -121,9 +121,9 @@ viewBehindPattern :
         , msgOnEnter : Maybe msg
         , msgOnFocus : msg
         , msgOnLoseFocus : Maybe msg
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : FormComponents.UI.Palette.Palette
         , showPassword : Bool
-        , style : R10.FormComponents.Style.Style
+        , style : FormComponents.Style.Style
         , textType : TextType
         , trailingIcon : Maybe (Element msg)
         , value : String
@@ -291,7 +291,7 @@ view attrs extraInputAttrs args =
     let
         valid : Maybe Bool
         valid =
-            R10.FormComponents.Validations.isValid args.validation
+            FormComponents.Validations.isValid args.validation
 
         displayValidation : Bool
         displayValidation =
@@ -309,13 +309,13 @@ view attrs extraInputAttrs args =
             , msgOnFocus : msg
             , msgOnLoseFocus : Maybe msg
             , msgOnTogglePasswordShow : Maybe msg
-            , palette : R10.FormComponents.UI.Palette.Palette
+            , palette : FormComponents.UI.Palette.Palette
             , requiredLabel : Maybe String
             , showPassword : Bool
-            , style : R10.FormComponents.Style.Style
+            , style : FormComponents.Style.Style
             , textType : TextType
             , trailingIcon : Maybe (Element msg)
-            , validation : R10.FormComponents.Validations.Validation
+            , validation : FormComponents.Validations.Validation
             , value : String
             }
         newArgs =
@@ -329,7 +329,7 @@ view attrs extraInputAttrs args =
 
                     else
                         Just <|
-                            R10.FormComponents.UI.showValidationIcon_
+                            FormComponents.UI.showValidationIcon_
                                 { maybeValid = valid
                                 , displayValidation = displayValidation
                                 , palette = args.palette
@@ -343,9 +343,9 @@ view attrs extraInputAttrs args =
             , isMouseOver : Bool
             , label : String
             , leadingIcon : Maybe (Element msg)
-            , palette : R10.FormComponents.UI.Palette.Palette
+            , palette : FormComponents.UI.Palette.Palette
             , requiredLabel : Maybe String
-            , style : R10.FormComponents.Style.Style
+            , style : FormComponents.Style.Style
             , trailingIcon : Maybe (Element msg)
             , valid : Maybe Bool
             , value : String
@@ -371,7 +371,7 @@ view attrs extraInputAttrs args =
            -- If there is spacing and no error, it will appear as a double spacing.
            spacing 0
          , width (fill |> minimum 150)
-         , inFront <| R10.FormComponents.UI.labelBuilder styleArgs
+         , inFront <| FormComponents.UI.labelBuilder styleArgs
          ]
             ++ (if newArgs.disabled then
                     [ alpha 0.6 ]
@@ -385,10 +385,10 @@ view attrs extraInputAttrs args =
             [ getBorder styleArgs
             , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
             , case newArgs.style of
-                R10.FormComponents.Style.Filled ->
+                FormComponents.Style.Filled ->
                     Border.rounded 0
 
-                R10.FormComponents.Style.Outlined ->
+                FormComponents.Style.Outlined ->
                     Border.rounded 5
             , height <|
                 px <|
@@ -406,11 +406,11 @@ view attrs extraInputAttrs args =
                             []
                    )
                 ++ extraInputAttrs
-        , R10.FormComponents.UI.viewHelperText newArgs.palette
+        , FormComponents.UI.viewHelperText newArgs.palette
             [ spacing 2
             , alpha 0.5
             , Font.size 14
-            , paddingEach { top = R10.FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
+            , paddingEach { top = FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
             ]
             newArgs.helperText
         ]
@@ -426,9 +426,9 @@ viewInput :
         , msgOnEnter : Maybe msg
         , msgOnFocus : msg
         , msgOnLoseFocus : Maybe msg
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : FormComponents.UI.Palette.Palette
         , showPassword : Bool
-        , style : R10.FormComponents.Style.Style
+        , style : FormComponents.Style.Style
         , textType : TextType
         , trailingIcon : Maybe (Element msg)
         , value : String
@@ -446,14 +446,21 @@ viewInput args extraAttr =
             [ -- in order to icon to be aligned with the input, move icon down
               moveDown <|
                 case args.style of
-                    R10.FormComponents.Style.Filled ->
+                    FormComponents.Style.Filled ->
                         8
 
-                    R10.FormComponents.Style.Outlined ->
+                    FormComponents.Style.Outlined ->
                         0
             , centerY
             , paddingXY 8 0
             ]
+
+        paddingValues : { top : Int, right : Int, bottom : Int, left : Int }
+        paddingValues =
+            FormComponents.UI.getTextfieldPaddingEach args
+
+        paddingOffset =
+            12
 
         inputAttrs : List (Attribute msg)
         inputAttrs =
@@ -465,10 +472,16 @@ viewInput args extraAttr =
             , width fill
             , Font.size Constants.inputTextFontSize
             , Border.width 0
-            , Background.color <| R10.FormComponents.UI.Color.transparent
-            , Font.color <| R10.FormComponents.UI.Color.font args.palette
+            , Background.color <| FormComponents.UI.Color.transparent
+            , Font.color <| FormComponents.UI.Color.font args.palette
             , Events.onFocus args.msgOnFocus
-            , paddingEach <| R10.FormComponents.UI.getTextfieldPaddingEach args
+
+            -- Remove part of the top padding and re-apply it as a margin,
+            -- fixes issue with chrome auto-fill styles. more info: https://jira.rakuten-it.com/jira/browse/OMN-2279
+            -- Please feel free to modify it if you would find some better solution.
+            -- Possibly could be fixed in elm-ui 2.0. At the time 1.1.8 in use
+            , paddingEach <| { paddingValues | top = paddingValues.top - paddingOffset }
+            , htmlAttribute <| Html.Attributes.style "margin-top" (String.fromInt paddingOffset ++ "px")
 
             -- We want selection tab order to be: leadingIcon <-> input  <-> trailingIcon
             , behindContent <| el (alignLeft :: iconCommonAttrs) (Maybe.withDefault none args.leadingIcon)
@@ -476,7 +489,7 @@ viewInput args extraAttr =
             ]
                 ++ (case args.msgOnEnter of
                         Just msgOnEnter_ ->
-                            [ htmlAttribute <| R10.FormComponents.UI.onEnter msgOnEnter_ ]
+                            [ htmlAttribute <| FormComponents.UI.onEnter msgOnEnter_ ]
 
                         Nothing ->
                             []

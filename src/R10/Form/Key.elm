@@ -1,4 +1,4 @@
-module R10.Form.Key exposing
+module Form.Key exposing
     ( Key
     , KeyAsString
     , composeKey
@@ -7,6 +7,7 @@ module R10.Form.Key exposing
     , fromList
     , fromString
     , headId
+    , replaceLeaf
     , toQuantity
     , toString
     )
@@ -22,7 +23,7 @@ type alias KeyAsString =
 
 fromList : List String -> Key
 fromList list =
-    Key list
+    Key (list |> List.filter (not << String.isEmpty))
 
 
 empty : Key
@@ -32,7 +33,11 @@ empty =
 
 composeKey : Key -> String -> Key
 composeKey (Key keys) extraKey =
-    Key (extraKey :: keys)
+    if String.isEmpty extraKey then
+        Key keys
+
+    else
+        Key (extraKey :: keys)
 
 
 composeMultiKeys : Key -> Int -> List Key
@@ -67,3 +72,12 @@ fromString keyAsString =
 toQuantity : Key -> Int
 toQuantity (Key keys) =
     List.length keys
+
+
+replaceLeaf : String -> Key -> Key
+replaceLeaf newLeaf (Key keyList) =
+    if List.isEmpty keyList then
+        fromList keyList
+
+    else
+        newLeaf :: List.drop 1 keyList |> fromList

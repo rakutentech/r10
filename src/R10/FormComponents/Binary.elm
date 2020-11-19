@@ -1,4 +1,4 @@
-module R10.FormComponents.Binary exposing
+module FormComponents.Binary exposing
     ( Args
     , TypeBinary(..)
     , view
@@ -9,11 +9,11 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
+import FormComponents.UI
+import FormComponents.UI.Color
+import FormComponents.UI.Palette
+import FormComponents.Validations
 import Html.Attributes
-import R10.FormComponents.UI
-import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
-import R10.FormComponents.Validations
 
 
 type TypeBinary
@@ -25,7 +25,7 @@ type alias Args msg =
     { -- Stuff that change
       value : Bool
     , focused : Bool
-    , validation : R10.FormComponents.Validations.Validation
+    , validation : FormComponents.Validations.Validation
 
     -- Messages
     , msgOnChange : Bool -> msg
@@ -37,7 +37,7 @@ type alias Args msg =
     , label : String
     , disabled : Bool
     , helperText : Maybe String
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , palette : FormComponents.UI.Palette.Palette
 
     -- Specific stuff
     , typeBinary : TypeBinary
@@ -49,13 +49,13 @@ viewBinarySwitch attrs args =
     let
         { trackColor, thumbColor } =
             if args.value then
-                { trackColor = R10.FormComponents.UI.Color.primaryVariant
-                , thumbColor = R10.FormComponents.UI.Color.primary
+                { trackColor = FormComponents.UI.Color.primaryVariant
+                , thumbColor = FormComponents.UI.Color.primary
                 }
 
             else
-                { trackColor = R10.FormComponents.UI.Color.onSurfaceA 0.37
-                , thumbColor = R10.FormComponents.UI.Color.surface
+                { trackColor = FormComponents.UI.Color.onSurfaceA 0.37
+                , thumbColor = FormComponents.UI.Color.surface
                 }
 
         track : Element msg
@@ -104,7 +104,7 @@ viewBinarySwitch attrs args =
                             moveRight 0
                         ]
                     <|
-                        R10.FormComponents.UI.viewSelectShadow args thumb
+                        FormComponents.UI.viewSelectShadow args thumb
                 , behindContent <| track
                 ]
             <|
@@ -121,7 +121,7 @@ viewBinarySwitch attrs args =
                     [ Events.onClick args.msgOnClick
                     , pointer
                     , htmlAttribute <| Html.Attributes.tabindex 0
-                    , htmlAttribute <| R10.FormComponents.UI.onSelectKey args.msgOnClick
+                    , htmlAttribute <| FormComponents.UI.onSelectKey args.msgOnClick
                     , Events.onFocus args.msgOnFocus
                     , Events.onLoseFocus args.msgOnLoseFocus
                     ]
@@ -146,7 +146,7 @@ viewBinaryCheckbox attrs args =
                     [ Events.onClick args.msgOnClick
                     , pointer
                     , htmlAttribute <| Html.Attributes.tabindex 0
-                    , htmlAttribute <| R10.FormComponents.UI.onSelectKey args.msgOnClick
+                    , htmlAttribute <| FormComponents.UI.onSelectKey args.msgOnClick
                     , Events.onFocus args.msgOnFocus
                     , Events.onLoseFocus args.msgOnLoseFocus
                     ]
@@ -176,7 +176,7 @@ checkboxIcon args value =
                     ]
                 <|
                     html <|
-                        R10.FormComponents.UI.icons.checkBold_ (R10.FormComponents.UI.Color.onPrimary args.palette |> R10.FormComponents.UI.Color.toCssString) 10
+                        FormComponents.UI.icons.checkBold_ (FormComponents.UI.Color.onPrimary args.palette |> FormComponents.UI.Color.toCssString) 10
 
             else
                 none
@@ -192,29 +192,29 @@ checkboxIcon args value =
                  , centerX
                  ]
                     ++ (if value then
-                            [ Background.color <| R10.FormComponents.UI.Color.primary args.palette
+                            [ Background.color <| FormComponents.UI.Color.primary args.palette
                             , Border.innerShadow
                                 { offset = ( 0, 0 )
                                 , size = 0
                                 , blur = 0
-                                , color = R10.FormComponents.UI.Color.onSurfaceA 0.54 args.palette
+                                , color = FormComponents.UI.Color.onSurfaceA 0.54 args.palette
                                 }
                             ]
 
                         else
-                            [ Background.color <| R10.FormComponents.UI.Color.transparent
+                            [ Background.color <| FormComponents.UI.Color.transparent
                             , Border.innerShadow
                                 { offset = ( 0, 0 )
                                 , size = 2
                                 , blur = 0
-                                , color = R10.FormComponents.UI.Color.onSurfaceA 0.54 args.palette
+                                , color = FormComponents.UI.Color.onSurfaceA 0.54 args.palette
                                 }
                             ]
                        )
                 )
                 checkMark
     in
-    el [ width <| px 18, moveLeft 11 ] <| R10.FormComponents.UI.viewSelectShadow args boxBorderAndFill
+    el [ width <| px 18, moveLeft 11 ] <| FormComponents.UI.viewSelectShadow args boxBorderAndFill
 
 
 view : List (Attribute msg) -> Args msg -> Element msg
@@ -226,7 +226,7 @@ view attrs args =
 
             BinaryCheckbox ->
                 viewBinaryCheckbox attrs args
-        , R10.FormComponents.UI.viewHelperText args.palette
-            [ Font.size 14, alpha 0.5, paddingEach { top = R10.FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ]
+        , FormComponents.UI.viewHelperText args.palette
+            [ Font.size 14, alpha 0.5, paddingEach { top = FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ]
             args.helperText
         ]

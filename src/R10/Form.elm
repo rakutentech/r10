@@ -5,12 +5,13 @@ module R10.Form exposing
     , Conf, Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
     , FieldConf, TypeSingle, single, fieldType, text, validationIcon, validation, binary, initFieldConf
     , State, initState, stateToString, stringToState
-    , update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations
+    , update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
     , Msg, msg
     , keyToString
     , getFieldValueAsBool
     , commonValidation
-    , boolToString, stringToBool
+    , FieldState
+    , Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
     )
 
 {-| Use this stuff if you need to add a form in your page.
@@ -36,7 +37,7 @@ module R10.Form exposing
 
 @docs State, initState, stateToString, stringToState
 
-@docs update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations
+@docs update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
 
 @docs Model
 
@@ -47,6 +48,8 @@ module R10.Form exposing
 @docs getFieldValueAsBool
 
 @docs commonValidation
+
+@docs FieldState
 
 -}
 
@@ -316,14 +319,14 @@ validation :
     , equal : Validation
     , maxLength : Int -> Validation
     , minLength : Int -> Validation
-    , noValidatio : Validation
+    , noValidation : Validation
     , oneOf : List Validation -> Validation
     , regex : String -> Validation
     , required : Validation
     , withMsg : ValidationMessage -> Validation -> Validation
     }
 validation =
-    { noValidatio = R10.Form.FieldConf.NoValidation
+    { noValidation = R10.Form.FieldConf.NoValidation
     , withMsg = R10.Form.FieldConf.WithMsg
     , dependant = R10.Form.FieldConf.Dependant
     , oneOf = R10.Form.FieldConf.OneOf
@@ -411,6 +414,16 @@ runOnlyExistingValidations =
     R10.Form.Update.runOnlyExistingValidations
 
 
+submittable : Model -> Bool
+submittable =
+    R10.Form.Update.submittable
+
+
+isFormSubmittableAndSubmitted : Model -> Msg -> Bool
+isFormSubmittableAndSubmitted =
+    R10.Form.Update.isFormSubmittableAndSubmitted
+
+
 
 -- EXPOSING STUFF FROM R10.Form.Msg
 
@@ -483,3 +496,23 @@ commonValidation :
     }
 commonValidation =
     R10.Form.Validation.commonValidation
+
+
+setFieldValue : KeyAsString -> String -> State -> State
+setFieldValue =
+    R10.Form.Helpers.setFieldValue
+
+
+getField : KeyAsString -> State -> Maybe FieldState
+getField =
+    R10.Form.Helpers.getField
+
+
+validate : Maybe ValidationSpecs -> State -> FieldState -> FieldState
+validate =
+    R10.Form.Validation.validate
+
+
+isChangingValues : Msg -> Bool
+isChangingValues =
+    R10.Form.Msg.isChangingValues

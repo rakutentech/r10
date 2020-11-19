@@ -1,6 +1,6 @@
 module R10.Form exposing
     ( view, viewWithOptions, viewWithPalette
-    , Options
+    , Options, defaultTranslator
     , Maker, MakerArgs
     , Model, Conf
     , State, initState, stateToString, stringToState
@@ -13,6 +13,7 @@ module R10.Form exposing
     , getFieldValueAsBool
     , commonValidation
     , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
+    , Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
     )
 
 {-| Use this stuff if you need to add a form in your page.
@@ -25,7 +26,7 @@ module R10.Form exposing
 
 # View Options
 
-@docs Options
+@docs Options, defaultTranslator
 
 
 # Maker
@@ -69,10 +70,12 @@ module R10.Form exposing
 
 @docs FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
 
+@docs Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
+
 -}
 
 import Dict
-import Element
+import Element exposing (..)
 import Json.Decode
 import R10.Form.Conf
 import R10.Form.FieldConf
@@ -86,9 +89,14 @@ import R10.Form.State
 import R10.Form.Update
 import R10.Form.Validation
 import R10.Form.ValidationCode
-import R10.FormComponents
+import R10.FormComponents.IconButton
+import R10.FormComponents.Single
+import R10.FormComponents.Single.Common
 import R10.FormComponents.Style
+import R10.FormComponents.UI
+import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
+import R10.FormComponents.Validations
 
 
 {-| -}
@@ -96,8 +104,8 @@ type alias MakerArgs =
     { key : Key
     , formState : State
     , translator : ValidationCode -> String
-    , style : R10.FormComponents.Style
-    , palette : R10.FormComponents.Palette
+    , style : Style
+    , palette : Palette
     }
 
 
@@ -109,60 +117,83 @@ type alias ValidationCode =
 type alias Maker =
     MakerArgs
     -> List R10.Form.Conf.Entity
-    -> List (Element.Element R10.Form.Msg.Msg)
+    -> List (Element R10.Form.Msg.Msg)
 
 
 {-| `style` can be
 
-    * R10.FormComponents.style.filled
-    * R10.FormComponents.style.outlined
+    * style.filled
+    * style.outlined
+
+`palette` is
+
+    type alias Palette =
+        { primary : Color
+        , primaryVariant : Color
+        , success : Color
+        , error : Color
+
+        -- Text Colors
+        --
+        , onSurface : Color
+        , onPrimary : Color
+
+        -- Background Colors
+        --
+        , surface : Color
+        , background : Color
+        }
+
+See <https://material.io/design/color/dark-theme.html#properties> for more details.
+
+If you want to use the default palette, just pass `Nothing`
 
 -}
 type alias Options =
     { maker : Maybe Maker
     , translator : Maybe (ValidationCode -> String)
-    , style : R10.FormComponents.Style
-    , palette : Maybe R10.FormComponents.Palette
+    , style : Style
+    , palette : Maybe Palette
     }
 
 
 {-| This is the simplest no-configuration version of the view. Just pass
 -}
-view : R10.Form.Shared.Model -> (R10.Form.Msg.Msg -> msg) -> List (Element.Element msg)
+view : Model -> (Msg -> msg) -> List (Element msg)
 view form msgMapper =
     viewWithOptions form
         msgMapper
         { maker = Nothing
         , translator = Nothing
-        , style = R10.FormComponents.Style.Outlined
+        , style = style.outlined
         , palette = Nothing
         }
 
 
 {-| Use this version if you have a specific palette that you want to use.
 -}
-viewWithPalette : R10.Form.Shared.Model -> (R10.Form.Msg.Msg -> msg) -> R10.FormComponents.UI.Palette.Palette -> List (Element.Element msg)
+viewWithPalette : Model -> (Msg -> msg) -> Palette -> List (Element msg)
 viewWithPalette form msgMapper palette =
     viewWithOptions form
         msgMapper
         { maker = Nothing
         , translator = Nothing
-        , style = R10.FormComponents.Style.Outlined
+        , style = style.outlined
         , palette = Just palette
         }
 
 
 {-| Use this version for a full control.
 -}
-viewWithOptions : R10.Form.Shared.Model -> (R10.Form.Msg.Msg -> msg) -> Options -> List (Element.Element msg)
+viewWithOptions : Model -> (R10.Form.Msg.Msg -> msg) -> Options -> List (Element msg)
 viewWithOptions form msgMapper args =
     List.map
-        (Element.map msgMapper)
+        (map msgMapper)
         (Maybe.withDefault R10.Form.MakerForView.maker
             args.maker
             { key = R10.Form.Key.empty
             , formState = form.state
-            , translator = Maybe.withDefault R10.Form.ValidationCode.translator args.translator
+            , translator = Maybe.withDefault defaultTranslator args.translator
             , style = args.style
             , palette = Maybe.withDefault R10.FormComponents.UI.Palette.light args.palette
             }
@@ -170,12 +201,18 @@ viewWithOptions form msgMapper args =
         )
 
 
+{-| -}
+defaultTranslator : ValidationCode -> String
+defaultTranslator =
+    R10.Form.ValidationCode.translator
+
+
 
 -- EXPOSING STUFF FROM R10.Form.MakerForView
 
 
 {-| -}
-extraCss : Maybe R10.FormComponents.Palette -> String
+extraCss : Maybe Palette -> String
 extraCss =
     R10.Form.MakerForView.extraCss
 
@@ -456,7 +493,8 @@ initState =
     R10.Form.State.init
 
 
-{-| -}
+{-| This can be useful to store the state of a form to the Local Storage, for example. Then, using `stringToState` is possible to restore all the values of a form or keep the form sync'ed on different tabs.
+-}
 stateToString : R10.Form.State.State -> String
 stateToString =
     R10.Form.State.toString
@@ -628,3 +666,173 @@ validate =
 isChangingValues : Msg -> Bool
 isChangingValues =
     R10.Form.Msg.isChangingValues
+
+
+
+-- IMPORTING STUFF FROM FormComponents
+
+
+{-| -}
+type alias Palette =
+    R10.FormComponents.UI.Palette.Palette
+
+
+{-| -}
+type alias Style =
+    R10.FormComponents.Style.Style
+
+
+{-| -}
+type alias SingleModel =
+    R10.FormComponents.Single.Common.Model
+
+
+{-| -}
+type alias SingleMsg =
+    R10.FormComponents.Single.Common.Msg
+
+
+{-| -}
+type alias SingleType =
+    R10.FormComponents.Single.Common.TypeSingle
+
+
+{-| -}
+type alias SingleFieldOption =
+    R10.FormComponents.Single.Common.FieldOption
+
+
+{-| -}
+type alias Validation2 =
+    R10.FormComponents.Validations.Validation
+
+
+{-| -}
+style :
+    { filled : Style
+    , outlined : Style
+    }
+style =
+    { filled = R10.FormComponents.Style.Filled
+    , outlined = R10.FormComponents.Style.Outlined
+    }
+
+
+{-| -}
+label : Palette -> Color
+label =
+    R10.FormComponents.UI.Color.label
+
+
+{-| -}
+onClickWithStopPropagation : msg -> Attribute msg
+onClickWithStopPropagation =
+    R10.FormComponents.UI.onClickWithStopPropagation
+
+
+{-| -}
+viewIconButton :
+    List (Element.Attribute msg)
+    ->
+        { icon : Element msg
+        , msgOnClick : Maybe msg
+        , palette : Palette
+        , size : Int
+        }
+    -> Element msg
+viewIconButton =
+    R10.FormComponents.IconButton.view
+
+
+{-| -}
+viewSingleCustom :
+    List (Element.Attribute msg)
+    -> SingleModel
+    ->
+        { disabled : Bool
+        , fieldOptions : List SingleFieldOption
+        , helperText : Maybe String
+        , key : String
+        , label : String
+        , leadingIcon : Maybe (Element.Element msg)
+        , maxDisplayCount : Int
+        , palette : Palette
+        , requiredLabel : Maybe String
+        , searchFn : String -> SingleFieldOption -> Bool
+        , selectOptionHeight : Int
+        , singleType : SingleType
+        , style : Style
+        , toMsg : SingleMsg -> msg
+        , toOptionEl : SingleFieldOption -> Element msg
+        , trailingIcon : Maybe (Element.Element msg)
+        , validation : Validation2
+        }
+    -> Element msg
+viewSingleCustom =
+    R10.FormComponents.Single.viewCustom
+
+
+{-| -}
+defaultSearchFn : String -> SingleFieldOption -> Bool
+defaultSearchFn =
+    R10.FormComponents.Single.defaultSearchFn
+
+
+{-| -}
+initSingle : SingleModel
+initSingle =
+    R10.FormComponents.Single.Common.init
+
+
+{-| -}
+typeSingle :
+    { combobox : SingleType
+    , radio : SingleType
+    }
+typeSingle =
+    { radio = R10.FormComponents.Single.Common.SingleRadio
+    , combobox = R10.FormComponents.Single.Common.SingleCombobox
+    }
+
+
+
+--
+-- updateSingle : SingleMsg -> SingleModel -> ( SingleModel, Cmd SingleMsg )
+-- updateSingle =
+--     R10.FormComponents.Single.update
+--
+
+
+{-| -}
+normalizeString : String -> String
+normalizeString =
+    R10.FormComponents.Single.normalizeString
+
+
+{-| -}
+insertBold : List Int -> String -> String
+insertBold =
+    R10.FormComponents.Single.insertBold
+
+
+{-| -}
+defaultToOptionEl :
+    { a | msgOnSelect : String -> msg, search : String }
+    -> SingleFieldOption
+    -> Element msg
+defaultToOptionEl =
+    R10.FormComponents.Single.defaultToOptionEl
+
+
+{-| -}
+defaultTrailingIcon :
+    { a | opened : Bool, palette : Palette }
+    -> Element msg
+defaultTrailingIcon =
+    R10.FormComponents.Single.defaultTrailingIcon
+
+
+{-| -}
+singleMsg : { onOptionSelect : String -> SingleMsg }
+singleMsg =
+    { onOptionSelect = R10.FormComponents.Single.Common.OnOptionSelect }

@@ -1,9 +1,9 @@
 module R10.FormComponents.Phone.Update exposing (..)
 
 import Browser.Dom
+import List.Extra
 import R10.FormComponents.Phone.Common as Common
 import R10.FormComponents.Phone.Country exposing (Country)
-import List.Extra
 import Regex
 import Set
 import Task

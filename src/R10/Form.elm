@@ -14,6 +14,7 @@ module R10.Form exposing
     , commonValidation
     , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
     , Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
+    , FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, maker, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationCodes, validationMessage, validationToString, viewButton, viewText
     )
 
 {-| Use this stuff if you need to add a form in your page.
@@ -82,20 +83,33 @@ import R10.Form.FieldConf
 import R10.Form.FieldState
 import R10.Form.Helpers
 import R10.Form.Key
+import R10.Form.MakerForValues
 import R10.Form.MakerForView
 import R10.Form.Msg
 import R10.Form.Shared
 import R10.Form.State
+import R10.Form.StateForValues
 import R10.Form.Update
 import R10.Form.Validation
 import R10.Form.ValidationCode
+import R10.FormComponents.Binary
+import R10.FormComponents.Button
+import R10.FormComponents.ExtraCss
 import R10.FormComponents.IconButton
+import R10.FormComponents.Phone
+import R10.FormComponents.Phone.Common
+import R10.FormComponents.Phone.Country
+import R10.FormComponents.Phone.Update
 import R10.FormComponents.Single
 import R10.FormComponents.Single.Common
+import R10.FormComponents.Single.Update
 import R10.FormComponents.Style
+import R10.FormComponents.Text
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
+import R10.FormComponents.Utils.FocusOut
+import R10.FormComponents.Utils.SimpleMarkdown
 import R10.FormComponents.Validations
 
 
@@ -413,6 +427,8 @@ validation :
     , regex : String -> Validation
     , required : Validation
     , withMsg : ValidationMessage -> Validation -> Validation
+    , empty : Validation
+    , not : Validation -> Validation
     }
 validation =
     { noValidation = R10.Form.FieldConf.NoValidation
@@ -425,17 +441,29 @@ validation =
     , minLength = R10.Form.FieldConf.MinLength
     , maxLength = R10.Form.FieldConf.MaxLength
     , regex = R10.Form.FieldConf.Regex
+    , empty = R10.Form.FieldConf.Empty
+    , not = R10.Form.FieldConf.Not
     }
 
 
 {-| -}
 binary :
-    { checkbox : TypeBinary
-    , switch : TypeBinary
+    { checkbox : R10.Form.FieldConf.TypeBinary
+    , switch : R10.Form.FieldConf.TypeBinary
     }
 binary =
     { checkbox = R10.Form.FieldConf.BinaryCheckbox
     , switch = R10.Form.FieldConf.BinarySwitch
+    }
+
+
+binary2 :
+    { checkbox : R10.FormComponents.Binary.TypeBinary
+    , switch : R10.FormComponents.Binary.TypeBinary
+    }
+binary2 =
+    { checkbox = R10.FormComponents.Binary.BinaryCheckbox
+    , switch = R10.FormComponents.Binary.BinarySwitch
     }
 
 
@@ -611,6 +639,11 @@ keyToString =
 getFieldValueAsBool : KeyAsString -> State -> Maybe Bool
 getFieldValueAsBool =
     R10.Form.Helpers.getFieldValueAsBool
+
+
+getFieldValue : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe String
+getFieldValue =
+    R10.Form.Helpers.getFieldValue
 
 
 {-| -}
@@ -836,3 +869,291 @@ defaultTrailingIcon =
 singleMsg : { onOptionSelect : String -> SingleMsg }
 singleMsg =
     { onOptionSelect = R10.FormComponents.Single.Common.OnOptionSelect }
+
+
+getMultiActiveKeys : R10.Form.Key.Key -> R10.Form.State.State -> List R10.Form.Key.Key
+getMultiActiveKeys =
+    R10.Form.Helpers.getMultiActiveKeys
+
+
+stringToKey : R10.Form.Key.KeyAsString -> R10.Form.Key.Key
+stringToKey =
+    R10.Form.Key.fromString
+
+
+composeKey : R10.Form.Key.Key -> String -> R10.Form.Key.Key
+composeKey =
+    R10.Form.Key.composeKey
+
+
+setFieldValidationError :
+    R10.Form.Key.KeyAsString
+    -> String
+    -> R10.Form.State.State
+    -> R10.Form.State.State
+setFieldValidationError =
+    R10.Form.Helpers.setFieldValidationError
+
+
+initFieldState : R10.Form.FieldState.FieldState
+initFieldState =
+    R10.Form.FieldState.init
+
+
+updateSingle :
+    R10.FormComponents.Single.Common.Msg
+    -> R10.FormComponents.Single.Common.Model
+    ->
+        ( R10.FormComponents.Single.Common.Model
+        , Cmd R10.FormComponents.Single.Common.Msg
+        )
+updateSingle =
+    R10.FormComponents.Single.Update.update
+
+
+initValidationSpecs : R10.Form.FieldConf.ValidationSpecs
+initValidationSpecs =
+    R10.Form.FieldConf.initValidationSpecs
+
+
+listToKey : List String -> R10.Form.Key.Key
+listToKey =
+    R10.Form.Key.fromList
+
+
+setMultiplicableQuantities : R10.Form.Key.KeyAsString -> Int -> R10.Form.State.State -> R10.Form.State.State
+setMultiplicableQuantities =
+    R10.Form.Helpers.setMultiplicableQuantities
+
+
+clearFieldValidation : R10.Form.Key.KeyAsString -> R10.Form.State.State -> R10.Form.State.State
+clearFieldValidation =
+    R10.Form.Helpers.clearFieldValidation
+
+
+headId : R10.Form.Key.Key -> Maybe String
+headId =
+    R10.Form.Key.headId
+
+
+viewButton : List (Attribute msg) -> R10.FormComponents.Button.Args msg -> Element msg
+viewButton =
+    R10.FormComponents.Button.view
+
+
+button :
+    { contained : R10.FormComponents.Button.Button
+    , outlined : R10.FormComponents.Button.Button
+    , text : R10.FormComponents.Button.Button
+    , icon : R10.FormComponents.Button.Button
+    }
+button =
+    { outlined = R10.FormComponents.Button.Outlined
+    , contained = R10.FormComponents.Button.Contained
+    , text = R10.FormComponents.Button.Text
+    , icon = R10.FormComponents.Button.Icon
+    }
+
+
+setFieldDisabled : R10.Form.Key.KeyAsString -> Bool -> R10.Form.State.State -> R10.Form.State.State
+setFieldDisabled =
+    R10.Form.Helpers.setFieldDisabled
+
+
+getActiveTab : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe String
+getActiveTab =
+    R10.Form.Helpers.getActiveTab
+
+
+setActiveTab : KeyAsString -> String -> State -> State
+setActiveTab =
+    R10.Form.Helpers.setActiveTab
+
+
+validateEntireForm : R10.Form.Conf.Conf -> R10.Form.State.State -> R10.Form.State.State
+validateEntireForm =
+    R10.Form.Update.validateEntireForm
+
+
+validateDirtyFormFields : R10.Form.Conf.Conf -> R10.Form.State.State -> R10.Form.State.State
+validateDirtyFormFields =
+    R10.Form.Update.validateDirtyFormFields
+
+
+isExistingFormFieldsValid : R10.Form.Conf.Conf -> R10.Form.State.State -> Bool
+isExistingFormFieldsValid =
+    R10.Form.Update.isExistingFormFieldsValid
+
+
+colorToCssString : Color -> String
+colorToCssString =
+    R10.FormComponents.UI.Color.toCssString
+
+
+elementMarkdown : String -> List (Element msg)
+elementMarkdown =
+    R10.FormComponents.Utils.SimpleMarkdown.elementMarkdown
+
+
+componentValidation :
+    { notYetValidated : R10.FormComponents.Validations.Validation
+    , validated :
+        List R10.FormComponents.Validations.ValidationMessage
+        -> R10.FormComponents.Validations.Validation
+    }
+componentValidation =
+    { notYetValidated = R10.FormComponents.Validations.NotYetValidated
+    , validated = R10.FormComponents.Validations.Validated
+    }
+
+
+onFocusOut : String -> msg -> Json.Decode.Decoder msg
+onFocusOut =
+    R10.FormComponents.Utils.FocusOut.onFocusOut
+
+
+entitiesToString : List R10.Form.StateForValues.Entity -> String
+entitiesToString =
+    R10.Form.StateForValues.toString
+
+
+maker :
+    R10.Form.Key.Key
+    -> R10.Form.State.State
+    -> R10.Form.Conf.Conf
+    -> List R10.Form.StateForValues.Entity
+maker =
+    R10.Form.MakerForValues.maker
+
+
+emptyKey : R10.Form.Key.Key
+emptyKey =
+    R10.Form.Key.empty
+
+
+validationCodes :
+    { allOf : R10.Form.FieldConf.ValidationCode
+    , emailFormatInvalid : R10.Form.FieldConf.ValidationCode
+    , emailFormatValid : R10.Form.FieldConf.ValidationCode
+    , empty : R10.Form.FieldConf.ValidationCode
+    , equalInvalid : R10.Form.FieldConf.ValidationCode
+    , formatInvalid : R10.Form.FieldConf.ValidationCode
+    , formatInvalidCharactersInvalid : R10.Form.FieldConf.ValidationCode
+    , formatNoNumberInvalid : R10.Form.FieldConf.ValidationCode
+    , formatNoSpecialCharactersInvalid : R10.Form.FieldConf.ValidationCode
+    , formatNoUppercaseInvalid : R10.Form.FieldConf.ValidationCode
+    , formatValid : R10.Form.FieldConf.ValidationCode
+    , hexColorFormatInvalid : R10.Form.FieldConf.ValidationCode
+    , jsonFormatInvalid : R10.Form.FieldConf.ValidationCode
+    , lengthTooLargeInvalid : R10.Form.FieldConf.ValidationCode
+    , lengthTooSmallInvalid : R10.Form.FieldConf.ValidationCode
+    , oneOf : R10.Form.FieldConf.ValidationCode
+    , required : R10.Form.FieldConf.ValidationCode
+    , requiredField : R10.Form.FieldConf.ValidationCode
+    , somethingWrong : R10.Form.FieldConf.ValidationCode
+    , valueInvalid : R10.Form.FieldConf.ValidationCode
+    }
+validationCodes =
+    R10.Form.ValidationCode.validationCodes
+
+
+type alias TextType =
+    R10.FormComponents.Text.TextType
+
+
+validationToString : R10.FormComponents.Validations.Validation -> String
+validationToString =
+    R10.FormComponents.Validations.validationToString
+
+
+viewText :
+    List (Attribute msg)
+    -> List (Attribute msg)
+    -> R10.FormComponents.Text.Args msg
+    -> Element msg
+viewText =
+    R10.FormComponents.Text.view
+
+
+extraCssComponents : R10.FormComponents.UI.Palette.Palette -> String
+extraCssComponents =
+    R10.FormComponents.ExtraCss.extraCss
+
+
+validationMessage :
+    { error : String -> R10.FormComponents.Validations.ValidationMessage
+    , ok : String -> R10.FormComponents.Validations.ValidationMessage
+    }
+validationMessage =
+    { ok = R10.FormComponents.Validations.MessageOk
+    , error = R10.FormComponents.Validations.MessageErr
+    }
+
+
+componentTextType :
+    { email : R10.FormComponents.Text.TextType
+    , multiline : R10.FormComponents.Text.TextType
+    , passwordCurrent : R10.FormComponents.Text.TextType
+    , passwordNew : R10.FormComponents.Text.TextType
+    , plain : R10.FormComponents.Text.TextType
+    , username : R10.FormComponents.Text.TextType
+    , withPattern : String -> R10.FormComponents.Text.TextType
+    }
+componentTextType =
+    { plain = R10.FormComponents.Text.TextPlain
+    , email = R10.FormComponents.Text.TextEmail
+    , username = R10.FormComponents.Text.TextUsername
+    , passwordNew = R10.FormComponents.Text.TextPasswordNew
+    , passwordCurrent = R10.FormComponents.Text.TextPasswordCurrent
+    , multiline = R10.FormComponents.Text.TextMultiline
+    , withPattern = R10.FormComponents.Text.TextWithPattern
+    }
+
+
+binaryView : List (Attribute msg) -> R10.FormComponents.Binary.Args msg -> Element msg
+binaryView =
+    R10.FormComponents.Binary.view
+
+
+type alias PhoneModel =
+    R10.FormComponents.Phone.Common.Model
+
+
+type alias PhoneMsg =
+    R10.FormComponents.Phone.Common.Msg
+
+
+phoneView :
+    List (Attribute msg)
+    -> R10.FormComponents.Phone.Common.Model
+    ->
+        { countryOptions : Maybe (List R10.FormComponents.Phone.Country.Country)
+        , disabled : Bool
+        , helperText : Maybe String
+        , key : String
+        , label : String
+        , palette : R10.FormComponents.UI.Palette.Palette
+        , requiredLabel : Maybe String
+        , style : R10.FormComponents.Style.Style
+        , toMsg : R10.FormComponents.Phone.Common.Msg -> msg
+        , validation : R10.FormComponents.Validations.Validation
+        }
+    -> Element msg
+phoneView =
+    R10.FormComponents.Phone.view
+
+
+phoneUpdate :
+    R10.FormComponents.Phone.Common.Msg
+    -> R10.FormComponents.Phone.Common.Model
+    ->
+        ( R10.FormComponents.Phone.Common.Model
+        , Cmd R10.FormComponents.Phone.Common.Msg
+        )
+phoneUpdate =
+    R10.FormComponents.Phone.Update.update
+
+
+phoneInit : R10.FormComponents.Phone.Common.Model
+phoneInit =
+    R10.FormComponents.Phone.Common.init

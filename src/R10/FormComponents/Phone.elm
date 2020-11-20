@@ -8,6 +8,7 @@ module R10.FormComponents.Phone exposing
 import Element exposing (..)
 import Element.Events as Events
 import Element.Font as Font
+import Html.Attributes
 import R10.FormComponents.IconButton
 import R10.FormComponents.Phone.Common as Common
 import R10.FormComponents.Phone.Country exposing (Country)
@@ -18,7 +19,6 @@ import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
-import Html.Attributes
 
 
 

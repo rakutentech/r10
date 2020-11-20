@@ -20,10 +20,10 @@ module R10.Form.FieldConf exposing
     , initValidationSpecs
     )
 
-import R10.Form.Key
 import Json.Decode as D
 import Json.Encode as E
 import Json.Encode.Extra as E
+import R10.Form.Key
 
 
 type alias ValidationMessage =

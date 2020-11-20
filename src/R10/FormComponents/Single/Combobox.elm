@@ -6,6 +6,9 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Keyed as Keyed
+import Html.Attributes
+import Html.Events
+import List.Extra
 import R10.FormComponents.Single.Common as Common
 import R10.FormComponents.Single.Update
 import R10.FormComponents.Style
@@ -16,9 +19,6 @@ import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils
 import R10.FormComponents.Utils.FocusOut
 import R10.FormComponents.Validations
-import Html.Attributes
-import Html.Events
-import List.Extra
 
 
 filterBySearch : String -> Common.Args msg -> List Common.FieldOption

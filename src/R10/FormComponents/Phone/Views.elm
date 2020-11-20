@@ -7,6 +7,9 @@ import Element.Events as Events
 import Element.Font as Font
 import Element.Keyed as Keyed
 import Element.Lazy
+import Html.Attributes
+import Html.Events
+import List.Extra
 import R10.FormComponents.Phone.Common as Common
 import R10.FormComponents.Phone.Country exposing (Country)
 import R10.FormComponents.Phone.Update
@@ -18,9 +21,6 @@ import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils
 import R10.FormComponents.Utils.FocusOut
 import R10.FormComponents.Validations
-import Html.Attributes
-import Html.Events
-import List.Extra
 
 
 viewComboboxDropdown : Common.Model -> Common.Args msg -> Element msg

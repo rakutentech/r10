@@ -12,6 +12,7 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
+import Html.Attributes
 import R10.FormComponents.IconButton
 import R10.FormComponents.Style
 import R10.FormComponents.UI
@@ -19,7 +20,6 @@ import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Const as Constants
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
-import Html.Attributes
 import Regex
 
 

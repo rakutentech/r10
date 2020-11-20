@@ -12,10 +12,10 @@ module R10.Form.FieldState exposing
     )
 
 import Dict
-import R10.Form.FieldConf
 import Json.Decode as D
 import Json.Decode.Pipeline exposing (required)
 import Json.Encode as E
+import R10.Form.FieldConf
 
 
 

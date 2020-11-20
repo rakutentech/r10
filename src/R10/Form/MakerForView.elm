@@ -11,6 +11,7 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
+import Html.Attributes
 import R10.Form.Conf
 import R10.Form.Converter exposing (fromFormValidationIconToComponentValidationIcon)
 import R10.Form.Dict
@@ -30,7 +31,6 @@ import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
-import Html.Attributes
 
 
 

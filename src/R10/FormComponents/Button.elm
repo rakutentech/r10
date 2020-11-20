@@ -9,11 +9,11 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
+import Html.Attributes
 import R10.FormComponents.Style
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
-import Html.Attributes
 
 
 

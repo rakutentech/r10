@@ -6,11 +6,11 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
+import Html.Attributes
 import R10.FormComponents.Single.Common as Common
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
-import Html.Attributes
 
 
 isSelected : Input.OptionState -> Bool

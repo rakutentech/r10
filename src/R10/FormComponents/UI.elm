@@ -24,16 +24,16 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Html
+import Html.Attributes
+import Html.Events
+import Json.Decode
 import R10.FormComponents.Style
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Const
 import R10.FormComponents.UI.Icon
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils.SimpleMarkdown
-import Html
-import Html.Attributes
-import Html.Events
-import Json.Decode
 import Svg
 
 

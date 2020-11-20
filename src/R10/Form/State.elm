@@ -6,14 +6,14 @@ module R10.Form.State exposing
     )
 
 import Dict
-import R10.Form.FieldState
-import R10.Form.Key
-import R10.Form.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
 import Json.Decode as D
 import Json.Decode.Extra as D
 import Json.Decode.Pipeline as D
 import Json.Encode as E
 import Json.Encode.Extra as E
+import R10.Form.FieldState
+import R10.Form.Key
+import R10.Form.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
 import Set
 
 

@@ -10,11 +10,11 @@ module R10.FormComponents.Validations exposing
 
 import Element exposing (..)
 import Element.Font as Font
+import Html
+import Html.Attributes
 import R10.FormComponents.UI exposing (icons)
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
-import Html
-import Html.Attributes
 
 
 isValid : Validation -> Maybe Bool

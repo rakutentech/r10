@@ -1,8 +1,8 @@
 module R10.FormComponents.Single.Update exposing (..)
 
 import Browser.Dom
-import R10.FormComponents.Single.Common as Common
 import List.Extra
+import R10.FormComponents.Single.Common as Common
 import Task
 
 

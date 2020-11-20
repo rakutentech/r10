@@ -11,6 +11,7 @@ module R10.FormComponents.Single exposing
 
 import Element exposing (..)
 import Element.Background as Background
+import Html.Attributes
 import R10.FormComponents.IconButton
 import R10.FormComponents.Single.Combobox
 import R10.FormComponents.Single.Common as Common
@@ -23,7 +24,6 @@ import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils
 import R10.FormComponents.Utils.SimpleMarkdown
 import R10.FormComponents.Validations
-import Html.Attributes
 import String.Extra
 
 

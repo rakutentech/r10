@@ -1,8 +1,12 @@
 module R10.Form exposing
-    ( view, viewWithOptions, viewWithPalette
-    , Options, defaultTranslator
-    , Maker, MakerArgs
+    ( view, viewWithPalette, viewWithOptions
     , Model, Conf
+    , MsgMapper
+    , Options
+    , Maker, MakerArgs, maker
+    , defaultTranslator, validationCodes, ValidationCode
+    , style
+    , Palette
     , State, initState, stateToString, stringToState
     , extraCss
     , Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
@@ -13,31 +17,86 @@ module R10.Form exposing
     , getFieldValueAsBool
     , commonValidation
     , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
-    , Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
-    , FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, maker, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationCodes, validationMessage, validationToString, viewButton, viewText
+    , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
+    , FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText
     )
 
-{-| Use this stuff if you need to add a form in your page.
+{-| Useful things to build a form .
 
 
 # Views
 
-@docs view, viewWithOptions, viewWithPalette
+There are three functions to rennder the form, each with a different degree of customization. They are order from the simplest (less customizable) to the most complex (more customizable).
 
-
-# View Options
-
-@docs Options, defaultTranslator
-
-
-# Maker
-
-@docs Maker, MakerArgs
+@docs view, viewWithPalette, viewWithOptions
 
 
 # Model
 
 @docs Model, Conf
+
+
+# MsgMapper
+
+This function is to convert specific form messages (`Msg`) into generic messages (`msg`). Tipically you would define this function like this in your application:
+
+    type Msg
+        = MsgForm R10.Form.Msg
+
+`MsgForm` can now be used as `MsgMapper` that convert `R10.Form.Msg` into `Msg`.
+
+For a code example have a look at this [simple form](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm).
+
+@docs MsgMapper
+
+
+# Views' Options
+
+These are the options that you can use with `viewWithOptions`.
+
+@docs Options
+
+
+# Maker
+
+@docs Maker, MakerArgs, maker
+
+
+# Translator
+
+If you want to personalise the translations or you want to translate them in different languages, you can do so defining a function like
+
+    translator : ValidationCode -> String
+    translator validationCode =
+        Dict.fromList
+            [ ( validationCodes.emailFormatInvalid
+              , "Invalid email format"
+              )
+            , ( validationCodes.emailFormatValid
+              , "Valid email format"
+              )
+            , ( validationCodes.formatInvalid
+              , "Invalid format"
+              )
+            ...
+            , ( validationCodes.oneOf
+              , "All the validations have failed"
+              )
+            ]
+            |> Dict.get validationCode
+            |> Maybe.withDefault validationCode
+
+@docs defaultTranslator, validationCodes, ValidationCode
+
+
+# Style
+
+@docs style
+
+
+# Palette
+
+@docs Palette
 
 
 # State
@@ -71,7 +130,9 @@ module R10.Form exposing
 
 @docs FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
 
-@docs Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
+@docs label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
+
+@docs FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText
 
 -}
 
@@ -123,6 +184,8 @@ type alias MakerArgs =
     }
 
 
+{-| Just a `String`
+-}
 type alias ValidationCode =
     R10.Form.FieldConf.ValidationCode
 
@@ -134,35 +197,7 @@ type alias Maker =
     -> List (Element R10.Form.Msg.Msg)
 
 
-{-| `style` can be
-
-    * style.filled
-    * style.outlined
-
-`palette` is
-
-    type alias Palette =
-        { primary : Color
-        , primaryVariant : Color
-        , success : Color
-        , error : Color
-
-        -- Text Colors
-        --
-        , onSurface : Color
-        , onPrimary : Color
-
-        -- Background Colors
-        --
-        , surface : Color
-        , background : Color
-        }
-
-See <https://material.io/design/color/dark-theme.html#properties> for more details.
-
-If you want to use the default palette, just pass `Nothing`
-
--}
+{-| -}
 type alias Options =
     { maker : Maybe Maker
     , translator : Maybe (ValidationCode -> String)
@@ -171,9 +206,49 @@ type alias Options =
     }
 
 
-{-| This is the simplest no-configuration version of the view. Just pass
+{-| -}
+type alias MsgMapper msg =
+    Msg -> msg
+
+
+{-| This is the simplest way to render a form, as you can see in this basic example:
+
+    module Main exposing (main)
+
+    import Element exposing (..)
+    import Html
+    import R10.Form
+
+    formModel : R10.Form.Model
+    formModel =
+        { conf =
+            [ R10.Form.entity.field
+                { id = "email"
+                , idDom = Nothing
+                , type_ = R10.Form.fieldType.text R10.Form.text.email
+                , label = "Email"
+                , helperText = Just "My first form"
+                , requiredLabel = Nothing
+                , validationSpecs = Nothing
+                }
+            ]
+        , state = R10.Form.initState
+        }
+
+    formMsgMapper : R10.Form.MsgMapper ()
+    formMsgMapper =
+        \_ -> ()
+
+    main : Html.Html ()
+    main =
+        layout [] <|
+            column [ centerX, centerY ] <|
+                R10.Form.view formModel formMsgMapper
+
+Note that the form of this example is not active because is not wired to The Elm Architecture. In interested, look at the code of an [active form example](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm).
+
 -}
-view : Model -> (Msg -> msg) -> List (Element msg)
+view : Model -> MsgMapper msg -> List (Element msg)
 view form msgMapper =
     viewWithOptions form
         msgMapper
@@ -186,7 +261,7 @@ view form msgMapper =
 
 {-| Use this version if you have a specific palette that you want to use.
 -}
-viewWithPalette : Model -> (Msg -> msg) -> Palette -> List (Element msg)
+viewWithPalette : Model -> MsgMapper msg -> Palette -> List (Element msg)
 viewWithPalette form msgMapper palette =
     viewWithOptions form
         msgMapper
@@ -199,7 +274,7 @@ viewWithPalette form msgMapper palette =
 
 {-| Use this version for a full control.
 -}
-viewWithOptions : Model -> (R10.Form.Msg.Msg -> msg) -> Options -> List (Element msg)
+viewWithOptions : Model -> MsgMapper msg -> Options -> List (Element msg)
 viewWithOptions form msgMapper args =
     List.map
         (map msgMapper)
@@ -457,6 +532,7 @@ binary =
     }
 
 
+{-| -}
 binary2 :
     { checkbox : R10.FormComponents.Binary.TypeBinary
     , switch : R10.FormComponents.Binary.TypeBinary
@@ -641,6 +717,7 @@ getFieldValueAsBool =
     R10.Form.Helpers.getFieldValueAsBool
 
 
+{-| -}
 getFieldValue : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe String
 getFieldValue =
     R10.Form.Helpers.getFieldValue
@@ -705,7 +782,32 @@ isChangingValues =
 -- IMPORTING STUFF FROM FormComponents
 
 
-{-| -}
+{-|
+
+    type alias Palette =
+        { primary : Color
+        , primaryVariant : Color
+        , success : Color
+        , error : Color
+
+        -- Text Colors
+        --
+        , onSurface : Color
+        , onPrimary : Color
+
+        -- Background Colors
+        --
+        , surface : Color
+        , background : Color
+        }
+
+Note that these are `Element.Color` from `elm-ui`.
+
+See <https://material.io/design/color/dark-theme.html#properties> for more details.
+
+If you want to use the default palette, just pass `Nothing`
+
+-}
 type alias Palette =
     R10.FormComponents.UI.Palette.Palette
 
@@ -871,21 +973,29 @@ singleMsg =
     { onOptionSelect = R10.FormComponents.Single.Common.OnOptionSelect }
 
 
+
+-- NEW ADDITIONS AFTER SSP
+
+
+{-| -}
 getMultiActiveKeys : R10.Form.Key.Key -> R10.Form.State.State -> List R10.Form.Key.Key
 getMultiActiveKeys =
     R10.Form.Helpers.getMultiActiveKeys
 
 
+{-| -}
 stringToKey : R10.Form.Key.KeyAsString -> R10.Form.Key.Key
 stringToKey =
     R10.Form.Key.fromString
 
 
+{-| -}
 composeKey : R10.Form.Key.Key -> String -> R10.Form.Key.Key
 composeKey =
     R10.Form.Key.composeKey
 
 
+{-| -}
 setFieldValidationError :
     R10.Form.Key.KeyAsString
     -> String
@@ -895,11 +1005,13 @@ setFieldValidationError =
     R10.Form.Helpers.setFieldValidationError
 
 
+{-| -}
 initFieldState : R10.Form.FieldState.FieldState
 initFieldState =
     R10.Form.FieldState.init
 
 
+{-| -}
 updateSingle :
     R10.FormComponents.Single.Common.Msg
     -> R10.FormComponents.Single.Common.Model
@@ -911,36 +1023,43 @@ updateSingle =
     R10.FormComponents.Single.Update.update
 
 
+{-| -}
 initValidationSpecs : R10.Form.FieldConf.ValidationSpecs
 initValidationSpecs =
     R10.Form.FieldConf.initValidationSpecs
 
 
+{-| -}
 listToKey : List String -> R10.Form.Key.Key
 listToKey =
     R10.Form.Key.fromList
 
 
+{-| -}
 setMultiplicableQuantities : R10.Form.Key.KeyAsString -> Int -> R10.Form.State.State -> R10.Form.State.State
 setMultiplicableQuantities =
     R10.Form.Helpers.setMultiplicableQuantities
 
 
+{-| -}
 clearFieldValidation : R10.Form.Key.KeyAsString -> R10.Form.State.State -> R10.Form.State.State
 clearFieldValidation =
     R10.Form.Helpers.clearFieldValidation
 
 
+{-| -}
 headId : R10.Form.Key.Key -> Maybe String
 headId =
     R10.Form.Key.headId
 
 
+{-| -}
 viewButton : List (Attribute msg) -> R10.FormComponents.Button.Args msg -> Element msg
 viewButton =
     R10.FormComponents.Button.view
 
 
+{-| -}
 button :
     { contained : R10.FormComponents.Button.Button
     , outlined : R10.FormComponents.Button.Button
@@ -955,46 +1074,55 @@ button =
     }
 
 
+{-| -}
 setFieldDisabled : R10.Form.Key.KeyAsString -> Bool -> R10.Form.State.State -> R10.Form.State.State
 setFieldDisabled =
     R10.Form.Helpers.setFieldDisabled
 
 
+{-| -}
 getActiveTab : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe String
 getActiveTab =
     R10.Form.Helpers.getActiveTab
 
 
+{-| -}
 setActiveTab : KeyAsString -> String -> State -> State
 setActiveTab =
     R10.Form.Helpers.setActiveTab
 
 
+{-| -}
 validateEntireForm : R10.Form.Conf.Conf -> R10.Form.State.State -> R10.Form.State.State
 validateEntireForm =
     R10.Form.Update.validateEntireForm
 
 
+{-| -}
 validateDirtyFormFields : R10.Form.Conf.Conf -> R10.Form.State.State -> R10.Form.State.State
 validateDirtyFormFields =
     R10.Form.Update.validateDirtyFormFields
 
 
+{-| -}
 isExistingFormFieldsValid : R10.Form.Conf.Conf -> R10.Form.State.State -> Bool
 isExistingFormFieldsValid =
     R10.Form.Update.isExistingFormFieldsValid
 
 
+{-| -}
 colorToCssString : Color -> String
 colorToCssString =
     R10.FormComponents.UI.Color.toCssString
 
 
+{-| -}
 elementMarkdown : String -> List (Element msg)
 elementMarkdown =
     R10.FormComponents.Utils.SimpleMarkdown.elementMarkdown
 
 
+{-| -}
 componentValidation :
     { notYetValidated : R10.FormComponents.Validations.Validation
     , validated :
@@ -1007,16 +1135,19 @@ componentValidation =
     }
 
 
+{-| -}
 onFocusOut : String -> msg -> Json.Decode.Decoder msg
 onFocusOut =
     R10.FormComponents.Utils.FocusOut.onFocusOut
 
 
+{-| -}
 entitiesToString : List R10.Form.StateForValues.Entity -> String
 entitiesToString =
     R10.Form.StateForValues.toString
 
 
+{-| -}
 maker :
     R10.Form.Key.Key
     -> R10.Form.State.State
@@ -1026,11 +1157,13 @@ maker =
     R10.Form.MakerForValues.maker
 
 
+{-| -}
 emptyKey : R10.Form.Key.Key
 emptyKey =
     R10.Form.Key.empty
 
 
+{-| -}
 validationCodes :
     { allOf : R10.Form.FieldConf.ValidationCode
     , emailFormatInvalid : R10.Form.FieldConf.ValidationCode
@@ -1057,15 +1190,18 @@ validationCodes =
     R10.Form.ValidationCode.validationCodes
 
 
+{-| -}
 type alias TextType =
     R10.FormComponents.Text.TextType
 
 
+{-| -}
 validationToString : R10.FormComponents.Validations.Validation -> String
 validationToString =
     R10.FormComponents.Validations.validationToString
 
 
+{-| -}
 viewText :
     List (Attribute msg)
     -> List (Attribute msg)
@@ -1075,11 +1211,13 @@ viewText =
     R10.FormComponents.Text.view
 
 
+{-| -}
 extraCssComponents : R10.FormComponents.UI.Palette.Palette -> String
 extraCssComponents =
     R10.FormComponents.ExtraCss.extraCss
 
 
+{-| -}
 validationMessage :
     { error : String -> R10.FormComponents.Validations.ValidationMessage
     , ok : String -> R10.FormComponents.Validations.ValidationMessage
@@ -1090,6 +1228,7 @@ validationMessage =
     }
 
 
+{-| -}
 componentTextType :
     { email : R10.FormComponents.Text.TextType
     , multiline : R10.FormComponents.Text.TextType
@@ -1110,19 +1249,23 @@ componentTextType =
     }
 
 
+{-| -}
 binaryView : List (Attribute msg) -> R10.FormComponents.Binary.Args msg -> Element msg
 binaryView =
     R10.FormComponents.Binary.view
 
 
+{-| -}
 type alias PhoneModel =
     R10.FormComponents.Phone.Common.Model
 
 
+{-| -}
 type alias PhoneMsg =
     R10.FormComponents.Phone.Common.Msg
 
 
+{-| -}
 phoneView :
     List (Attribute msg)
     -> R10.FormComponents.Phone.Common.Model
@@ -1143,6 +1286,7 @@ phoneView =
     R10.FormComponents.Phone.view
 
 
+{-| -}
 phoneUpdate :
     R10.FormComponents.Phone.Common.Msg
     -> R10.FormComponents.Phone.Common.Model
@@ -1154,6 +1298,7 @@ phoneUpdate =
     R10.FormComponents.Phone.Update.update
 
 
+{-| -}
 phoneInit : R10.FormComponents.Phone.Common.Model
 phoneInit =
     R10.FormComponents.Phone.Common.init

@@ -116,7 +116,7 @@ translator validationCode =
           , "One of the validations have failed"
           )
         , ( validationCodes.oneOf
-          , "All of the validations have failed"
+          , "All the validations have failed"
           )
         ]
         |> Dict.get validationCode

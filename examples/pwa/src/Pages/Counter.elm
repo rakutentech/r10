@@ -85,8 +85,8 @@ init =
 
 type Msg
     = OnAnimationFrame Time.Posix
-    | JumpTo Int
-    | MoveTo Int
+    | GoTo Int
+    | Add Int
 
 
 update : Msg -> Model -> Model
@@ -95,11 +95,11 @@ update msg model =
         OnAnimationFrame _ ->
             { model | counter = R10.Counter.update model.counter }
 
-        JumpTo value ->
-            { model | counter = R10.Counter.jumpTo value model.counter }
-
-        MoveTo value ->
+        GoTo value ->
             { model | counter = R10.Counter.moveTo value model.counter }
+
+        Add value ->
+            { model | counter = R10.Counter.add value model.counter }
 
 
 view : Model -> List (Element Msg)
@@ -107,38 +107,28 @@ view model =
     [ el [ Font.family [ Font.monospace ] ] <| R10.Counter.view model.counter 100
     , row [ spacing 20 ]
         [ R10.Button.secondary [ width shrink ]
-            { label = text "Jump To 999"
-            , libu = R10.Libu.Bu <| Just <| JumpTo 999
-            , theme = theme
-            }
-        , R10.Button.secondary [ width shrink ]
-            { label = text "Jump To 100"
-            , libu = R10.Libu.Bu <| Just <| JumpTo 100
-            , theme = theme
-            }
-        , R10.Button.secondary [ width shrink ]
             { label = text "Jump To 10"
-            , libu = R10.Libu.Bu <| Just <| JumpTo 10
+            , libu = R10.Libu.Bu <| Just <| GoTo 10
             , theme = theme
             }
         , R10.Button.secondary [ width shrink ]
             { label = text "Jump To 0"
-            , libu = R10.Libu.Bu <| Just <| JumpTo 0
+            , libu = R10.Libu.Bu <| Just <| GoTo 0
             , theme = theme
             }
         , R10.Button.secondary [ width shrink ]
-            { label = text "Move To 100"
-            , libu = R10.Libu.Bu <| Just <| MoveTo 100
+            { label = text "Add 10"
+            , libu = R10.Libu.Bu <| Just <| Add 10
             , theme = theme
             }
         , R10.Button.secondary [ width shrink ]
-            { label = text "Move To 10"
-            , libu = R10.Libu.Bu <| Just <| MoveTo 10
+            { label = text "Add 94,851"
+            , libu = R10.Libu.Bu <| Just <| Add 94857
             , theme = theme
             }
         , R10.Button.secondary [ width shrink ]
-            { label = text "Move To 0"
-            , libu = R10.Libu.Bu <| Just <| MoveTo 0
+            { label = text "Subtract 10"
+            , libu = R10.Libu.Bu <| Just <| Add -10
             , theme = theme
             }
         ]

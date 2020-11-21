@@ -2,7 +2,7 @@ module R10.Header exposing (view, Model, LanguageSystem(..), Msg(..), Session(..
 
 {-| This create a generic header.
 
-@docs view, Model, LanguageSystem, Logo, Msg, Session, SessionData, TypeLogo, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample
+@docs view, Model, LanguageSystem, Msg, Session, SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample
 
 -}
 

@@ -1,22 +1,10 @@
-module R10.Counter exposing
-    ( Counter
-    , add
-    , animationPosition
-    , areMoving
-    , init
-    , jumpTo
-    , lastValueInTheQueue
-    , moveTo
-    , nextValue
-    , pause
-    , presentValue
-    , setSpeedInDigitsPerSecond
-    , start
-    , stop
-    , update
-    , view
-    , wheelsQuantity
-    )
+module R10.Counter exposing (Counter, add, animationPosition, areMoving, init, jumpTo, lastValueInTheQueue, moveTo, nextValue, pause, presentValue, setSpeedInDigitsPerSecond, start, stop, update, view, wheelsQuantity)
+
+{-| Craate a Counter. See an example at <https://r10.netlify.app/counter/>
+
+@docs Counter, add, animationPosition, areMoving, init, jumpTo, lastValueInTheQueue, moveTo, nextValue, pause, presentValue, setSpeedInDigitsPerSecond, start, stop, update, view, wheelsQuantity
+
+-}
 
 import Array
 import Element exposing (..)
@@ -24,16 +12,34 @@ import Element.Font as Font
 import Html.Attributes
 
 
+{-| -}
+moveTo : Int -> Counter -> Counter
+moveTo target counter =
+    let
+        currentValue =
+            lastValueInTheQueue counter
+                |> Debug.log "xxx"
+    in
+    if abs (target - currentValue) < 20 then
+        moveTo_ target counter
+
+    else
+        jumpTo target counter
+
+
+{-| -}
 type Size
     = Flexible
     | Fixed Int
 
 
+{-| -}
 type Speed
     = Elastic
     | Rigid Float
 
 
+{-| -}
 type Counter
     = Counter
         { size : Size
@@ -46,6 +52,7 @@ type Counter
         }
 
 
+{-| -}
 init : Counter
 init =
     let
@@ -67,16 +74,19 @@ init =
         }
 
 
+{-| -}
 presentValue : Counter -> Int
 presentValue (Counter data) =
     data.value
 
 
+{-| -}
 animationPosition : Counter -> Float
 animationPosition (Counter data) =
     data.animationPosition
 
 
+{-| -}
 stop : Counter -> Counter
 stop (Counter data) =
     Counter
@@ -91,16 +101,19 @@ stop (Counter data) =
         }
 
 
+{-| -}
 pause : Counter -> Counter
 pause (Counter data) =
     Counter { data | pause = True }
 
 
+{-| -}
 nextValue : Counter -> Maybe Int
 nextValue (Counter data) =
     List.head data.nextValues
 
 
+{-| -}
 startNextTransition : Counter -> Counter
 startNextTransition (Counter data) =
     case data.nextValues of
@@ -127,6 +140,7 @@ startNextTransition (Counter data) =
                 }
 
 
+{-| -}
 calculateCachedStepSize : Speed -> Int -> Float
 calculateCachedStepSize speed lengthNextValues =
     case speed of
@@ -137,6 +151,7 @@ calculateCachedStepSize speed lengthNextValues =
             speed_ / 60
 
 
+{-| -}
 update : Counter -> Counter
 update (Counter data) =
     if data.pause then
@@ -157,6 +172,7 @@ update (Counter data) =
         newCounter
 
 
+{-| -}
 areMoving : List Counter -> Bool
 areMoving counters =
     List.foldl
@@ -171,6 +187,7 @@ areMoving counters =
         counters
 
 
+{-| -}
 setSpeedInDigitsPerSecond : Float -> Counter -> Counter
 setSpeedInDigitsPerSecond dps (Counter data) =
     {-
@@ -190,11 +207,13 @@ setSpeedInDigitsPerSecond dps (Counter data) =
     Counter { data | cachedStepSize = dps / 60 }
 
 
+{-| -}
 start : Counter -> Counter
 start (Counter data) =
     Counter { data | pause = False }
 
 
+{-| -}
 add : Int -> Counter -> Counter
 add delta (Counter data) =
     moveTo
@@ -202,8 +221,9 @@ add delta (Counter data) =
         (Counter data)
 
 
-moveTo : Int -> Counter -> Counter
-moveTo target (Counter data) =
+{-| -}
+moveTo_ : Int -> Counter -> Counter
+moveTo_ target (Counter data) =
     -- Move gradually to a certain number. Use only if the difference
     -- with the present value is small
     let
@@ -238,6 +258,7 @@ moveTo target (Counter data) =
             (List.repeat quantity ())
 
 
+{-| -}
 lastValueInTheQueue : Counter -> Int
 lastValueInTheQueue (Counter data) =
     Maybe.withDefault data.value <|
@@ -246,11 +267,13 @@ lastValueInTheQueue (Counter data) =
             (Array.fromList data.nextValues)
 
 
+{-| -}
 numberOfDigits : Int -> Int
 numberOfDigits number =
     round (logBase 10 (toFloat number + 1) + 1)
 
 
+{-| -}
 wheelsQuantity : Counter -> Int
 wheelsQuantity (Counter data) =
     case data.size of
@@ -261,6 +284,7 @@ wheelsQuantity (Counter data) =
             wheels
 
 
+{-| -}
 jumpTo : Int -> Counter -> Counter
 jumpTo target (Counter data) =
     -- Jump into a certain number as fast as possible, rotating the wheel in
@@ -309,6 +333,7 @@ jumpTo target (Counter data) =
             }
 
 
+{-| -}
 addLimited : number -> number -> number
 addLimited a b =
     let
@@ -325,6 +350,7 @@ addLimited a b =
         sum
 
 
+{-| -}
 directionClosestToTarget : Int -> Int -> Int
 directionClosestToTarget present target =
     if present == target then
@@ -342,16 +368,19 @@ directionClosestToTarget present target =
             1
 
 
+{-| -}
 getCharFromEnd : Int -> String -> String
 getCharFromEnd index string =
     String.slice (-2 - index) (-1 - index) (string ++ "X")
 
 
+{-| -}
 toInt : String -> Int
 toInt string =
     Maybe.withDefault 0 <| String.toInt string
 
 
+{-| -}
 helper : String -> String -> Int -> a -> String
 helper present target index _ =
     let
@@ -382,11 +411,13 @@ helper present target index _ =
 --     String.padLeft wheelsQuantity '0' (String.fromInt value)
 
 
+{-| -}
 convertToPaddedString : Int -> Int -> String
 convertToPaddedString value digitsQuantity =
     String.padLeft digitsQuantity '0' (String.fromInt value)
 
 
+{-| -}
 calculateNextValue : Int -> Int -> Int -> Maybe Int
 calculateNextValue valueTarget valuePresent digitsQuantity =
     if valueTarget == valuePresent then
@@ -408,6 +439,7 @@ calculateNextValue valueTarget valuePresent digitsQuantity =
                 |> Maybe.withDefault 0
 
 
+{-| -}
 listSteps :
     { wheelsQuantity : Int
     , nextValues : List Int
@@ -443,6 +475,7 @@ listSteps args =
 --
 
 
+{-| -}
 addSeparator : a -> List a -> List a
 addSeparator separator list =
     List.foldl
@@ -457,6 +490,7 @@ addSeparator separator list =
         (List.indexedMap (\index item -> ( index, item )) list)
 
 
+{-| -}
 downDirection : String -> String -> Bool
 downDirection present target =
     case ( String.toInt present, String.toInt target ) of
@@ -467,6 +501,7 @@ downDirection present target =
             False
 
 
+{-| -}
 transition :
     { a
         | position : Float
@@ -556,11 +591,13 @@ transition { present, target, size, position } =
             text target
 
 
+{-| -}
 getCharFromStart : Int -> String -> String
 getCharFromStart index string =
     String.slice index (index + 1) string
 
 
+{-| -}
 view : Counter -> Float -> Element msg
 view counter size =
     let

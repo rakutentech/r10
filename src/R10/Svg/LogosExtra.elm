@@ -2,7 +2,7 @@ module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monocrome,
 
 {-|
 
-@docs apple, apple_monochrome, elm, elm_monocrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome, r10, r10_monocrome
+@docs apple, apple_monochrome, elm, elm_monocrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome, r10
 
 -}
 

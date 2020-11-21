@@ -16,6 +16,8 @@ import Html exposing (Html)
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
+import R10.Card
+import R10.Color
 import R10.Color.Utils
 import R10.Form
 import R10.FormComponents
@@ -23,7 +25,9 @@ import R10.FormComponents.IconButton
 import R10.FormComponents.Text
 import R10.FormComponents.Validations
 import R10.Language
+import R10.Mode
 import R10.Svg.IconsExtra
+import R10.Theme
 
 
 title : R10.Language.Translations
@@ -43,6 +47,14 @@ title =
     , da_dk = "Forms - Text"
     , sv_se = "Forms - Text"
     }
+
+
+theme : R10.Theme.Theme
+theme =
+    R10.Theme.fromFlags
+        { mode = R10.Mode.Light
+        , primaryColor = R10.Color.primary.green
+        }
 
 
 type alias Model =
@@ -320,21 +332,16 @@ view model =
             Pages.Shared.Utils.toFormPalette
     in
     [ column
-        []
+        (R10.Card.normal theme ++ [ spacing 10 ])
         [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
 Here you can simulate all the possible states of the component "Text". You can click on all yellow areas below to change the state in real time.
 
 The messages on the right are all the messages that are fired by the component.
 """ ] ]
-    , column [ width fill ]
+    , column [ spacing 20, width fill ]
         [ row
-            [ height
-                (fill
-                    |> minimum 200
-                )
-            , spacing 30
-            ]
-            [ R10.FormComponents.Text.view
+            (R10.Card.normal theme ++ [ spacing 20 ])
+            [ R10.Form.viewText
                 [ width (fill |> maximum 600)
                 , centerY
                 ]
@@ -427,12 +434,17 @@ The messages on the right are all the messages that are fired by the component.
             ]
         ]
     , row
-        [ width fill
+        [ spacing 20
+        , width fill
         , centerX
         ]
         [ column
-            [ width fill
-            ]
+            (R10.Card.normal theme
+                ++ [ padding 20
+                   , spacing 5
+                   , width fill
+                   ]
+            )
             [ column
                 [ Font.family [ Font.monospace ]
                 , spacing 5
@@ -586,10 +598,12 @@ The messages on the right are all the messages that are fired by the component.
                 ]
             ]
         , column
-            [ width fill
-            , alignTop
-            , spacing 30
-            ]
+            (R10.Card.normal theme
+                ++ [ padding 20
+                   , spacing 5
+                   , width fill
+                   ]
+            )
             [ text <| "Messages"
             , column
                 [ Font.family [ Font.monospace ]

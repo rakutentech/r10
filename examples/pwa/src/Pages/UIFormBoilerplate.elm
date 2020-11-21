@@ -48,7 +48,7 @@ theme =
 
 
 type alias Model =
-    { form : R10.Form.Model }
+    { form : R10.Form.Form }
 
 
 init : Model
@@ -172,7 +172,7 @@ Consider also that changing the configuration does not re-run all validations.
 
 ```
 type alias Model =
-    { form : R10.Form.Model }
+    { form : R10.Form.Form }
 
 
 init : a -> b -> ( Model, Cmd msg1, Cmd msg2 )

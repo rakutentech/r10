@@ -29,7 +29,7 @@ main =
 
 
 type alias Model =
-    { form : R10.Form.Model }
+    { form : R10.Form.Form }
 
 
 type Msg
@@ -112,11 +112,11 @@ update msg model =
     case msg of
         MsgForm msgForm ->
             let
-                form : R10.Form.Model
+                form : R10.Form.Form
                 form =
                     model.form
 
-                newForm : R10.Form.Model
+                newForm : R10.Form.Form
                 newForm =
                     { form
                         | state =

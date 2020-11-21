@@ -16,14 +16,16 @@ import Html exposing (Html)
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
+import R10.Card
+import R10.Color
 import R10.Color.Utils
 import R10.Form
 import R10.FormComponents
-import R10.FormComponents.IconButton
 import R10.FormComponents.Single.Common
-import R10.FormComponents.Validations
 import R10.Language
+import R10.Mode
 import R10.Svg.IconsExtra
+import R10.Theme
 
 
 title : R10.Language.Translations
@@ -45,8 +47,16 @@ title =
     }
 
 
+theme : R10.Theme.Theme
+theme =
+    R10.Theme.fromFlags
+        { mode = R10.Mode.Light
+        , primaryColor = R10.Color.primary.green
+        }
+
+
 type alias Model =
-    { singleModel : R10.FormComponents.SingleModel
+    { singleModel : R10.Form.SingleModel
     , disabled : Bool
     , helperShow : Bool
     , helperText : String
@@ -58,20 +68,20 @@ type alias Model =
     , selectOptionHeight : Int
     , maxDisplayCount : Int
     , trailingIcon : Maybe Icon
-    , type_ : R10.FormComponents.SingleType
-    , validation : R10.FormComponents.Validations.Validation
-    , fieldOptions : List R10.FormComponents.SingleFieldOption
+    , type_ : R10.Form.SingleType
+    , validation : R10.Form.Validation2
+    , fieldOptions : List R10.Form.SingleFieldOption
     }
 
 
-typeToString : R10.FormComponents.SingleType -> String
+typeToString : R10.Form.SingleType -> String
 typeToString textType =
     case textType of
         R10.FormComponents.Single.Common.SingleCombobox ->
-            "SingleCombobox"
+            "R10.Form.single.combobox"
 
         R10.FormComponents.Single.Common.SingleRadio ->
-            "SingleRadio"
+            "R10.Form.single.radio"
 
 
 iconToString : Maybe Icon -> String
@@ -107,11 +117,11 @@ type Icon
     | Pause
 
 
-toIconEl : R10.FormComponents.Palette -> Icon -> Element Msg
+toIconEl : R10.Form.Palette -> Icon -> Element Msg
 toIconEl palette leadingIcon =
     case leadingIcon of
         Play ->
-            R10.FormComponents.IconButton.view []
+            R10.Form.viewIconButton []
                 { msgOnClick = Just <| PlayPauseClick Play
                 , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 24
                 , palette = palette
@@ -119,7 +129,7 @@ toIconEl palette leadingIcon =
                 }
 
         Pause ->
-            R10.FormComponents.IconButton.view []
+            R10.Form.viewIconButton []
                 { msgOnClick = Just <| PlayPauseClick Pause
                 , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 30
                 , palette = palette
@@ -129,7 +139,7 @@ toIconEl palette leadingIcon =
 
 init : Model
 init =
-    { singleModel = R10.FormComponents.initSingle
+    { singleModel = R10.Form.initSingle
     , disabled = False
     , helperShow = True
     , helperText = """Helper text ([Markdown](https://en.wikipedia.org/wiki/Markdown))"""
@@ -141,16 +151,16 @@ init =
     , selectOptionHeight = 36
     , maxDisplayCount = 5
     , trailingIcon = Nothing
-    , type_ = R10.FormComponents.typeSingle.combobox
-    , validation = R10.FormComponents.Validations.NotYetValidated
-    , fieldOptions = generateFieldOptions 4
+    , type_ = R10.Form.typeSingle.combobox
+    , validation = R10.Form.componentValidation.notYetValidated
+    , fieldOptions = generateFieldOptions 10
     }
 
 
 type Msg
     = -- component MSGs
       NoOp
-    | OnSingleMsg R10.FormComponents.SingleMsg
+    | OnSingleMsg R10.Form.SingleMsg
       -- page MSGs
     | ChangeFieldOptionLen String
     | ChangeHelperText String
@@ -172,16 +182,16 @@ type Msg
 
 
 validations :
-    { n1 : R10.FormComponents.Validations.Validation
-    , n2 : R10.FormComponents.Validations.Validation
-    , n3 : R10.FormComponents.Validations.Validation
-    , n4 : R10.FormComponents.Validations.Validation
+    { n1 : R10.Form.Validation2
+    , n2 : R10.Form.Validation2
+    , n3 : R10.Form.Validation2
+    , n4 : R10.Form.Validation2
     }
 validations =
-    { n1 = R10.FormComponents.Validations.NotYetValidated
-    , n2 = R10.FormComponents.Validations.Validated []
-    , n3 = R10.FormComponents.Validations.Validated [ R10.FormComponents.Validations.MessageOk "Yeah!" ]
-    , n4 = R10.FormComponents.Validations.Validated [ R10.FormComponents.Validations.MessageOk "Yeah!", R10.FormComponents.Validations.MessageErr "Nope" ]
+    { n1 = R10.Form.componentValidation.notYetValidated
+    , n2 = R10.Form.componentValidation.validated []
+    , n3 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!" ]
+    , n4 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!", R10.Form.validationMessage.error "Nope" ]
     }
 
 
@@ -194,7 +204,7 @@ update msg model =
         OnSingleMsg singleMsg ->
             let
                 ( singleModel, singleCmd ) =
-                    R10.FormComponents.updateSingle singleMsg model.singleModel
+                    R10.Form.updateSingle singleMsg model.singleModel
             in
             ( { model | singleModel = singleModel }, Cmd.map OnSingleMsg singleCmd )
 
@@ -367,16 +377,16 @@ view model =
             Pages.Shared.Utils.toFormPalette
     in
     [ column
-        []
+        (R10.Card.normal theme ++ [ spacing 10 ])
         [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
 Here you can simulate all the possible states of the component "Text". You can click on all yellow areas below to change the state in real time.
 
 The messages on the right are all the messages that are fired by the component.
 """ ] ]
-    , column [ width fill ]
+    , column [ spacing 20, width fill ]
         [ row
-            [ spacing 50 ]
-            [ R10.FormComponents.viewSingleCustom
+            (R10.Card.normal theme ++ [ spacing 20 ])
+            [ R10.Form.viewSingleCustom
                 []
                 model.singleModel
                 { validation = model.validation
@@ -395,16 +405,16 @@ The messages on the right are all the messages that are fired by the component.
 
                     else
                         Nothing
-                , style = R10.FormComponents.style.outlined
+                , style = R10.Form.style.outlined
                 , key = ""
                 , palette = palette
                 , singleType = model.type_
                 , fieldOptions = model.fieldOptions
-                , searchFn = R10.FormComponents.defaultSearchFn
+                , searchFn = R10.Form.defaultSearchFn
                 , toOptionEl =
-                    R10.FormComponents.defaultToOptionEl
+                    R10.Form.defaultToOptionEl
                         { search = model.singleModel.search
-                        , msgOnSelect = R10.FormComponents.singleMsg.onOptionSelect >> OnSingleMsg
+                        , msgOnSelect = R10.Form.singleMsg.onOptionSelect >> OnSingleMsg
                         }
                 , selectOptionHeight = model.selectOptionHeight
                 , maxDisplayCount = model.maxDisplayCount
@@ -413,14 +423,14 @@ The messages on the right are all the messages that are fired by the component.
                     model.trailingIcon
                         |> Maybe.map (toIconEl palette)
                         |> Maybe.withDefault
-                            (R10.FormComponents.defaultTrailingIcon
+                            (R10.Form.defaultTrailingIcon
                                 { opened = model.singleModel.opened
                                 , palette = palette
                                 }
                             )
                         |> Just
                 }
-            , R10.FormComponents.viewSingleCustom
+            , R10.Form.viewSingleCustom
                 []
                 model.singleModel
                 { validation = model.validation
@@ -439,16 +449,16 @@ The messages on the right are all the messages that are fired by the component.
 
                     else
                         Nothing
-                , style = R10.FormComponents.style.filled
+                , style = R10.Form.style.filled
                 , key = ""
                 , palette = palette
                 , singleType = model.type_
                 , fieldOptions = model.fieldOptions
-                , searchFn = R10.FormComponents.defaultSearchFn
+                , searchFn = R10.Form.defaultSearchFn
                 , toOptionEl =
-                    R10.FormComponents.defaultToOptionEl
+                    R10.Form.defaultToOptionEl
                         { search = model.singleModel.search
-                        , msgOnSelect = R10.FormComponents.singleMsg.onOptionSelect >> OnSingleMsg
+                        , msgOnSelect = R10.Form.singleMsg.onOptionSelect >> OnSingleMsg
                         }
                 , selectOptionHeight = model.selectOptionHeight
                 , maxDisplayCount = model.maxDisplayCount
@@ -457,7 +467,7 @@ The messages on the right are all the messages that are fired by the component.
                     model.trailingIcon
                         |> Maybe.map (toIconEl palette)
                         |> Maybe.withDefault
-                            (R10.FormComponents.defaultTrailingIcon
+                            (R10.Form.defaultTrailingIcon
                                 { opened = model.singleModel.opened
                                 , palette = palette
                                 }
@@ -467,17 +477,22 @@ The messages on the right are all the messages that are fired by the component.
             ]
         ]
     , row
-        [ width fill
+        [ spacing 20
+        , width fill
         , centerX
         ]
         [ column
-            [ width fill
-            ]
+            (R10.Card.normal theme
+                ++ [ padding 20
+                   , spacing 5
+                   , width fill
+                   ]
+            )
             [ column
                 [ Font.family [ Font.monospace ]
                 , spacing 5
                 ]
-                [ text "FormComponents.Text.view [] []"
+                [ text "R10.Form.viewText [] []"
                 , text " "
                 , text "    -- Stuff that doesn't change during"
                 , text "    -- the life of the component"
@@ -621,6 +636,26 @@ The messages on the right are all the messages that are fired by the component.
                     , text "\""
                     ]
                 , row []
+                    [ text "    , select = \""
+                    , Input.text attrs
+                        { label = Input.labelHidden ""
+                        , onChange = SetValue
+                        , placeholder = Nothing
+                        , text = model.singleModel.select
+                        }
+                    , text "\""
+                    ]
+                , row []
+                    [ text "    , search = \""
+                    , Input.text attrs
+                        { label = Input.labelHidden ""
+                        , onChange = SetValue
+                        , placeholder = Nothing
+                        , text = model.singleModel.search
+                        }
+                    , text "\""
+                    ]
+                , row []
                     [ text "    , focused = "
                     , Input.button [ backgroundColor ]
                         { onPress = Just RotateFocused
@@ -638,7 +673,7 @@ The messages on the right are all the messages that are fired by the component.
                     [ text "    , validation = "
                     , Input.button [ backgroundColor ]
                         { onPress = Just RotateValidation
-                        , label = text <| R10.FormComponents.Validations.validationToString model.validation
+                        , label = text <| R10.Form.validationToString model.validation
                         }
                     ]
                 , row []
@@ -659,8 +694,12 @@ The messages on the right are all the messages that are fired by the component.
                 ]
             ]
         , column
-            [ width fill
-            ]
+            (R10.Card.normal theme
+                ++ [ padding 20
+                   , spacing 5
+                   , width fill
+                   ]
+            )
             [ text <| "Messages"
             , column
                 [ Font.family [ Font.monospace ]

@@ -11,13 +11,13 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Html exposing (Html)
-import Html.Attributes
 import Pages.Shared.Utils
-import R10.FormComponents
-import R10.FormComponents.Single.Common
-import R10.FormComponents.Validations
+import R10.Card
+import R10.Color
+import R10.Form
 import R10.Language
-import R10.SimpleMarkdown
+import R10.Mode
+import R10.Theme
 
 
 title : R10.Language.Translations
@@ -39,173 +39,70 @@ title =
     }
 
 
-type alias Model =
-    { singleModel : R10.FormComponents.SingleModel
-    , disabled : Bool
-    , messages : List String
-    , validation : R10.FormComponents.Validations.Validation
-    }
-
-
-getFlagButton : R10.FormComponents.Palette -> String -> Element Msg
-getFlagButton palette label =
-    R10.FormComponents.viewIconButton []
-        { msgOnClick = Just <| FlagClick
-        , icon = getFlagIcon label
-        , palette = palette
-        , size = 24
+theme : R10.Theme.Theme
+theme =
+    R10.Theme.fromFlags
+        { mode = R10.Mode.Light
+        , primaryColor = R10.Color.primary.green
         }
 
 
-getFlagIcon : String -> Element msg
-getFlagIcon label =
-    if label == "" then
-        el
-            [ width <| px 24
-            , height <| px 18
-            , Border.width 1
-            , Background.color <| rgb 0 0 0
-            ]
-            none
-
-    else
-        el
-            [ width <| px 24
-            , height <| px 18
-            , Border.width 1
-            ]
-            none
-
-
-fieldOptions : List { label : String, value : String }
-fieldOptions =
-    [ { label = "Japan(+1)"
-      , value = "+1"
-      }
-    , { label = "USA(+2)"
-      , value = "+2"
-      }
-    , { label = "China(+3)"
-      , value = "+3"
-      }
-    , { label = "Taiwan(+4)"
-      , value = "+4"
-      }
-    ]
-
-
-viewOptionEl :
-    a
-    -> { c | msgOnOptionSelect : b -> msg, search : String }
-    -> { d | label : String, value : b }
-    -> Element msg
-viewOptionEl _ { search, msgOnOptionSelect } { label, value } =
-    let
-        insertPositions =
-            String.indexes
-                (search |> R10.FormComponents.normalizeString)
-                (label |> R10.FormComponents.normalizeString)
-                |> List.concatMap (\idx -> [ idx, idx + String.length search ])
-
-        withBold =
-            if String.isEmpty search then
-                label
-
-            else
-                R10.FormComponents.insertBold insertPositions label
-    in
-    row
-        [ width fill
-        , height fill
-        , R10.FormComponents.onClickWithStopPropagation <| msgOnOptionSelect value
-        , pointer
-        , paddingEach { top = 0, right = 0, bottom = 0, left = 12 }
-        , spacing 8
-
-        -- gradient for label overflow
-        , htmlAttribute <| Html.Attributes.style "mask-image" "linear-gradient(right, rgba(255,255,0,0), rgba(255,255,0, 1) 16px)"
-        , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
-        ]
-        ([ getFlagIcon label ]
-            ++ (withBold |> R10.SimpleMarkdown.elementMarkdown)
-        )
+type alias Model =
+    { phone1 : R10.Form.PhoneModel
+    , phone2 : R10.Form.PhoneModel
+    , disabled : Bool
+    , messages : List String
+    , validation : R10.Form.Validation2
+    }
 
 
 init : Model
 init =
-    { singleModel = R10.FormComponents.Single.Common.init
+    { phone1 = R10.Form.phoneInit
+    , phone2 = R10.Form.phoneInit
     , disabled = False
     , messages = []
-    , validation = R10.FormComponents.Validations.NotYetValidated
+    , validation = R10.Form.componentValidation.notYetValidated
     }
 
 
 type Msg
-    = OnSingleMsg R10.FormComponents.SingleMsg
-    | FlagClick
-    | OnOptionSelect String
+    = OnPhoneMsg1 R10.Form.PhoneMsg
+    | OnPhoneMsg2 R10.Form.PhoneMsg
     | RotateValidation
     | ToggleDisabled
 
 
 validations :
-    { n1 : R10.FormComponents.Validations.Validation
-    , n2 : R10.FormComponents.Validations.Validation
-    , n3 : R10.FormComponents.Validations.Validation
-    , n4 : R10.FormComponents.Validations.Validation
+    { n1 : R10.Form.Validation2
+    , n2 : R10.Form.Validation2
+    , n3 : R10.Form.Validation2
+    , n4 : R10.Form.Validation2
     }
 validations =
-    { n1 = R10.FormComponents.Validations.NotYetValidated
-    , n2 = R10.FormComponents.Validations.Validated []
-    , n3 = R10.FormComponents.Validations.Validated [ R10.FormComponents.Validations.MessageOk "Yeah!" ]
-    , n4 = R10.FormComponents.Validations.Validated [ R10.FormComponents.Validations.MessageOk "Yeah!", R10.FormComponents.Validations.MessageErr "Nope" ]
+    { n1 = R10.Form.componentValidation.notYetValidated
+    , n2 = R10.Form.componentValidation.validated []
+    , n3 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!" ]
+    , n4 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!", R10.Form.validationMessage.error "Nope" ]
     }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        OnSingleMsg singleMsg ->
+        OnPhoneMsg1 singleMsg ->
             let
-                skipMsg =
-                    case singleMsg of
-                        R10.FormComponents.Single.Common.OnArrowUp _ ->
-                            not model.singleModel.opened
-
-                        R10.FormComponents.Single.Common.OnArrowDown _ ->
-                            not model.singleModel.opened
-
-                        R10.FormComponents.Single.Common.OnInputClick _ ->
-                            True
-
-                        _ ->
-                            False
+                ( selectState, selectCmd ) =
+                    R10.Form.phoneUpdate singleMsg model.phone1
             in
-            if skipMsg then
-                ( model, Cmd.none )
+            ( { model | phone1 = selectState }, Cmd.map OnPhoneMsg1 selectCmd )
 
-            else
-                let
-                    ( selectState, selectCmd ) =
-                        R10.FormComponents.updateSingle singleMsg model.singleModel
-                in
-                ( { model | singleModel = selectState }, Cmd.map OnSingleMsg selectCmd )
-
-        OnOptionSelect value ->
+        OnPhoneMsg2 singleMsg ->
             let
-                singleModel =
-                    model.singleModel
+                ( selectState, selectCmd ) =
+                    R10.Form.phoneUpdate singleMsg model.phone2
             in
-            ( { model | singleModel = { singleModel | value = value } }, Cmd.none )
-
-        FlagClick ->
-            let
-                selectState =
-                    model.singleModel
-            in
-            ( { model | singleModel = { selectState | opened = not selectState.opened } }
-            , Cmd.none
-            )
+            ( { model | phone2 = selectState }, Cmd.map OnPhoneMsg2 selectCmd )
 
         RotateValidation ->
             ( { model
@@ -244,33 +141,36 @@ view model =
         palette =
             Pages.Shared.Utils.toFormPalette
     in
-    [ row
-        [ height (fill |> minimum 200)
-        ]
-        [ R10.FormComponents.viewSingleCustom
-            []
-            model.singleModel
-            { validation = model.validation
-            , toMsg = OnSingleMsg
-            , label = "Code"
-            , helperText = Nothing
-            , disabled = model.disabled
-            , requiredLabel = Nothing
-            , style = R10.FormComponents.style.filled
-            , key = ""
-            , palette = palette
-            , singleType = R10.FormComponents.typeSingle.combobox
-            , fieldOptions = fieldOptions
-            , searchFn = R10.FormComponents.defaultSearchFn
-            , toOptionEl =
-                viewOptionEl palette
-                    { search = model.singleModel.search
-                    , msgOnOptionSelect = OnOptionSelect
-                    }
-            , selectOptionHeight = 36
-            , maxDisplayCount = 5
-            , leadingIcon = Just <| getFlagButton palette model.singleModel.value
-            , trailingIcon = Nothing
-            }
-        ]
+    [ el (R10.Card.normal theme ++ [ spacing 20, width fill ]) <|
+        row
+            [ spacing 40, width fill ]
+            [ R10.Form.phoneView
+                []
+                model.phone1
+                { validation = model.validation
+                , toMsg = OnPhoneMsg1
+                , label = "Phone number"
+                , helperText = Nothing
+                , disabled = model.disabled
+                , requiredLabel = Nothing
+                , style = R10.Form.style.outlined
+                , key = "field1"
+                , palette = palette
+                , countryOptions = Nothing
+                }
+            , R10.Form.phoneView
+                []
+                model.phone2
+                { validation = model.validation
+                , toMsg = OnPhoneMsg2
+                , label = "Phone number"
+                , helperText = Nothing
+                , disabled = model.disabled
+                , requiredLabel = Nothing
+                , style = R10.Form.style.filled
+                , key = "field2"
+                , palette = palette
+                , countryOptions = Nothing
+                }
+            ]
     ]

@@ -61,7 +61,7 @@ formQuantity =
 
 
 type alias Model =
-    { forms : Array.Array R10.Form.Model
+    { forms : Array.Array R10.Form.Form
     , messagesWhileLoadingLocalStorage : List String
     , buffersConf : Array.Array String
     , buffersConfErrors : Array.Array String

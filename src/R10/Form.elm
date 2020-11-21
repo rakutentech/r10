@@ -1,6 +1,6 @@
 module R10.Form exposing
     ( view, viewWithPalette, viewWithOptions
-    , Model, Conf
+    , Form, Conf, Entity, entity
     , MsgMapper
     , Options
     , Maker, MakerArgs, maker
@@ -9,7 +9,7 @@ module R10.Form exposing
     , Palette
     , State, initState, stateToString, stringToState
     , extraCss
-    , Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
+    , EntityId, TextConf, stringToConf, confToString, initConf
     , FieldConf, TypeSingle, single, fieldType, text, validationIcon, validation, binary, initFieldConf
     , update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
     , Msg, msg
@@ -31,9 +31,9 @@ There are three functions to rennder the form, each with a different degree of c
 @docs view, viewWithPalette, viewWithOptions
 
 
-# Model
+# Form, Conf, State, Entity
 
-@docs Model, Conf
+@docs Form, Conf, Entity, entity
 
 
 # MsgMapper
@@ -111,7 +111,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 # Form related stuff
 
-@docs Entity, EntityId, TextConf, entity, stringToConf, confToString, initConf
+@docs EntityId, TextConf, stringToConf, confToString, initConf
 
 
 # Fields related stuff
@@ -211,7 +211,7 @@ type alias MsgMapper msg =
     Msg -> msg
 
 
-{-| This is the simplest way to render a form, as you can see in this basic example:
+{-| This is the simplest way to render a form, as you can see in this minimalistic example:
 
     module Main exposing (main)
 
@@ -245,10 +245,10 @@ type alias MsgMapper msg =
             column [ centerX, centerY ] <|
                 R10.Form.view formModel formMsgMapper
 
-Note that the form of this example is not active because is not wired to The Elm Architecture. In interested, look at the code of an [active form example](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm).
+Note that the form of this example is not active because it is just rendering the view but it is not wired to The Elm Architecture. In interested, look at the code of an [active form example](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm).
 
 -}
-view : Model -> MsgMapper msg -> List (Element msg)
+view : Form -> MsgMapper msg -> List (Element msg)
 view form msgMapper =
     viewWithOptions form
         msgMapper
@@ -261,7 +261,7 @@ view form msgMapper =
 
 {-| Use this version if you have a specific palette that you want to use.
 -}
-viewWithPalette : Model -> MsgMapper msg -> Palette -> List (Element msg)
+viewWithPalette : Form -> MsgMapper msg -> Palette -> List (Element msg)
 viewWithPalette form msgMapper palette =
     viewWithOptions form
         msgMapper
@@ -272,9 +272,9 @@ viewWithPalette form msgMapper palette =
         }
 
 
-{-| Use this version for a full control.
+{-| Use this version for full control.
 -}
-viewWithOptions : Model -> MsgMapper msg -> Options -> List (Element msg)
+viewWithOptions : Form -> MsgMapper msg -> Options -> List (Element msg)
 viewWithOptions form msgMapper args =
     List.map
         (map msgMapper)
@@ -310,12 +310,14 @@ extraCss =
 -- EXPOSING STUFF FROM R10.Form.Conf
 
 
-{-| -}
+{-| `Conf` is simply defined as a `List Entity`.
+-}
 type alias Conf =
     R10.Form.Conf.Conf
 
 
-{-| -}
+{-| A form is made of multiple **entities**. An example of entity is an input field, a title, a subtitle, etc.
+-}
 type alias Entity =
     R10.Form.Conf.Entity
 
@@ -330,7 +332,8 @@ type alias TextConf =
     R10.Form.Conf.TextConf
 
 
-{-| -}
+{-| These are the constructors for entities
+-}
 entity :
     { field : FieldConf -> Entity
     , multi : EntityId -> List Entity -> Entity
@@ -677,14 +680,14 @@ msg =
 
 {-| A form is defined by the **configuration** (`R10.Form.Conf`) that contain data about the input fields, radio buttons, etc. and the **state** (`R10.Form.State`), containing instead all the values and other parameters that change during the life of the form.
 
-    type alias Model =
+    type alias Form =
         { conf : R10.Form.Conf
         , state : R10.Form.State
         }
 
 -}
-type alias Model =
-    R10.Form.Shared.Model
+type alias Form =
+    R10.Form.Shared.Form
 
 
 

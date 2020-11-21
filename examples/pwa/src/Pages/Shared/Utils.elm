@@ -27,7 +27,7 @@ toFormPalette =
 
 maxWidthPx : Int
 maxWidthPx =
-    800
+    1000
 
 
 maxWidth : Attribute msg

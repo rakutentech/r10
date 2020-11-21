@@ -10,6 +10,7 @@ import Element.Font as Font
 import Html
 import Html.Attributes
 import Json.Decode
+import Pages.Counter
 import Pages.Overview
 import Pages.Shared.Utils
 import Pages.Top
@@ -90,6 +91,7 @@ type alias Model =
     , pageExample6 : Pages.UIFormComponentsText.Model
     , pageExample7 : Pages.UIFormIntroduction.Model
     , pageExample8 : Pages.UIComponents.Model
+    , pageCounter : Pages.Counter.Model
     }
 
 
@@ -154,6 +156,7 @@ init flags =
       -- TODO - Add local storage
       , pageExample7 = Pages.UIFormIntroduction.init { localStorage = Dict.empty }
       , pageExample8 = Pages.UIComponents.init
+      , pageCounter = Pages.Counter.init
       }
     , Cmd.batch
         [ updateHtmlMeta flags.starter route
@@ -193,6 +196,9 @@ subscriptions model =
                     RouteExamples _ ->
                         [ Browser.Events.onMouseMove (Json.Decode.map MouseMove positionDecoder) ]
 
+                    RouteCounter _ ->
+                        [ Sub.map PagesCounter <| Pages.Counter.subscriptions model.pageCounter ]
+
                     _ ->
                         []
                )
@@ -219,6 +225,7 @@ type Msg
     | PagesExample6 Pages.UIFormComponentsText.Msg
     | PagesExample7 Pages.UIFormIntroduction.Msg
     | PagesExample8 Pages.UIComponents.Msg
+    | PagesCounter Pages.Counter.Msg
 
 
 
@@ -290,6 +297,13 @@ update msg model =
                     Pages.UIComponents.update pageMsg model.pageExample8
             in
             ( { model | pageExample8 = modelPageExample }, Cmd.none )
+
+        PagesCounter pageMsg ->
+            let
+                modelPageExample =
+                    Pages.Counter.update pageMsg model.pageCounter
+            in
+            ( { model | pageCounter = modelPageExample }, Cmd.none )
 
         MouseMove mouse ->
             ( { model | mouse = mouse }, Cmd.none )
@@ -404,6 +418,9 @@ view model =
 
                 RouteExample8 lang ->
                     mainLayout model Pages.UIComponents.title (List.map (map PagesExample8) (Pages.UIComponents.view model.pageExample8))
+
+                RouteCounter lang ->
+                    mainLayout model Pages.Counter.title (List.map (map PagesCounter) (Pages.Counter.view model.pageCounter))
 
                 NotFound lang ->
                     mainLayout model translationsError <|
@@ -729,6 +746,7 @@ type Route
     | RouteExample6 R10.Language.Language
     | RouteExample7 R10.Language.Language
     | RouteExample8 R10.Language.Language
+    | RouteCounter R10.Language.Language
     | NotFound R10.Language.Language
 
 
@@ -752,6 +770,7 @@ routesList =
     , RouteExample4
     , RouteExample6
     , RouteExample5
+    , RouteCounter
     ]
 
 
@@ -821,6 +840,12 @@ routeDetails route =
         RouteExample8 language ->
             { title = Pages.UIComponents.title
             , routeLabel = "UI_Components"
+            , language = language
+            }
+
+        RouteCounter language ->
+            { title = Pages.Counter.title
+            , routeLabel = "Counter"
             , language = language
             }
 

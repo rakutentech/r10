@@ -44,7 +44,7 @@ title : R10.Language.Translations
 title =
     { key = "title"
     , en_us = "Overview"
-    , ja_jp = "Overview"
+    , ja_jp = "前書き"
     , zh_tw = "Overview"
     , es_es = "Overview"
     , fr_fr = "Overview"

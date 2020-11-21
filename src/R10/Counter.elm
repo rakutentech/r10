@@ -18,7 +18,6 @@ moveTo target counter =
     let
         currentValue =
             lastValueInTheQueue counter
-                |> Debug.log "xxx"
     in
     if abs (target - currentValue) < 20 then
         moveTo_ target counter

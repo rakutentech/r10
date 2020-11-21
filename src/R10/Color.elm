@@ -70,6 +70,7 @@ primary :
     , green : Primary
     , lightBlue : Primary
     , blue : Primary
+    , blueSky : Primary
     , purple : Primary
     , pink : Primary
     }
@@ -83,6 +84,7 @@ primary =
     , crimsonRed = R10.Color.Internal.Primary.CrimsonRed
     , red = R10.Color.Internal.Primary.CrimsonRed
     , blue = R10.Color.Internal.Primary.Blue
+    , blueSky = R10.Color.Internal.Primary.BlueSky
     }
 
 

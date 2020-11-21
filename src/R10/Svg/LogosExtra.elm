@@ -1,8 +1,8 @@
-module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monocrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome)
+module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monocrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome, r10)
 
 {-|
 
-@docs apple, apple_monochrome, elm, elm_monocrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome
+@docs apple, apple_monochrome, elm, elm_monocrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome, r10, r10_monocrome
 
 -}
 
@@ -13,6 +13,87 @@ import R10.Color.Utils
 import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA
+
+
+{-| -}
+r10_2 : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r10_2 attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 637 234"
+        size
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M351.6 114.5L464 2l113.2 112.4H351.6z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M270.3 161.7V231l70.4 1.1v-70.4h-70.4z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M340 86.4l.5 69.8-69.8-.5 69.2-69.3z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M271 146.4l69.8-69.8v-66L271 80.4v66z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M264.7 2.6V108l-106-.6 106-105z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M270.7 71.5V2.2l69.8-.5-69.8 69.8z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M351.6 232L464 119.6 577.2 232H351.6z", SA.transform "rotate(180 464.4 175.8)" ] []
+        ]
+
+
+
+-- <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice" viewBox="0 0 658 234">
+--   <path fill="none" d="M-1-1h660v236H-1z"/>
+--   <g>
+--     <path fill=" d="M429.9 114.5L542.3 2l113.2 112.4H429.9v.1zM338 3.2v69.3l70.5 1.1V3.2H338z"/>
+--     <path fill="#" d="M406.5 230.2l-69.8.5.5-69.8 69.3 69.2v.1z"/>
+--     <path fill="#" d="M263.3 139.4L333 69.6v-66l-69.8 69.8v66z"/>
+--     <path fill="#" stroke="null" d="M407.7 224.4L337.4 154l71.1-70.3-.6 140.7-.2-.1z"/>
+--     <path fill="#" d="M338 147.2V78l69.8-.5-69.8 69.8z"/>
+--     <path fill="#" stroke="null" d="M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z"/>
+--     <path fill="#" d="M655.5 119.6L543 232 429.9 119.6h225.6z"/>
+--   </g>
+-- </svg>
+--
+
+
+{-| -}
+r10_monocrome_1 : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r10_monocrome_1 attrs cl size =
+    r10_ attrs cl cl cl cl size
+
+
+{-| -}
+r10 : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r10 attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 2370 672"
+        size
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M1207 129l-150 72-1 62c0 60 0 62 2 62a3071 3071 0 00113-55l3-1v209h-118v100h303V317l-1-261-151 72zM205 211v129h-3l-50 9-51 9h-2v110l53-9 53-9v128h185V419l62-11 61-9 101 89 101 90h256l-4-3-121-108c-93-82-118-105-116-105l208-36h4V82H205v129zm552 3l-1 32a80339 80339 0 00-365 61l-1-62v-63h367v32zM1501 330v248h730V82h-730v248zm466-147l-277 214-4 3V182h141c122 0 141 0 140 1zm79 186v109h-142c-124 0-141 0-140-2a37829 37829 0 00281-216l1 109z" ] []
+        ]
+
+
+{-| -}
+r10_ : List (Attribute msg) -> Color.Color -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+r10_ attrs cl1 cl2 cl3 cl4 size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 658 234"
+        size
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M429.9 114.5L542.3 2l113.2 112.4H429.9v.1zM338 3.2v69.3l70.5 1.1V3.2H338z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M406.5 230.2l-69.8.5.5-69.8 69.3 69.2v.1z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M263.3 139.4L333 69.6v-66l-69.8 69.8v66z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl4, SA.d "M407.7 224.4L337.4 154l71.1-70.3-.6 140.7-.2-.1z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M338 147.2V78l69.8-.5-69.8 69.8z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M655.5 119.6L543 232 429.9 119.6h225.6z" ] []
+        ]
+
+
+{-| -}
+r10_3 : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r10_3 attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 637 234"
+        size
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M407.9 114.5L520.3 2l113.2 112.4H407.9v.1zM318.6 161.7V231l70.4 1.1v-70.4h-70.4z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M388.3 86.4l.5 69.8-69.8-.5 69.2-69.3z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M319.3 146.4L389 76.6v-66l-69.8 69.8v66z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M313 2.6V108l-106-.6 106-105v.2z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M319 71.5V2.2l69.8-.5L319 71.5z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M633.5 119.6L521 232 407.9 119.6h225.6z" ] []
+        ]
 
 
 {-| -}

@@ -471,7 +471,13 @@ viewHeader model =
                 , route = model.route
                 , routeToLanguage = routeToLanguage
                 }
+        , logoElement = logoElement
         }
+
+
+logoElement : Element msg
+logoElement =
+    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 1 1 1) 30
 
 
 viewFooter : Model -> Element Msg
@@ -491,6 +497,7 @@ viewFooter model =
                 , route = model.route
                 , routeToLanguage = routeToLanguage
                 }
+        , logoElement = logoElement
         }
 
 

@@ -1,4 +1,4 @@
-module R10.Header exposing (view, Model, LanguageSystem(..), Logo(..), Msg(..), Session(..), SessionData, TypeLogo(..), ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample)
+module R10.Header exposing (view, Model, LanguageSystem(..), Msg(..), Session(..), SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample)
 
 {-| This create a generic header.
 
@@ -80,7 +80,6 @@ type alias Model =
     , theme : R10.Theme.Theme
     , backgroundColor : Maybe Color
     , negative : Bool
-    , logo : Logo
     }
 
 
@@ -99,7 +98,6 @@ init =
     , theme = defaultTheme
     , negative = True
     , backgroundColor = Nothing
-    , logo = defaultLogo
     }
 
 
@@ -304,6 +302,7 @@ type alias ViewArgs msg route =
     , onClick : String -> msg
     , urlTop : String
     , languageSystem : LanguageSystem route
+    , logoElement : Element msg
     }
 
 
@@ -808,6 +807,7 @@ humbergAndLogo :
             , msgMapper : Msg -> msg
             , onClick : String -> msg
             , urlTop : String
+            , logoElement : Element msg
         }
     -> Element msg
 humbergAndLogo model args =
@@ -847,68 +847,21 @@ humbergAndLogo model args =
             [ moveDown (fromTop args.isTop + 2)
             , htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"
             ]
-            { label = logo model.logo model.negative model.theme
+            { label = logo args.logoElement
             , type_ = R10.Libu.LiInternal args.urlTop args.onClick
             }
         ]
 
 
 {-| -}
-type TypeLogo
-    = Rakuten
-
-
-{-| -}
-type Logo
-    = JustText String
-    | JustLogo TypeLogo
-    | LogoAndText TypeLogo String
-
-
-{-| -}
-defaultLogo : Logo
-defaultLogo =
-    -- JustLogo Rakuten
-    JustText "R10"
-
-
-
--- LogoAndText Rakuten "UI"
-
-
-{-| -}
-logo : Logo -> Bool -> R10.Theme.Theme -> Element msg
-logo logo_ negative theme =
-    let
-        elementLogo typeLogo =
-            case typeLogo of
-                Rakuten ->
-                    R10.Svg.Logos.rakuten [ moveUp 1 ] (R10.Color.Internal.Derived.toColor theme R10.Color.Internal.Derived.Logo) 32
-
-        elementText string =
-            el
-                [ Font.color <| logoColor negative theme
-                , Font.size 26
-                , moveUp 5
-                , Font.bold
-                ]
-            <|
-                text string
-    in
-    row
+logo : Element msg -> Element msg
+logo elementLogo =
+    el
         [ spacing 20
         , htmlAttribute <| Html.Attributes.attribute "aria-label" "Top page"
         ]
     <|
-        case logo_ of
-            JustText string ->
-                [ elementText string ]
-
-            JustLogo typeLogo ->
-                [ elementLogo typeLogo ]
-
-            LogoAndText typeLogo string ->
-                [ elementLogo typeLogo, elementText string ]
+        elementLogo
 
 
 {-| -}

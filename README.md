@@ -125,7 +125,7 @@ import R10.Theme
 theme : R10.Theme.Theme
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.primary.red
+    , primaryColor = R10.Color.primary.blueSky
     }
 
 
@@ -141,8 +141,8 @@ main =
                    , spacing 30
                    ]
             )
-            [ R10.Svg.Logos.rakuten [] (R10.Color.Svg.logo theme) 32
-            , R10.Paragraph.normalMarkdown [] theme "This is an example of a view made with [Elm](https://elm-lang.org/), [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) and [R10](https://package.elm-lang.org/packages/rakutentech/r10/latest/) ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleView/src/Main.elm))."
+            [ R10.Svg.LogosExtra.r10 [ centerX ] (R10.Color.Svg.logo theme) 32
+            , R10.Paragraph.normalMarkdown [ Font.center ] theme "This is an example of a view made with [Elm](https://elm-lang.org/), [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) and [R10](https://package.elm-lang.org/packages/rakutentech/r10/latest/) ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleView/src/Main.elm))."
             , el [ Font.size 60, centerX, padding 10 ] <| text "🎉"
             , R10.Button.primary []
                 { label =
@@ -186,6 +186,7 @@ import R10.Libu
 import R10.Mode
 import R10.Paragraph
 import R10.Svg.Logos
+import R10.Svg.LogosExtra
 import R10.Theme
 
 
@@ -199,7 +200,7 @@ main =
 
 
 type alias Model =
-    { form : R10.Form.Model }
+    { form : R10.Form.Form }
 
 
 type Msg
@@ -223,12 +224,11 @@ init =
                         , hidePassedValidationStyle = False
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            R10.Form.validation.allOf
-                                [ R10.Form.commonValidation.email
-                                , R10.Form.validation.minLength 5
-                                , R10.Form.validation.maxLength 50
-                                , R10.Form.validation.required
-                                ]
+                            [ R10.Form.commonValidation.email
+                            , R10.Form.validation.minLength 5
+                            , R10.Form.validation.maxLength 50
+                            , R10.Form.validation.required
+                            ]
                         }
                 }
             , R10.Form.entity.field
@@ -244,11 +244,10 @@ init =
                         , hidePassedValidationStyle = False
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            R10.Form.validation.allOf
-                                [ R10.Form.commonValidation.password
-                                , R10.Form.validation.minLength 8
-                                , R10.Form.validation.required
-                                ]
+                            [ R10.Form.commonValidation.password
+                            , R10.Form.validation.minLength 8
+                            , R10.Form.validation.required
+                            ]
                         }
                 }
             , R10.Form.entity.field
@@ -264,14 +263,13 @@ init =
                         , hidePassedValidationStyle = False
                         , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
-                            R10.Form.validation.allOf
-                                [ R10.Form.validation.withMsg
-                                    { ok = "Passwords are the same"
-                                    , err = "Passwords are not the same"
-                                    }
-                                  <|
-                                    R10.Form.validation.dependant "password" R10.Form.validation.equal
-                                ]
+                            [ R10.Form.validation.withMsg
+                                { ok = "Passwords are the same"
+                                , err = "Passwords are not the same"
+                                }
+                              <|
+                                R10.Form.validation.dependant "password" (R10.Form.validation.equal "password_repeat")
+                            ]
                         }
                 }
             ]
@@ -285,11 +283,11 @@ update msg model =
     case msg of
         MsgForm msgForm ->
             let
-                form : R10.Form.Model
+                form : R10.Form.Form
                 form =
                     model.form
 
-                newForm : R10.Form.Model
+                newForm : R10.Form.Form
                 newForm =
                     { form
                         | state =
@@ -304,7 +302,7 @@ update msg model =
 theme : R10.Theme.Theme
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.primary.red
+    , primaryColor = R10.Color.primary.blueSky
     }
 
 
@@ -329,8 +327,8 @@ view model =
                    , spacing 30
                    ]
             )
-            [ R10.Svg.Logos.rakuten [] (R10.Color.Svg.logo theme) 32
-            , R10.Paragraph.normalMarkdown [] theme "This is an example of a form made with [Elm](https://elm-lang.org/), [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) and [R10](https://package.elm-lang.org/packages/rakutentech/r10/latest/) ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm))."
+            [ R10.Svg.LogosExtra.r10 [ centerX ] (R10.Color.Svg.logo theme) 32
+            , R10.Paragraph.normalMarkdown [ Font.center ] theme "This is an example of a form made with [Elm](https://elm-lang.org/), [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) and [R10](https://package.elm-lang.org/packages/rakutentech/r10/latest/) ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm))."
             , column [ spacing 20 ] <| R10.Form.view model.form MsgForm
             , Element.map MsgForm <|
                 R10.Button.primary []

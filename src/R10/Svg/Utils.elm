@@ -7,6 +7,7 @@ module R10.Svg.Utils exposing (wrapperWithViewbox, wrapper32)
 -}
 
 import Element exposing (..)
+import Html
 import Html.Attributes
 import Svg
 import Svg.Attributes as SA
@@ -50,7 +51,9 @@ svgSize_ viewbox ySize =
 wrapperWithViewbox_ : String -> Int -> List (Svg.Svg msg) -> Svg.Svg msg
 wrapperWithViewbox_ viewbox ySize listSvg =
     Svg.svg
-        ([ SA.xmlSpace "http://www.w3.org/2000/svg"
+        ([ Html.Attributes.attribute "xmlns" "http://www.w3.org/2000/svg"
+         , Html.Attributes.attribute "xmlns:xlink" "http://www.w3.org/1999/xlink"
+         , SA.version "1.1"
          , SA.preserveAspectRatio "xMinYMin slice"
          , SA.viewBox viewbox
 

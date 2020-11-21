@@ -36,6 +36,7 @@ type Color
     | Green
     | CrimsonRed
     | Blue
+    | BlueSky
 
 
 {-| -}
@@ -73,6 +74,9 @@ decoder =
                 "blue" ->
                     Json.Decode.succeed Blue
 
+                "bluesky" ->
+                    Json.Decode.succeed BlueSky
+
                 _ ->
                     Json.Decode.fail "Unknown value for Color"
     in
@@ -106,6 +110,9 @@ toString value =
 
         Blue ->
             "Blue"
+
+        BlueSky ->
+            "Blue Sky"
 
 
 
@@ -227,6 +234,13 @@ toColorLight_ color =
             , "Hard coded as #ff008c"
             )
 
+        BlueSky ->
+            -- The pink color changed fromm to #ff008c from #ff41be as
+            -- per Rakuten Mobile request on 2020.11.19
+            ( R10.Color.Utils.fromHex "#117bb4"
+            , "Hard coded as #117bb4"
+            )
+
 
 {-| -}
 toColorDark_ : Color -> ( Color.Color, String )
@@ -268,6 +282,11 @@ toColorDark_ color =
             )
 
         Pink ->
+            ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
+            , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
+            )
+
+        BlueSky ->
             ( R10.Color.Utils.fromLightToDark <| Tuple.first <| toColorLight_ color
             , "Converted from light mode using `R10.Color.Utils.fromLightToDark`"
             )

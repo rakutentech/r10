@@ -791,67 +791,67 @@ routeDetails route =
 
         RouteExamples language ->
             { title = Pages.Overview.title
-            , routeLabel = "Overview"
+            , routeLabel = "overview"
             , language = language
             }
 
         RouteExample1 language ->
             { title = Pages.UIFormBoilerplate.title
-            , routeLabel = "Forms_Boilerplate"
+            , routeLabel = "forms_boilerplate"
             , language = language
             }
 
         RouteExample2 language ->
             { title = Pages.UIFormBoilerplate2.title
-            , routeLabel = "Forms_Bolierplate_2"
+            , routeLabel = "forms_bolierplate_2"
             , language = language
             }
 
         RouteExample3 language ->
             { title = Pages.UIFormComponentsPhoneSelect.title
-            , routeLabel = "Forms_PhoneSelector"
+            , routeLabel = "forms_phoneselector"
             , language = language
             }
 
         RouteExample4 language ->
             { title = Pages.UIFormComponentsSingle.title
-            , routeLabel = "Forms_Single"
+            , routeLabel = "forms_single"
             , language = language
             }
 
         RouteExample5 language ->
             { title = Pages.UIFormComponentsStates.title
-            , routeLabel = "Forms_States"
+            , routeLabel = "forms_states"
             , language = language
             }
 
         RouteExample6 language ->
             { title = Pages.UIFormComponentsText.title
-            , routeLabel = "Forms_Text"
+            , routeLabel = "forms_text"
             , language = language
             }
 
         RouteExample7 language ->
             { title = Pages.UIFormIntroduction.title
-            , routeLabel = "Forms"
+            , routeLabel = "forms"
             , language = language
             }
 
         RouteExample8 language ->
             { title = Pages.UIComponents.title
-            , routeLabel = "UI_Components"
+            , routeLabel = "ui_components"
             , language = language
             }
 
         RouteCounter language ->
             { title = Pages.Counter.title
-            , routeLabel = "Counter"
+            , routeLabel = "counter"
             , language = language
             }
 
         NotFound language ->
             { title = translationsError
-            , routeLabel = "notFound"
+            , routeLabel = "not_found"
             , language = language
             }
 

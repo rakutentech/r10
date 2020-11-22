@@ -321,10 +321,10 @@ view model theme =
             Background.color <| rgba 0.9 1 0.2 0.7
 
         palette =
-            Pages.Shared.Utils.toFormPalette theme
+            R10.Form.themeToPalette theme
     in
     [ column
-        (R10.Card.normal theme ++ [ spacing 10 ])
+        [ spacing 10 ]
         [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
 Here you can simulate all the possible states of the component "Text". You can click on all yellow areas below to change the state in real time.
 
@@ -332,7 +332,7 @@ The messages on the right are all the messages that are fired by the component.
 """ ] ]
     , column [ spacing 20, width fill ]
         [ row
-            (R10.Card.normal theme ++ [ spacing 20 ])
+            (R10.Card.noShadow theme ++ [ spacing 20 ])
             [ R10.Form.viewText
                 [ width (fill |> maximum 600)
                 , centerY
@@ -431,7 +431,7 @@ The messages on the right are all the messages that are fired by the component.
         , centerX
         ]
         [ column
-            (R10.Card.normal theme
+            (R10.Card.noShadow theme
                 ++ [ padding 20
                    , spacing 5
                    , width fill
@@ -590,7 +590,7 @@ The messages on the right are all the messages that are fired by the component.
                 ]
             ]
         , column
-            (R10.Card.normal theme
+            (R10.Card.noShadow theme
                 ++ [ padding 20
                    , spacing 5
                    , width fill

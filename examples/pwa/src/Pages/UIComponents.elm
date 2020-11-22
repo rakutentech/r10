@@ -376,7 +376,7 @@ view model theme =
             --     , widthMode : Attribute msg
             --     }
             --
-            components
+            (components theme)
         -- ++ [ section "Colors" (paragraph [] [ html <| Markdown.toHtml [] notesAboutColors ])
         -- , section "Palette Base"
         --      (el [] <|
@@ -492,8 +492,8 @@ type alias Component msg =
     }
 
 
-components : List (Component msg)
-components =
+components : R10.Theme.Theme -> List (Component msg)
+components theme_ =
     --
     --
     --
@@ -664,7 +664,7 @@ components =
                         { maker = Nothing
                         , translator = Nothing
                         , style = R10.FormComponents.style.filled
-                        , palette = Nothing
+                        , palette = Just <| R10.Form.themeToPalette theme_
                         }
       , componentAsStringCode = """Form.viewWith
     { conf = Flow.Login.FormConfs.v01 Utils.I18n.Language.EN_US
@@ -674,7 +674,7 @@ components =
     { maker = Nothing
     , translator = Nothing
     , style = R10.FormComponents.style.filled
-    , palette = Nothing
+    , palette = Just <| R10.Form.themeToPalette theme
     }"""
       }
 
@@ -712,7 +712,7 @@ components =
                         { maker = Nothing
                         , translator = Nothing
                         , style = R10.FormComponents.style.filled
-                        , palette = Nothing
+                        , palette = Just <| R10.Form.themeToPalette theme_
                         }
       , componentAsStringCode = """Form.viewWith
     { conf = Flow.Login.FormConfs.v11 Utils.I18n.Language.EN_US
@@ -722,7 +722,7 @@ components =
     { maker = Nothing
     , translator = Nothing
     , style = R10.FormComponents.style.filled
-    , palette = Nothing
+    , palette = Just <| R10.Form.themeToPalette theme
     }"""
       }
     ]

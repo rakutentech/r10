@@ -1,8 +1,8 @@
-module R10.Svg.IconsExtra exposing (more_vert_, checkBold_, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search)
+module R10.Svg.IconsExtra exposing (more_vert_, checkBold_, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight)
 
 {-|
 
-@docs more_vert_, checkBold_, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search
+@docs more_vert_, checkBold_, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight
 
 -}
 
@@ -399,4 +399,14 @@ aToZ attrs _ size =
         , Svg.path [ SA.d "M435.2 162.1c-2.2 0-4.4-.8-6-2.5l-68.3-68.2a8.5 8.5 0 1112-12.1l68.3 68.3a8.5 8.5 0 01-6 14.5zm0 0" ] []
         , Svg.path [ SA.d "M298.7 162.1a8.5 8.5 0 01-6-14.5l68.2-68.3a8.5 8.5 0 1112 12l-68.2 68.3a8.5 8.5 0 01-6 2.5zm0 0M213.3 93.9H102.4a8.5 8.5 0 010-17.1h111a8.5 8.5 0 110 17zm0 0M213.3 230.4H102.4a8.5 8.5 0 110-17h111a8.5 8.5 0 110 17zm0 0" ] []
         , Svg.path [ SA.d "M102.4 230.4c-1.9 0-3.8-.6-5.4-2a8.5 8.5 0 01-1.2-12L206.8 80A8.6 8.6 0 01220 90.7L109 227.2a8.5 8.5 0 01-6.6 3.2zm0 0" ] []
+        ]
+
+
+{-| -}
+darkLight : List (Attribute msg) -> Color.Color -> Int -> Element msg
+darkLight attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 1024 1024"
+        size
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M320 85a279 279 0 001 470 235 235 0 11-1-470m494 64l61 61-665 665-61-61 665-665M550 253l-63-40-62 43 18-73-59-45 75-5 24-70 29 69 74 2-58 48 22 71M409 407l-49-31-48 33 14-56-46-36 58-3 19-55 22 54 58 1-45 37 17 56m402 169a235 235 0 01-374 189l328-328c29 39 46 87 46 139M623 857l118-49-10 143-108-94m185-115l49-119 94 109-143 10m49-212l-49-119 143 11-94 108M411 808l118 49-108 93-10-142z" ] []
         ]

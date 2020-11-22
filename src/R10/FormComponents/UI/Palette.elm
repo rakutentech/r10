@@ -26,7 +26,9 @@ module R10.FormComponents.UI.Palette exposing
     )
 
 import Color
+import Color.Manipulate
 import R10.Color.Svg
+import R10.Mode
 import R10.Theme
 
 
@@ -35,13 +37,13 @@ import R10.Theme
 fromTheme : R10.Theme.Theme -> Palette
 fromTheme theme =
     { primary = R10.Color.Svg.primary theme
-    , primaryVariant = R10.Color.Svg.primary theme
+    , primaryVariant = R10.Color.Svg.primaryVariant theme
     , success = R10.Color.Svg.success theme
     , error = R10.Color.Svg.error theme
+    , background = R10.Color.Svg.background theme
+    , surface = R10.Color.Svg.surface theme
     , onSurface = R10.Color.Svg.fontNormal theme
     , onPrimary = R10.Color.Svg.fontButtonPrimary theme
-    , surface = R10.Color.Svg.backgroundNormal theme
-    , background = R10.Color.Svg.underModal theme
     }
 
 

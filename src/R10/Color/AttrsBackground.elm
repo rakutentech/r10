@@ -1,8 +1,8 @@
-module R10.Color.AttrsBackground exposing (buttonMinorOver, buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, buttonPrimaryOver, debugger, debuggerOver, dropdown, dropdownHover, dropdownSelected, inputFieldCheckboxOver, inputFieldCheckboxSelected, normal, sameAsBorderNormal, underModal)
+module R10.Color.AttrsBackground exposing (buttonMinorOver, buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, buttonPrimaryOver, debugger, debuggerOver, dropdown, dropdownHover, dropdownSelected, inputFieldCheckboxOver, inputFieldCheckboxSelected, surface, sameAsBorderNormal, background, surface2dp)
 
 {-| Background colors
 
-@docs buttonMinorOver, buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, buttonPrimaryOver, debugger, debuggerOver, dropdown, dropdownHover, dropdownSelected, inputFieldCheckboxOver, inputFieldCheckboxSelected, normal, sameAsBorderNormal, underModal
+@docs buttonMinorOver, buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, buttonPrimaryOver, debugger, debuggerOver, dropdown, dropdownHover, dropdownSelected, inputFieldCheckboxOver, inputFieldCheckboxSelected, surface, sameAsBorderNormal, background, surface2dp
 
 -}
 
@@ -15,26 +15,35 @@ import R10.Theme
 
 
 
--- NORMAL
+-- BACKGROUND
 
 
 {-| -}
-normal : R10.Theme.Theme -> Element.Attr decorative msg
-normal theme =
-    R10.Color.Internal.Derived.BackgroundNormal
+background : R10.Theme.Theme -> Element.Attr decorative msg
+background theme =
+    R10.Color.Internal.Derived.Background
         |> R10.Color.Internal.Derived.toColor theme
         |> R10.Color.Utils.colorToElementColor
         |> Element.Background.color
 
 
 
--- UNDER MODAL
+-- SURFACE
 
 
 {-| -}
-underModal : R10.Theme.Theme -> Element.Attr decorative msg
-underModal theme =
-    R10.Color.Internal.Derived.BackgroundButtonMinorOver
+surface : R10.Theme.Theme -> Element.Attr decorative msg
+surface theme =
+    R10.Color.Internal.Derived.Surface
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.colorToElementColor
+        |> Element.Background.color
+
+
+{-| -}
+surface2dp : R10.Theme.Theme -> Element.Attr decorative msg
+surface2dp theme =
+    R10.Color.Internal.Derived.Surface2dp
         |> R10.Color.Internal.Derived.toColor theme
         |> R10.Color.Utils.colorToElementColor
         |> Element.Background.color

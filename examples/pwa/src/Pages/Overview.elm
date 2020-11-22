@@ -327,10 +327,44 @@ view model theme mouse windowSize =
     , titleSubSection theme "Palette Derived"
     , twoPalettes theme R10.Color.listDerived
     , titleSection theme "Buttons"
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
+```elm
+[ R10.Button.primary []
+    { label = text "Primary Button"
+    , libu = R10.Libu.Li "#"
+    , theme = theme
+    }
+, R10.Button.primary []
+    { label =
+        row [ spacing 10 ]
+            [ R10.Svg.Icons.arrow_left_l [] (R10.Color.Svg.fontButtonPrimary theme) 24
+            , text "Primary Button"
+            ]
+    , libu = R10.Libu.Li "#"
+    , theme = theme
+    }
+, R10.Button.secondary []
+    { label = text "Secondary Button"
+    , libu = R10.Libu.Li "#"
+    , theme = theme
+    }
+, R10.Button.tertiary []
+    { label = text "Tertiary Button"
+    , libu = R10.Libu.Li "#"
+    , theme = theme
+    }
+, R10.Button.quaternary []
+    { label = text "Quaternary Button"
+    , libu = R10.Libu.Li "#"
+    , theme = theme
+    }
+]
+```
+    """
     , column
         [ padding 20
         , spacing 20
-        , R10.Color.AttrsBackground.normal theme
+        , R10.Color.AttrsBackground.surface theme
         , R10.Color.AttrsFont.normal theme
         ]
         [ R10.Button.primary []
@@ -363,8 +397,31 @@ view model theme mouse windowSize =
             , theme = theme
             }
         ]
+    , titleSection theme
+        "Font sizes"
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
+```elm
+[ el [ R10.FontSize.xxlarge ] <| text "Font size: XX Large"
+, el [ R10.FontSize.xlarge ] <| text "Font size: X Large"
+, el [ R10.FontSize.large ] <| text "Font size: Large"
+, el [ R10.FontSize.normal ] <| text "Font size: Normal"
+, el [ R10.FontSize.small ] <| text "Font size: Small"
+, el [ R10.FontSize.xsmall ] <| text "Font size: X Small"
+, el [ R10.FontSize.xxsmall ] <| text "Font size: XX Small"
+]
+```
+    """
+    , column [ spacing 5 ]
+        [ el [ R10.FontSize.xxlarge ] <| text "Font size: XX Large"
+        , el [ R10.FontSize.xlarge ] <| text "Font size: X Large"
+        , el [ R10.FontSize.large ] <| text "Font size: Large"
+        , el [ R10.FontSize.normal ] <| text "Font size: Normal"
+        , el [ R10.FontSize.small ] <| text "Font size: Small"
+        , el [ R10.FontSize.xsmall ] <| text "Font size: X Small"
+        , el [ R10.FontSize.xxsmall ] <| text "Font size: XX Small"
+        ]
     , titleSection theme "Forms"
-    , el [] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """Forms are defined by two things: Configuration and State.
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """Forms are defined by two things: Configuration and State.
 
 An example of `Configuration` is
 
@@ -401,9 +458,14 @@ Forms have two different styles: **Outlined** and **Filled**.
     , row [ spacing 40 ]
         [ column [ spacing 30 ] <|
             [ paragraph [ Font.bold ] [ text "Style: Outlined" ] ]
-                ++ R10.Form.view
+                ++ R10.Form.viewWithOptions
                     { state = model.formState, conf = formConf }
                     MsgForm
+                    { maker = Nothing
+                    , translator = Nothing
+                    , style = R10.FormComponents.style.outlined
+                    , palette = Just <| R10.Form.themeToPalette theme
+                    }
         , column [ spacing 30 ] <|
             [ paragraph [ Font.bold ] [ text "Style: Filled" ] ]
                 ++ R10.Form.viewWithOptions
@@ -412,12 +474,12 @@ Forms have two different styles: **Outlined** and **Filled**.
                     { maker = Nothing
                     , translator = Nothing
                     , style = R10.FormComponents.style.filled
-                    , palette = Nothing
+                    , palette = Just <| R10.Form.themeToPalette theme
                     }
         ]
 
     --     , titleSection theme "Translations"
-    --     , el [] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """To translate some text:
+    --     , el [width fill] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """To translate some text:
     --
     --     R10.I18n.t model.language R10.Translations.signInHeader
     --
@@ -468,7 +530,7 @@ Forms have two different styles: **Outlined** and **Filled**.
                     { mouse = mouse
                     , screen = windowSize
                     }
-    , el [] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
 ```
 R10.Okaimonopanda.view
     { mouse = mouse

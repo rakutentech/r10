@@ -97,6 +97,7 @@ listIconsExtra size cl =
     , ( R10.Svg.IconsExtra.search [] cl size, "search" )
     , ( R10.Svg.IconsExtra.more_vert_ [] cl size, "more_vert_" )
     , ( R10.Svg.IconsExtra.aToZ [] cl size, "aToZ" )
+    , ( R10.Svg.IconsExtra.darkLight [] cl size, "darkLight" )
     ]
 
 

@@ -546,7 +546,7 @@ viewRow index model theme =
         [ column (R10.Card.normal theme ++ [ spacing 20, height fill ])
             [ paragraph secondaryTitle [ text <| formName index ]
             , column [ width fill, spacing 20 ] <|
-                (R10.Form.viewWithPalette form msgTransformer (Pages.Shared.Utils.toFormPalette theme)
+                (R10.Form.viewWithPalette form msgTransformer (R10.Form.themeToPalette theme)
                     ++ [ if R10.Form.shouldShowTheValidationOverview form.state then
                             let
                                 allKeys_ =

@@ -16,11 +16,15 @@ import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes
 import Json.Encode
+import Markdown
 import Pages.Shared.Utils
+import R10.Button
 import R10.Card
 import R10.Color
 import R10.Color.Utils
+import R10.Form
 import R10.Language
+import R10.Libu
 import R10.Mode
 import R10.Table
 import R10.Table.Config
@@ -284,7 +288,7 @@ view model theme =
         -- tableSimple
         tableSimple =
             R10.Table.view
-                (Pages.Shared.Utils.toFormPalette theme)
+                (R10.Form.themeToPalette theme)
                 (R10.Table.config
                     { toId = .id
                     , toMsg = Table1Msg
@@ -300,7 +304,7 @@ view model theme =
 
         tableWithAccordion =
             R10.Table.view
-                (Pages.Shared.Utils.toFormPalette theme)
+                (R10.Form.themeToPalette theme)
                 (R10.Table.config
                     { toId = .id
                     , toMsg = Table1Msg
@@ -323,7 +327,7 @@ view model theme =
         -- tableWithPaginationAndFilters
         tableWithPaginationAndFilters =
             R10.Table.view
-                (Pages.Shared.Utils.toFormPalette theme)
+                (R10.Form.themeToPalette theme)
                 (R10.Table.customConfig
                     { toId = .id
                     , toMsg = Table2Msg
@@ -357,7 +361,7 @@ view model theme =
         -- tableWithCustomStyles
         tableWithCustomStyles =
             R10.Table.view
-                (Pages.Shared.Utils.toFormPalette theme)
+                (R10.Form.themeToPalette theme)
                 (R10.Table.customConfig
                     { toId = .id
                     , toMsg = Table1Msg
@@ -408,30 +412,26 @@ view model theme =
                 model.table1State
                 (Dict.values model.tableRecords)
     in
-    [ column [ width fill, height fill, spacing 16 ]
-        [ column (R10.Card.normal theme)
-            [ el subTitle <| text "Table data"
-            , text (Json.Encode.encode 4 <| tableRecordsEncoder model.tableRecords)
+    [ column [ width fill, height fill, spacing 30 ]
+        [ column [ width fill ]
+            [ el subTitle <| text "Data"
+            , paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] <| "```\n" ++ (Json.Encode.encode 4 <| tableRecordsEncoder model.tableRecords) ++ "```" ]
             ]
-        , column (R10.Card.normal theme)
-            [ el subTitle <| text "Table simple"
-            , tableSimple
+        , el subTitle <| text "Table simple"
+        , column (R10.Card.normal theme) [ tableSimple ]
+        , row [ width fill ]
+            [ el subTitle <| text "tableWithPaginationAndFilters and custom column"
+            , R10.Button.secondary [ width shrink, alignRight ]
+                { label = text "Toggle loading state"
+                , libu = R10.Libu.Bu <| Just Table2ToggleLoadingMsg
+                , theme = theme
+                }
             ]
-        , column (R10.Card.normal theme)
-            [ row [ width fill ]
-                [ el subTitle <| text "tableWithPaginationAndFilters and custom column"
-                , el (buttonOutlined ++ [ alignRight, Events.onClick <| Table2ToggleLoadingMsg ]) (text "Toggle loading state")
-                ]
-            , tableWithPaginationAndFilters
-            ]
-        , column (R10.Card.normal theme)
-            [ el subTitle <| text "tableWithAccordion"
-            , tableWithAccordion
-            ]
-        , column (R10.Card.normal theme)
-            [ el subTitle <| text "tableWithCustomStyles"
-            , tableWithCustomStyles
-            ]
+        , column (R10.Card.normal theme) [ tableWithPaginationAndFilters ]
+        , el subTitle <| text "tableWithAccordion"
+        , column (R10.Card.normal theme) [ tableWithAccordion ]
+        , el subTitle <| text "tableWithCustomStyles"
+        , column (R10.Card.normal theme) [ tableWithCustomStyles ]
         ]
     ]
 

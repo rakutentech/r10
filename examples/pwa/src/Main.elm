@@ -7,6 +7,7 @@ import Dict
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events as Events
 import Element.Font as Font
 import Html
 import Html.Attributes
@@ -26,6 +27,7 @@ import Pages.UIFormComponentsText
 import Pages.UIFormIntroduction
 import R10.Button
 import R10.Card
+import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.AttrsFont
 import R10.Color.Internal.Primary
@@ -39,6 +41,7 @@ import R10.Language
 import R10.Libu
 import R10.Mode
 import R10.Okaimonopanda
+import R10.Svg.IconsExtra
 import R10.Svg.LogosExtra
 import R10.Theme
 import Starter.ConfMain
@@ -229,6 +232,7 @@ type Msg
     | UrlChanged Route
     | WindowResize Int Int
     | OnChangeIsTop Bool
+    | ChangePrimaryColor R10.Color.Primary
     | MouseMove Position
     | ToggleMode
     | Header R10.Header.Msg
@@ -261,6 +265,16 @@ updateHtmlMeta flagsStarter route =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ChangePrimaryColor primaryColor ->
+            let
+                theme =
+                    model.theme
+
+                newTheme =
+                    { theme | primaryColor = primaryColor }
+            in
+            ( { model | theme = newTheme }, Cmd.none )
+
         ToggleMode ->
             let
                 theme =
@@ -407,7 +421,8 @@ view model =
             [ Font.family []
             , Font.size 18
             , R10.Color.AttrsFont.normal model.theme
-            , R10.Color.AttrsBackground.underModal model.theme
+            , R10.Color.AttrsBackground.background model.theme
+            , htmlAttribute <| Html.Attributes.style "transition" "background-color 1.2s"
             , inFront <| viewHeader model
             ]
           <|
@@ -515,23 +530,62 @@ logoOnLight =
     R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 0 0 0) 24
 
 
+colorsMenu : R10.Theme.Theme -> Element Msg
+colorsMenu theme =
+    row [ spacing 1, centerX ] <|
+        List.map
+            (\{ color, name, type_ } ->
+                R10.Libu.view
+                    [ width shrink
+                    , padding 0
+                    , htmlAttribute <| Html.Attributes.style "transition" "0.4s"
+                    , Font.color <| R10.Color.Utils.colorToElementColor <| R10.Color.Svg.primary { theme | primaryColor = type_ }
+                    , Font.size <|
+                        if theme.primaryColor == type_ then
+                            28
+
+                        else
+                            16
+                    ]
+                <|
+                    { label = text "⬤"
+                    , type_ = R10.Libu.Bu <| Just <| ChangePrimaryColor type_
+                    }
+            )
+            (R10.Color.listPrimary theme)
+
+
 headerFooterArgs : Model -> R10.Header.ViewArgs Msg Route
 headerFooterArgs model =
     { extraContent = links model.route (routeToLanguage model.route)
     , extraContentRightSide =
-        [ R10.Button.quaternary []
-            { label = text "Light/Dark"
-            , libu = R10.Libu.Bu <| Just ToggleMode
-            , theme = model.theme
-            }
-        , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
-            { label = R10.Svg.LogosExtra.github [] (Color.rgb 1 1 1) 24
-            , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
-            }
-        , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
-            { label = R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 24
-            , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
-            }
+        [ row [ spacing 20 ]
+            [ colorsMenu model.theme
+            , R10.Libu.view
+                [ alpha 0.8
+                , transitionOpacity
+                , mouseOver [ alpha 1 ]
+                , htmlAttribute <| Html.Attributes.style "transition" "1s"
+                , rotate
+                    (if R10.Mode.isLight model.theme.mode then
+                        pi
+
+                     else
+                        0
+                    )
+                ]
+                { label = R10.Svg.IconsExtra.darkLight [] (Color.rgb 1 1 1) 28
+                , type_ = R10.Libu.Bu <| Just ToggleMode
+                }
+            , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
+                { label = R10.Svg.LogosExtra.github [] (Color.rgb 1 1 1) 24
+                , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
+                }
+            , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
+                { label = R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 24
+                , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
+                }
+            ]
         ]
     , msgMapper = Header
     , isTop = model.isTop
@@ -573,7 +627,7 @@ mainLayout model title content =
     column [ width fill ]
         [ headerPlaceholder
         , el
-            [ paddingEach { top = 20, right = 20, bottom = 20, left = 20 }
+            [ paddingEach { top = 40, right = 20, bottom = 40, left = 20 }
             , centerX
             , width fill
             ]
@@ -581,7 +635,7 @@ mainLayout model title content =
             column
                 (R10.Card.normal model.theme
                     ++ [ centerX
-                       , paddingXY 20 40
+                       , paddingXY 40 40
                        , Pages.Shared.Utils.maxWidth
                        , spacing 40
                        ]
@@ -632,7 +686,7 @@ css theme =
         [ cssSkipLink
         , cssCommon
         , cssMarkdown theme
-        , R10.Form.extraCss (Just <| Pages.Shared.Utils.toFormPalette theme)
+        , R10.Form.extraCss (Just <| R10.Form.themeToPalette theme)
         ]
 
 
@@ -666,9 +720,7 @@ cssMarkdown theme =
 }
 
 .markdown pre  {
-    -- max-width: """ ++ String.fromInt Pages.Shared.Utils.maxWidthPx ++ """px;
-    
-    background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.underModal theme) ++ """;
+    /* background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.background theme) ++ """; */
     margin: 20px 0;
     line-height: 20px;
     overflow: scroll;
@@ -679,13 +731,14 @@ cssMarkdown theme =
     word-wrap: break-word;       /* Internet Explorer 5.5+ */    
     font-size: 14px;
     border-radius: 10px;
-    padding: 10px;
+    padding: 30px;
     box-sizing: border-box;
     width: 100%;
+    border: 1px solid lightgrey;
 }
 
 .markdown p code {
-    background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.underModal theme) ++ """;
+    /* background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.background theme) ++ """; */
     display: inline-block;
     padding: 0 8px;
 }
@@ -845,8 +898,8 @@ routesList =
     , Route_UIFormBoilerplate
     , Route_UIFormBoilerplate2
     , Route_UIFormComponentsPhoneSelect
-    , Route_UIFormComponentsSingle
     , Route_UIFormComponentsText
+    , Route_UIFormComponentsSingle
     , Route_UIFormComponentsStates
     , Route_Counter
     , Route_TableExample

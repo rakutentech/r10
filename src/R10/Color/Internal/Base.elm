@@ -125,7 +125,7 @@ toColorLight_ color =
             )
 
         Background ->
-            ( R10.Color.Utils.fromHex "#ffffff"
+            ( R10.Color.Utils.fromHex "#f5f5f5"
             , "Hard coded as #ffffff"
             )
 

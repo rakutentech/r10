@@ -366,7 +366,7 @@ view model theme =
             Background.color <| rgba 0.9 1 0.2 0.7
 
         palette =
-            Pages.Shared.Utils.toFormPalette theme
+            R10.Form.themeToPalette theme
     in
     [ column
         (R10.Card.normal theme ++ [ spacing 10 ])

@@ -144,7 +144,7 @@ view model theme =
             R10.Form.viewWithPalette
                 model.form
                 MsgForm
-                (Pages.Shared.Utils.toFormPalette theme)
+                (R10.Form.themeToPalette theme)
 
         viewCTA =
             Element.map MsgForm <|

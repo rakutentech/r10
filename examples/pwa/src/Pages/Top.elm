@@ -17,26 +17,6 @@ import R10.Svg.LogosExtra
 import R10.Theme
 
 
-viewMessage : R10.Language.Language -> Element msg
-viewMessage language =
-    column
-        [ spacing 14
-        , centerX
-        , paddingXY 20 0
-        , htmlAttribute <| Html.Attributes.style "word-spacing" "5px"
-        , htmlAttribute <| Html.Attributes.style "letter-spacing" "1px"
-        , Font.color <| rgb 1 1 1
-        ]
-        [ paragraph
-            [ Font.center
-            , width (fill |> maximum 500)
-            , spacing 10
-            ]
-            [ html <| Markdown.toHtml [ Html.Attributes.class "markdown whiteLinks" ] (R10.I18n.t language intro) ]
-        , R10.Svg.IconsExtra.keyboardArrowDown [ centerX, moveDown 60, alpha 0.2 ] (Color.rgb 1 1 1) 100
-        ]
-
-
 view : R10.Theme.Theme -> R10.Language.Language -> Attribute msg -> List (Element msg) -> (String -> msg) -> Element msg
 view theme language heroBackgroundColor content onClick =
     let
@@ -46,11 +26,11 @@ view theme language heroBackgroundColor content onClick =
     column [ width fill ] <|
         [ column
             [ width fill
-            , paddingXY 0 140
-            , spacing 70
+            , paddingXY 0 80
+            , spacing 60
             , heroBackgroundColor
             ]
-            [ row [ spacing 40, centerX, centerY ]
+            [ row [ spacing 40, centerX, centerY, moveDown 40 ]
                 [ R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 155
                 , R10.Svg.Icons.x [ moveRight 15 ] (Color.rgb 1 1 1) 100
                 , R10.Svg.Logos.r [ moveDown 19 ] (Color.rgb 1 1 1) 200
@@ -58,7 +38,7 @@ view theme language heroBackgroundColor content onClick =
             , viewMessage language
             ]
         , el
-            [ padding 20
+            [ padding 40
             , centerX
             ]
           <|
@@ -74,6 +54,26 @@ view theme language heroBackgroundColor content onClick =
                 , paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] "# Content" ]
                 , paragraph [ paddingEach { top = 0, right = 20, bottom = 40, left = 50 } ] content
                 ]
+        ]
+
+
+viewMessage : R10.Language.Language -> Element msg
+viewMessage language =
+    column
+        [ spacing 0
+        , centerX
+        , paddingXY 20 0
+        , htmlAttribute <| Html.Attributes.style "word-spacing" "5px"
+        , htmlAttribute <| Html.Attributes.style "letter-spacing" "1px"
+        , Font.color <| rgb 1 1 1
+        ]
+        [ paragraph
+            [ Font.center
+            , width (fill |> maximum 500)
+            , spacing 10
+            ]
+            [ html <| Markdown.toHtml [ Html.Attributes.class "markdown whiteLinks" ] (R10.I18n.t language intro) ]
+        , R10.Svg.IconsExtra.keyboardArrowDown [ centerX, moveDown 30, alpha 0.2 ] (Color.rgb 1 1 1) 100
         ]
 
 

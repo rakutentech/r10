@@ -20,6 +20,7 @@ import Html.Attributes
 import Http
 import Json.Decode
 import Process
+import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.Internal.Derived
@@ -638,17 +639,29 @@ userMenu model args =
             [ map args.msgMapper <| el [ centerX, paddingXY 0 30 ] <| loginButton model args ]
     in
     el
-        [ R10.Color.AttrsBackground.underModal args.theme
-        , Border.width 1
-        , Border.color <| rgba 0 0 0 0.1
-        , height <| px 320
-        , moveDown 45
-        , alignRight
-        , moveRight 10
-        , width <| px 280
-        , Font.size 16
-        , htmlAttribute <| Html.Attributes.id userMenuId
-        ]
+        -- [ R10.Color.AttrsBackground.surface args.theme
+        -- , Border.width 1
+        -- , Border.color <| rgba 0 0 0 0.1
+        -- , height <| px 320
+        -- , moveDown 45
+        -- , alignRight
+        -- , moveRight 10
+        -- , width <| px 280
+        -- , Font.size 16
+        -- , htmlAttribute <| Html.Attributes.id userMenuId
+        -- ]
+        (R10.Card.normal args.theme
+            ++ [ height <| px 320
+               , width <| px 280
+               , moveDown 40
+               , moveRight 10
+               , alignRight
+               , Font.size 16
+               , htmlAttribute <| Html.Attributes.id userMenuId
+               , R10.Color.AttrsBackground.surface2dp args.theme
+               , padding 0
+               ]
+        )
     <|
         column
             [ scrollbarY
@@ -937,7 +950,7 @@ argsToLanguage args =
 sideMenu : Model -> ViewArgs msg route -> Element msg
 sideMenu model args =
     column
-        [ R10.Color.AttrsBackground.underModal args.theme
+        [ R10.Color.AttrsBackground.surface2dp args.theme
         , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 12, color = rgba 0 0 0 0.3 }
         , Font.size 16
         , width <| px 300

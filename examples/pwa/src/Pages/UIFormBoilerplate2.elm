@@ -113,7 +113,7 @@ operationsTable theme formState =
               , width = px 46
               , view =
                     \index _ ->
-                        row cellAttrs <| checkbox (Pages.Shared.Utils.toFormPalette theme) formState MsgForm index
+                        row cellAttrs <| checkbox (R10.Form.themeToPalette theme) formState MsgForm index
               }
             , { header = el headerAttrs <| text "Name"
               , width = fill

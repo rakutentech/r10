@@ -131,38 +131,37 @@ view model theme =
             Background.color <| rgba 0.9 1 0.2 0.7
 
         palette =
-            Pages.Shared.Utils.toFormPalette theme
+            R10.Form.themeToPalette theme
     in
-    [ el (R10.Card.normal theme ++ [ spacing 20, width fill ]) <|
-        row
-            [ spacing 40, width fill ]
-            [ R10.Form.phoneView
-                []
-                model.phone1
-                { validation = model.validation
-                , toMsg = OnPhoneMsg1
-                , label = "Phone number"
-                , helperText = Nothing
-                , disabled = model.disabled
-                , requiredLabel = Nothing
-                , style = R10.Form.style.outlined
-                , key = "field1"
-                , palette = palette
-                , countryOptions = Nothing
-                }
-            , R10.Form.phoneView
-                []
-                model.phone2
-                { validation = model.validation
-                , toMsg = OnPhoneMsg2
-                , label = "Phone number"
-                , helperText = Nothing
-                , disabled = model.disabled
-                , requiredLabel = Nothing
-                , style = R10.Form.style.filled
-                , key = "field2"
-                , palette = palette
-                , countryOptions = Nothing
-                }
-            ]
+    [ row
+        [ spacing 40, width fill, padding 40 ]
+        [ R10.Form.phoneView
+            []
+            model.phone1
+            { validation = model.validation
+            , toMsg = OnPhoneMsg1
+            , label = "Phone number"
+            , helperText = Nothing
+            , disabled = model.disabled
+            , requiredLabel = Nothing
+            , style = R10.Form.style.outlined
+            , key = "field1"
+            , palette = palette
+            , countryOptions = Nothing
+            }
+        , R10.Form.phoneView
+            []
+            model.phone2
+            { validation = model.validation
+            , toMsg = OnPhoneMsg2
+            , label = "Phone number"
+            , helperText = Nothing
+            , disabled = model.disabled
+            , requiredLabel = Nothing
+            , style = R10.Form.style.filled
+            , key = "field2"
+            , palette = palette
+            , countryOptions = Nothing
+            }
+        ]
     ]

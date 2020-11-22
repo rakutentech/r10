@@ -13,6 +13,7 @@ import R10.Theme
 type Color
     = Success
     | Primary
+    | PrimaryVariant
     | Logo
     | FontMediumEmphasisWithMaximumContrast
     | FontMediumEmphasis
@@ -23,7 +24,9 @@ type Color
     | Debugger
     | Border
     | BackgroundPhoneDropdown
-    | BackgroundNormal
+    | Background
+    | Surface
+    | Surface2dp
     | BackgroundInputFieldText
     | BackgroundButtonPrimaryOver
     | BackgroundButtonPrimaryDisabledOver
@@ -57,6 +60,9 @@ toString_ value =
         Primary ->
             "Primary"
 
+        PrimaryVariant ->
+            "Primary Variant"
+
         Logo ->
             "Logo"
 
@@ -87,8 +93,14 @@ toString_ value =
         BackgroundPhoneDropdown ->
             "Background Phone Dropdown"
 
-        BackgroundNormal ->
+        Background ->
             "Background Normal"
+
+        Surface ->
+            "Surface"
+
+        Surface2dp ->
+            "Surface 2dp"
 
         BackgroundInputFieldText ->
             "Background Input Field Text"
@@ -111,9 +123,12 @@ toString_ value =
 
 list_ : List Color
 list_ =
-    [ BackgroundNormal
+    [ Background
+    , Surface
+    , Surface2dp
     , FontMediumEmphasis
     , Primary
+    , PrimaryVariant
     , Success
     , Error
     , Logo
@@ -167,6 +182,16 @@ toColor_ theme colorDerived =
         Primary ->
             ( primary_ theme
             , "Just the primary color"
+            )
+
+        PrimaryVariant ->
+            ( primary_ theme
+                |> Color.Manipulate.scaleHsl
+                    { saturationScale = -0.4
+                    , lightnessScale = 0
+                    , alphaScale = -0.6
+                    }
+            , "Like the primary, but more subtle"
             )
 
         FontMediumEmphasis ->
@@ -259,10 +284,34 @@ toColor_ theme colorDerived =
             , "A special background for the phone dropdown. On `light` mode is the same as the base `Background` but in `dark` mode is lighter 0.05 compared to the base `Background` so that it became visible."
             )
 
-        BackgroundNormal ->
+        Background ->
             ( R10.Color.Internal.Base.Background
                 |> R10.Color.Internal.Base.toColor theme
             , "The same as the base `Background`."
+            )
+
+        Surface ->
+            ( case theme.mode of
+                R10.Mode.Light ->
+                    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
+                        |> Color.Manipulate.lighten 0.05
+
+                R10.Mode.Dark ->
+                    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
+                        |> Color.Manipulate.lighten 0.05
+            , "A color for surfaces above the background, 1dp (See https://material.io/design/color/dark-theme.html#anatomy)"
+            )
+
+        Surface2dp ->
+            ( case theme.mode of
+                R10.Mode.Light ->
+                    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
+                        |> Color.Manipulate.lighten 0.1
+
+                R10.Mode.Dark ->
+                    R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Background
+                        |> Color.Manipulate.lighten 0.1
+            , "A color for surfaces above the background, 2dp (See https://material.io/design/color/dark-theme.html#anatomy)"
             )
 
         BackgroundInputFieldText ->

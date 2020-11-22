@@ -60,54 +60,21 @@ title =
 
 
 type alias Model =
-    { language : R10.Language.Language
-    , theme : R10.Theme.Theme
-    , formState : R10.Form.State
-    }
-
-
-defaultTheme : { mode : R10.Mode.Mode, primaryColor : R10.Color.Primary }
-defaultTheme =
-    { primaryColor = R10.Color.primary.crimsonRed
-    , mode = R10.Mode.Light
-    }
+    { formState : R10.Form.State }
 
 
 init : Model
 init =
-    { language = R10.Language.EN_US
-    , theme = defaultTheme
-    , formState = R10.Form.initState
-    }
+    { formState = R10.Form.initState }
 
 
 type Msg
-    = ChangeLanguage R10.Language.Language
-    | ChangePrimaryColor R10.Color.Primary
-    | ChangeMode R10.Mode.Mode
-    | MsgForm R10.Form.Msg
+    = MsgForm R10.Form.Msg
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ChangeLanguage language ->
-            { model | language = language }
-
-        ChangePrimaryColor primaryColor ->
-            let
-                theme =
-                    model.theme
-            in
-            { model | theme = { theme | primaryColor = primaryColor } }
-
-        ChangeMode mode ->
-            let
-                theme =
-                    model.theme
-            in
-            { model | theme = { theme | mode = mode } }
-
         MsgForm msgForm ->
             { model | formState = Tuple.first <| R10.Form.update msgForm model.formState }
 
@@ -350,53 +317,53 @@ formConf =
     ]
 
 
-view : Model -> { x : Int, y : Int } -> { x : Int, y : Int } -> List (Element Msg)
-view model mouse windowSize =
-    [ titleSection model.theme "Palettes"
-    , titleSubSection model.theme "Palette Base"
-    , twoPalettes model.theme R10.Color.listBase
-    , titleSubSection model.theme "Palette Primary"
-    , twoPalettes model.theme R10.Color.listPrimary
-    , titleSubSection model.theme "Palette Derived"
-    , twoPalettes model.theme R10.Color.listDerived
-    , titleSection model.theme "Buttons"
+view : Model -> R10.Theme.Theme -> { x : Int, y : Int } -> { x : Int, y : Int } -> List (Element Msg)
+view model theme mouse windowSize =
+    [ titleSection theme "Palettes"
+    , titleSubSection theme "Palette Base"
+    , twoPalettes theme R10.Color.listBase
+    , titleSubSection theme "Palette Primary"
+    , twoPalettes theme R10.Color.listPrimary
+    , titleSubSection theme "Palette Derived"
+    , twoPalettes theme R10.Color.listDerived
+    , titleSection theme "Buttons"
     , column
         [ padding 20
         , spacing 20
-        , R10.Color.AttrsBackground.normal model.theme
-        , R10.Color.AttrsFont.normal model.theme
+        , R10.Color.AttrsBackground.normal theme
+        , R10.Color.AttrsFont.normal theme
         ]
         [ R10.Button.primary []
             { label = text "Primary Button"
             , libu = R10.Libu.Li "#"
-            , theme = model.theme
+            , theme = theme
             }
         , R10.Button.primary []
             { label =
                 row [ spacing 10 ]
-                    [ R10.Svg.Icons.arrow_left_l [] (R10.Color.Svg.fontButtonPrimary model.theme) 24
+                    [ R10.Svg.Icons.arrow_left_l [] (R10.Color.Svg.fontButtonPrimary theme) 24
                     , text "Primary Button"
                     ]
             , libu = R10.Libu.Li "#"
-            , theme = model.theme
+            , theme = theme
             }
         , R10.Button.secondary []
             { label = text "Secondary Button"
             , libu = R10.Libu.Li "#"
-            , theme = model.theme
+            , theme = theme
             }
         , R10.Button.tertiary []
             { label = text "Tertiary Button"
             , libu = R10.Libu.Li "#"
-            , theme = model.theme
+            , theme = theme
             }
         , R10.Button.quaternary []
             { label = text "Quaternary Button"
             , libu = R10.Libu.Li "#"
-            , theme = model.theme
+            , theme = theme
             }
         ]
-    , titleSection model.theme "Forms"
+    , titleSection theme "Forms"
     , el [] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """Forms are defined by two things: Configuration and State.
 
 An example of `Configuration` is
@@ -448,51 +415,52 @@ Forms have two different styles: **Outlined** and **Filled**.
                     , palette = Nothing
                     }
         ]
-    , titleSection model.theme "Translations"
-    , el [] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """To translate some text:
 
-    R10.I18n.t model.language R10.Translations.signInHeader
-
-Where `signInHeader` is defined as
-
-    signInHeader : Translations
-    signInHeader =
-        { key = "signInHeader"
-        , en_us = "Sign in to your Rakuten account"
-        , zh_tw = "會員登入"
-        , ja_jp = "楽天会員 ログイン"
-        ...
-        }
-
-#### Examples:"""
-    , wrappedRow [ spacing 16 ] <|
-        List.map
-            (\language ->
-                R10.Button.secondary []
-                    { label = text <| R10.Language.toLongString R10.Language.International language
-                    , libu = R10.Libu.Bu <| Just <| ChangeLanguage language
-                    , theme = model.theme
-                    }
-            )
-            langauges
-    , text <| R10.I18n.t model.language R10.Translations.signInHeader
-    , titleSection model.theme "Language Selector"
-    , R10.LanguageSelector.view []
-        { changeMsg =
-            \result ->
-                case result of
-                    Ok language ->
-                        ChangeLanguage language
-
-                    Err _ ->
-                        ChangeLanguage R10.Language.default
-        , colorBackground = Color.rgb 1 1 1
-        , colorFont = Color.rgb 0 0 0
-        , currentLocale = model.language
-        , supportedLanguageList = R10.Language.defaultSupportedLanguageList
-        , withLanguageSelector = True
-        }
-    , titleSection model.theme "Okaimono Panda"
+    --     , titleSection theme "Translations"
+    --     , el [] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """To translate some text:
+    --
+    --     R10.I18n.t model.language R10.Translations.signInHeader
+    --
+    -- Where `signInHeader` is defined as
+    --
+    --     signInHeader : Translations
+    --     signInHeader =
+    --         { key = "signInHeader"
+    --         , en_us = "Sign in to your Rakuten account"
+    --         , zh_tw = "會員登入"
+    --         , ja_jp = "楽天会員 ログイン"
+    --         ...
+    --         }
+    --
+    -- #### Examples:"""
+    --     , wrappedRow [ spacing 16 ] <|
+    --         List.map
+    --             (\language ->
+    --                 R10.Button.secondary []
+    --                     { label = text <| R10.Language.toLongString R10.Language.International language
+    --                     , libu = R10.Libu.Bu <| Just <| ChangeLanguage language
+    --                     , theme = theme
+    --                     }
+    --             )
+    --             langauges
+    --     , text <| R10.I18n.t model.language R10.Translations.signInHeader
+    -- , titleSection theme "Language Selector"
+    -- , R10.LanguageSelector.view []
+    --     { changeMsg =
+    --         \result ->
+    --             case result of
+    --                 Ok language ->
+    --                     ChangeLanguage language
+    --
+    --                 Err _ ->
+    --                     ChangeLanguage R10.Language.default
+    --     , colorBackground = Color.rgb 1 1 1
+    --     , colorFont = Color.rgb 0 0 0
+    --     , currentLocale = model.language
+    --     , supportedLanguageList = R10.Language.defaultSupportedLanguageList
+    --     , withLanguageSelector = True
+    --     }
+    , titleSection theme "Okaimono Panda"
     , el [] <|
         html <|
             Html.div [] <|
@@ -512,68 +480,70 @@ R10.Okaimonopanda.view
     --
     -- LOGOS & ICONS
     --
-    , titleSection model.theme "Logos & Icons"
-    , titleSubSection model.theme "Logos"
+    , titleSection theme "Logos & Icons"
+    , titleSubSection theme "Logos"
     , f R10.Svg.Lists.listLogos 30
-    , titleSubSection model.theme "Logos Extra"
+    , titleSubSection theme "Logos Extra"
     , f R10.Svg.Lists.listLogosExtra 30
-    , titleSubSection model.theme "Icons"
+    , titleSubSection theme "Icons"
     , f R10.Svg.Lists.listIcons 30
-    , titleSubSection model.theme "Icons Extra"
+    , titleSubSection theme "Icons Extra"
     , f R10.Svg.Lists.listIconsExtra 30
-    , titleSubSection model.theme "Others"
+    , titleSubSection theme "Others"
     , f R10.Svg.Lists.listOthers 200
-    , footer model.theme
+
+    -- , footer theme
     ]
 
 
-footer : R10.Theme.Theme -> Element Msg
-footer theme =
-    el
-        [ htmlAttribute <| Html.Attributes.style "position" "fixed"
-        , htmlAttribute <| Html.Attributes.style "bottom" "0"
-        , htmlAttribute <| Html.Attributes.style "left" "0"
-        , padding 10
-        , width fill
-        , R10.Color.AttrsBackground.normal theme
-        , R10.Color.AttrsFont.normal theme
-        , Border.color <| rgba 0 0 0 0.05
-        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
-        , Border.shadow { offset = ( 0, 0 ), size = 2, blur = 10, color = rgba 0 0 0 0.05 }
-        ]
-    <|
-        wrappedRow [ spacing 10, centerX ] <|
-            List.map
-                (\{ color, name, type_ } ->
-                    R10.Button.primary
-                        [ width shrink, padding 10, R10.FontSize.xxsmall ]
-                        { label =
-                            el
-                                [ alpha <|
-                                    if theme.primaryColor == type_ then
-                                        1
 
-                                    else
-                                        0
-                                ]
-                            <|
-                                text "⬤"
-
-                        -- stext name
-                        , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor type_
-                        , theme = { theme | primaryColor = type_ }
-                        }
-                )
-                (R10.Color.listPrimary defaultTheme)
-                ++ List.map
-                    (\mode ->
-                        R10.Button.quaternary [ width shrink ]
-                            { label = text <| R10.Mode.toString mode
-                            , libu = R10.Libu.Bu <| Just <| ChangeMode mode
-                            , theme = theme
-                            }
-                    )
-                    [ R10.Mode.Light, R10.Mode.Dark ]
+--
+-- footer : R10.Theme.Theme -> Element Msg
+-- footer theme =
+--     el
+--         [ htmlAttribute <| Html.Attributes.style "position" "fixed"
+--         , htmlAttribute <| Html.Attributes.style "bottom" "0"
+--         , htmlAttribute <| Html.Attributes.style "left" "0"
+--         , padding 10
+--         , width fill
+--         , R10.Color.AttrsBackground.normal theme
+--         , R10.Color.AttrsFont.normal theme
+--         , Border.color <| rgba 0 0 0 0.05
+--         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
+--         , Border.shadow { offset = ( 0, 0 ), size = 2, blur = 10, color = rgba 0 0 0 0.05 }
+--         ]
+--     <|
+--         wrappedRow [ spacing 10, centerX ] <|
+--             List.map
+--                 (\{ color, name, type_ } ->
+--                     R10.Button.primary
+--                         [ width shrink, padding 10, R10.FontSize.xxsmall ]
+--                         { label =
+--                             el
+--                                 [ alpha <|
+--                                     if theme.primaryColor == type_ then
+--                                         1
+--
+--                                     else
+--                                         0
+--                                 ]
+--                             <|
+--                                 text "⬤"
+--                         , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor type_
+--                         , theme = { theme | primaryColor = type_ }
+--                         }
+--                 )
+--                 (R10.Color.listPrimary defaultTheme)
+--                 ++ List.map
+--                     (\mode ->
+--                         R10.Button.quaternary [ width shrink ]
+--                             { label = text <| R10.Mode.toString mode
+--                             , libu = R10.Libu.Bu <| Just <| ChangeMode mode
+--                             , theme = theme
+--                             }
+--                     )
+--                     [ R10.Mode.Light, R10.Mode.Dark ]
+--
 
 
 f : (Int -> Color.Color -> List ( Element msg, String )) -> Int -> Element msg

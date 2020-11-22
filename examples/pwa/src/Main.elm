@@ -6,6 +6,7 @@ import Color
 import Dict
 import Element exposing (..)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
 import Html
 import Html.Attributes
@@ -23,14 +24,23 @@ import Pages.UIFormComponentsSingle
 import Pages.UIFormComponentsStates
 import Pages.UIFormComponentsText
 import Pages.UIFormIntroduction
+import R10.Button
+import R10.Card
+import R10.Color.AttrsBackground
+import R10.Color.AttrsFont
+import R10.Color.Internal.Primary
+import R10.Color.Svg
+import R10.Color.Utils
 import R10.Footer
 import R10.Form
 import R10.Header
 import R10.I18n
 import R10.Language
 import R10.Libu
+import R10.Mode
 import R10.Okaimonopanda
 import R10.Svg.LogosExtra
+import R10.Theme
 import Starter.ConfMain
 import Starter.Flags
 import Url
@@ -78,6 +88,7 @@ type alias Model =
     , windowSize : Position
     , mouse : Position
     , isTop : Bool
+    , theme : R10.Theme.Theme
 
     --
     , header : R10.Header.Model
@@ -139,6 +150,7 @@ init flags =
       , windowSize = { x = flags.width, y = flags.height }
       , mouse = { x = flags.width // 2, y = flags.height // 2 }
       , isTop = True
+      , theme = initTheme
       , header =
             { header
                 | debuggingMode = debuggingMode
@@ -218,6 +230,7 @@ type Msg
     | WindowResize Int Int
     | OnChangeIsTop Bool
     | MouseMove Position
+    | ToggleMode
     | Header R10.Header.Msg
       --
     | Msg_Overview Pages.Overview.Msg
@@ -248,6 +261,16 @@ updateHtmlMeta flagsStarter route =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ToggleMode ->
+            let
+                theme =
+                    model.theme
+
+                newTheme =
+                    { theme | mode = R10.Mode.toggle theme.mode }
+            in
+            ( { model | theme = newTheme }, Cmd.none )
+
         Msg_Overview pageMsg ->
             ( { model | pageExamples = Pages.Overview.update pageMsg model.pageExamples }, Cmd.none )
 
@@ -369,7 +392,7 @@ view model =
     in
     Html.div
         [ Html.Attributes.id "elm" ]
-        [ Html.node "style" [] [ Html.text css ]
+        [ Html.node "style" [] [ Html.text (css model.theme) ]
         , Html.a [ Html.Attributes.class "skip-link", Html.Attributes.href "#main" ]
             [ Html.text "Skip to main" ]
         , layoutWith
@@ -383,15 +406,15 @@ view model =
             }
             [ Font.family []
             , Font.size 18
-            , Font.color <| rgb 0.2 0.2 0.2
-            , Background.color <| rgb255 247 247 247
+            , R10.Color.AttrsFont.normal model.theme
+            , R10.Color.AttrsBackground.underModal model.theme
             , inFront <| viewHeader model
             ]
           <|
             case model.route of
                 RouteTop _ ->
                     column [ width fill ]
-                        [ Pages.Top.view (routeToLanguage model.route) heroBackgroundColor (links model.route language) OnClick
+                        [ Pages.Top.view model.theme (routeToLanguage model.route) heroBackgroundColor (links model.route language) OnClick
                         , viewFooter model
                         ]
 
@@ -405,37 +428,37 @@ view model =
                             -- of the panda in the page
                             { mouse | y = mouse.y - 7000 }
                     in
-                    mainLayout model Pages.Overview.title (List.map (map Msg_Overview) (Pages.Overview.view model.pageExamples mouseCorrected model.windowSize))
+                    mainLayout model Pages.Overview.title (List.map (map Msg_Overview) (Pages.Overview.view model.pageExamples model.theme mouseCorrected model.windowSize))
 
                 Route_UIFormBoilerplate lang ->
-                    mainLayout model Pages.UIFormBoilerplate.title (List.map (map Msg_UIFormBoilerplate) (Pages.UIFormBoilerplate.view model.pageExample1))
+                    mainLayout model Pages.UIFormBoilerplate.title (List.map (map Msg_UIFormBoilerplate) (Pages.UIFormBoilerplate.view model.pageExample1 model.theme))
 
                 Route_UIFormBoilerplate2 lang ->
-                    mainLayout model Pages.UIFormBoilerplate2.title (List.map (map Msg_UIFormBoilerplate2) (Pages.UIFormBoilerplate2.view model.pageExample2))
+                    mainLayout model Pages.UIFormBoilerplate2.title (List.map (map Msg_UIFormBoilerplate2) (Pages.UIFormBoilerplate2.view model.pageExample2 model.theme))
 
                 Route_UIFormComponentsPhoneSelect lang ->
-                    mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map Msg_UIFormComponentsPhoneSelect) (Pages.UIFormComponentsPhoneSelect.view model.pageExample3))
+                    mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map Msg_UIFormComponentsPhoneSelect) (Pages.UIFormComponentsPhoneSelect.view model.pageExample3 model.theme))
 
                 Route_UIFormComponentsSingle lang ->
-                    mainLayout model Pages.UIFormComponentsSingle.title (List.map (map Msg_UIFormComponentsSingle) (Pages.UIFormComponentsSingle.view model.pageExample4))
+                    mainLayout model Pages.UIFormComponentsSingle.title (List.map (map Msg_UIFormComponentsSingle) (Pages.UIFormComponentsSingle.view model.pageExample4 model.theme))
 
                 Route_UIFormComponentsStates lang ->
-                    mainLayout model Pages.UIFormComponentsStates.title (List.map (map Msg_UIFormComponentsStates) (Pages.UIFormComponentsStates.view model.pageExample5))
+                    mainLayout model Pages.UIFormComponentsStates.title (List.map (map Msg_UIFormComponentsStates) (Pages.UIFormComponentsStates.view model.pageExample5 model.theme))
 
                 Route_UIFormComponentsText lang ->
-                    mainLayout model Pages.UIFormComponentsText.title (List.map (map Msg_UIFormComponentsText) (Pages.UIFormComponentsText.view model.pageExample6))
+                    mainLayout model Pages.UIFormComponentsText.title (List.map (map Msg_UIFormComponentsText) (Pages.UIFormComponentsText.view model.pageExample6 model.theme))
 
                 Route_UIFormIntroduction lang ->
-                    mainLayout model Pages.UIFormIntroduction.title (List.map (map Msg_UIFormIntroduction) (Pages.UIFormIntroduction.view model.pageExample7))
+                    mainLayout model Pages.UIFormIntroduction.title (List.map (map Msg_UIFormIntroduction) (Pages.UIFormIntroduction.view model.pageExample7 model.theme))
 
                 Route_UIComponents lang ->
-                    mainLayout model Pages.UIComponents.title (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageExample8))
+                    mainLayout model Pages.UIComponents.title (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageExample8 model.theme))
 
                 Route_Counter lang ->
-                    mainLayout model Pages.Counter.title (List.map (map Msg_Counter) (Pages.Counter.view model.pageCounter))
+                    mainLayout model Pages.Counter.title (List.map (map Msg_Counter) (Pages.Counter.view model.pageCounter model.theme))
 
                 Route_TableExample lang ->
-                    mainLayout model Pages.TableExample.title (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTable))
+                    mainLayout model Pages.TableExample.title (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTable model.theme))
 
                 NotFound lang ->
                     mainLayout model translationsError <|
@@ -464,7 +487,8 @@ view model =
 
 headerPlaceholder : Element msg
 headerPlaceholder =
-    el [ height <| px 80, Background.color <| rgb 1 1 1, width fill ] none
+    -- TODO - Make the height variable the same as the header
+    el [ height <| px 80, width fill ] none
 
 
 transitionOpacity : Attribute msg
@@ -478,66 +502,66 @@ viewHeader model =
         language =
             routeToLanguage model.route
     in
-    R10.Header.view
-        model.header
-        { extraContent = links model.route language
-        , extraContentRightSide =
-            [ R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
-                { label = R10.Svg.LogosExtra.github [] (Color.rgb 1 1 1) 24
-                , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
-                }
-            , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
-                { label = R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 24
-                , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
-                }
-            ]
-        , msgMapper = Header
-        , isTop = model.isTop
-        , from = routeToPathWithoutLanguage model.route
-        , isMobile = False
-        , onClick = OnClick
-        , urlTop = "/"
-        , languageSystem =
-            R10.Header.LanguageInRoute
-                { routeToPath = routeToPath
-                , route = model.route
-                , routeToLanguage = routeToLanguage
-                }
-        , logoOnDark = logoOnDark
-        , logoOnLight = logoOnLight
-        }
+    R10.Header.view model.header (headerFooterArgs model)
 
 
 logoOnDark : Element msg
 logoOnDark =
-    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 1 1 1) 30
+    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 1 1 1) 24
 
 
 logoOnLight : Element msg
 logoOnLight =
-    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 0 0 0) 30
+    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 0 0 0) 24
+
+
+headerFooterArgs : Model -> R10.Header.ViewArgs Msg Route
+headerFooterArgs model =
+    { extraContent = links model.route (routeToLanguage model.route)
+    , extraContentRightSide =
+        [ R10.Button.quaternary []
+            { label = text "Light/Dark"
+            , libu = R10.Libu.Bu <| Just ToggleMode
+            , theme = model.theme
+            }
+        , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
+            { label = R10.Svg.LogosExtra.github [] (Color.rgb 1 1 1) 24
+            , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
+            }
+        , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
+            { label = R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 24
+            , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
+            }
+        ]
+    , msgMapper = Header
+    , isTop = model.isTop
+    , from = routeToPathWithoutLanguage model.route
+    , isMobile = False
+    , onClick = OnClick
+    , urlTop = "/"
+    , languageSystem =
+        R10.Header.LanguageInRoute
+            { routeToPath = routeToPath
+            , route = model.route
+            , routeToLanguage = routeToLanguage
+            }
+    , logoOnDark = logoOnDark
+    , logoOnLight = logoOnLight
+    , darkHeader = True
+    , theme = model.theme
+    }
+
+
+initTheme : R10.Theme.Theme
+initTheme =
+    { mode = R10.Mode.Light
+    , primaryColor = R10.Color.Internal.Primary.BlueSky
+    }
 
 
 viewFooter : Model -> Element Msg
 viewFooter model =
-    R10.Footer.view model.header
-        { extraContent = links model.route (routeToLanguage model.route)
-        , extraContentRightSide = []
-        , msgMapper = Header
-        , isTop = model.isTop
-        , from = routeToPathWithoutLanguage model.route
-        , isMobile = False
-        , onClick = OnClick
-        , urlTop = "/"
-        , languageSystem =
-            R10.Header.LanguageInRoute
-                { routeToPath = routeToPath
-                , route = model.route
-                , routeToLanguage = routeToLanguage
-                }
-        , logoOnDark = logoOnDark
-        , logoOnLight = logoOnLight
-        }
+    R10.Footer.view model.header (headerFooterArgs model)
 
 
 mainLayout :
@@ -548,15 +572,23 @@ mainLayout :
 mainLayout model title content =
     column [ width fill ]
         [ headerPlaceholder
-        , column
-            [ centerX
-            , paddingXY 20 80
-            , Pages.Shared.Utils.maxWidth
-            , spacing 40
+        , el
+            [ paddingEach { top = 20, right = 20, bottom = 20, left = 20 }
+            , centerX
+            , width fill
             ]
-            ([ el [ Font.size 40 ] <| text <| R10.I18n.t (routeToLanguage model.route) title ]
-                ++ content
-            )
+          <|
+            column
+                (R10.Card.normal model.theme
+                    ++ [ centerX
+                       , paddingXY 20 40
+                       , Pages.Shared.Utils.maxWidth
+                       , spacing 40
+                       ]
+                )
+                ([ el [ Font.size 40 ] <| text <| R10.I18n.t (routeToLanguage model.route) title ]
+                    ++ content
+                )
         , viewFooter model
         ]
 
@@ -594,13 +626,13 @@ links currentRoute currentLanguage =
 -- CSS
 
 
-css : String
-css =
+css : R10.Theme.Theme -> String
+css theme =
     String.join "\n"
         [ cssSkipLink
         , cssCommon
-        , cssMarkdown
-        , R10.Form.extraCss (Just <| Pages.Shared.Utils.toFormPalette)
+        , cssMarkdown theme
+        , R10.Form.extraCss (Just <| Pages.Shared.Utils.toFormPalette theme)
         ]
 
 
@@ -622,21 +654,44 @@ cssSkipLink =
 """
 
 
-cssMarkdown : String
-cssMarkdown =
+cssMarkdown : R10.Theme.Theme -> String
+cssMarkdown theme =
     """.markdown {
     white-space: normal;
     line-height: 1.7em;}
 .markdown p {margin: 20px 0 !important}
-.markdown pre {margin: 20px 0; line-height: 20px; background-color: #eee; padding: 20px;}
 
 .markdown a {
     color: rgb(17, 123, 180);
 }
 
-.markdown pre {
-    max-width: """ ++ String.fromInt Pages.Shared.Utils.maxWidthPx ++ """px;
+.markdown pre  {
+    -- max-width: """ ++ String.fromInt Pages.Shared.Utils.maxWidthPx ++ """px;
+    
+    background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.underModal theme) ++ """;
+    margin: 20px 0;
+    line-height: 20px;
     overflow: scroll;
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */    
+    font-size: 14px;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.markdown p code {
+    background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.underModal theme) ++ """;
+    display: inline-block;
+    padding: 0 8px;
+}
+
+.markdown img {
+    width: 100%;
 }
 
 .markdown.whiteLinks a {

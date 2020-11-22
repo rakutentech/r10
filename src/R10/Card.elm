@@ -21,7 +21,7 @@ shadow level =
         { offset = ( 0, level )
         , blur = level
         , size = 0
-        , color = rgba255 0 0 0 0.14
+        , color = rgba255 0 0 0 0
         }
 
 
@@ -51,7 +51,8 @@ high theme =
 -}
 normal : R10.Theme.Theme -> List (Attribute msg)
 normal theme =
-    base theme ++ [ shadow 2, mouseOver [ shadow 8 ] ]
+    -- base theme ++ [ shadow 2, mouseOver [ shadow 8 ] ]
+    base theme ++ [ shadow 2 ]
 
 
 {-| Card with a low shadow

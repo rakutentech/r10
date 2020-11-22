@@ -292,8 +292,8 @@ section title_ content =
         ]
 
 
-view : Model -> List (Element Msg)
-view model =
+view : Model -> R10.Theme.Theme -> List (Element Msg)
+view model theme =
     let
         mode : R10.Mode.Mode
         mode =
@@ -312,13 +312,6 @@ view model =
 
                 _ ->
                     R10.Color.primary.pink
-
-        theme : R10.Theme.Theme
-        theme =
-            R10.Theme.fromFlags
-                { primaryColor = primaryColor
-                , mode = mode
-                }
 
         widthMode : Attribute msg
         widthMode =
@@ -384,29 +377,29 @@ view model =
             --     }
             --
             components
-        ++ [ section "Colors" (paragraph [] [ html <| Markdown.toHtml [] notesAboutColors ])
-           , section "Palette Base"
-                (el [] <|
-                    paletteBase
-                        { mode = mode
-                        , primaryColor = primaryColor
-                        }
-                )
-           , section "Palette Primary"
-                (el [] <|
-                    palettePrimary
-                        { mode = mode
-                        , primaryColor = primaryColor
-                        }
-                )
-           , section "Palette Derived"
-                (el [] <|
-                    paletteDerived
-                        { mode = mode
-                        , primaryColor = primaryColor
-                        }
-                )
-           , section "Notes" (paragraph [] [ html <| Markdown.toHtml [] notes ])
+        -- ++ [ section "Colors" (paragraph [] [ html <| Markdown.toHtml [] notesAboutColors ])
+        -- , section "Palette Base"
+        --      (el [] <|
+        --          paletteBase
+        --              { mode = mode
+        --              , primaryColor = primaryColor
+        --              }
+        --      )
+        -- , section "Palette Primary"
+        --      (el [] <|
+        --          palettePrimary
+        --              { mode = mode
+        --              , primaryColor = primaryColor
+        --              }
+        --      )
+        -- , section "Palette Derived"
+        --      (el [] <|
+        --          paletteDerived
+        --              { mode = mode
+        --              , primaryColor = primaryColor
+        --              }
+        --      )
+        ++ [ section "Notes" (paragraph [] [ html <| Markdown.toHtml [] notes ])
            , section "Links" (paragraph [] [ html <| Markdown.toHtml [] links ])
            , el
                 [ alignLeft

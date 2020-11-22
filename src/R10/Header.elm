@@ -20,9 +20,11 @@ import Html.Attributes
 import Http
 import Json.Decode
 import Process
+import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.Internal.Derived
 import R10.Color.Internal.Primary
+import R10.Color.Svg
 import R10.Color.Utils
 import R10.I18n
 import R10.Language
@@ -77,9 +79,25 @@ type alias Model =
     , urlLogout : String
     , session : Session
     , debuggingMode : Bool
-    , theme : R10.Theme.Theme
     , backgroundColor : Maybe Color
-    , negative : Bool
+    }
+
+
+{-| -}
+type alias ViewArgs msg route =
+    { extraContent : List (Element msg)
+    , extraContentRightSide : List (Element msg)
+    , from : String
+    , msgMapper : Msg -> msg
+    , isTop : Bool
+    , isMobile : Bool
+    , onClick : String -> msg
+    , urlTop : String
+    , languageSystem : LanguageSystem route
+    , logoOnDark : Element msg
+    , logoOnLight : Element msg
+    , darkHeader : Bool
+    , theme : R10.Theme.Theme
     }
 
 
@@ -95,8 +113,6 @@ init =
     , urlLogout = "/api/logout"
     , session = SessionNotRequested
     , debuggingMode = False
-    , theme = defaultTheme
-    , negative = True
     , backgroundColor = Nothing
     }
 
@@ -105,7 +121,7 @@ init =
 defaultTheme : R10.Theme.Theme
 defaultTheme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Internal.Primary.Blue
+    , primaryColor = R10.Color.Internal.Primary.CrimsonRed
     }
 
 
@@ -292,22 +308,6 @@ type LanguageSystem route
 
 
 {-| -}
-type alias ViewArgs msg route =
-    { extraContent : List (Element msg)
-    , extraContentRightSide : List (Element msg)
-    , from : String
-    , msgMapper : Msg -> msg
-    , isTop : Bool
-    , isMobile : Bool
-    , onClick : String -> msg
-    , urlTop : String
-    , languageSystem : LanguageSystem route
-    , logoOnDark : Element msg
-    , logoOnLight : Element msg
-    }
-
-
-{-| -}
 css : String -> String
 css color =
     """/*!
@@ -343,7 +343,7 @@ css color =
   .hamburger.is-active .hamburger-inner,
   .hamburger.is-active .hamburger-inner::before,
   .hamburger.is-active .hamburger-inner::after {
-    background-color: #000; }
+    background-color: """ ++ color ++ """; }
 
 .hamburger-box {
   width: 30px;
@@ -397,6 +397,28 @@ css color =
     transition-delay: 0.075s; }"""
 
 
+fontColorHeader :
+    { a
+        | darkHeader : Bool
+        , theme :
+            { mode : R10.Mode.Mode
+            , primaryColor : R10.Color.Internal.Primary.Color
+            }
+    }
+    -> Color.Color
+fontColorHeader args =
+    let
+        theme =
+            args.theme
+    in
+    if args.darkHeader then
+        -- The header is always dark
+        R10.Color.Svg.fontNormal { theme | mode = R10.Mode.Dark }
+
+    else
+        R10.Color.Svg.fontNormal theme
+
+
 {-| -}
 view : Model -> ViewArgs msg route -> Element msg
 view model args =
@@ -405,10 +427,10 @@ view model args =
         , width fill
         , htmlAttribute <| Html.Attributes.style "transition" "background 0.4s"
         , htmlAttribute <| Html.Attributes.style "z-index" "20"
-        , if model.negative then
+        , if args.darkHeader then
             case model.backgroundColor of
                 Nothing ->
-                    R10.Color.AttrsBackground.buttonPrimary model.theme
+                    R10.Color.AttrsBackground.buttonPrimary args.theme
 
                 Just color ->
                     Background.color color
@@ -424,7 +446,15 @@ view model args =
                      else
                         1
                     )
-        , inFront <| html <| Html.node "style" [] [ Html.text (css (logoColorAsString model.negative model.theme)) ]
+        , let
+            hamburgerColor =
+                if model.sideMenuOpen then
+                    R10.Color.Svg.fontNormal args.theme
+
+                else
+                    fontColorHeader args
+          in
+          inFront <| html <| Html.node "style" [] [ Html.text (css <| R10.Color.Utils.toHex hamburgerColor) ]
         , inFront <| cover model args
         , inFront <| sideMenu model args
         , inFront <| humbergAndLogo model args
@@ -499,18 +529,17 @@ userSection model args =
         in
         case model.session of
             SessionNotRequired ->
-                rightArea model args.msgMapper emptyButton
+                rightArea model args emptyButton
 
             SessionNotRequested ->
-                rightArea model args.msgMapper emptyButton
+                rightArea model args emptyButton
 
             SessionFetching ->
-                rightArea model args.msgMapper emptyButton
+                rightArea model args emptyButton
 
             SessionSuccess user ->
-                rightArea
-                    model
-                    args.msgMapper
+                rightArea model
+                    args
                     (el
                         [ transition
                         , htmlAttribute <| Html.Attributes.class "visibleDesktop"
@@ -520,9 +549,8 @@ userSection model args =
                     )
 
             SessionError _ ->
-                rightArea
-                    model
-                    args.msgMapper
+                rightArea model
+                    args
                     (el
                         [ transition
                         , htmlAttribute <| Html.Attributes.class "visibleDesktop"
@@ -534,9 +562,9 @@ userSection model args =
 
 
 {-| -}
-rightArea : Model -> (Msg -> msg1) -> Element Msg -> Element msg1
-rightArea model msgMapper loginButtonElement =
-    map msgMapper <|
+rightArea : Model -> ViewArgs msg route -> Element Msg -> Element msg
+rightArea model args loginButtonElement =
+    map args.msgMapper <|
         Input.button
             [ alignRight
             , htmlAttribute <| Html.Attributes.id userMenuId
@@ -545,7 +573,7 @@ rightArea model msgMapper loginButtonElement =
                 row
                     []
                     [ loginButtonElement
-                    , rightMenuButton model.negative model.theme
+                    , rightMenuButton args.darkHeader args.theme
                     ]
             , onPress = Just ToggleUserMenu
             }
@@ -553,13 +581,13 @@ rightArea model msgMapper loginButtonElement =
 
 {-| -}
 rightMenuButton : Bool -> R10.Theme.Theme -> Element msg
-rightMenuButton negative theme =
+rightMenuButton darkHeader theme =
     el
         [ Font.size 26
         , paddingXY 14 6
         , Border.rounded 60
         , Font.bold
-        , Font.color <| logoColor negative theme
+        , Font.color <| logoColor darkHeader theme
         , mouseOver [ Background.color <| rgba 0 0 0 0.05 ]
         , htmlAttribute <| Html.Attributes.style "transition" "background 0.2s"
         ]
@@ -610,17 +638,16 @@ userMenu model args =
             [ map args.msgMapper <| el [ centerX, paddingXY 0 30 ] <| loginButton model args ]
     in
     el
-        [ height <| px 320
-        , Background.color <| rgb 1 1 1
+        [ R10.Color.AttrsBackground.underModal args.theme
         , Border.width 1
         , Border.color <| rgba 0 0 0 0.1
+        , height <| px 320
         , moveDown 45
         , alignRight
         , moveRight 10
         , width <| px 280
         , Font.size 16
         , htmlAttribute <| Html.Attributes.id userMenuId
-        , explain Debug.todo
         ]
     <|
         column
@@ -751,8 +778,6 @@ attrsLink =
     , htmlAttribute <| Html.Attributes.style "transition" "background 0.2s"
     , width fill
     , paddingXY 20 13
-
-    -- , explain Debug.todo
     ]
 
 
@@ -780,14 +805,14 @@ fromTop isTop =
 
 {-| -}
 logoColorAsString : Bool -> R10.Theme.Theme -> String
-logoColorAsString negative theme =
-    Color.Convert.colorToCssRgba <| logoColorColor negative theme
+logoColorAsString darkHeader theme =
+    Color.Convert.colorToCssRgba <| logoColorColor darkHeader theme
 
 
 {-| -}
 logoColorColor : Bool -> R10.Theme.Theme -> Color.Color
-logoColorColor negative theme =
-    if negative then
+logoColorColor darkHeader theme =
+    if darkHeader then
         Color.rgb 1 1 1
 
     else
@@ -796,8 +821,8 @@ logoColorColor negative theme =
 
 {-| -}
 logoColor : Bool -> R10.Theme.Theme -> Color
-logoColor negative theme =
-    R10.Color.Utils.colorToElementColor <| logoColorColor negative theme
+logoColor darkHeader theme =
+    R10.Color.Utils.colorToElementColor <| logoColorColor darkHeader theme
 
 
 {-| -}
@@ -806,7 +831,6 @@ humbergAndLogo model args =
     row
         [ paddingXY 10 0
         , spacing 10
-        , explain Debug.todo
         ]
         [ map args.msgMapper <|
             el
@@ -822,7 +846,11 @@ humbergAndLogo model args =
             { label =
                 logo
                     (if model.sideMenuOpen then
-                        args.logoOnLight
+                        if R10.Mode.isLight args.theme.mode then
+                            args.logoOnLight
+
+                        else
+                            args.logoOnDark
 
                      else
                         args.logoOnDark
@@ -909,7 +937,7 @@ argsToLanguage args =
 sideMenu : Model -> ViewArgs msg route -> Element msg
 sideMenu model args =
     column
-        [ Background.color <| rgb 1 1 1
+        [ R10.Color.AttrsBackground.underModal args.theme
         , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 12, color = rgba 0 0 0 0.3 }
         , Font.size 16
         , width <| px 300

@@ -1,5 +1,5 @@
 module R10.Form exposing
-    ( view, viewWithPalette, viewWithOptions
+    ( view, viewWithTheme, viewWithPalette, viewWithOptions
     , Form, Conf, Entity, entity
     , MsgMapper
     , Options
@@ -18,7 +18,7 @@ module R10.Form exposing
     , commonValidation
     , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
     , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
-    , FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText
+    , FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette
     )
 
 {-| Useful things to build a form .
@@ -28,7 +28,7 @@ module R10.Form exposing
 
 There are three functions to rennder the form, each with a different degree of customization. They are order from the simplest (less customizable) to the most complex (more customizable).
 
-@docs view, viewWithPalette, viewWithOptions
+@docs view, viewWithTheme, viewWithPalette, viewWithOptions
 
 
 # Form, Conf, State, Entity
@@ -132,7 +132,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 @docs label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
 
-@docs FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText
+@docs FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette
 
 -}
 
@@ -172,6 +172,7 @@ import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils.FocusOut
 import R10.FormComponents.Utils.SimpleMarkdown
 import R10.FormComponents.Validations
+import R10.Theme
 
 
 {-| -}
@@ -272,6 +273,23 @@ viewWithPalette form msgMapper palette =
         }
 
 
+{-| Use this version if you have `R10.Theme.Theme`.
+-}
+viewWithTheme : Form -> MsgMapper msg -> R10.Theme.Theme -> List (Element msg)
+viewWithTheme form msgMapper theme =
+    let
+        palette =
+            R10.FormComponents.UI.Palette.fromTheme theme
+    in
+    viewWithOptions form
+        msgMapper
+        { maker = Nothing
+        , translator = Nothing
+        , style = style.outlined
+        , palette = Just palette
+        }
+
+
 {-| Use this version for full control.
 -}
 viewWithOptions : Form -> MsgMapper msg -> Options -> List (Element msg)
@@ -294,6 +312,11 @@ viewWithOptions form msgMapper args =
 defaultTranslator : ValidationCode -> String
 defaultTranslator =
     R10.Form.ValidationCode.translator
+
+
+themeToPalette : R10.Theme.Theme -> R10.FormComponents.UI.Palette.Palette
+themeToPalette =
+    R10.FormComponents.UI.Palette.fromTheme
 
 
 

@@ -1,4 +1,4 @@
-module R10.Color.Svg exposing (logo, fontNormal, primary, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, logoHex, fontError, fontValid)
+module R10.Color.Svg exposing (logo, fontNormal, primary, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, logoHex, error, success, backgroundNormal, underModal)
 
 {-|
 
@@ -9,7 +9,7 @@ These are colors that can be used for SVGs because SVGs don't accept `Element.At
 
 For all other colors, look into `R10.Color.Attrs...` modules.
 
-@docs logo, fontNormal, primary, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, logoHex, fontError, fontValid
+@docs logo, fontNormal, primary, fontButtonPrimary, mediumEmphasis, backgroundButtonMinorOver, backgroundPhoneDropdown, logoHex, error, success, backgroundNormal, underModal
 
 -}
 
@@ -20,6 +20,20 @@ import R10.Theme
 
 
 -- SVG COLORS
+
+
+{-| -}
+underModal : R10.Theme.Theme -> Color.Color
+underModal theme =
+    R10.Color.Internal.Derived.BackgroundButtonMinorOver
+        |> R10.Color.Internal.Derived.toColor theme
+
+
+{-| -}
+backgroundNormal : R10.Theme.Theme -> Color.Color
+backgroundNormal theme =
+    R10.Color.Internal.Derived.BackgroundNormal
+        |> R10.Color.Internal.Derived.toColor theme
 
 
 {-| -}
@@ -79,14 +93,14 @@ logoHex theme =
 
 
 {-| -}
-fontError : R10.Theme.Theme -> Color.Color
-fontError theme =
+error : R10.Theme.Theme -> Color.Color
+error theme =
     R10.Color.Internal.Derived.Error
         |> R10.Color.Internal.Derived.toColor theme
 
 
 {-| -}
-fontValid : R10.Theme.Theme -> Color.Color
-fontValid theme =
+success : R10.Theme.Theme -> Color.Color
+success theme =
     R10.Color.Internal.Derived.Success
         |> R10.Color.Internal.Derived.toColor theme

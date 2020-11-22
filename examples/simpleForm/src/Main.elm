@@ -20,6 +20,13 @@ import R10.Svg.LogosExtra
 import R10.Theme
 
 
+theme : R10.Theme.Theme
+theme =
+    { mode = R10.Mode.Light
+    , primaryColor = R10.Color.primary.blueSky
+    }
+
+
 main : Program () Model Msg
 main =
     Browser.sandbox
@@ -129,13 +136,6 @@ update msg model =
             { model | form = newForm }
 
 
-theme : R10.Theme.Theme
-theme =
-    { mode = R10.Mode.Light
-    , primaryColor = R10.Color.primary.blueSky
-    }
-
-
 view : Model -> Html.Html Msg
 view model =
     layoutWith
@@ -159,7 +159,7 @@ view model =
             )
             [ R10.Svg.LogosExtra.r10 [ centerX ] (R10.Color.Svg.logo theme) 32
             , R10.Paragraph.normalMarkdown [ Font.center ] theme "This is an example of a form made with [Elm](https://elm-lang.org/), [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) and [R10](https://package.elm-lang.org/packages/rakutentech/r10/latest/) ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm))."
-            , column [ spacing 20 ] <| R10.Form.view model.form MsgForm
+            , column [ spacing 20 ] <| R10.Form.viewWithTheme model.form MsgForm theme
             , Element.map MsgForm <|
                 R10.Button.primary []
                     { label = text "Sign In"

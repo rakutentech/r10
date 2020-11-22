@@ -53,13 +53,6 @@ title =
     }
 
 
-theme2 : R10.Theme.Theme
-theme2 =
-    { primaryColor = R10.Color.primary.blueSky
-    , mode = R10.Mode.Light
-    }
-
-
 type Theme
     = DarkTheme
     | LightTheme
@@ -281,8 +274,8 @@ buildFilterOptions filterOptions =
     List.map (\s -> { value = s, label = s }) filterOptions
 
 
-view : Model -> List (Element Msg)
-view model =
+view : Model -> R10.Theme.Theme -> List (Element Msg)
+view model theme =
     let
         colorAsString : TableRecord -> String
         colorAsString record =
@@ -291,7 +284,7 @@ view model =
         -- tableSimple
         tableSimple =
             R10.Table.view
-                Pages.Shared.Utils.toFormPalette
+                (Pages.Shared.Utils.toFormPalette theme)
                 (R10.Table.config
                     { toId = .id
                     , toMsg = Table1Msg
@@ -307,7 +300,7 @@ view model =
 
         tableWithAccordion =
             R10.Table.view
-                Pages.Shared.Utils.toFormPalette
+                (Pages.Shared.Utils.toFormPalette theme)
                 (R10.Table.config
                     { toId = .id
                     , toMsg = Table1Msg
@@ -330,7 +323,7 @@ view model =
         -- tableWithPaginationAndFilters
         tableWithPaginationAndFilters =
             R10.Table.view
-                Pages.Shared.Utils.toFormPalette
+                (Pages.Shared.Utils.toFormPalette theme)
                 (R10.Table.customConfig
                     { toId = .id
                     , toMsg = Table2Msg
@@ -364,7 +357,7 @@ view model =
         -- tableWithCustomStyles
         tableWithCustomStyles =
             R10.Table.view
-                Pages.Shared.Utils.toFormPalette
+                (Pages.Shared.Utils.toFormPalette theme)
                 (R10.Table.customConfig
                     { toId = .id
                     , toMsg = Table1Msg
@@ -416,26 +409,26 @@ view model =
                 (Dict.values model.tableRecords)
     in
     [ column [ width fill, height fill, spacing 16 ]
-        [ column (R10.Card.normal theme2)
+        [ column (R10.Card.normal theme)
             [ el subTitle <| text "Table data"
             , text (Json.Encode.encode 4 <| tableRecordsEncoder model.tableRecords)
             ]
-        , column (R10.Card.normal theme2)
+        , column (R10.Card.normal theme)
             [ el subTitle <| text "Table simple"
             , tableSimple
             ]
-        , column (R10.Card.normal theme2)
+        , column (R10.Card.normal theme)
             [ row [ width fill ]
                 [ el subTitle <| text "tableWithPaginationAndFilters and custom column"
                 , el (buttonOutlined ++ [ alignRight, Events.onClick <| Table2ToggleLoadingMsg ]) (text "Toggle loading state")
                 ]
             , tableWithPaginationAndFilters
             ]
-        , column (R10.Card.normal theme2)
+        , column (R10.Card.normal theme)
             [ el subTitle <| text "tableWithAccordion"
             , tableWithAccordion
             ]
-        , column (R10.Card.normal theme2)
+        , column (R10.Card.normal theme)
             [ el subTitle <| text "tableWithCustomStyles"
             , tableWithCustomStyles
             ]

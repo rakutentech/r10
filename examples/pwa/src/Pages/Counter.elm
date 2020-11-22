@@ -64,13 +64,6 @@ title =
     }
 
 
-theme : R10.Theme.Theme
-theme =
-    { primaryColor = R10.Color.primary.blueSky
-    , mode = R10.Mode.Light
-    }
-
-
 type alias Model =
     { counter : R10.Counter.Counter }
 
@@ -102,8 +95,8 @@ update msg model =
             { model | counter = R10.Counter.add value model.counter }
 
 
-view : Model -> List (Element Msg)
-view model =
+view : Model -> R10.Theme.Theme -> List (Element Msg)
+view model theme =
     [ el [ Font.family [ Font.monospace ] ] <| R10.Counter.view model.counter 100
     , row [ spacing 20 ]
         [ R10.Button.secondary [ width shrink ]

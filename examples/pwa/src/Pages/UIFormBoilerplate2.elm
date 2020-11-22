@@ -17,6 +17,7 @@ import Pages.Shared.Utils
 import R10.Form
 import R10.FormComponents
 import R10.Language
+import R10.Theme
 
 
 title : R10.Language.Translations
@@ -81,8 +82,8 @@ operations =
         (List.repeat 20 ())
 
 
-operationsTable : R10.Form.State -> Element Msg
-operationsTable formState =
+operationsTable : R10.Theme.Theme -> R10.Form.State -> Element Msg
+operationsTable theme formState =
     let
         cellAttrs =
             [ Border.widthEach { bottom = 1, left = 1, right = 0, top = 0 }
@@ -112,7 +113,7 @@ operationsTable formState =
               , width = px 46
               , view =
                     \index _ ->
-                        row cellAttrs <| checkbox Pages.Shared.Utils.toFormPalette formState MsgForm index
+                        row cellAttrs <| checkbox (Pages.Shared.Utils.toFormPalette theme) formState MsgForm index
               }
             , { header = el headerAttrs <| text "Name"
               , width = fill
@@ -151,8 +152,8 @@ checkbox palette state msgTransformer index =
         palette
 
 
-view : Model -> List (Element Msg)
-view model =
+view : Model -> R10.Theme.Theme -> List (Element Msg)
+view model theme =
     let
         checked =
             Dict.filter (\_ value -> R10.Form.stringToBool value.value) model.formState.fieldsState
@@ -227,7 +228,7 @@ To get the list of checked indexes:
 ### Working demo
 """ ]
     , row [ width fill, spacing 20 ]
-        [ operationsTable model.formState
+        [ operationsTable theme model.formState
         , column [ width fill, alignTop, Font.family [ Font.monospace ] ]
             [ paragraph []
                 [ text <| "Touched: [" ++ String.join ", " (Dict.keys model.formState.fieldsState) ++ "]" ]

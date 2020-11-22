@@ -22,7 +22,7 @@ import R10.Theme
 
 theme : R10.Theme.Theme
 theme =
-    { mode = R10.Mode.Dark
+    { mode = R10.Mode.Light
     , primaryColor = R10.Color.primary.blueSky
     }
 

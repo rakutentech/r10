@@ -6,22 +6,24 @@ module Pages.Shared.Utils exposing
 
 import Color
 import Element exposing (..)
+import R10.Color.Svg
 import R10.Form
+import R10.Theme
 
 
 {-| get Palette for use with R10.FormComponents lib
 -}
-toFormPalette : R10.Form.Palette
-toFormPalette =
+toFormPalette : R10.Theme.Theme -> R10.Form.Palette
+toFormPalette theme =
     -- TODO
-    { primary = Color.rgb255 17 123 180
-    , primaryVariant = Color.rgb 18 147 216
-    , success = Color.rgb 1 0 0
-    , error = Color.rgb 0 1 0
-    , onSurface = Color.rgb 0 0 0
-    , onPrimary = Color.rgb 0.2 0.2 0.2
-    , surface = Color.rgb 1 1 1
-    , background = Color.rgb 0.8 0.8 0.8
+    { primary = R10.Color.Svg.primary theme
+    , primaryVariant = R10.Color.Svg.primary theme
+    , success = R10.Color.Svg.success theme
+    , error = R10.Color.Svg.error theme
+    , onSurface = R10.Color.Svg.fontNormal theme
+    , onPrimary = R10.Color.Svg.fontButtonPrimary theme
+    , surface = R10.Color.Svg.backgroundNormal theme
+    , background = R10.Color.Svg.underModal theme
     }
 
 

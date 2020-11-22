@@ -18,6 +18,7 @@ import R10.FormComponents.Binary
 import R10.FormComponents.Text
 import R10.FormComponents.Validations
 import R10.Language
+import R10.Theme
 
 
 title : R10.Language.Translations
@@ -82,8 +83,8 @@ validationToStr validation =
                 "Invalid"
 
 
-viewChecboxTable : List (Element Msg)
-viewChecboxTable =
+viewChecboxTable : R10.Theme.Theme -> List (Element Msg)
+viewChecboxTable theme =
     let
         attrs =
             [ Border.color <| rgba 0 0 0 0.1 ]
@@ -184,7 +185,7 @@ viewChecboxTable =
                                                                         , msgOnFocus = DoNothing
                                                                         , msgOnLoseFocus = DoNothing
                                                                         , helperText = Nothing
-                                                                        , palette = Pages.Shared.Utils.toFormPalette
+                                                                        , palette = Pages.Shared.Utils.toFormPalette theme
 
                                                                         --
                                                                         , typeBinary = R10.FormComponents.Binary.BinaryCheckbox
@@ -209,8 +210,8 @@ viewChecboxTable =
     ]
 
 
-viewJoinedTable : List (Element Msg)
-viewJoinedTable =
+viewJoinedTable : R10.Theme.Theme -> List (Element Msg)
+viewJoinedTable theme =
     let
         attrs =
             [ Border.color <| rgba 0 0 0 0.1 ]
@@ -332,7 +333,7 @@ viewJoinedTable =
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
                                                                     , style = R10.FormComponents.style.filled
-                                                                    , palette = Pages.Shared.Utils.toFormPalette
+                                                                    , palette = Pages.Shared.Utils.toFormPalette theme
                                                                     }
                                                             , el (attrsElCell 2) <|
                                                                 R10.FormComponents.Text.view []
@@ -364,7 +365,7 @@ viewJoinedTable =
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
                                                                     , style = R10.FormComponents.style.outlined
-                                                                    , palette = Pages.Shared.Utils.toFormPalette
+                                                                    , palette = Pages.Shared.Utils.toFormPalette theme
                                                                     }
                                                             , el (attrsElCell 1) <|
                                                                 R10.FormComponents.Binary.view []
@@ -380,7 +381,7 @@ viewJoinedTable =
                                                                     , msgOnFocus = DoNothing
                                                                     , msgOnLoseFocus = DoNothing
                                                                     , helperText = Nothing
-                                                                    , palette = Pages.Shared.Utils.toFormPalette
+                                                                    , palette = Pages.Shared.Utils.toFormPalette theme
 
                                                                     --
                                                                     , typeBinary = R10.FormComponents.Binary.BinarySwitch
@@ -399,7 +400,7 @@ viewJoinedTable =
                                                                     , msgOnFocus = DoNothing
                                                                     , msgOnLoseFocus = DoNothing
                                                                     , helperText = Nothing
-                                                                    , palette = Pages.Shared.Utils.toFormPalette
+                                                                    , palette = Pages.Shared.Utils.toFormPalette theme
 
                                                                     --
                                                                     , typeBinary = R10.FormComponents.Binary.BinaryCheckbox
@@ -424,8 +425,8 @@ viewJoinedTable =
     ]
 
 
-viewTextTable : List (Element Msg)
-viewTextTable =
+viewTextTable : R10.Theme.Theme -> List (Element Msg)
+viewTextTable theme =
     let
         attrs =
             [ Border.color <| rgba 0 0 0 0.1 ]
@@ -542,7 +543,7 @@ viewTextTable =
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
                                                                     , style = R10.FormComponents.style.filled
-                                                                    , palette = Pages.Shared.Utils.toFormPalette
+                                                                    , palette = Pages.Shared.Utils.toFormPalette theme
                                                                     }
                                                             , el (attrsCell ++ [ width <| px 250, Font.alignLeft ]) <|
                                                                 R10.FormComponents.Text.view []
@@ -569,7 +570,7 @@ viewTextTable =
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
                                                                     , style = R10.FormComponents.style.outlined
-                                                                    , palette = Pages.Shared.Utils.toFormPalette
+                                                                    , palette = Pages.Shared.Utils.toFormPalette theme
                                                                     }
                                                             , el attrsCell <| text <| R10.Form.boolToString focused_
                                                             , el attrsCell <| text <| validationToStr validation_
@@ -591,14 +592,14 @@ viewTextTable =
     ]
 
 
-view : Model -> List (Element Msg)
-view model =
+view : Model -> R10.Theme.Theme -> List (Element Msg)
+view model theme =
     [ column
         [ width fill
         ]
         [ el [] <| text "Form Components"
-        , column [] viewJoinedTable
-        , column [] viewTextTable
-        , column [] viewChecboxTable
+        , column [] <| viewJoinedTable theme
+        , column [] <| viewTextTable theme
+        , column [] <| viewChecboxTable theme
         ]
     ]

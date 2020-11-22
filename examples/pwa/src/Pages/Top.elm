@@ -2,16 +2,19 @@ module Pages.Top exposing (view)
 
 import Color
 import Element exposing (..)
+import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes
 import Markdown
 import Pages.Shared.Utils
+import R10.Card
 import R10.I18n
 import R10.Language
 import R10.Svg.Icons
 import R10.Svg.IconsExtra
 import R10.Svg.Logos
 import R10.Svg.LogosExtra
+import R10.Theme
 
 
 viewMessage : R10.Language.Language -> Element msg
@@ -24,7 +27,7 @@ viewMessage language =
         , htmlAttribute <| Html.Attributes.style "letter-spacing" "1px"
         , Font.color <| rgb 1 1 1
         ]
-        [ column
+        [ paragraph
             [ Font.center
             , width (fill |> maximum 500)
             , spacing 10
@@ -34,14 +37,11 @@ viewMessage language =
         ]
 
 
-view : R10.Language.Language -> Attribute msg -> List (Element msg) -> (String -> msg) -> Element msg
-view language heroBackgroundColor content onClick =
+view : R10.Theme.Theme -> R10.Language.Language -> Attribute msg -> List (Element msg) -> (String -> msg) -> Element msg
+view theme language heroBackgroundColor content onClick =
     let
         columnAttrs =
-            [ Pages.Shared.Utils.maxWidth
-            , padding 20
-            , centerX
-            ]
+            [ padding 20 ]
     in
     column [ width fill ] <|
         [ column
@@ -57,9 +57,23 @@ view language heroBackgroundColor content onClick =
                 ]
             , viewMessage language
             ]
-        , column columnAttrs [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] readme ]
-        , column columnAttrs [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] "# Content" ]
-        , column (columnAttrs ++ [ paddingEach { top = 0, right = 20, bottom = 40, left = 50 } ]) content
+        , el
+            [ padding 20
+            , centerX
+            ]
+          <|
+            column
+                (R10.Card.normal theme
+                    ++ [ centerX
+                       , paddingXY 20 40
+                       , Pages.Shared.Utils.maxWidth
+                       , spacing 40
+                       ]
+                )
+                [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] readme ]
+                , paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] "# Content" ]
+                , paragraph [ paddingEach { top = 0, right = 20, bottom = 40, left = 50 } ] content
+                ]
         ]
 
 

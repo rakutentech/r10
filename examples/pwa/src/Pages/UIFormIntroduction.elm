@@ -47,14 +47,6 @@ title =
     }
 
 
-theme : R10.Theme.Theme
-theme =
-    R10.Theme.fromFlags
-        { mode = R10.Mode.Light
-        , primaryColor = R10.Color.primary.green
-        }
-
-
 formQuantity : Int
 formQuantity =
     Array.length formsInit
@@ -525,13 +517,8 @@ secondaryTitle =
     [ Font.size 18 ]
 
 
-viewRow :
-    Int
-    -> Model
-    -- -> { a | code : String, title : String }
-    -- -> (R10.Form.Msg -> Msg)
-    -> List (Element Msg)
-viewRow index model =
+viewRow : Int -> Model -> R10.Theme.Theme -> List (Element Msg)
+viewRow index model theme =
     let
         multilineAttrs =
             [ width fill
@@ -559,7 +546,7 @@ viewRow index model =
         [ column (R10.Card.normal theme ++ [ spacing 20, height fill ])
             [ paragraph secondaryTitle [ text <| formName index ]
             , column [ width fill, spacing 20 ] <|
-                (R10.Form.viewWithPalette form msgTransformer Pages.Shared.Utils.toFormPalette
+                (R10.Form.viewWithPalette form msgTransformer (Pages.Shared.Utils.toFormPalette theme)
                     ++ [ if R10.Form.shouldShowTheValidationOverview form.state then
                             let
                                 allKeys_ =
@@ -653,8 +640,8 @@ reformatError error =
         |> String.replace "\\\"" "\""
 
 
-view : Model -> List (Element Msg)
-view model =
+view : Model -> R10.Theme.Theme -> List (Element Msg)
+view model theme =
     [ column
         []
         [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
@@ -878,4 +865,4 @@ Both `FormState` and `FormConf` have decoder and encoders so you can edit their 
         ++ [ Input.button [] { label = text "Reset all forms state", onPress = Just ResetAll } ]
         ++ [ el [] <| text "Loading forms state from Local Storage..." ]
         ++ [ column [ paddingXY 40 0, spacing 10 ] <| List.map (\error -> el [] <| text <| reformatError error) (List.reverse model.messagesWhileLoadingLocalStorage) ]
-        ++ (List.concat <| repeatForAllForms <| \index -> viewRow index model)
+        ++ (List.concat <| repeatForAllForms <| \index -> viewRow index model theme)

@@ -39,14 +39,6 @@ title =
     }
 
 
-theme : R10.Theme.Theme
-theme =
-    R10.Theme.fromFlags
-        { mode = R10.Mode.Light
-        , primaryColor = R10.Color.primary.green
-        }
-
-
 type alias Model =
     { form : R10.Form.Form }
 
@@ -145,18 +137,18 @@ update msg model =
             { model | form = { form | state = newFormState_ } }
 
 
-view : Model -> List (Element Msg)
-view model =
+view : Model -> R10.Theme.Theme -> List (Element Msg)
+view model theme =
     let
         viewForm =
             R10.Form.viewWithPalette
                 model.form
                 MsgForm
-                Pages.Shared.Utils.toFormPalette
+                (Pages.Shared.Utils.toFormPalette theme)
 
         viewCTA =
             Element.map MsgForm <|
-                R10.Button.primary []
+                R10.Button.primary [ width shrink ]
                     { label = text "Submit"
                     , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
                     , theme = theme

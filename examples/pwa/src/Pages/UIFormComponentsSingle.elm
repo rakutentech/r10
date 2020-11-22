@@ -47,14 +47,6 @@ title =
     }
 
 
-theme : R10.Theme.Theme
-theme =
-    R10.Theme.fromFlags
-        { mode = R10.Mode.Light
-        , primaryColor = R10.Color.primary.green
-        }
-
-
 type alias Model =
     { singleModel : R10.Form.SingleModel
     , disabled : Bool
@@ -361,8 +353,8 @@ update msg model =
             )
 
 
-view : Model -> List (Element Msg)
-view model =
+view : Model -> R10.Theme.Theme -> List (Element Msg)
+view model theme =
     let
         attrs =
             [ padding 0
@@ -374,7 +366,7 @@ view model =
             Background.color <| rgba 0.9 1 0.2 0.7
 
         palette =
-            Pages.Shared.Utils.toFormPalette
+            Pages.Shared.Utils.toFormPalette theme
     in
     [ column
         (R10.Card.normal theme ++ [ spacing 10 ])

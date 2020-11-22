@@ -26,11 +26,19 @@ view model args =
         , spacing 50
         ]
     <|
-        [ row
+        [ el
+            [ moveRight 14
+            , width (fill |> maximum model.maxWidth)
+            , centerX
+            ]
+          <|
+            args.logoOnDark
+        , row
             [ width (fill |> maximum model.maxWidth)
             , centerX
             ]
-            [ column [ width fill, alignTop ] args.extraContent
+            [ column [ width fill, alignTop ]
+                args.extraContent
             , column [ width fill, alignTop ] <|
                 []
                     ++ R10.Header.languageMenu model args

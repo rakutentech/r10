@@ -35,7 +35,7 @@ base theme =
     , padding 30
     , width fill
     , height fill
-    , htmlAttribute <| Html.Attributes.style "transition" "all 0.2s"
+    , htmlAttribute <| Html.Attributes.style "transition" "border 0.2s"
     ]
 
 

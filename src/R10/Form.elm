@@ -219,7 +219,7 @@ type alias MsgMapper msg =
     import Html
     import R10.Form
 
-    formModel : R10.Form.Model
+    formModel : R10.Form.Form
     formModel =
         { conf =
             [ R10.Form.entity.field

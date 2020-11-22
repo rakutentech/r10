@@ -10,7 +10,7 @@ import R10.Form.Msg
 import R10.Form.Update
 
 
-button : R10.Form.Model -> (R10.Form.Msg.Msg -> msg) -> Element msg
+button : R10.Form.Form -> (R10.Form.Msg.Msg -> msg) -> Element msg
 button form msgMapper =
     let
         submittable : Bool

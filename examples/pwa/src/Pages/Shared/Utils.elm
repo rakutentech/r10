@@ -6,12 +6,12 @@ module Pages.Shared.Utils exposing
 
 import Color
 import Element exposing (..)
-import R10.FormComponents
+import R10.Form
 
 
 {-| get Palette for use with R10.FormComponents lib
 -}
-toFormPalette : R10.FormComponents.Palette
+toFormPalette : R10.Form.Palette
 toFormPalette =
     -- TODO
     { primary = Color.rgb255 17 123 180

@@ -13,6 +13,7 @@ import Json.Decode
 import Pages.Counter
 import Pages.Overview
 import Pages.Shared.Utils
+import Pages.TableExample
 import Pages.Top
 import Pages.UIComponents
 import Pages.UIFormBoilerplate
@@ -92,6 +93,7 @@ type alias Model =
     , pageExample7 : Pages.UIFormIntroduction.Model
     , pageExample8 : Pages.UIComponents.Model
     , pageCounter : Pages.Counter.Model
+    , pageTable : Pages.TableExample.Model
     }
 
 
@@ -157,6 +159,7 @@ init flags =
       , pageExample7 = Pages.UIFormIntroduction.init { localStorage = Dict.empty }
       , pageExample8 = Pages.UIComponents.init
       , pageCounter = Pages.Counter.init
+      , pageTable = Pages.TableExample.init
       }
     , Cmd.batch
         [ updateHtmlMeta flags.starter route
@@ -193,11 +196,11 @@ subscriptions model =
                     NotFound _ ->
                         [ Browser.Events.onMouseMove (Json.Decode.map MouseMove positionDecoder) ]
 
-                    RouteExamples _ ->
+                    Route_Overview _ ->
                         [ Browser.Events.onMouseMove (Json.Decode.map MouseMove positionDecoder) ]
 
-                    RouteCounter _ ->
-                        [ Sub.map PagesCounter <| Pages.Counter.subscriptions model.pageCounter ]
+                    Route_Counter _ ->
+                        [ Sub.map Msg_Counter <| Pages.Counter.subscriptions model.pageCounter ]
 
                     _ ->
                         []
@@ -216,16 +219,18 @@ type Msg
     | OnChangeIsTop Bool
     | MouseMove Position
     | Header R10.Header.Msg
-    | PagesExamples Pages.Overview.Msg
-    | PagesExample1 Pages.UIFormBoilerplate.Msg
-    | PagesExample2 Pages.UIFormBoilerplate2.Msg
-    | PagesExample3 Pages.UIFormComponentsPhoneSelect.Msg
-    | PagesExample4 Pages.UIFormComponentsSingle.Msg
-    | PagesExample5 Pages.UIFormComponentsStates.Msg
-    | PagesExample6 Pages.UIFormComponentsText.Msg
-    | PagesExample7 Pages.UIFormIntroduction.Msg
-    | PagesExample8 Pages.UIComponents.Msg
-    | PagesCounter Pages.Counter.Msg
+      --
+    | Msg_Overview Pages.Overview.Msg
+    | Msg_UIFormBoilerplate Pages.UIFormBoilerplate.Msg
+    | Msg_UIFormBoilerplate2 Pages.UIFormBoilerplate2.Msg
+    | Msg_UIFormComponentsPhoneSelect Pages.UIFormComponentsPhoneSelect.Msg
+    | Msg_UIFormComponentsSingle Pages.UIFormComponentsSingle.Msg
+    | Msg_UIFormComponentsStates Pages.UIFormComponentsStates.Msg
+    | Msg_UIFormComponentsText Pages.UIFormComponentsText.Msg
+    | Msg_UIFormIntroduction Pages.UIFormIntroduction.Msg
+    | Msg_UIComponents Pages.UIComponents.Msg
+    | Msg_Counter Pages.Counter.Msg
+    | Msg_PagesTable Pages.TableExample.Msg
 
 
 
@@ -243,67 +248,74 @@ updateHtmlMeta flagsStarter route =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        PagesExamples pageMsg ->
+        Msg_Overview pageMsg ->
             ( { model | pageExamples = Pages.Overview.update pageMsg model.pageExamples }, Cmd.none )
 
-        PagesExample1 pageMsg ->
+        Msg_UIFormBoilerplate pageMsg ->
             ( { model | pageExample1 = Pages.UIFormBoilerplate.update pageMsg model.pageExample1 }, Cmd.none )
 
-        PagesExample2 pageMsg ->
+        Msg_UIFormBoilerplate2 pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.UIFormBoilerplate2.update pageMsg model.pageExample2
             in
-            ( { model | pageExample2 = modelPageExample }, Cmd.map PagesExample2 cmdPageExample )
+            ( { model | pageExample2 = modelPageExample }, Cmd.map Msg_UIFormBoilerplate2 cmdPageExample )
 
-        PagesExample3 pageMsg ->
+        Msg_UIFormComponentsPhoneSelect pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.UIFormComponentsPhoneSelect.update pageMsg model.pageExample3
             in
-            ( { model | pageExample3 = modelPageExample }, Cmd.map PagesExample3 cmdPageExample )
+            ( { model | pageExample3 = modelPageExample }, Cmd.map Msg_UIFormComponentsPhoneSelect cmdPageExample )
 
-        PagesExample4 pageMsg ->
+        Msg_UIFormComponentsSingle pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.UIFormComponentsSingle.update pageMsg model.pageExample4
             in
-            ( { model | pageExample4 = modelPageExample }, Cmd.map PagesExample4 cmdPageExample )
+            ( { model | pageExample4 = modelPageExample }, Cmd.map Msg_UIFormComponentsSingle cmdPageExample )
 
-        PagesExample5 pageMsg ->
+        Msg_UIFormComponentsStates pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.UIFormComponentsStates.update pageMsg model.pageExample5
             in
-            ( { model | pageExample5 = modelPageExample }, Cmd.map PagesExample5 cmdPageExample )
+            ( { model | pageExample5 = modelPageExample }, Cmd.map Msg_UIFormComponentsStates cmdPageExample )
 
-        PagesExample6 pageMsg ->
+        Msg_UIFormComponentsText pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.UIFormComponentsText.update pageMsg model.pageExample6
             in
-            ( { model | pageExample6 = modelPageExample }, Cmd.map PagesExample6 cmdPageExample )
+            ( { model | pageExample6 = modelPageExample }, Cmd.map Msg_UIFormComponentsText cmdPageExample )
 
-        PagesExample7 pageMsg ->
+        Msg_UIFormIntroduction pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.UIFormIntroduction.update pageMsg model.pageExample7
             in
-            ( { model | pageExample7 = modelPageExample }, Cmd.map PagesExample7 cmdPageExample )
+            ( { model | pageExample7 = modelPageExample }, Cmd.map Msg_UIFormIntroduction cmdPageExample )
 
-        PagesExample8 pageMsg ->
+        Msg_UIComponents pageMsg ->
             let
                 modelPageExample =
                     Pages.UIComponents.update pageMsg model.pageExample8
             in
             ( { model | pageExample8 = modelPageExample }, Cmd.none )
 
-        PagesCounter pageMsg ->
+        Msg_Counter pageMsg ->
             let
                 modelPageExample =
                     Pages.Counter.update pageMsg model.pageCounter
             in
             ( { model | pageCounter = modelPageExample }, Cmd.none )
+
+        Msg_PagesTable pageMsg ->
+            let
+                modelPageExample =
+                    Pages.TableExample.update pageMsg model.pageTable
+            in
+            ( { model | pageTable = modelPageExample }, Cmd.none )
 
         MouseMove mouse ->
             ( { model | mouse = mouse }, Cmd.none )
@@ -383,7 +395,7 @@ view model =
                         , viewFooter model
                         ]
 
-                RouteExamples lang ->
+                Route_Overview lang ->
                     let
                         mouse =
                             model.mouse
@@ -393,34 +405,37 @@ view model =
                             -- of the panda in the page
                             { mouse | y = mouse.y - 7000 }
                     in
-                    mainLayout model Pages.Overview.title (List.map (map PagesExamples) (Pages.Overview.view model.pageExamples mouseCorrected model.windowSize))
+                    mainLayout model Pages.Overview.title (List.map (map Msg_Overview) (Pages.Overview.view model.pageExamples mouseCorrected model.windowSize))
 
-                RouteExample1 lang ->
-                    mainLayout model Pages.UIFormBoilerplate.title (List.map (map PagesExample1) (Pages.UIFormBoilerplate.view model.pageExample1))
+                Route_UIFormBoilerplate lang ->
+                    mainLayout model Pages.UIFormBoilerplate.title (List.map (map Msg_UIFormBoilerplate) (Pages.UIFormBoilerplate.view model.pageExample1))
 
-                RouteExample2 lang ->
-                    mainLayout model Pages.UIFormBoilerplate2.title (List.map (map PagesExample2) (Pages.UIFormBoilerplate2.view model.pageExample2))
+                Route_UIFormBoilerplate2 lang ->
+                    mainLayout model Pages.UIFormBoilerplate2.title (List.map (map Msg_UIFormBoilerplate2) (Pages.UIFormBoilerplate2.view model.pageExample2))
 
-                RouteExample3 lang ->
-                    mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map PagesExample3) (Pages.UIFormComponentsPhoneSelect.view model.pageExample3))
+                Route_UIFormComponentsPhoneSelect lang ->
+                    mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map Msg_UIFormComponentsPhoneSelect) (Pages.UIFormComponentsPhoneSelect.view model.pageExample3))
 
-                RouteExample4 lang ->
-                    mainLayout model Pages.UIFormComponentsSingle.title (List.map (map PagesExample4) (Pages.UIFormComponentsSingle.view model.pageExample4))
+                Route_UIFormComponentsSingle lang ->
+                    mainLayout model Pages.UIFormComponentsSingle.title (List.map (map Msg_UIFormComponentsSingle) (Pages.UIFormComponentsSingle.view model.pageExample4))
 
-                RouteExample5 lang ->
-                    mainLayout model Pages.UIFormComponentsStates.title (List.map (map PagesExample5) (Pages.UIFormComponentsStates.view model.pageExample5))
+                Route_UIFormComponentsStates lang ->
+                    mainLayout model Pages.UIFormComponentsStates.title (List.map (map Msg_UIFormComponentsStates) (Pages.UIFormComponentsStates.view model.pageExample5))
 
-                RouteExample6 lang ->
-                    mainLayout model Pages.UIFormComponentsText.title (List.map (map PagesExample6) (Pages.UIFormComponentsText.view model.pageExample6))
+                Route_UIFormComponentsText lang ->
+                    mainLayout model Pages.UIFormComponentsText.title (List.map (map Msg_UIFormComponentsText) (Pages.UIFormComponentsText.view model.pageExample6))
 
-                RouteExample7 lang ->
-                    mainLayout model Pages.UIFormIntroduction.title (List.map (map PagesExample7) (Pages.UIFormIntroduction.view model.pageExample7))
+                Route_UIFormIntroduction lang ->
+                    mainLayout model Pages.UIFormIntroduction.title (List.map (map Msg_UIFormIntroduction) (Pages.UIFormIntroduction.view model.pageExample7))
 
-                RouteExample8 lang ->
-                    mainLayout model Pages.UIComponents.title (List.map (map PagesExample8) (Pages.UIComponents.view model.pageExample8))
+                Route_UIComponents lang ->
+                    mainLayout model Pages.UIComponents.title (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageExample8))
 
-                RouteCounter lang ->
-                    mainLayout model Pages.Counter.title (List.map (map PagesCounter) (Pages.Counter.view model.pageCounter))
+                Route_Counter lang ->
+                    mainLayout model Pages.Counter.title (List.map (map Msg_Counter) (Pages.Counter.view model.pageCounter))
+
+                Route_TableExample lang ->
+                    mainLayout model Pages.TableExample.title (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTable))
 
                 NotFound lang ->
                     mainLayout model translationsError <|
@@ -452,8 +467,8 @@ headerPlaceholder =
     el [ height <| px 80, Background.color <| rgb 1 1 1, width fill ] none
 
 
-transition : Attribute msg
-transition =
+transitionOpacity : Attribute msg
+transitionOpacity =
     htmlAttribute <| Html.Attributes.style "transition" "opacity 0.3s"
 
 
@@ -467,11 +482,11 @@ viewHeader model =
         model.header
         { extraContent = links model.route language
         , extraContentRightSide =
-            [ R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
+            [ R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
                 { label = R10.Svg.LogosExtra.github [] (Color.rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
                 }
-            , R10.Libu.view [ alpha 0.8, transition, mouseOver [ alpha 1 ] ]
+            , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
                 { label = R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
                 }
@@ -488,13 +503,19 @@ viewHeader model =
                 , route = model.route
                 , routeToLanguage = routeToLanguage
                 }
-        , logoElement = logoElement
+        , logoOnDark = logoOnDark
+        , logoOnLight = logoOnLight
         }
 
 
-logoElement : Element msg
-logoElement =
+logoOnDark : Element msg
+logoOnDark =
     R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 1 1 1) 30
+
+
+logoOnLight : Element msg
+logoOnLight =
+    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 0 0 0) 30
 
 
 viewFooter : Model -> Element Msg
@@ -514,7 +535,8 @@ viewFooter model =
                 , route = model.route
                 , routeToLanguage = routeToLanguage
                 }
-        , logoElement = logoElement
+        , logoOnDark = logoOnDark
+        , logoOnLight = logoOnLight
         }
 
 
@@ -737,16 +759,17 @@ languageSupportedList =
 
 type Route
     = RouteTop R10.Language.Language
-    | RouteExamples R10.Language.Language
-    | RouteExample1 R10.Language.Language
-    | RouteExample2 R10.Language.Language
-    | RouteExample3 R10.Language.Language
-    | RouteExample4 R10.Language.Language
-    | RouteExample5 R10.Language.Language
-    | RouteExample6 R10.Language.Language
-    | RouteExample7 R10.Language.Language
-    | RouteExample8 R10.Language.Language
-    | RouteCounter R10.Language.Language
+    | Route_Overview R10.Language.Language
+    | Route_UIFormBoilerplate R10.Language.Language
+    | Route_UIFormBoilerplate2 R10.Language.Language
+    | Route_UIFormComponentsPhoneSelect R10.Language.Language
+    | Route_UIFormComponentsSingle R10.Language.Language
+    | Route_UIFormComponentsStates R10.Language.Language
+    | Route_UIFormComponentsText R10.Language.Language
+    | Route_UIFormIntroduction R10.Language.Language
+    | Route_UIComponents R10.Language.Language
+    | Route_Counter R10.Language.Language
+    | Route_TableExample R10.Language.Language
     | NotFound R10.Language.Language
 
 
@@ -761,16 +784,17 @@ listForSSR =
 
 routesList : List (R10.Language.Language -> Route)
 routesList =
-    [ RouteExamples
-    , RouteExample8
-    , RouteExample7
-    , RouteExample1
-    , RouteExample2
-    , RouteExample3
-    , RouteExample4
-    , RouteExample6
-    , RouteExample5
-    , RouteCounter
+    [ Route_Overview
+    , Route_UIComponents
+    , Route_UIFormIntroduction
+    , Route_UIFormBoilerplate
+    , Route_UIFormBoilerplate2
+    , Route_UIFormComponentsPhoneSelect
+    , Route_UIFormComponentsSingle
+    , Route_UIFormComponentsText
+    , Route_UIFormComponentsStates
+    , Route_Counter
+    , Route_TableExample
     ]
 
 
@@ -789,63 +813,69 @@ routeDetails route =
             , language = language
             }
 
-        RouteExamples language ->
+        Route_Overview language ->
             { title = Pages.Overview.title
             , routeLabel = "overview"
             , language = language
             }
 
-        RouteExample1 language ->
+        Route_UIFormBoilerplate language ->
             { title = Pages.UIFormBoilerplate.title
             , routeLabel = "forms_boilerplate"
             , language = language
             }
 
-        RouteExample2 language ->
+        Route_UIFormBoilerplate2 language ->
             { title = Pages.UIFormBoilerplate2.title
             , routeLabel = "forms_bolierplate_2"
             , language = language
             }
 
-        RouteExample3 language ->
+        Route_UIFormComponentsPhoneSelect language ->
             { title = Pages.UIFormComponentsPhoneSelect.title
             , routeLabel = "forms_phoneselector"
             , language = language
             }
 
-        RouteExample4 language ->
+        Route_UIFormComponentsSingle language ->
             { title = Pages.UIFormComponentsSingle.title
             , routeLabel = "forms_single"
             , language = language
             }
 
-        RouteExample5 language ->
+        Route_UIFormComponentsStates language ->
             { title = Pages.UIFormComponentsStates.title
             , routeLabel = "forms_states"
             , language = language
             }
 
-        RouteExample6 language ->
+        Route_UIFormComponentsText language ->
             { title = Pages.UIFormComponentsText.title
             , routeLabel = "forms_text"
             , language = language
             }
 
-        RouteExample7 language ->
+        Route_UIFormIntroduction language ->
             { title = Pages.UIFormIntroduction.title
             , routeLabel = "forms"
             , language = language
             }
 
-        RouteExample8 language ->
+        Route_UIComponents language ->
             { title = Pages.UIComponents.title
             , routeLabel = "ui_components"
             , language = language
             }
 
-        RouteCounter language ->
+        Route_Counter language ->
             { title = Pages.Counter.title
             , routeLabel = "counter"
+            , language = language
+            }
+
+        Route_TableExample language ->
+            { title = Pages.TableExample.title
+            , routeLabel = "sortable_table"
             , language = language
             }
 

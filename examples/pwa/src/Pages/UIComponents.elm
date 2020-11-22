@@ -338,16 +338,16 @@ view model =
                         , Border.dashed
                         , Border.color <| rgb 0 0.5 0.8
                         , Background.color <| rgba 0 0.5 1 0.3
-                        , htmlAttribute <| Html.Attributes.style "transition" "background-color 0.4s"
                         , widthMode
                         , centerX
+                        , htmlAttribute <| Html.Attributes.style "transition" "background-color 0.4s"
                         ]
 
                 _ ->
                     el
-                        [ htmlAttribute <| Html.Attributes.style "transition" "background-color 0.4s"
-                        , widthMode
+                        [ widthMode
                         , centerX
+                        , htmlAttribute <| Html.Attributes.style "transition" "background-color 0.4s"
                         ]
     in
     []

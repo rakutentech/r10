@@ -302,7 +302,8 @@ type alias ViewArgs msg route =
     , onClick : String -> msg
     , urlTop : String
     , languageSystem : LanguageSystem route
-    , logoElement : Element msg
+    , logoOnDark : Element msg
+    , logoOnLight : Element msg
     }
 
 
@@ -619,6 +620,7 @@ userMenu model args =
         , width <| px 280
         , Font.size 16
         , htmlAttribute <| Html.Attributes.id userMenuId
+        , explain Debug.todo
         ]
     <|
         column
@@ -799,43 +801,13 @@ logoColor negative theme =
 
 
 {-| -}
-humbergAndLogo :
-    Model
-    ->
-        { b
-            | isTop : Bool
-            , msgMapper : Msg -> msg
-            , onClick : String -> msg
-            , urlTop : String
-            , logoElement : Element msg
-        }
-    -> Element msg
+humbergAndLogo : Model -> ViewArgs msg route -> Element msg
 humbergAndLogo model args =
-    let
-        hamburger : Bool -> Element Msg
-        hamburger sideMenuOpen =
-            -- From https://jonsuh.com/hamburgers/
-            Input.button
-                [ htmlAttribute <| Html.Attributes.class "hamburger"
-                , htmlAttribute <| Html.Attributes.class "hamburger--elastic"
-                , htmlAttribute <| Html.Attributes.classList [ ( "is-active", sideMenuOpen ) ]
-                , htmlAttribute <| Html.Attributes.attribute "aria-label" "Left Side Menu button"
-                , Border.rounded 60
-                , width <| px 60
-                , height <| px 60
-                , mouseOver [ Background.color <| rgba 0 0 0 0.05 ]
-                , htmlAttribute <| Html.Attributes.style "transition" "background 0.2s"
-                , scale 0.7
-                ]
-                { label =
-                    html <|
-                        Html.span [ Html.Attributes.class "hamburger-box" ]
-                            [ Html.span [ Html.Attributes.class "hamburger-inner" ] []
-                            ]
-                , onPress = Just ToggleSideMenu
-                }
-    in
-    row [ paddingXY 10 0, spacing 10 ]
+    row
+        [ paddingXY 10 0
+        , spacing 10
+        , explain Debug.todo
+        ]
         [ map args.msgMapper <|
             el
                 [ moveDown (fromTop args.isTop)
@@ -847,10 +819,41 @@ humbergAndLogo model args =
             [ moveDown (fromTop args.isTop + 2)
             , htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"
             ]
-            { label = logo args.logoElement
+            { label =
+                logo
+                    (if model.sideMenuOpen then
+                        args.logoOnLight
+
+                     else
+                        args.logoOnDark
+                    )
             , type_ = R10.Libu.LiInternal args.urlTop args.onClick
             }
         ]
+
+
+hamburger : Bool -> Element Msg
+hamburger sideMenuOpen =
+    -- From https://jonsuh.com/hamburgers/
+    Input.button
+        [ htmlAttribute <| Html.Attributes.class "hamburger"
+        , htmlAttribute <| Html.Attributes.class "hamburger--elastic"
+        , htmlAttribute <| Html.Attributes.classList [ ( "is-active", sideMenuOpen ) ]
+        , htmlAttribute <| Html.Attributes.attribute "aria-label" "Left Side Menu button"
+        , Border.rounded 60
+        , width <| px 60
+        , height <| px 60
+        , mouseOver [ Background.color <| rgba 0 0 0 0.05 ]
+        , htmlAttribute <| Html.Attributes.style "transition" "background 0.2s"
+        , scale 0.7
+        ]
+        { label =
+            html <|
+                Html.span [ Html.Attributes.class "hamburger-box" ]
+                    [ Html.span [ Html.Attributes.class "hamburger-inner" ] []
+                    ]
+        , onPress = Just ToggleSideMenu
+        }
 
 
 {-| -}
@@ -906,10 +909,11 @@ argsToLanguage args =
 sideMenu : Model -> ViewArgs msg route -> Element msg
 sideMenu model args =
     column
-        [ width <| px 300
-        , Background.color <| rgb 1 1 1
-        , paddingEach { top = 60, right = 0, bottom = 20, left = 0 }
+        [ Background.color <| rgb 1 1 1
         , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 12, color = rgba 0 0 0 0.3 }
+        , Font.size 16
+        , width <| px 300
+        , paddingEach { top = 60, right = 0, bottom = 20, left = 0 }
         , htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"
         , htmlAttribute <| Html.Attributes.style "position" "fixed"
         , htmlAttribute <| Html.Attributes.style "height" "100vh"
@@ -920,7 +924,6 @@ sideMenu model args =
 
             else
                 310
-        , Font.size 16
         ]
     <|
         []
@@ -986,10 +989,13 @@ languageMenu model args =
             else
                 case args.languageSystem of
                     LanguageInRoute languageInRoute ->
-                        R10.Libu.view attrsLink
-                            { label = label
-                            , type_ = R10.Libu.LiInternal (languageInRoute.routeToPath language languageInRoute.route) args.onClick
-                            }
+                        -- R10.Libu.view (attrsLink ++ [ map args.msgMapper <| Events.onClick CloseUserMenu ])
+                        el [ mapAttribute args.msgMapper <| Events.onClick CloseUserMenu, width fill ] <|
+                            R10.Libu.view attrsLink
+                                -- R10.Libu.view attrsLink
+                                { label = label
+                                , type_ = R10.Libu.LiInternal (languageInRoute.routeToPath language languageInRoute.route) args.onClick
+                                }
 
                     LanguageInModel ->
                         -- TODO - Finish this part

@@ -64,9 +64,9 @@ title =
     }
 
 
-theme : { mode : R10.Mode.Mode, primaryColor : R10.Color.Primary }
+theme : R10.Theme.Theme
 theme =
-    { primaryColor = R10.Color.primary.crimsonRed
+    { primaryColor = R10.Color.primary.blueSky
     , mode = R10.Mode.Light
     }
 

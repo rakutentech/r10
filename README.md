@@ -4,6 +4,8 @@
 
 **R10** is a library of interactive building blocks written in [Elm](https://elm-lang.org/) and [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) that we use at [Rakuten](https://global.rakuten.com/) for creating user interfaces.
 
+![Examples](https://r10.netlify.app/images/examples.png)
+
 ### Links
 
 * [R10 demo with documentation and examples](https://r10.netlify.app/)
@@ -70,18 +72,32 @@ Note: If you copied the file in a new folder you need to modify the `elm.json` f
 1. Remove `"../../src"` from the list of `"source-directories"`
 2. Run `elm install rakutentech/r10` that will add this library as dependency
 
-# Example
 
-This is a real-life fully working example that render a view like these:
+
+# Other languages or frameworks
+
+If you are looking for Rakuten UI components written in other languages or frameworks, have a look at the [ReX Github repository](https://github.com/rakuten-rex) and the [ReX Frontend Components Library](https://zeroheight.com/390c074f3/p/080991-).
+
+
+
+# Thanks
+
+Thanks to Evan Czaplicki, Matthew Griffith, Richard Feldman, the folks at NoRedInk, Ryan Haskell-Glatz, Ilias Van Peer, Aaron VonderHaar, Abadi Kurniawaan, Dillon Kearns, Jeroen Engels, Keith Lazuka, Luke Westby, Alex Korban, Thibaut Assus, Brian Hicks and many more from the Elm community that directly or indirectly supported us in this journey.
+
+
+
+# Examples
+
+These are real-life fully working code samples that render these views:
 
 ![Examples](https://r10.netlify.app/images/examples.png)
 
-The differences among these views are coming from different `theme` definitions. From left to right:
+The primary color and the light/dark mode can be changed through the `theme` definitions. For example:
 
 ```elm
 theme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.primary.crimsonRed
+    , primaryColor = R10.Color.primary.blueSky
     }
 
 theme =
@@ -91,13 +107,13 @@ theme =
 
 theme =
     { mode = R10.Mode.Dark
-    , primaryColor = R10.Color.primary.crimsonRed
+    , primaryColor = R10.Color.primary.blueSky
     }
 ```
 
-This is the source code of this view.
+This is the source code for the example with two buttons.
 
-You can also find it at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simple/src/Main.elm) or in  [this Ellie](https://ellie-app.com/btv2tGK7tk8a1).
+You can also find it at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simpleView/src/Main.elm) or in  [this Ellie](https://ellie-app.com/btv2tGK7tk8a1).
 
 ```elm
 module Main exposing (main)
@@ -161,11 +177,7 @@ main =
             ]
 ```
 
-# Form Example
-
-![Form Example](https://r10.netlify.app/images/form.png)
-
-This is an example of code to create a form ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm)):
+This is the code sample for the view with the form ([Source code](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm)).
 
 ```elm
 module Main exposing (main)
@@ -339,13 +351,3 @@ view model =
             ]
         )
 ```
-
-# Other languages or frameworks
-
-If you are looking for Rakuten UI components written in other languages or frameworks, have a look at the [ReX Github repository](https://github.com/rakuten-rex) and the [ReX Frontend Components Library](https://zeroheight.com/390c074f3/p/080991-).
-
-
-
-# Thanks
-
-Thanks to Evan Czaplicki, Matthew Griffith, Richard Feldman, the folks at NoRedInk, Ryan Haskell-Glatz, Ilias Van Peer, Aaron VonderHaar, Abadi Kurniawaan, Dillon Kearns, Jeroen Engels, Keith Lazuka, Luke Westby, Alex Korban, Thibaut Assus, Brian Hicks and many more from the Elm community that directly or indirectly supported us in this journey.

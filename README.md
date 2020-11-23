@@ -69,7 +69,7 @@ To know more, read the [`elm-starter` documentation](https://github.com/lucamug/
     
 Note: If you copied the file in a new folder you need to modify the `elm.json` file:
 
-1. Remove `"../../src"` from the list of `"source-directories"`
+1. Remove `../../src` from the list of `source-directories`
 2. Run `elm install rakutentech/r10` that will add this library as dependency
 
 

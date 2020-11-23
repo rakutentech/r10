@@ -18,6 +18,7 @@ import Html
 import Html.Attributes
 import Markdown
 import R10.Button
+import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.AttrsBorder
@@ -31,11 +32,13 @@ import R10.I18n
 import R10.Language
 import R10.LanguageSelector
 import R10.Libu
+import R10.Link
 import R10.Mode
 import R10.Okaimonopanda
 import R10.Paragraph
 import R10.Svg.Icons
 import R10.Svg.Lists
+import R10.Svg.LogosExtra
 import R10.Theme
 import R10.Translations
 
@@ -319,86 +322,124 @@ formConf =
 
 view : Model -> R10.Theme.Theme -> { x : Int, y : Int } -> { x : Int, y : Int } -> List (Element Msg)
 view model theme mouse windowSize =
-    [ titleSection theme "Palettes"
-    , titleSubSection theme "Palette Base"
-    , twoPalettes theme R10.Color.listBase
-    , titleSubSection theme "Palette Primary"
-    , twoPalettes theme R10.Color.listPrimary
-    , titleSubSection theme "Palette Derived"
-    , twoPalettes theme R10.Color.listDerived
-    , titleSection theme "Buttons"
-    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
-```elm
-[ R10.Button.primary []
-    { label = text "Primary Button"
-    , libu = R10.Libu.Li "#"
-    , theme = theme
-    }
-, R10.Button.primary []
-    { label =
-        row [ spacing 10 ]
-            [ R10.Svg.Icons.arrow_left_l [] (R10.Color.Svg.fontButtonPrimary theme) 24
-            , text "Primary Button"
-            ]
-    , libu = R10.Libu.Li "#"
-    , theme = theme
-    }
-, R10.Button.secondary []
-    { label = text "Secondary Button"
-    , libu = R10.Libu.Li "#"
-    , theme = theme
-    }
-, R10.Button.tertiary []
-    { label = text "Tertiary Button"
-    , libu = R10.Libu.Li "#"
-    , theme = theme
-    }
-, R10.Button.quaternary []
-    { label = text "Quaternary Button"
-    , libu = R10.Libu.Li "#"
-    , theme = theme
-    }
-]
-```
-    """
+    --
+    -- BUTTONS
+    --
+    [ titleSection theme "Buttons"
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """There are 4 levels of buttons, form primary to quaternary:"""
     , column
-        [ padding 20
-        , spacing 20
-        , R10.Color.AttrsBackground.surface theme
-        , R10.Color.AttrsFont.normal theme
-        ]
+        (R10.Card.normal theme
+            ++ [ centerX
+               , centerY
+               , width (fill |> maximum 360)
+               , height shrink
+               , spacing 30
+               , R10.Color.AttrsBackground.surface2dp theme
+               ]
+        )
         [ R10.Button.primary []
-            { label = text "Primary Button"
-            , libu = R10.Libu.Li "#"
-            , theme = theme
-            }
-        , R10.Button.primary []
             { label =
-                row [ spacing 10 ]
-                    [ R10.Svg.Icons.arrow_left_l [] (R10.Color.Svg.fontButtonPrimary theme) 24
-                    , text "Primary Button"
+                row [ spacing 15, centerX ]
+                    [ R10.Paragraph.normal [] [ text "Primary button" ]
+                    , R10.Svg.Icons.cart_f [] (R10.Color.Svg.fontButtonPrimary theme) 18
                     ]
-            , libu = R10.Libu.Li "#"
+            , libu = R10.Libu.Li "https://r10.netlify.app"
             , theme = theme
             }
         , R10.Button.secondary []
-            { label = text "Secondary Button"
-            , libu = R10.Libu.Li "#"
+            { label = R10.Paragraph.normal [] [ text "Secondary button" ]
+            , libu = R10.Libu.Li "https://r10.netlify.app"
             , theme = theme
             }
         , R10.Button.tertiary []
-            { label = text "Tertiary Button"
-            , libu = R10.Libu.Li "#"
+            { label =
+                R10.Paragraph.normal []
+                    [ text "Tertiary "
+                    , el (R10.Link.attrs theme) <| text "button"
+                    ]
+            , libu = R10.Libu.Li "https://r10.netlify.app"
             , theme = theme
             }
-        , R10.Button.quaternary []
-            { label = text "Quaternary Button"
-            , libu = R10.Libu.Li "#"
-            , theme = theme
-            }
+        , row [ width fill ]
+            [ R10.Button.quaternary [ moveLeft 13 ]
+                { label = R10.Paragraph.normal [] [ text "Quaternary button" ]
+                , libu = R10.Libu.Li "https://r10.netlify.app"
+                , theme = theme
+                }
+            , R10.Button.quaternary [ alignRight, moveRight 13 ]
+                { label = R10.Paragraph.normal [] [ text "Quaternary button" ]
+                , libu = R10.Libu.Li "https://r10.netlify.app"
+                , theme = theme
+                }
+            ]
         ]
+    , el [ width fill ] <|
+        html <|
+            Markdown.toHtml [ Html.Attributes.class "markdown" ]
+                """
+```elm
+[ R10.Button.primary []
+    { label =
+        row [ spacing 15, centerX ]
+            [ R10.Paragraph.normal [] [ text "Primary button" ]
+            , R10.Svg.Icons.cart_f [] (R10.Color.Svg.fontButtonPrimary theme) 18
+            ]
+    , libu = R10.Libu.Li "https://r10.netlify.app"
+    , theme = theme
+    }
+, R10.Button.secondary []
+    { label = R10.Paragraph.normal [] [ text "Secondary button" ]
+    , libu = R10.Libu.Li "https://r10.netlify.app"
+    , theme = theme
+    }
+, R10.Button.tertiary []
+    { label =
+        R10.Paragraph.normal []
+            [ text "Tertiary "
+            , el (R10.Link.attrs theme) <| text "button"
+            ]
+    , libu = R10.Libu.Li "https://r10.netlify.app"
+    , theme = theme
+    }
+, row [ width fill ]
+    [ R10.Button.quaternary [ moveLeft 13 ]
+        { label = R10.Paragraph.normal [] [ text "Quaternary button" ]
+        , libu = R10.Libu.Li "https://r10.netlify.app"
+        , theme = theme
+        }
+    , R10.Button.quaternary [ alignRight, moveRight 13 ]
+        { label = R10.Paragraph.normal [] [ text "Quaternary button" ]
+        , libu = R10.Libu.Li "https://r10.netlify.app"
+        , theme = theme
+        }
+    ]
+]
+```
+    """
+
+    --
+    -- FONT SIZES
+    --
     , titleSection theme
         "Font sizes"
+    , column
+        (R10.Card.normal theme
+            ++ [ centerX
+               , centerY
+               , width (fill |> maximum 360)
+               , height shrink
+               , spacing 15
+               , R10.Color.AttrsBackground.surface2dp theme
+               ]
+        )
+        [ el [ R10.FontSize.xxlarge ] <| text "Font size: XX Large"
+        , el [ R10.FontSize.xlarge ] <| text "Font size: X Large"
+        , el [ R10.FontSize.large ] <| text "Font size: Large"
+        , el [ R10.FontSize.normal ] <| text "Font size: Normal"
+        , el [ R10.FontSize.small ] <| text "Font size: Small"
+        , el [ R10.FontSize.xsmall ] <| text "Font size: X Small"
+        , el [ R10.FontSize.xxsmall ] <| text "Font size: XX Small"
+        ]
     , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
 ```elm
 [ el [ R10.FontSize.xxlarge ] <| text "Font size: XX Large"
@@ -409,21 +450,56 @@ view model theme mouse windowSize =
 , el [ R10.FontSize.xsmall ] <| text "Font size: X Small"
 , el [ R10.FontSize.xxsmall ] <| text "Font size: XX Small"
 ]
-```
-    """
-    , column [ spacing 5 ]
-        [ el [ R10.FontSize.xxlarge ] <| text "Font size: XX Large"
-        , el [ R10.FontSize.xlarge ] <| text "Font size: X Large"
-        , el [ R10.FontSize.large ] <| text "Font size: Large"
-        , el [ R10.FontSize.normal ] <| text "Font size: Normal"
-        , el [ R10.FontSize.small ] <| text "Font size: Small"
-        , el [ R10.FontSize.xsmall ] <| text "Font size: X Small"
-        , el [ R10.FontSize.xxsmall ] <| text "Font size: XX Small"
-        ]
-    , titleSection theme "Forms"
-    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """Forms are defined by two things: Configuration and State.
+```"""
 
-An example of `Configuration` is
+    --
+    -- FORMS
+    --
+    , titleSection theme "Forms"
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """Forms have two different styles: **Outlined** and **Filled**:"""
+    , row [ spacing 40, centerX ]
+        [ column
+            (R10.Card.normal theme
+                ++ [ centerX
+                   , centerY
+                   , width (fill |> maximum 360)
+                   , height shrink
+                   , spacing 30
+                   , R10.Color.AttrsBackground.surface2dp theme
+                   ]
+            )
+          <|
+            [ R10.Paragraph.xlarge [ Font.center, paddingXY 0 20 ] [ text "Outlined" ] ]
+                ++ R10.Form.viewWithOptions
+                    { state = model.formState, conf = formConf }
+                    MsgForm
+                    { maker = Nothing
+                    , translator = Nothing
+                    , style = R10.FormComponents.style.outlined
+                    , palette = Just <| R10.Form.themeToPalette theme
+                    }
+        , column
+            (R10.Card.normal theme
+                ++ [ centerX
+                   , centerY
+                   , width (fill |> maximum 360)
+                   , height shrink
+                   , spacing 30
+                   , R10.Color.AttrsBackground.surface2dp theme
+                   ]
+            )
+          <|
+            [ R10.Paragraph.xlarge [ Font.center, paddingXY 0 20 ] [ text "Filled" ] ]
+                ++ R10.Form.viewWithOptions
+                    { state = model.formState, conf = formConf }
+                    MsgForm
+                    { maker = Nothing
+                    , translator = Nothing
+                    , style = R10.FormComponents.style.filled
+                    , palette = Just <| R10.Form.themeToPalette theme
+                    }
+        ]
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """Forms are defined by two things: Configuration and State. This is an example of configuration:
 
     [ R10.Form.entity.field
         { id = "userId"
@@ -451,77 +527,31 @@ An example of `Configuration` is
                 }
         }
     ]
+"""
 
-Forms have two different styles: **Outlined** and **Filled**.
-        
-#### Examples:"""
-    , row [ spacing 40 ]
-        [ column [ spacing 30 ] <|
-            [ paragraph [ Font.bold ] [ text "Style: Outlined" ] ]
-                ++ R10.Form.viewWithOptions
-                    { state = model.formState, conf = formConf }
-                    MsgForm
-                    { maker = Nothing
-                    , translator = Nothing
-                    , style = R10.FormComponents.style.outlined
-                    , palette = Just <| R10.Form.themeToPalette theme
-                    }
-        , column [ spacing 30 ] <|
-            [ paragraph [ Font.bold ] [ text "Style: Filled" ] ]
-                ++ R10.Form.viewWithOptions
-                    { state = model.formState, conf = formConf }
-                    MsgForm
-                    { maker = Nothing
-                    , translator = Nothing
-                    , style = R10.FormComponents.style.filled
-                    , palette = Just <| R10.Form.themeToPalette theme
-                    }
-        ]
+    --
+    -- TRANSLATIONS
+    --
+    , titleSection theme "Translations"
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """To translate some text:
+    
+    R10.I18n.t language R10.Translations.signInHeader
 
-    --     , titleSection theme "Translations"
-    --     , el [width fill] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """To translate some text:
+Where `signInHeader` is defined as
+
+    signInHeader : Translations
+    signInHeader =
+        { key = "signInHeader"
+        , en_us = "Sign in to your Rakuten account"
+        , zh_tw = "會員登入"
+        , ja_jp = "楽天会員 ログイン"
+        ...
+        }
+"""
+
     --
-    --     R10.I18n.t model.language R10.Translations.signInHeader
+    -- OKAIMONO PANDA
     --
-    -- Where `signInHeader` is defined as
-    --
-    --     signInHeader : Translations
-    --     signInHeader =
-    --         { key = "signInHeader"
-    --         , en_us = "Sign in to your Rakuten account"
-    --         , zh_tw = "會員登入"
-    --         , ja_jp = "楽天会員 ログイン"
-    --         ...
-    --         }
-    --
-    -- #### Examples:"""
-    --     , wrappedRow [ spacing 16 ] <|
-    --         List.map
-    --             (\language ->
-    --                 R10.Button.secondary []
-    --                     { label = text <| R10.Language.toLongString R10.Language.International language
-    --                     , libu = R10.Libu.Bu <| Just <| ChangeLanguage language
-    --                     , theme = theme
-    --                     }
-    --             )
-    --             langauges
-    --     , text <| R10.I18n.t model.language R10.Translations.signInHeader
-    -- , titleSection theme "Language Selector"
-    -- , R10.LanguageSelector.view []
-    --     { changeMsg =
-    --         \result ->
-    --             case result of
-    --                 Ok language ->
-    --                     ChangeLanguage language
-    --
-    --                 Err _ ->
-    --                     ChangeLanguage R10.Language.default
-    --     , colorBackground = Color.rgb 1 1 1
-    --     , colorFont = Color.rgb 0 0 0
-    --     , currentLocale = model.language
-    --     , supportedLanguageList = R10.Language.defaultSupportedLanguageList
-    --     , withLanguageSelector = True
-    --     }
     , titleSection theme "Okaimono Panda"
     , el [] <|
         html <|
@@ -540,76 +570,80 @@ R10.Okaimonopanda.view
 """
 
     --
+    -- PALETTES
+    --
+    , titleSection theme "Palettes"
+    , titleSubSection theme "Palette Base"
+    , twoPalettes theme R10.Color.listBase
+    , titleSubSection theme "Palette Primary"
+    , twoPalettes theme R10.Color.listPrimary
+    , titleSubSection theme "Palette Derived"
+    , twoPalettes theme R10.Color.listDerived
+
+    --
     -- LOGOS & ICONS
     --
     , titleSection theme "Logos & Icons"
     , titleSubSection theme "Logos"
-    , f R10.Svg.Lists.listLogos 30
+    , viewIcons theme R10.Svg.Lists.listLogos 30
     , titleSubSection theme "Logos Extra"
-    , f R10.Svg.Lists.listLogosExtra 30
+    , viewIcons theme R10.Svg.Lists.listLogosExtra 30
     , titleSubSection theme "Icons"
-    , f R10.Svg.Lists.listIcons 30
+    , viewIcons theme R10.Svg.Lists.listIcons 30
     , titleSubSection theme "Icons Extra"
-    , f R10.Svg.Lists.listIconsExtra 30
+    , viewIcons theme R10.Svg.Lists.listIconsExtra 30
     , titleSubSection theme "Others"
-    , f R10.Svg.Lists.listOthers 200
+    , viewIcons theme R10.Svg.Lists.listOthers 200
+    , el [ width fill ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
+# More about colors
 
-    -- , footer theme
+Material Design Colors
+
+![alt text](/images/material-colors.png "Material Colors")
+
+Overview Colors
+
+![alt text](/images/colors-overview1.png)
+
+System Colors
+
+![alt text](/images/system-color.png)
+
+Palette
+
+![alt text](/images/palette.png)
+
+# Theme
+
+UI.Theme.Theme`contains two values:
+
+   * "primaryColor" (pink, red, etc.)
+   * "mode" (light or dark)
+
+`UI.Theme.Theme` is generated from flags using `UI.Theme.fromFlags`
+
+# About Dark mode
+
+* https://material.io/design/color/dark-theme.html
+* http://rex.public.rakuten-it.com/design/mobile/mobile-apps/dark-mode/
+* https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
+* https://material.io/design/color/the-color-system.html#color-usage-and-palettes
+* https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=6002ee
+
+
+# Other Design Frameworks
+
+* Material: https://material.io/components
+* Tailwind:  https://tailwindui.com/components
+* Semantic: https://semantic-ui.com/elements/button.html
+* Ant: https://ant.design/components/button/
+* Onsen: https://onsen.io/theme-roller/
+* Apple: https://developer.apple.com/design/human-interface-guidelines/"""
     ]
 
 
-
---
--- footer : R10.Theme.Theme -> Element Msg
--- footer theme =
---     el
---         [ htmlAttribute <| Html.Attributes.style "position" "fixed"
---         , htmlAttribute <| Html.Attributes.style "bottom" "0"
---         , htmlAttribute <| Html.Attributes.style "left" "0"
---         , padding 10
---         , width fill
---         , R10.Color.AttrsBackground.normal theme
---         , R10.Color.AttrsFont.normal theme
---         , Border.color <| rgba 0 0 0 0.05
---         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
---         , Border.shadow { offset = ( 0, 0 ), size = 2, blur = 10, color = rgba 0 0 0 0.05 }
---         ]
---     <|
---         wrappedRow [ spacing 10, centerX ] <|
---             List.map
---                 (\{ color, name, type_ } ->
---                     R10.Button.primary
---                         [ width shrink, padding 10, R10.FontSize.xxsmall ]
---                         { label =
---                             el
---                                 [ alpha <|
---                                     if theme.primaryColor == type_ then
---                                         1
---
---                                     else
---                                         0
---                                 ]
---                             <|
---                                 text "⬤"
---                         , libu = R10.Libu.Bu <| Just <| ChangePrimaryColor type_
---                         , theme = { theme | primaryColor = type_ }
---                         }
---                 )
---                 (R10.Color.listPrimary defaultTheme)
---                 ++ List.map
---                     (\mode ->
---                         R10.Button.quaternary [ width shrink ]
---                             { label = text <| R10.Mode.toString mode
---                             , libu = R10.Libu.Bu <| Just <| ChangeMode mode
---                             , theme = theme
---                             }
---                     )
---                     [ R10.Mode.Light, R10.Mode.Dark ]
---
-
-
-f : (Int -> Color.Color -> List ( Element msg, String )) -> Int -> Element msg
-f list size =
+viewIcons : R10.Theme.Theme -> (Int -> Color.Color -> List ( Element msg, String )) -> Int -> Element msg
+viewIcons theme list size =
     Element.wrappedRow
         [ spacing 10 ]
     <|
@@ -620,4 +654,4 @@ f list size =
                     , el [ width <| px 300, alpha 0.3 ] <| text name
                     ]
             )
-            (list size (R10.Color.Utils.fromHex "#333"))
+            (list size (R10.Color.Svg.fontNormal theme))

@@ -17,7 +17,9 @@ import Html
 import Html.Attributes
 import Markdown
 import R10.Button
+import R10.Card
 import R10.Color
+import R10.Color.AttrsBackground
 import R10.Color.Utils
 import R10.Form
 import R10.FormComponents
@@ -114,31 +116,12 @@ rowAttrs =
 
 formConf : R10.Form.Conf
 formConf =
-    -- Same as WidgetLogin.Shared.userIdInputField
     [ R10.Form.entity.field
-        { id = "mode"
-        , idDom = Nothing
-        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
-        , label = "Light ⇔ Dark"
-        , helperText = Just "Mode"
-        , requiredLabel = Nothing
-        , validationSpecs = Nothing
-        }
-    , R10.Form.entity.field
-        { id = "primaryColor"
-        , idDom = Nothing
-        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
-        , label = "Pink ⇔ Blue"
-        , helperText = Just "Primary Color"
-        , requiredLabel = Nothing
-        , validationSpecs = Nothing
-        }
-    , R10.Form.entity.field
         { id = "explain"
         , idDom = Nothing
         , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
-        , label = "OFF ⇔ ON"
-        , helperText = Just "Explain"
+        , label = "Explain: OFF ⇔ ON"
+        , helperText = Nothing
         , requiredLabel = Nothing
         , validationSpecs = Nothing
         }
@@ -146,88 +129,27 @@ formConf =
         { id = "width"
         , idDom = Nothing
         , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
-        , label = "Fill ⇔ Shrink"
-        , helperText = Just "Width"
+        , label = "Width: Fill ⇔ Shrink"
+        , helperText = Nothing
         , requiredLabel = Nothing
         , validationSpecs = Nothing
         }
     ]
 
 
-formView : R10.Form.State -> (R10.Form.Msg -> msg) -> List (Element msg)
-formView formState msgMapper =
-    R10.Form.view
+formView : R10.Theme.Theme -> R10.Form.State -> (R10.Form.Msg -> msg) -> List (Element msg)
+formView theme formState msgMapper =
+    R10.Form.viewWithTheme
         { conf = formConf
         , state = formState
         }
         msgMapper
+        theme
 
 
 subTitleAttrs : List (Attr () msg)
 subTitleAttrs =
     [ Font.size 20, Font.bold, paddingXY 0 20 ]
-
-
-paletteBase : R10.Theme.Theme -> Element msg
-paletteBase theme =
-    paletteAdv theme R10.Color.listBase
-
-
-palettePrimary : R10.Theme.Theme -> Element msg
-palettePrimary theme =
-    paletteAdv theme R10.Color.listPrimary
-
-
-paletteDerived : R10.Theme.Theme -> Element msg
-paletteDerived theme =
-    paletteAdv theme R10.Color.listDerived
-
-
-paletteAdv :
-    R10.Theme.Theme
-    -> (R10.Theme.Theme -> List { a | color : Color.Color, name : String })
-    -> Element msg
-paletteAdv theme list =
-    column [ centerX, scrollbars ]
-        [ el subTitleAttrs <| text <| R10.Mode.toString theme.mode
-        , el [ width fill, height <| px 50, Background.color <| rgb 0 0 0 ] none
-        , row [] <|
-            List.map
-                (\paletteColor ->
-                    let
-                        elementColor : Element.Color
-                        elementColor =
-                            R10.Color.Utils.colorToElementColor color
-
-                        color : Color.Color
-                        color =
-                            paletteColor.color
-
-                        hex : String
-                        hex =
-                            color
-                                |> Color.Convert.colorToHexWithAlpha
-
-                        name : String
-                        name =
-                            paletteColor.name
-                    in
-                    el
-                        [ padding 10
-                        , Background.color elementColor
-                        , width <| px 80
-                        , scrollbarX
-                        ]
-                    <|
-                        column [ Font.size 13, spacing 4 ]
-                            [ el [ Font.color <| rgb 1 1 1, Font.family [ Font.monospace ] ] <| text hex
-                            , el [ Font.color <| rgb 1 1 1 ] <| text name
-                            , el [ Font.color <| rgb 0 0 0, Font.family [ Font.monospace ] ] <| text hex
-                            , el [ Font.color <| rgb 0 0 0 ] <| text name
-                            ]
-                )
-                (list theme)
-        ]
 
 
 titleAttrs : List (Attribute msg)
@@ -248,15 +170,6 @@ viewHelper :
     -> Component msg
     -> Element msg
 viewHelper explainComponent data index component =
-    let
-        backgroundColor : Attr decorative msg
-        backgroundColor =
-            if R10.Mode.isLight data.theme.mode then
-                Background.color <| rgb 0.95 0.95 0.9
-
-            else
-                Background.color <| rgb 0.25 0.25 0.15
-    in
     section
         (String.fromInt (index + 1)
             ++ ". "
@@ -270,10 +183,13 @@ viewHelper explainComponent data index component =
                )
         )
         (row rowAttrs
-            [ el codeAttrs <| html <| Html.pre [] [ Html.text component.componentAsStringCode ]
+            [ -- el codeAttrs <| html <| Html.pre [] [ Html.text component.componentAsStringCode ]
+              el [ width <| fillPortion 3, padding 0 ] <| html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] ("```\n" ++ component.componentAsStringCode ++ "```")
             , el
-                (exampleAttrs
-                    ++ [ backgroundColor
+                -- exampleAttrs
+                (R10.Card.noShadow data.theme
+                    ++ [ R10.Color.AttrsBackground.surface2dp data.theme
+                       , width <| fillPortion 2
                        , htmlAttribute <| Html.Attributes.style "transition" "background-color 0.4s"
                        ]
                 )
@@ -345,18 +261,6 @@ view model theme =
     in
     []
         ++ [ el [] <| html <| Html.node "style" [] [ Html.text """.pre div {line-height: 18px}""" ] ]
-        ++ [ section "Buttons Hierarchy"
-                (el [ width <| px 300 ] <|
-                    image
-                        [ Border.width 1
-                        , Border.color <| rgba 0 0 0 0.2
-                        , Border.rounded 5
-                        , padding 5
-                        , width fill
-                        ]
-                        { src = "/images/buttons.png", description = "Buttons" }
-                )
-           ]
         ++ List.indexedMap
             (viewHelper
                 explainComponent
@@ -367,41 +271,8 @@ view model theme =
                 , widthMode = widthMode
                 }
             )
-            --
-            -- type alias Data msg =
-            --     { doSomething : msg
-            --     , formState : R10.Form.State
-            --     , msgMapper : R10.Form.Msg -> msg
-            --     , theme : R10.Theme.Theme
-            --     , widthMode : Attribute msg
-            --     }
-            --
             (components theme)
-        -- ++ [ section "Colors" (paragraph [] [ html <| Markdown.toHtml [] notesAboutColors ])
-        -- , section "Palette Base"
-        --      (el [] <|
-        --          paletteBase
-        --              { mode = mode
-        --              , primaryColor = primaryColor
-        --              }
-        --      )
-        -- , section "Palette Primary"
-        --      (el [] <|
-        --          palettePrimary
-        --              { mode = mode
-        --              , primaryColor = primaryColor
-        --              }
-        --      )
-        -- , section "Palette Derived"
-        --      (el [] <|
-        --          paletteDerived
-        --              { mode = mode
-        --              , primaryColor = primaryColor
-        --              }
-        --      )
-        ++ [ section "Notes" (paragraph [] [ html <| Markdown.toHtml [] notes ])
-           , section "Links" (paragraph [] [ html <| Markdown.toHtml [] links ])
-           , el
+        ++ [ el
                 [ alignLeft
                 , Font.size 16
                 , htmlAttribute <| Html.Attributes.style "position" "fixed"
@@ -409,7 +280,7 @@ view model theme =
                 , htmlAttribute <| Html.Attributes.style "left" "0"
                 , padding 30
                 , width fill
-                , Background.color <| rgba 1 1 1 1
+                , R10.Color.AttrsBackground.surface2dp theme
                 , Border.color <| rgba 0 0 0 0.05
                 , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
                 , Border.shadow { offset = ( 0, 0 ), size = 2, blur = 10, color = rgba 0 0 0 0.05 }
@@ -418,56 +289,8 @@ view model theme =
                 row
                     [ centerX ]
                 <|
-                    formView model.formState FormMsg
+                    formView theme model.formState FormMsg
            ]
-
-
-notes : String
-notes =
-    """`UI.Theme.Theme`contains two values:
-
-   * "primaryColor" (pink, red, etc.)
-   * "mode" (light or dark)
-
-`UI.Theme.Theme` is generated from flags using `UI.Theme.fromFlags`
-
-# About Dark mode
-
-* https://material.io/design/color/dark-theme.html
-* http://rex.public.rakuten-it.com/design/mobile/mobile-apps/dark-mode/
-* https://uxplanet.org/8-tips-for-dark-theme-design-8dfc2f8f7ab6
-* https://material.io/design/color/the-color-system.html#color-usage-and-palettes
-* https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=6002ee"""
-
-
-notesAboutColors : String
-notesAboutColors =
-    """Material Design Colors
-
-![alt text](/images/material-colors.png "Material Colors")
-
-Overview Colors
-
-![alt text](/images/colors-overview1.png)
-
-System Colors
-
-![alt text](/images/system-color.png)"""
-
-
-
--- ![alt text](/images/palette.png)"""
-
-
-links : String
-links =
-    """
-* Material: https://material.io/components
-* Tailwind:  https://tailwindui.com/components
-* Semantic: https://semantic-ui.com/elements/button.html
-* Ant: https://ant.design/components/button/
-* Onsen: https://onsen.io/theme-roller/
-* Apple: https://developer.apple.com/design/human-interface-guidelines/"""
 
 
 
@@ -506,7 +329,7 @@ components theme_ =
                     , theme = theme
                     }
       , componentAsStringCode =
-            """UI.Button.primary []
+            """R10.Button.primary []
     { label = text "Text"
     , libu = R10.Libu.Bu <| Just doSomething
     , theme = theme
@@ -525,7 +348,7 @@ components theme_ =
                     , theme = theme
                     }
       , componentAsStringCode =
-            """UI.Button.primary []
+            """R10.Button.primary []
     { label = text "Text"
     , libu = R10.Libu.Bu <| Nothing
     , theme = theme
@@ -543,7 +366,7 @@ components theme_ =
                     , libu = R10.Libu.Li "https://www.example.com"
                     , theme = theme
                     }
-      , componentAsStringCode = """UI.Button.primary []
+      , componentAsStringCode = """R10.Button.primary []
     { label = text "Text"
     , libu = R10.Libu.Li "https://www.example.com"
     , theme = theme
@@ -561,7 +384,7 @@ components theme_ =
                     , libu = R10.Libu.Bu <| Just doSomething
                     , theme = theme
                     }
-      , componentAsStringCode = """UI.Button.primary R10.Button.withLimitedWidth
+      , componentAsStringCode = """R10.Button.primary R10.Button.withLimitedWidth
     { label = text "Text"
     , libu = R10.Libu.Bu <| Just doSomething
     , theme = theme
@@ -579,7 +402,7 @@ components theme_ =
                     , libu = R10.Libu.Bu <| Just doSomething
                     , theme = theme
                     }
-      , componentAsStringCode = """UI.Button.secondary []
+      , componentAsStringCode = """R10.Button.secondary []
     { label = text "Text"
     , libu = R10.Libu.Bu <| Just doSomething
     , theme = theme
@@ -597,7 +420,7 @@ components theme_ =
                     , libu = R10.Libu.Bu <| Just doSomething
                     , theme = theme
                     }
-      , componentAsStringCode = """UI.Button.tertiary []
+      , componentAsStringCode = """R10.Button.tertiary []
     { label = text "Text"
     , libu = R10.Libu.Bu <| Just doSomething
     , theme = theme
@@ -620,11 +443,11 @@ components theme_ =
                     , theme = theme
                     }
       , componentAsStringCode =
-            """UI.Button.tertiary []
+            """R10.Button.tertiary []
     { label =
         paragraph []
             [ text "Text with "
-            , el R10.Button.attrsLink <| text <| "link"
+            , el (R10.Link.attrs theme) <| text <| "link"
             ]
     , libu = R10.Libu.Bu <| Just doSomething
     , theme = theme
@@ -638,15 +461,18 @@ components theme_ =
       , componentAsElmCode =
             \{ formState, msgMapper, widthMode } ->
                 column [ widthMode ] <|
-                    R10.Form.view
+                    R10.Form.viewWithTheme
                         { conf = v01
                         , state = formState
                         }
                         msgMapper
-      , componentAsStringCode = """Form.view
-    { conf = Flow.Login.FormConfs.v01 Utils.I18n.Language.EN_US
+                        theme_
+      , componentAsStringCode = """R10.Form.viewWithTheme
+    { conf = v01
     , state = formState
-    }"""
+    }
+    msgMapper
+    theme_"""
       }
 
     --
@@ -666,15 +492,15 @@ components theme_ =
                         , style = R10.FormComponents.style.filled
                         , palette = Just <| R10.Form.themeToPalette theme_
                         }
-      , componentAsStringCode = """Form.viewWith
-    { conf = Flow.Login.FormConfs.v01 Utils.I18n.Language.EN_US
+      , componentAsStringCode = """R10.Form.viewWithOptions
+    { conf = v01
     , state = formState
     }
     msgMapper
     { maker = Nothing
     , translator = Nothing
     , style = R10.FormComponents.style.filled
-    , palette = Just <| R10.Form.themeToPalette theme
+    , palette = Just <| R10.Form.themeToPalette theme_
     }"""
       }
 
@@ -685,16 +511,18 @@ components theme_ =
       , componentAsElmCode =
             \{ formState, msgMapper, widthMode } ->
                 column [ widthMode ] <|
-                    R10.Form.view
+                    R10.Form.viewWithTheme
                         { conf = v11
                         , state = formState
                         }
                         msgMapper
-      , componentAsStringCode = """Form.view
-    { conf = Flow.Login.FormConfs.v11 Utils.I18n.Language.EN_US
+                        theme_
+      , componentAsStringCode = """                    R10.Form.viewWithTheme
+    { conf = v11
     , state = formState
     }
-    msgMapper"""
+    msgMapper
+    theme_"""
       }
 
     --
@@ -714,15 +542,15 @@ components theme_ =
                         , style = R10.FormComponents.style.filled
                         , palette = Just <| R10.Form.themeToPalette theme_
                         }
-      , componentAsStringCode = """Form.viewWith
-    { conf = Flow.Login.FormConfs.v11 Utils.I18n.Language.EN_US
-    , state = model.formState
+      , componentAsStringCode = """                    R10.Form.viewWithOptions
+    { conf = v11
+    , state = formState
     }
     msgMapper
     { maker = Nothing
     , translator = Nothing
     , style = R10.FormComponents.style.filled
-    , palette = Just <| R10.Form.themeToPalette theme
+    , palette = Just <| R10.Form.themeToPalette theme_
     }"""
       }
     ]

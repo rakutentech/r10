@@ -710,6 +710,15 @@ cssSkipLink =
 
 cssMarkdown : R10.Theme.Theme -> String
 cssMarkdown theme =
+    let
+        codeBorder =
+            case theme.mode of
+                R10.Mode.Dark ->
+                    "#444"
+
+                R10.Mode.Light ->
+                    "#ddd"
+    in
     """.markdown {
     white-space: normal;
     line-height: 1.7em;}
@@ -720,8 +729,8 @@ cssMarkdown theme =
 }
 
 .markdown pre  {
-    /* background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.background theme) ++ """; */
-    margin: 20px 0;
+    background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.surface2dp theme) ++ """; 
+    margin: 0;
     line-height: 20px;
     overflow: scroll;
     white-space: pre-wrap;       /* css-3 */
@@ -731,16 +740,19 @@ cssMarkdown theme =
     word-wrap: break-word;       /* Internet Explorer 5.5+ */    
     font-size: 14px;
     border-radius: 10px;
-    padding: 30px;
+    padding: 20px;
     box-sizing: border-box;
     width: 100%;
-    border: 1px solid lightgrey;
+    border: 1px solid """ ++ codeBorder ++ """;
 }
 
 .markdown p code {
-    /* background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.background theme) ++ """; */
+    background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.surface2dp theme) ++ """; 
+    border: 1px solid """ ++ codeBorder ++ """;
     display: inline-block;
     padding: 0 8px;
+    margin: 0 5px;
+    border-radius: 8px;
 }
 
 .markdown img {

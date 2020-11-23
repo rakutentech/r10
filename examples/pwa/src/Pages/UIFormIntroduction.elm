@@ -20,10 +20,13 @@ import Json.Decode
 import Json.Encode
 import Markdown
 import Pages.Shared.Utils
+import R10.Button
 import R10.Card
 import R10.Color
+import R10.Color.AttrsBackground
 import R10.Form
 import R10.Language
+import R10.Libu
 import R10.Mode
 import R10.Theme
 
@@ -526,7 +529,9 @@ viewRow index model theme =
             , alignTop
             , Border.width 1
             , Font.size 13
-            , Border.color <| rgba 0 0 0 0.1
+            , R10.Color.AttrsBackground.surface2dp theme
+
+            -- , Border.color <| rgba 0 0 0 0.1
             , padding 5
             , htmlAttribute <| Html.Attributes.style "white-space" "nowrap"
             , htmlAttribute <| Html.Attributes.style "font-family" "monospace"
@@ -543,7 +548,7 @@ viewRow index model theme =
     in
     [ el secondaryTitle <| text formDesc.title
     , row [ width fill, spacing 20 ]
-        [ column (R10.Card.normal theme ++ [ spacing 20, height fill ])
+        [ column (R10.Card.noShadow theme ++ [ R10.Color.AttrsBackground.surface2dp theme, spacing 20, height fill ])
             [ paragraph secondaryTitle [ text <| formName index ]
             , column [ width fill, spacing 20 ] <|
                 (R10.Form.viewWithPalette form msgTransformer (R10.Form.themeToPalette theme)
@@ -571,13 +576,21 @@ viewRow index model theme =
                             none
                        ]
                     ++ [ row [ spacing 15 ]
-                            [ Input.button [] { label = text "Submit", onPress = Just <| MsgForm index <| R10.Form.msg.submit form.conf }
-                            , Input.button [] { label = text "Reset", onPress = Just <| Reset index }
+                            [ R10.Button.primary []
+                                { label = text "Submit"
+                                , libu = R10.Libu.Bu <| Just <| MsgForm index <| R10.Form.msg.submit form.conf
+                                , theme = theme
+                                }
+                            , R10.Button.primary []
+                                { label = text "Reset"
+                                , libu = R10.Libu.Bu <| Just <| Reset index
+                                , theme = theme
+                                }
                             ]
                        ]
                 )
             ]
-        , column (R10.Card.normal theme ++ [ spacing 20, height fill ])
+        , column (R10.Card.noShadow theme ++ [ R10.Color.AttrsBackground.surface2dp theme, spacing 20, height fill ])
             [ paragraph secondaryTitle [ text <| formName index ++ " state Json - editable" ]
             , Input.multiline
                 multilineAttrs
@@ -591,7 +604,7 @@ viewRow index model theme =
             ]
         ]
     , row [ width fill, spacing 20 ]
-        [ column (R10.Card.normal theme ++ [ spacing 20, height fill ])
+        [ column (R10.Card.noShadow theme ++ [ R10.Color.AttrsBackground.surface2dp theme, spacing 20, height fill ])
             [ paragraph secondaryTitle [ text <| formName index ++ " configuration Elm - read only" ]
             , Input.multiline
                 (multilineAttrs ++ [ Background.color <| rgba 0 0 0 0.1 ])
@@ -602,7 +615,7 @@ viewRow index model theme =
                 , spellcheck = False
                 }
             ]
-        , column (R10.Card.normal theme ++ [ spacing 20, height fill ])
+        , column (R10.Card.noShadow theme ++ [ R10.Color.AttrsBackground.surface2dp theme, spacing 20, height fill ])
             [ paragraph secondaryTitle [ text <| formName index ++ " configuration Json - editable" ]
             , workAroundMultiLine
                 multilineAttrs
@@ -813,47 +826,6 @@ This maker generate `( R10.Form.Key.Key, R10.Form.FieldConf.ValidationSpecs )` t
 
 This maker generate `Form.StateForValues.Entity` that is a shallow (but not flat) structure that contain all the values of the form. This structure could be close to a graphQL structure. Could also generate type (String, Bool, Int,etc.) accordingly if needed.
 
-# Idea 1
-
-We can think to develop a maker that would interface directly to GraphQL structure.
-
-These are the two makers available so far.
-
-* `Maker.elm` convert a `Form` into a `List (Element msg)`, used to generate the view of the form.
-* `MakerForValidationKeys.elm` convert a `Form` into a `List (String, ValidationSpecs)`, that is the entire list of all entities' keys together with the validation configurations, used to validate all fields upon form submission.
-
-![alt text](/images/makers.png "Makers")
-
-# Idea 2
-
-```
--- This is the idea how the recursion could work
--- but now there is no time to optimize this way
-
-finalLeaf1 : Int -> List String
-finalLeaf1 counter =
-    [ "finalLeaf1 " ++ String.fromInt counter ]
-
-finalLeaf2 : Int -> List (Element msg)
-finalLeaf2 counter =
-    [ text <| "finalLeaf2 " ++ String.fromInt counter ]
-
-t1 : List String
-t1 =
-    List.concat <| makerHelperTest finalLeaf1 0 []
-
-t2 : List (Element msg)
-t2 =
-    List.concat <| makerHelperTest finalLeaf2 0 []
-
-makerHelperTest : (Int -> a) -> Int -> List a -> List a
-makerHelperTest f counter acc =
-    if counter < 10 then
-        makerHelperTest f (counter + 1) (f counter :: acc)
-    else
-        acc
-```
-
 # Examples
 
 See below few example of forms.
@@ -862,7 +834,12 @@ Both `FormState` and `FormConf` have decoder and encoders so you can edit their 
 
  """ ] ]
     ]
-        ++ [ Input.button [] { label = text "Reset all forms state", onPress = Just ResetAll } ]
+        ++ [ R10.Button.primary [ width shrink ]
+                { label = text "Reset all forms state"
+                , libu = R10.Libu.Bu <| Just ResetAll
+                , theme = theme
+                }
+           ]
         ++ [ el [] <| text "Loading forms state from Local Storage..." ]
         ++ [ column [ paddingXY 40 0, spacing 10 ] <| List.map (\error -> el [] <| text <| reformatError error) (List.reverse model.messagesWhileLoadingLocalStorage) ]
         ++ (List.concat <| repeatForAllForms <| \index -> viewRow index model theme)

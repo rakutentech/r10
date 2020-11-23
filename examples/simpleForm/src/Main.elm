@@ -147,7 +147,7 @@ view model =
                 }
             ]
         }
-        [ R10.Color.AttrsBackground.underModal theme, padding 20, R10.FontSize.normal ]
+        [ R10.Color.AttrsBackground.background theme, padding 20, R10.FontSize.normal ]
         (column
             (R10.Card.high theme
                 ++ [ centerX

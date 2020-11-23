@@ -29,7 +29,7 @@ theme =
 
 main : Html.Html msg
 main =
-    layout [ R10.Color.AttrsBackground.underModal theme, padding 20, R10.FontSize.normal ] <|
+    layout [ R10.Color.AttrsBackground.background theme, padding 20, R10.FontSize.normal ] <|
         column
             (R10.Card.high theme
                 ++ [ centerX

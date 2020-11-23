@@ -638,7 +638,29 @@ UI.Theme.Theme`contains two values:
 * Semantic: https://semantic-ui.com/elements/button.html
 * Ant: https://ant.design/components/button/
 * Onsen: https://onsen.io/theme-roller/
-* Apple: https://developer.apple.com/design/human-interface-guidelines/"""
+* Apple: https://developer.apple.com/design/human-interface-guidelines/
+* noredink-ui: https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/
+    
+    
+# ReX Links
+
+* ReX on github: https://github.com/rakuten-rex
+* ReX on zeroheight: https://zeroheight.com/390c074f3/p/080991-
+* ReX icons: https://rakuten-rex.github.io/icons
+* ReX text field: https://rakuten-rex.github.io/text-field/
+* Rex button: https://rakuten-rex.github.io/button/
+* ReX demo booking: https://rakuten-rex.github.io/demo-booking/
+* ReX demo registration: https://rakuten-rex.github.io/demo-register/
+* ReX demo sign-up: https://rakuten-rex.github.io/demo-sign-up/
+
+# Elm open source projects in Rakuten
+
+* R10: https://github.com/rakutentech/r10/
+* http-trinity: https://github.com/rakutentech/http-trinity
+* rakutentech.github.io: https://github.com/rakutentech/rakutentech.github.io
+* Elm projects: https://rakutentech.github.io/#/filter/elm
+    
+"""
     ]
 
 

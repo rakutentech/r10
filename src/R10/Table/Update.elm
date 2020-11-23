@@ -98,7 +98,7 @@ getFormFieldValue key formModel =
         |> Maybe.map .value
 
 
-justUpdateForm : R10.Form.Msg -> R10.Table.State.FiltersStateRecord -> ( R10.Table.State.FiltersStateRecord, Cmd R10.Table.Msg.Msg )
+justUpdateForm : R10.Form.Msg.Msg -> R10.Table.State.FiltersStateRecord -> ( R10.Table.State.FiltersStateRecord, Cmd R10.Table.Msg.Msg )
 justUpdateForm formMsg filtersState =
     case filtersState.filterEditor of
         Nothing ->

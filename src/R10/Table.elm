@@ -1,33 +1,12 @@
-module R10.Table exposing
-    ( Column
-    , columnCustom
-    , columnSimple
-    , columnWithAttrs
-    , columnWithViews
-    , config
-    , configWithAccordionRow
-    , customConfig
-    , getActiveFilters
-    , getPaginationStateRecord
-    , initialStateFilters
-    , initialStatePagination
-    , initialStateSort
-    , isLoading
-    , isLoadingByPagination
-    , paginationButtonDisableAll
-    , paginationButtonEnableAll
-    , paginationButtonEnableOther
-    , paginationButtonNextFetch
-    , paginationButtonPrevFetch
-    , setLoading
-    , updatePaginationState
-    , view
-    , viewHeaderRowHelp
-    )
+module R10.Table exposing (Column, columnCustom, columnSimple, columnWithAttrs, columnWithViews, config, configWithAccordionRow, customConfig, getActiveFilters, getPaginationStateRecord, initialStateFilters, initialStatePagination, initialStateSort, isLoading, isLoadingByPagination, paginationButtonDisableAll, paginationButtonEnableAll, paginationButtonEnableOther, paginationButtonNextFetch, paginationButtonPrevFetch, setLoading, updatePaginationState, view, viewHeaderRowHelp)
 
-{-| Elm-UI adapted version of
-<https://github.com/NoRedInk/elm-sortable-table>
+{-|
+
+@docs Column, columnCustom, columnSimple, columnWithAttrs, columnWithViews, config, configWithAccordionRow, customConfig, getActiveFilters, getPaginationStateRecord, initialStateFilters, initialStatePagination, initialStateSort, isLoading, isLoadingByPagination, paginationButtonDisableAll, paginationButtonEnableAll, paginationButtonEnableOther, paginationButtonNextFetch, paginationButtonPrevFetch, setLoading, updatePaginationState, view, viewHeaderRowHelp
+
 -}
+
+-- Elm-UI adapted version of <https://github.com/NoRedInk/elm-sortable-table>
 
 import Dict exposing (Dict)
 import Element exposing (..)
@@ -64,6 +43,7 @@ initialStateSort { name, isReversed } =
     }
 
 
+{-| -}
 initialStatePagination : { length : Int } -> R10.Table.State.State -> R10.Table.State.State
 initialStatePagination { length } state =
     { state
@@ -76,6 +56,7 @@ initialStatePagination { length } state =
     }
 
 
+{-| -}
 initialStateFilters : { filterValues : Dict String String } -> R10.Table.State.State -> R10.Table.State.State
 initialStateFilters { filterValues } state =
     { state
@@ -87,41 +68,49 @@ initialStateFilters { filterValues } state =
     }
 
 
+{-| -}
 updatePaginationState : R10.Table.State.PaginationStateRecord -> R10.Table.State.State -> R10.Table.State.State
 updatePaginationState paginationStateRecord state =
     R10.Table.Paginator.updatePaginationState_ paginationStateRecord state
 
 
+{-| -}
 paginationButtonNextFetch : R10.Table.State.State -> R10.Table.State.State
 paginationButtonNextFetch state =
     R10.Table.Paginator.paginationButtonNextFetch_ state
 
 
+{-| -}
 paginationButtonPrevFetch : R10.Table.State.State -> R10.Table.State.State
 paginationButtonPrevFetch state =
     R10.Table.Paginator.paginationButtonPrevFetch_ state
 
 
+{-| -}
 paginationButtonEnableAll : R10.Table.State.State -> R10.Table.State.State
 paginationButtonEnableAll state =
     R10.Table.Paginator.paginationButtonEnableAll_ state
 
 
+{-| -}
 paginationButtonDisableAll : R10.Table.State.State -> R10.Table.State.State
 paginationButtonDisableAll state =
     R10.Table.Paginator.paginationButtonDisableAll_ state
 
 
+{-| -}
 paginationButtonEnableOther : R10.Table.State.State -> R10.Table.State.State
 paginationButtonEnableOther state =
     R10.Table.Paginator.paginationButtonEnableOther_ state
 
 
+{-| -}
 getPaginationStateRecord : R10.Table.State.State -> Maybe R10.Table.State.PaginationStateRecord
 getPaginationStateRecord state =
     R10.Table.Paginator.getPaginationStateRecord_ state
 
 
+{-| -}
 getActiveFilters : R10.Table.State.State -> Dict String String
 getActiveFilters state =
     case state.filters of
@@ -132,16 +121,19 @@ getActiveFilters state =
             Dict.empty
 
 
+{-| -}
 setLoading : Bool -> R10.Table.State.State -> R10.Table.State.State
 setLoading isLoading_ state =
     { state | loading = isLoading_ }
 
 
+{-| -}
 isLoading : R10.Table.State.State -> Bool
 isLoading state =
     state.loading
 
 
+{-| -}
 isLoadingByPagination : R10.Table.State.State -> Bool
 isLoadingByPagination state =
     case state.pagination of
@@ -229,6 +221,7 @@ customConfig { toId, toMsg, columns, bodyAttrs, rowAttrsBuilder, pagination, fil
     }
 
 
+{-| -}
 configWithAccordionRow :
     (Maybe data -> Element msg)
     -> Int
@@ -332,6 +325,7 @@ columnCustom { name, viewCell, viewHeader, sorter } =
         }
 
 
+{-| -}
 viewHeaderRowHelp : R10.Form.Palette -> R10.Table.State.State -> List (R10.Table.Config.ColumnConf data msg) -> (String -> Bool -> msg) -> Element msg
 viewHeaderRowHelp palette state columns sortMsg =
     row [ width fill ] (List.map (viewHeaderRow_ palette state sortMsg) columns)

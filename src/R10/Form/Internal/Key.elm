@@ -1,4 +1,4 @@
-module R10.Form.Key exposing
+module R10.Form.Internal.Key exposing
     ( Key
     , KeyAsString
     , composeKey

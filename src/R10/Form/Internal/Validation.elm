@@ -1,14 +1,14 @@
-module R10.Form.Validation exposing
+module R10.Form.Internal.Validation exposing
     ( commonValidation
     , validate
     )
 
 import Dict
-import R10.Form.FieldConf exposing (Validation(..))
-import R10.Form.FieldState exposing (ValidationOutcome(..))
-import R10.Form.Key
-import R10.Form.State
-import R10.Form.ValidationCode exposing (validationCodes)
+import R10.Form.Internal.FieldConf exposing (Validation(..))
+import R10.Form.Internal.FieldState exposing (ValidationOutcome(..))
+import R10.Form.Internal.Key
+import R10.Form.Internal.State
+import R10.Form.Internal.ValidationCode exposing (validationCodes)
 import Regex
 
 
@@ -32,7 +32,7 @@ runRegex pattern value =
             NotValid
 
 
-isValid : R10.Form.FieldState.ValidationOutcome -> Bool
+isValid : R10.Form.Internal.FieldState.ValidationOutcome -> Bool
 isValid outcome =
     case outcome of
         MessageOk _ _ ->
@@ -42,7 +42,7 @@ isValid outcome =
             False
 
 
-toMessageOk : R10.Form.FieldState.ValidationOutcome -> R10.Form.FieldState.ValidationOutcome
+toMessageOk : R10.Form.Internal.FieldState.ValidationOutcome -> R10.Form.Internal.FieldState.ValidationOutcome
 toMessageOk outcome =
     case outcome of
         MessageOk _ _ ->
@@ -52,7 +52,7 @@ toMessageOk outcome =
             MessageOk msg payload
 
 
-toMessageErr : R10.Form.FieldState.ValidationOutcome -> R10.Form.FieldState.ValidationOutcome
+toMessageErr : R10.Form.Internal.FieldState.ValidationOutcome -> R10.Form.Internal.FieldState.ValidationOutcome
 toMessageErr outcome =
     case outcome of
         MessageOk msg payload ->
@@ -62,12 +62,12 @@ toMessageErr outcome =
             outcome
 
 
-validateDependant : String -> R10.Form.Key.KeyAsString -> R10.Form.State.State -> Validation -> Maybe R10.Form.FieldState.ValidationOutcome
+validateDependant : String -> R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
 validateDependant value dependantKey formState validation =
     let
-        newKey : R10.Form.Key.Key
+        newKey : R10.Form.Internal.Key.Key
         newKey =
-            dependantKey |> R10.Form.Key.fromString
+            dependantKey |> R10.Form.Internal.Key.fromString
 
         newContextValue : String
         newContextValue =
@@ -78,7 +78,7 @@ validateDependant value dependantKey formState validation =
     validateValidationSpecs newKey newContextValue formState validation
 
 
-validateEqual : String -> R10.Form.Key.KeyAsString -> R10.Form.State.State -> R10.Form.FieldState.ValidationOutcome
+validateEqual : String -> R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.ValidationOutcome
 validateEqual value dependantKey formState =
     let
         dependantValue : String
@@ -88,70 +88,70 @@ validateEqual value dependantKey formState =
                 |> Maybe.withDefault ""
     in
     if value == dependantValue then
-        R10.Form.FieldState.MessageOk validationCodes.equalInvalid []
+        R10.Form.Internal.FieldState.MessageOk validationCodes.equalInvalid []
 
     else
-        R10.Form.FieldState.MessageErr validationCodes.equalInvalid []
+        R10.Form.Internal.FieldState.MessageErr validationCodes.equalInvalid []
 
 
-validateNot : R10.Form.Key.Key -> String -> R10.Form.State.State -> Validation -> Maybe R10.Form.FieldState.ValidationOutcome
+validateNot : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
 validateNot key value formState validation =
     let
-        outcome : Maybe R10.Form.FieldState.ValidationOutcome
+        outcome : Maybe R10.Form.Internal.FieldState.ValidationOutcome
         outcome =
             validateValidationSpecs key value formState validation
     in
     case outcome of
-        Just (R10.Form.FieldState.MessageOk a b) ->
-            Just <| R10.Form.FieldState.MessageErr a b
+        Just (R10.Form.Internal.FieldState.MessageOk a b) ->
+            Just <| R10.Form.Internal.FieldState.MessageErr a b
 
-        Just (R10.Form.FieldState.MessageErr a b) ->
-            Just <| R10.Form.FieldState.MessageOk a b
+        Just (R10.Form.Internal.FieldState.MessageErr a b) ->
+            Just <| R10.Form.Internal.FieldState.MessageOk a b
 
         Nothing ->
             Nothing
 
 
-validateAllOf : R10.Form.Key.Key -> String -> R10.Form.State.State -> List Validation -> R10.Form.FieldState.ValidationOutcome
+validateAllOf : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> List Validation -> R10.Form.Internal.FieldState.ValidationOutcome
 validateAllOf key value formState validations =
     let
-        messages : List R10.Form.FieldState.ValidationOutcome
+        messages : List R10.Form.Internal.FieldState.ValidationOutcome
         messages =
             List.map (validateValidationSpecs key value formState) validations
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
-        R10.Form.FieldState.MessageOk validationCodes.allOf []
+        R10.Form.Internal.FieldState.MessageOk validationCodes.allOf []
 
     else if List.all isValid messages then
-        R10.Form.FieldState.MessageOk validationCodes.allOf []
+        R10.Form.Internal.FieldState.MessageOk validationCodes.allOf []
 
     else
-        R10.Form.FieldState.MessageErr validationCodes.allOf []
+        R10.Form.Internal.FieldState.MessageErr validationCodes.allOf []
 
 
-validateOneOf : R10.Form.Key.Key -> String -> R10.Form.State.State -> List Validation -> R10.Form.FieldState.ValidationOutcome
+validateOneOf : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> List Validation -> R10.Form.Internal.FieldState.ValidationOutcome
 validateOneOf key value formState validations =
     let
-        messages : List R10.Form.FieldState.ValidationOutcome
+        messages : List R10.Form.Internal.FieldState.ValidationOutcome
         messages =
             List.map (validateValidationSpecs key value formState) validations
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
-        R10.Form.FieldState.MessageOk validationCodes.oneOf []
+        R10.Form.Internal.FieldState.MessageOk validationCodes.oneOf []
 
     else if List.any isValid messages then
-        R10.Form.FieldState.MessageOk validationCodes.oneOf []
+        R10.Form.Internal.FieldState.MessageOk validationCodes.oneOf []
 
     else
-        R10.Form.FieldState.MessageErr validationCodes.oneOf []
+        R10.Form.Internal.FieldState.MessageErr validationCodes.oneOf []
 
 
-validateWithMsg : R10.Form.Key.Key -> String -> R10.Form.FieldConf.ValidationMessage -> R10.Form.State.State -> Validation -> Maybe R10.Form.FieldState.ValidationOutcome
+validateWithMsg : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.FieldConf.ValidationMessage -> R10.Form.Internal.State.State -> Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
 validateWithMsg key value msg formState validation =
     let
-        maybeMessage : Maybe R10.Form.FieldState.ValidationOutcome
+        maybeMessage : Maybe R10.Form.Internal.FieldState.ValidationOutcome
         maybeMessage =
             validateValidationSpecs key value formState validation
     in
@@ -167,53 +167,53 @@ validateWithMsg key value msg formState validation =
                 Just <| MessageErr msg.err []
 
 
-validateRequired : String -> R10.Form.FieldState.ValidationOutcome
+validateRequired : String -> R10.Form.Internal.FieldState.ValidationOutcome
 validateRequired value =
     if String.isEmpty value then
-        R10.Form.FieldState.MessageErr validationCodes.required []
+        R10.Form.Internal.FieldState.MessageErr validationCodes.required []
 
     else
-        R10.Form.FieldState.MessageOk validationCodes.required []
+        R10.Form.Internal.FieldState.MessageOk validationCodes.required []
 
 
-validateEmpty : String -> R10.Form.FieldState.ValidationOutcome
+validateEmpty : String -> R10.Form.Internal.FieldState.ValidationOutcome
 validateEmpty value =
     if String.isEmpty value then
-        R10.Form.FieldState.MessageOk validationCodes.empty []
+        R10.Form.Internal.FieldState.MessageOk validationCodes.empty []
 
     else
-        R10.Form.FieldState.MessageErr validationCodes.empty []
+        R10.Form.Internal.FieldState.MessageErr validationCodes.empty []
 
 
-validateMinLength : String -> Int -> R10.Form.FieldState.ValidationOutcome
+validateMinLength : String -> Int -> R10.Form.Internal.FieldState.ValidationOutcome
 validateMinLength value length =
     if String.length value < length then
-        R10.Form.FieldState.MessageErr validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
+        R10.Form.Internal.FieldState.MessageErr validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
 
     else
-        R10.Form.FieldState.MessageOk validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
+        R10.Form.Internal.FieldState.MessageOk validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
 
 
-validateMaxLength : String -> Int -> R10.Form.FieldState.ValidationOutcome
+validateMaxLength : String -> Int -> R10.Form.Internal.FieldState.ValidationOutcome
 validateMaxLength value length =
     if String.length value > length then
-        R10.Form.FieldState.MessageErr validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
+        R10.Form.Internal.FieldState.MessageErr validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
 
     else
-        R10.Form.FieldState.MessageOk validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
+        R10.Form.Internal.FieldState.MessageOk validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
 
 
-validateRegex : String -> String -> R10.Form.FieldState.ValidationOutcome
+validateRegex : String -> String -> R10.Form.Internal.FieldState.ValidationOutcome
 validateRegex value regex =
     case runRegex regex value of
         Valid ->
-            R10.Form.FieldState.MessageOk validationCodes.formatInvalid []
+            R10.Form.Internal.FieldState.MessageOk validationCodes.formatInvalid []
 
         NotValid ->
-            R10.Form.FieldState.MessageErr validationCodes.formatInvalid []
+            R10.Form.Internal.FieldState.MessageErr validationCodes.formatInvalid []
 
 
-skipValidationIfEmpty : String -> R10.Form.FieldState.ValidationOutcome -> Maybe R10.Form.FieldState.ValidationOutcome
+skipValidationIfEmpty : String -> R10.Form.Internal.FieldState.ValidationOutcome -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
 skipValidationIfEmpty value validationOutcome =
     if String.isEmpty value then
         Nothing
@@ -222,7 +222,7 @@ skipValidationIfEmpty value validationOutcome =
         Just validationOutcome
 
 
-validateValidationSpecs : R10.Form.Key.Key -> String -> R10.Form.State.State -> Validation -> Maybe R10.Form.FieldState.ValidationOutcome
+validateValidationSpecs : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
 validateValidationSpecs key value formState validation =
     case validation of
         WithMsg msg validation_ ->
@@ -266,14 +266,14 @@ validateValidationSpecs key value formState validation =
             Nothing
 
 
-validate : R10.Form.Key.Key -> Maybe R10.Form.FieldConf.ValidationSpecs -> R10.Form.State.State -> R10.Form.FieldState.FieldState -> R10.Form.FieldState.FieldState
+validate : R10.Form.Internal.Key.Key -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState
 validate key maybeValidationSpec formState state =
     { state
         | validation =
             (maybeValidationSpec |> Maybe.map .validation |> Maybe.withDefault [ NoValidation ])
                 |> List.map (validateValidationSpecs key state.value formState)
                 |> List.filterMap identity
-                |> R10.Form.FieldState.Validated
+                |> R10.Form.Internal.FieldState.Validated
     }
 
 
@@ -325,7 +325,7 @@ commonValidation :
     }
 commonValidation =
     { phoneNumber =
-        R10.Form.FieldConf.WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
+        R10.Form.Internal.FieldConf.WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
             Regex commonRegularExpression.phoneNumber
     , email =
         WithMsg { ok = validationCodes.emailFormatInvalid, err = validationCodes.emailFormatInvalid } <|

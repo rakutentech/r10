@@ -1,4 +1,4 @@
-module R10.Form.State exposing
+module R10.Form.Internal.State exposing
     ( State
     , fromString
     , init
@@ -11,9 +11,9 @@ import Json.Decode.Extra as D
 import Json.Decode.Pipeline as D
 import Json.Encode as E
 import Json.Encode.Extra as E
-import R10.Form.FieldState
-import R10.Form.Key
-import R10.Form.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
+import R10.Form.Internal.FieldState
+import R10.Form.Internal.Key
+import R10.Form.Internal.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
 import Set
 
 
@@ -27,12 +27,12 @@ import Set
 
 
 type alias State =
-    { fieldsState : Dict.Dict R10.Form.Key.KeyAsString R10.Form.FieldState.FieldState
-    , multiplicableQuantities : Dict.Dict R10.Form.Key.KeyAsString Int
-    , activeTabs : Dict.Dict R10.Form.Key.KeyAsString String
-    , focused : Maybe R10.Form.Key.KeyAsString
-    , active : Maybe R10.Form.Key.KeyAsString
-    , removed : Set.Set R10.Form.Key.KeyAsString
+    { fieldsState : Dict.Dict R10.Form.Internal.Key.KeyAsString R10.Form.Internal.FieldState.FieldState
+    , multiplicableQuantities : Dict.Dict R10.Form.Internal.Key.KeyAsString Int
+    , activeTabs : Dict.Dict R10.Form.Internal.Key.KeyAsString String
+    , focused : Maybe R10.Form.Internal.Key.KeyAsString
+    , active : Maybe R10.Form.Internal.Key.KeyAsString
+    , removed : Set.Set R10.Form.Internal.Key.KeyAsString
     , qtySubmitAttempted : QtySubmitAttempted
     , changesSinceLastSubmissions : Bool
     }
@@ -77,7 +77,7 @@ init =
 encoder : State -> E.Value
 encoder v =
     E.object
-        [ ( "fieldsState", R10.Form.FieldState.encoderFieldState v.fieldsState )
+        [ ( "fieldsState", R10.Form.Internal.FieldState.encoderFieldState v.fieldsState )
         , ( "multiplicableQuantities", E.dict identity E.int v.multiplicableQuantities )
         , ( "activeTabs", E.dict identity E.string v.activeTabs )
         , ( "focused", E.maybe E.string v.focused )
@@ -90,7 +90,7 @@ encoder v =
 decoder : D.Decoder State
 decoder =
     D.succeed State
-        |> D.required "fieldsState" R10.Form.FieldState.decoderFieldState
+        |> D.required "fieldsState" R10.Form.Internal.FieldState.decoderFieldState
         |> D.required "multiplicableQuantities" (D.dict D.int)
         |> D.required "activeTabs" (D.dict D.string)
         |> D.optional "focused" (D.maybe D.string) Nothing

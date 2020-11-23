@@ -1,4 +1,4 @@
-module R10.Form.TempSubmitButton exposing (button)
+module R10.Form.Internal.TempSubmitButton exposing (button)
 
 import Element exposing (..)
 import Element.Background as Background
@@ -6,16 +6,16 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Form
-import R10.Form.Msg
-import R10.Form.Update
+import R10.Form.Internal.Msg
+import R10.Form.Internal.Update
 
 
-button : R10.Form.Form -> (R10.Form.Msg.Msg -> msg) -> Element msg
+button : R10.Form.Internal.Form -> (R10.Form.Internal.Msg.Msg -> msg) -> Element msg
 button form msgMapper =
     let
         submittable : Bool
         submittable =
-            R10.Form.Update.submittable form
+            R10.Form.Internal.Update.submittable form
     in
     map msgMapper <|
         Input.button
@@ -30,5 +30,5 @@ button form msgMapper =
                     rgb 0.5 0 0
             ]
             { label = text "Submit"
-            , onPress = Just <| R10.Form.Msg.Submit form.conf
+            , onPress = Just <| R10.Form.Internal.Msg.Submit form.conf
             }

@@ -139,20 +139,20 @@ If you want to personalise the translations or you want to translate them in dif
 import Dict
 import Element exposing (..)
 import Json.Decode
-import R10.Form.Conf
-import R10.Form.FieldConf
-import R10.Form.FieldState
-import R10.Form.Helpers
-import R10.Form.Key
-import R10.Form.MakerForValues
-import R10.Form.MakerForView
+import R10.Form.Internal.Conf
+import R10.Form.Internal.FieldConf
+import R10.Form.Internal.FieldState
+import R10.Form.Internal.Helpers
+import R10.Form.Internal.Key
+import R10.Form.Internal.MakerForValues
+import R10.Form.Internal.MakerForView
+import R10.Form.Internal.Shared
+import R10.Form.Internal.State
+import R10.Form.Internal.StateForValues
+import R10.Form.Internal.Update
+import R10.Form.Internal.Validation
+import R10.Form.Internal.ValidationCode
 import R10.Form.Msg
-import R10.Form.Shared
-import R10.Form.State
-import R10.Form.StateForValues
-import R10.Form.Update
-import R10.Form.Validation
-import R10.Form.ValidationCode
 import R10.FormComponents.Binary
 import R10.FormComponents.Button
 import R10.FormComponents.ExtraCss
@@ -188,13 +188,13 @@ type alias MakerArgs =
 {-| Just a `String`
 -}
 type alias ValidationCode =
-    R10.Form.FieldConf.ValidationCode
+    R10.Form.Internal.FieldConf.ValidationCode
 
 
 {-| -}
 type alias Maker =
     MakerArgs
-    -> List R10.Form.Conf.Entity
+    -> List R10.Form.Internal.Conf.Entity
     -> List (Element R10.Form.Msg.Msg)
 
 
@@ -220,20 +220,20 @@ type alias MsgMapper msg =
     import Html
     import R10.Form
 
-    formModel : R10.Form.Form
+    formModel : R10.Form.Internal.Form
     formModel =
         { conf =
-            [ R10.Form.entity.field
+            [ R10.Form.Internal.entity.field
                 { id = "email"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.email
+                , type_ = R10.Form.Internal.fieldType.text R10.Form.Internal.text.email
                 , label = "Email"
                 , helperText = Just "My first form"
                 , requiredLabel = Nothing
                 , validationSpecs = Nothing
                 }
             ]
-        , state = R10.Form.initState
+        , state = R10.Form.Internal.initState
         }
 
     formMsgMapper : R10.Form.MsgMapper ()
@@ -244,7 +244,7 @@ type alias MsgMapper msg =
     main =
         layout [] <|
             column [ centerX, centerY ] <|
-                R10.Form.view formModel formMsgMapper
+                R10.Form.Internal.view formModel formMsgMapper
 
 Note that the form of this example is not active because it is just rendering the view but it is not wired to The Elm Architecture. In interested, look at the code of an [active form example](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm).
 
@@ -296,9 +296,9 @@ viewWithOptions : Form -> MsgMapper msg -> Options -> List (Element msg)
 viewWithOptions form msgMapper args =
     List.map
         (map msgMapper)
-        (Maybe.withDefault R10.Form.MakerForView.maker
+        (Maybe.withDefault R10.Form.Internal.MakerForView.maker
             args.maker
-            { key = R10.Form.Key.empty
+            { key = R10.Form.Internal.Key.empty
             , formState = form.state
             , translator = Maybe.withDefault defaultTranslator args.translator
             , style = args.style
@@ -311,48 +311,49 @@ viewWithOptions form msgMapper args =
 {-| -}
 defaultTranslator : ValidationCode -> String
 defaultTranslator =
-    R10.Form.ValidationCode.translator
+    R10.Form.Internal.ValidationCode.translator
 
 
+{-| -}
 themeToPalette : R10.Theme.Theme -> R10.FormComponents.UI.Palette.Palette
 themeToPalette =
     R10.FormComponents.UI.Palette.fromTheme
 
 
 
--- EXPOSING STUFF FROM R10.Form.MakerForView
+-- EXPOSING STUFF FROM R10.Form.Internal.MakerForView
 
 
 {-| -}
 extraCss : Maybe Palette -> String
 extraCss =
-    R10.Form.MakerForView.extraCss
+    R10.Form.Internal.MakerForView.extraCss
 
 
 
--- EXPOSING STUFF FROM R10.Form.Conf
+-- EXPOSING STUFF FROM R10.Form.Internal.Conf
 
 
 {-| `Conf` is simply defined as a `List Entity`.
 -}
 type alias Conf =
-    R10.Form.Conf.Conf
+    R10.Form.Internal.Conf.Conf
 
 
 {-| A form is made of multiple **entities**. An example of entity is an input field, a title, a subtitle, etc.
 -}
 type alias Entity =
-    R10.Form.Conf.Entity
+    R10.Form.Internal.Conf.Entity
 
 
 {-| -}
 type alias EntityId =
-    R10.Form.Conf.EntityId
+    R10.Form.Internal.Conf.EntityId
 
 
 {-| -}
 type alias TextConf =
-    R10.Form.Conf.TextConf
+    R10.Form.Internal.Conf.TextConf
 
 
 {-| These are the constructors for entities
@@ -368,92 +369,92 @@ entity :
     , wrappable : EntityId -> List Entity -> Entity
     }
 entity =
-    { normal = R10.Form.Conf.EntityNormal
-    , wrappable = R10.Form.Conf.EntityWrappable
-    , withBorder = R10.Form.Conf.EntityWithBorder
-    , withTabs = R10.Form.Conf.EntityWithTabs
-    , multi = R10.Form.Conf.EntityMulti
-    , field = R10.Form.Conf.EntityField
-    , title = R10.Form.Conf.EntityTitle
-    , subTitle = R10.Form.Conf.EntitySubTitle
+    { normal = R10.Form.Internal.Conf.EntityNormal
+    , wrappable = R10.Form.Internal.Conf.EntityWrappable
+    , withBorder = R10.Form.Internal.Conf.EntityWithBorder
+    , withTabs = R10.Form.Internal.Conf.EntityWithTabs
+    , multi = R10.Form.Internal.Conf.EntityMulti
+    , field = R10.Form.Internal.Conf.EntityField
+    , title = R10.Form.Internal.Conf.EntityTitle
+    , subTitle = R10.Form.Internal.Conf.EntitySubTitle
     }
 
 
 {-| -}
 initConf : List Entity
 initConf =
-    R10.Form.Conf.init
+    R10.Form.Internal.Conf.init
 
 
 {-| -}
 stringToConf : String -> Result Json.Decode.Error Conf
 stringToConf =
-    R10.Form.Conf.fromString
+    R10.Form.Internal.Conf.fromString
 
 
 {-| -}
 confToString : Conf -> String
 confToString =
-    R10.Form.Conf.toString
+    R10.Form.Internal.Conf.toString
 
 
 
--- EXPOSING STUFF FROM R10.Form.FieldConf
+-- EXPOSING STUFF FROM R10.Form.Internal.FieldConf
 
 
 {-| -}
 type alias FieldConf =
-    R10.Form.FieldConf.FieldConf
+    R10.Form.Internal.FieldConf.FieldConf
 
 
 {-| -}
 type alias TypeSingle =
-    R10.Form.FieldConf.TypeSingle
+    R10.Form.Internal.FieldConf.TypeSingle
 
 
 {-| -}
 type alias FieldType =
-    R10.Form.FieldConf.FieldType
+    R10.Form.Internal.FieldConf.FieldType
 
 
 {-| -}
 type alias TypeBinary =
-    R10.Form.FieldConf.TypeBinary
+    R10.Form.Internal.FieldConf.TypeBinary
 
 
 {-| -}
 type alias TypeMulti =
-    R10.Form.FieldConf.TypeMulti
+    R10.Form.Internal.FieldConf.TypeMulti
 
 
 {-| -}
 type alias TypeText =
-    R10.Form.FieldConf.TypeText
+    R10.Form.Internal.FieldConf.TypeText
 
 
 {-| -}
 type alias FieldOption =
-    R10.Form.FieldConf.FieldOption
+    R10.Form.Internal.FieldConf.FieldOption
 
 
 {-| -}
 type alias ValidationIcon =
-    R10.Form.FieldConf.ValidationIcon
+    R10.Form.Internal.FieldConf.ValidationIcon
 
 
 {-| -}
 type alias Validation =
-    R10.Form.FieldConf.Validation
+    R10.Form.Internal.FieldConf.Validation
 
 
 {-| -}
 type alias ValidationMessage =
-    R10.Form.FieldConf.ValidationMessage
+    R10.Form.Internal.FieldConf.ValidationMessage
 
 
 {-| -}
 type alias ValidationSpecs =
-    R10.Form.FieldConf.ValidationSpecs
+    R10.Form.Internal.FieldConf.ValidationSpecs
 
 
 {-| -}
@@ -464,10 +465,10 @@ fieldType :
     , binary : TypeBinary -> FieldType
     }
 fieldType =
-    { text = R10.Form.FieldConf.TypeText
-    , single = R10.Form.FieldConf.TypeSingle
-    , multi = R10.Form.FieldConf.TypeMulti
-    , binary = R10.Form.FieldConf.TypeBinary
+    { text = R10.Form.Internal.FieldConf.TypeText
+    , single = R10.Form.Internal.FieldConf.TypeSingle
+    , multi = R10.Form.Internal.FieldConf.TypeMulti
+    , binary = R10.Form.Internal.FieldConf.TypeBinary
     }
 
 
@@ -477,8 +478,8 @@ single :
     , radio : TypeSingle
     }
 single =
-    { combobox = R10.Form.FieldConf.SingleCombobox
-    , radio = R10.Form.FieldConf.SingleRadio
+    { combobox = R10.Form.Internal.FieldConf.SingleCombobox
+    , radio = R10.Form.Internal.FieldConf.SingleRadio
     }
 
 
@@ -493,13 +494,13 @@ text :
     , withPattern : String -> TypeText
     }
 text =
-    { plain = R10.Form.FieldConf.TextPlain
-    , email = R10.Form.FieldConf.TextEmail
-    , username = R10.Form.FieldConf.TextUsername
-    , passwordNew = R10.Form.FieldConf.TextPasswordNew
-    , passwordCurrent = R10.Form.FieldConf.TextPasswordCurrent
-    , multiline = R10.Form.FieldConf.TextMultiline
-    , withPattern = R10.Form.FieldConf.TextWithPattern
+    { plain = R10.Form.Internal.FieldConf.TextPlain
+    , email = R10.Form.Internal.FieldConf.TextEmail
+    , username = R10.Form.Internal.FieldConf.TextUsername
+    , passwordNew = R10.Form.Internal.FieldConf.TextPasswordNew
+    , passwordCurrent = R10.Form.Internal.FieldConf.TextPasswordCurrent
+    , multiline = R10.Form.Internal.FieldConf.TextMultiline
+    , withPattern = R10.Form.Internal.FieldConf.TextWithPattern
     }
 
 
@@ -510,9 +511,9 @@ validationIcon :
     , noIcon : ValidationIcon
     }
 validationIcon =
-    { noIcon = R10.Form.FieldConf.NoIcon
-    , clearOrCheck = R10.Form.FieldConf.ClearOrCheck -- clear aka cross
-    , errorOrCheck = R10.Form.FieldConf.ErrorOrCheck -- "!" in circle, just like Google's
+    { noIcon = R10.Form.Internal.FieldConf.NoIcon
+    , clearOrCheck = R10.Form.Internal.FieldConf.ClearOrCheck -- clear aka cross
+    , errorOrCheck = R10.Form.Internal.FieldConf.ErrorOrCheck -- "!" in circle, just like Google's
     }
 
 
@@ -532,29 +533,29 @@ validation :
     , not : Validation -> Validation
     }
 validation =
-    { noValidation = R10.Form.FieldConf.NoValidation
-    , withMsg = R10.Form.FieldConf.WithMsg
-    , dependant = R10.Form.FieldConf.Dependant
-    , oneOf = R10.Form.FieldConf.OneOf
-    , allOf = R10.Form.FieldConf.AllOf
-    , equal = R10.Form.FieldConf.Equal
-    , required = R10.Form.FieldConf.Required
-    , minLength = R10.Form.FieldConf.MinLength
-    , maxLength = R10.Form.FieldConf.MaxLength
-    , regex = R10.Form.FieldConf.Regex
-    , empty = R10.Form.FieldConf.Empty
-    , not = R10.Form.FieldConf.Not
+    { noValidation = R10.Form.Internal.FieldConf.NoValidation
+    , withMsg = R10.Form.Internal.FieldConf.WithMsg
+    , dependant = R10.Form.Internal.FieldConf.Dependant
+    , oneOf = R10.Form.Internal.FieldConf.OneOf
+    , allOf = R10.Form.Internal.FieldConf.AllOf
+    , equal = R10.Form.Internal.FieldConf.Equal
+    , required = R10.Form.Internal.FieldConf.Required
+    , minLength = R10.Form.Internal.FieldConf.MinLength
+    , maxLength = R10.Form.Internal.FieldConf.MaxLength
+    , regex = R10.Form.Internal.FieldConf.Regex
+    , empty = R10.Form.Internal.FieldConf.Empty
+    , not = R10.Form.Internal.FieldConf.Not
     }
 
 
 {-| -}
 binary :
-    { checkbox : R10.Form.FieldConf.TypeBinary
-    , switch : R10.Form.FieldConf.TypeBinary
+    { checkbox : R10.Form.Internal.FieldConf.TypeBinary
+    , switch : R10.Form.Internal.FieldConf.TypeBinary
     }
 binary =
-    { checkbox = R10.Form.FieldConf.BinaryCheckbox
-    , switch = R10.Form.FieldConf.BinarySwitch
+    { checkbox = R10.Form.Internal.FieldConf.BinaryCheckbox
+    , switch = R10.Form.Internal.FieldConf.BinarySwitch
     }
 
 
@@ -570,22 +571,22 @@ binary2 =
 
 
 {-| -}
-initFieldConf : R10.Form.FieldConf.FieldConf
+initFieldConf : R10.Form.Internal.FieldConf.FieldConf
 initFieldConf =
-    R10.Form.FieldConf.init
+    R10.Form.Internal.FieldConf.init
 
 
 
--- EXPOSING STUFF FROM R10.Form.FieldState
+-- EXPOSING STUFF FROM R10.Form.Internal.FieldState
 
 
 {-| -}
 type alias FieldState =
-    R10.Form.FieldState.FieldState
+    R10.Form.Internal.FieldState.FieldState
 
 
 
--- EXPOSING STUFF FROM R10.Form.State
+-- EXPOSING STUFF FROM R10.Form.Internal.State
 
 
 {-| The state is defined as
@@ -614,72 +615,72 @@ Where:
 
 -}
 type alias State =
-    R10.Form.State.State
+    R10.Form.Internal.State.State
 
 
 {-| -}
 initState : State
 initState =
-    R10.Form.State.init
+    R10.Form.Internal.State.init
 
 
 {-| This can be useful to store the state of a form to the Local Storage, for example. Then, using `stringToState` is possible to restore all the values of a form or keep the form sync'ed on different tabs.
 -}
-stateToString : R10.Form.State.State -> String
+stateToString : R10.Form.Internal.State.State -> String
 stateToString =
-    R10.Form.State.toString
+    R10.Form.Internal.State.toString
 
 
 {-| -}
-stringToState : String -> Result Json.Decode.Error R10.Form.State.State
+stringToState : String -> Result Json.Decode.Error R10.Form.Internal.State.State
 stringToState =
-    R10.Form.State.fromString
+    R10.Form.Internal.State.fromString
 
 
 
--- EXPOSING STUFF FROM R10.Form.Update
+-- EXPOSING STUFF FROM R10.Form.Internal.Update
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update =
-    R10.Form.Update.update
+    R10.Form.Internal.Update.update
 
 
 {-| -}
-shouldShowTheValidationOverview : R10.Form.State.State -> Bool
+shouldShowTheValidationOverview : R10.Form.Internal.State.State -> Bool
 shouldShowTheValidationOverview =
-    R10.Form.Update.shouldShowTheValidationOverview
+    R10.Form.Internal.Update.shouldShowTheValidationOverview
 
 
 {-| -}
 allValidationKeysMaker : Conf -> State -> List ( Key, Maybe ValidationSpecs )
 allValidationKeysMaker =
-    R10.Form.Update.allValidationKeysMaker
+    R10.Form.Internal.Update.allValidationKeysMaker
 
 
 {-| -}
 entitiesWithErrors : List ( Key, Maybe ValidationSpecs ) -> Dict.Dict KeyAsString FieldState -> List ( Key, Maybe ValidationSpecs )
 entitiesWithErrors =
-    R10.Form.Update.entitiesWithErrors
+    R10.Form.Internal.Update.entitiesWithErrors
 
 
 {-| -}
 runOnlyExistingValidations : List ( Key, Maybe ValidationSpecs ) -> State -> Dict.Dict KeyAsString FieldState -> Dict.Dict KeyAsString FieldState
 runOnlyExistingValidations =
-    R10.Form.Update.runOnlyExistingValidations
+    R10.Form.Internal.Update.runOnlyExistingValidations
 
 
 {-| -}
 submittable : Conf -> State -> Bool
 submittable =
-    R10.Form.Update.submittable
+    R10.Form.Internal.Update.submittable
 
 
 {-| -}
 isFormSubmittableAndSubmitted : Conf -> State -> Msg -> Bool
 isFormSubmittableAndSubmitted =
-    R10.Form.Update.isFormSubmittableAndSubmitted
+    R10.Form.Internal.Update.isFormSubmittableAndSubmitted
 
 
 
@@ -698,71 +699,71 @@ msg =
 
 
 
--- EXPOSING STUFF FROM R10.Form.Shared
+-- EXPOSING STUFF FROM R10.Form.Internal.Shared
 
 
 {-| A form is defined by the **configuration** (`R10.Form.Conf`) that contain data about the input fields, radio buttons, etc. and the **state** (`R10.Form.State`), containing instead all the values and other parameters that change during the life of the form.
 
     type alias Form =
-        { conf : R10.Form.Conf
-        , state : R10.Form.State
+        { conf : R10.Form.Internal.Conf
+        , state : R10.Form.Internal.State
         }
 
 -}
 type alias Form =
-    R10.Form.Shared.Form
+    R10.Form.Internal.Shared.Form
 
 
 
--- EXPOSING STUFF FROM R10.Form.Key
+-- EXPOSING STUFF FROM R10.Form.Internal.Key
 
 
 {-| -}
 type alias Key =
-    R10.Form.Key.Key
+    R10.Form.Internal.Key.Key
 
 
 {-| -}
 type alias KeyAsString =
-    R10.Form.Key.KeyAsString
+    R10.Form.Internal.Key.KeyAsString
 
 
 {-| -}
 keyToString : Key -> KeyAsString
 keyToString =
-    R10.Form.Key.toString
+    R10.Form.Internal.Key.toString
 
 
 
--- EXPOSING STUFF FROM R10.Form.Helpers
+-- EXPOSING STUFF FROM R10.Form.Internal.Helpers
 
 
 {-| -}
 getFieldValueAsBool : KeyAsString -> State -> Maybe Bool
 getFieldValueAsBool =
-    R10.Form.Helpers.getFieldValueAsBool
+    R10.Form.Internal.Helpers.getFieldValueAsBool
 
 
 {-| -}
-getFieldValue : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe String
+getFieldValue : R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> Maybe String
 getFieldValue =
-    R10.Form.Helpers.getFieldValue
+    R10.Form.Internal.Helpers.getFieldValue
 
 
 {-| -}
 stringToBool : String -> Bool
 stringToBool =
-    R10.Form.Helpers.stringToBool
+    R10.Form.Internal.Helpers.stringToBool
 
 
 {-| -}
 boolToString : Bool -> String
 boolToString =
-    R10.Form.Helpers.boolToString
+    R10.Form.Internal.Helpers.boolToString
 
 
 
--- EXPOSING STUFF FROM R10.Form.Validation
+-- EXPOSING STUFF FROM R10.Form.Internal.Validation
 
 
 {-| -}
@@ -777,25 +778,25 @@ commonValidation :
     , url : Validation
     }
 commonValidation =
-    R10.Form.Validation.commonValidation
+    R10.Form.Internal.Validation.commonValidation
 
 
 {-| -}
 setFieldValue : KeyAsString -> String -> State -> State
 setFieldValue =
-    R10.Form.Helpers.setFieldValue
+    R10.Form.Internal.Helpers.setFieldValue
 
 
 {-| -}
 getField : KeyAsString -> State -> Maybe FieldState
 getField =
-    R10.Form.Helpers.getField
+    R10.Form.Internal.Helpers.getField
 
 
 {-| -}
 validate : Key -> Maybe ValidationSpecs -> State -> FieldState -> FieldState
 validate =
-    R10.Form.Validation.validate
+    R10.Form.Internal.Validation.validate
 
 
 {-| -}
@@ -1004,37 +1005,37 @@ singleMsg =
 
 
 {-| -}
-getMultiActiveKeys : R10.Form.Key.Key -> R10.Form.State.State -> List R10.Form.Key.Key
+getMultiActiveKeys : R10.Form.Internal.Key.Key -> R10.Form.Internal.State.State -> List R10.Form.Internal.Key.Key
 getMultiActiveKeys =
-    R10.Form.Helpers.getMultiActiveKeys
+    R10.Form.Internal.Helpers.getMultiActiveKeys
 
 
 {-| -}
-stringToKey : R10.Form.Key.KeyAsString -> R10.Form.Key.Key
+stringToKey : R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.Key.Key
 stringToKey =
-    R10.Form.Key.fromString
+    R10.Form.Internal.Key.fromString
 
 
 {-| -}
-composeKey : R10.Form.Key.Key -> String -> R10.Form.Key.Key
+composeKey : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.Key.Key
 composeKey =
-    R10.Form.Key.composeKey
+    R10.Form.Internal.Key.composeKey
 
 
 {-| -}
 setFieldValidationError :
-    R10.Form.Key.KeyAsString
+    R10.Form.Internal.Key.KeyAsString
     -> String
-    -> R10.Form.State.State
-    -> R10.Form.State.State
+    -> R10.Form.Internal.State.State
+    -> R10.Form.Internal.State.State
 setFieldValidationError =
-    R10.Form.Helpers.setFieldValidationError
+    R10.Form.Internal.Helpers.setFieldValidationError
 
 
 {-| -}
-initFieldState : R10.Form.FieldState.FieldState
+initFieldState : R10.Form.Internal.FieldState.FieldState
 initFieldState =
-    R10.Form.FieldState.init
+    R10.Form.Internal.FieldState.init
 
 
 {-| -}
@@ -1050,33 +1051,33 @@ updateSingle =
 
 
 {-| -}
-initValidationSpecs : R10.Form.FieldConf.ValidationSpecs
+initValidationSpecs : R10.Form.Internal.FieldConf.ValidationSpecs
 initValidationSpecs =
-    R10.Form.FieldConf.initValidationSpecs
+    R10.Form.Internal.FieldConf.initValidationSpecs
 
 
 {-| -}
-listToKey : List String -> R10.Form.Key.Key
+listToKey : List String -> R10.Form.Internal.Key.Key
 listToKey =
-    R10.Form.Key.fromList
+    R10.Form.Internal.Key.fromList
 
 
 {-| -}
-setMultiplicableQuantities : R10.Form.Key.KeyAsString -> Int -> R10.Form.State.State -> R10.Form.State.State
+setMultiplicableQuantities : R10.Form.Internal.Key.KeyAsString -> Int -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
 setMultiplicableQuantities =
-    R10.Form.Helpers.setMultiplicableQuantities
+    R10.Form.Internal.Helpers.setMultiplicableQuantities
 
 
 {-| -}
-clearFieldValidation : R10.Form.Key.KeyAsString -> R10.Form.State.State -> R10.Form.State.State
+clearFieldValidation : R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
 clearFieldValidation =
-    R10.Form.Helpers.clearFieldValidation
+    R10.Form.Internal.Helpers.clearFieldValidation
 
 
 {-| -}
-headId : R10.Form.Key.Key -> Maybe String
+headId : R10.Form.Internal.Key.Key -> Maybe String
 headId =
-    R10.Form.Key.headId
+    R10.Form.Internal.Key.headId
 
 
 {-| -}
@@ -1101,39 +1102,39 @@ button =
 
 
 {-| -}
-setFieldDisabled : R10.Form.Key.KeyAsString -> Bool -> R10.Form.State.State -> R10.Form.State.State
+setFieldDisabled : R10.Form.Internal.Key.KeyAsString -> Bool -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
 setFieldDisabled =
-    R10.Form.Helpers.setFieldDisabled
+    R10.Form.Internal.Helpers.setFieldDisabled
 
 
 {-| -}
-getActiveTab : R10.Form.Key.KeyAsString -> R10.Form.State.State -> Maybe String
+getActiveTab : R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> Maybe String
 getActiveTab =
-    R10.Form.Helpers.getActiveTab
+    R10.Form.Internal.Helpers.getActiveTab
 
 
 {-| -}
 setActiveTab : KeyAsString -> String -> State -> State
 setActiveTab =
-    R10.Form.Helpers.setActiveTab
+    R10.Form.Internal.Helpers.setActiveTab
 
 
 {-| -}
-validateEntireForm : R10.Form.Conf.Conf -> R10.Form.State.State -> R10.Form.State.State
+validateEntireForm : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
 validateEntireForm =
-    R10.Form.Update.validateEntireForm
+    R10.Form.Internal.Update.validateEntireForm
 
 
 {-| -}
-validateDirtyFormFields : R10.Form.Conf.Conf -> R10.Form.State.State -> R10.Form.State.State
+validateDirtyFormFields : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
 validateDirtyFormFields =
-    R10.Form.Update.validateDirtyFormFields
+    R10.Form.Internal.Update.validateDirtyFormFields
 
 
 {-| -}
-isExistingFormFieldsValid : R10.Form.Conf.Conf -> R10.Form.State.State -> Bool
+isExistingFormFieldsValid : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> Bool
 isExistingFormFieldsValid =
-    R10.Form.Update.isExistingFormFieldsValid
+    R10.Form.Internal.Update.isExistingFormFieldsValid
 
 
 {-| -}
@@ -1168,52 +1169,52 @@ onFocusOut =
 
 
 {-| -}
-entitiesToString : List R10.Form.StateForValues.Entity -> String
+entitiesToString : List R10.Form.Internal.StateForValues.Entity -> String
 entitiesToString =
-    R10.Form.StateForValues.toString
+    R10.Form.Internal.StateForValues.toString
 
 
 {-| -}
 maker :
-    R10.Form.Key.Key
-    -> R10.Form.State.State
-    -> R10.Form.Conf.Conf
-    -> List R10.Form.StateForValues.Entity
+    R10.Form.Internal.Key.Key
+    -> R10.Form.Internal.State.State
+    -> R10.Form.Internal.Conf.Conf
+    -> List R10.Form.Internal.StateForValues.Entity
 maker =
-    R10.Form.MakerForValues.maker
+    R10.Form.Internal.MakerForValues.maker
 
 
 {-| -}
-emptyKey : R10.Form.Key.Key
+emptyKey : R10.Form.Internal.Key.Key
 emptyKey =
-    R10.Form.Key.empty
+    R10.Form.Internal.Key.empty
 
 
 {-| -}
 validationCodes :
-    { allOf : R10.Form.FieldConf.ValidationCode
-    , emailFormatInvalid : R10.Form.FieldConf.ValidationCode
-    , emailFormatValid : R10.Form.FieldConf.ValidationCode
-    , empty : R10.Form.FieldConf.ValidationCode
-    , equalInvalid : R10.Form.FieldConf.ValidationCode
-    , formatInvalid : R10.Form.FieldConf.ValidationCode
-    , formatInvalidCharactersInvalid : R10.Form.FieldConf.ValidationCode
-    , formatNoNumberInvalid : R10.Form.FieldConf.ValidationCode
-    , formatNoSpecialCharactersInvalid : R10.Form.FieldConf.ValidationCode
-    , formatNoUppercaseInvalid : R10.Form.FieldConf.ValidationCode
-    , formatValid : R10.Form.FieldConf.ValidationCode
-    , hexColorFormatInvalid : R10.Form.FieldConf.ValidationCode
-    , jsonFormatInvalid : R10.Form.FieldConf.ValidationCode
-    , lengthTooLargeInvalid : R10.Form.FieldConf.ValidationCode
-    , lengthTooSmallInvalid : R10.Form.FieldConf.ValidationCode
-    , oneOf : R10.Form.FieldConf.ValidationCode
-    , required : R10.Form.FieldConf.ValidationCode
-    , requiredField : R10.Form.FieldConf.ValidationCode
-    , somethingWrong : R10.Form.FieldConf.ValidationCode
-    , valueInvalid : R10.Form.FieldConf.ValidationCode
+    { allOf : R10.Form.Internal.FieldConf.ValidationCode
+    , emailFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , emailFormatValid : R10.Form.Internal.FieldConf.ValidationCode
+    , empty : R10.Form.Internal.FieldConf.ValidationCode
+    , equalInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , formatInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , formatInvalidCharactersInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , formatNoNumberInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , formatNoSpecialCharactersInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , formatNoUppercaseInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , formatValid : R10.Form.Internal.FieldConf.ValidationCode
+    , hexColorFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , jsonFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , lengthTooLargeInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , lengthTooSmallInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , oneOf : R10.Form.Internal.FieldConf.ValidationCode
+    , required : R10.Form.Internal.FieldConf.ValidationCode
+    , requiredField : R10.Form.Internal.FieldConf.ValidationCode
+    , somethingWrong : R10.Form.Internal.FieldConf.ValidationCode
+    , valueInvalid : R10.Form.Internal.FieldConf.ValidationCode
     }
 validationCodes =
-    R10.Form.ValidationCode.validationCodes
+    R10.Form.Internal.ValidationCode.validationCodes
 
 
 {-| -}

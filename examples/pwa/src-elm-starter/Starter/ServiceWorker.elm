@@ -68,6 +68,12 @@ precacheAndRoute(
         ++ """
 );
 
+
+registerRoute(
+    ({url}) => url.pathname === ('/'),
+    new NetworkFirst()
+);
+
 registerRoute(
     ({request}) => request.destination === 'script',
     new NetworkFirst()

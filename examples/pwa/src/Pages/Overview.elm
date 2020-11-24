@@ -652,6 +652,11 @@ UI.Theme.Theme`contains two values:
 * ReX demo booking: https://rakuten-rex.github.io/demo-booking/
 * ReX demo registration: https://rakuten-rex.github.io/demo-register/
 * ReX demo sign-up: https://rakuten-rex.github.io/demo-sign-up/
+    
+# Rakuten Branding Tram
+
+* Brand Guideline: https://global.rakuten.com/corp/brand/
+* Logos (internal): https://global.rakuten.com/corp/brand/logos_temp_visual/logos/files/subbrand_japan_logos.html
 
 # Elm open source projects in Rakuten
 

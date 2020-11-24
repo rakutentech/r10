@@ -26,7 +26,7 @@ precacheFiles :
     -> String
 precacheFiles { relative, version, commit, assets } =
     Starter.Cache.stuffToCache relative version commit assets
-        |> List.map (\( url, revision ) -> { url = url, revision = revision })
+        |> List.map (\( url, revision ) -> { url = url, revision = revision ++ "." ++ commit })
         |> Json.Encode.list encoderCacheableUrls
         |> Json.Encode.encode 4
 

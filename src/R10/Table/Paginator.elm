@@ -8,11 +8,11 @@ import Html exposing (Html)
 import Html.Attributes
 import Html.Events
 import R10.Form
-import Svg
 import R10.Table.Config exposing (PaginationConfig)
 import R10.Table.Msg
 import R10.Table.State exposing (PaginationButtonState(..), PaginationState(..), PaginationStateRecord)
 import R10.Table.Svg exposing (arrowNext, arrowPrev)
+import Svg
 
 
 buttonStyle : List (Attribute msg)

@@ -1,8 +1,8 @@
-module R10.Table exposing (Column, columnCustom, columnSimple, columnWithAttrs, columnWithViews, config, configWithAccordionRow, customConfig, getActiveFilters, getPaginationStateRecord, initialStateFilters, initialStatePagination, initialStateSort, isLoading, isLoadingByPagination, paginationButtonDisableAll, paginationButtonEnableAll, paginationButtonEnableOther, paginationButtonNextFetch, paginationButtonPrevFetch, setLoading, updatePaginationState, view, viewHeaderRowHelp)
+module R10.Table exposing (Column, columnCustom, columnSimple, columnWithAttrs, columnWithViews, config, configWithAccordionRow, customConfig, getActiveFilters, getPaginationStateRecord, initialStateFilters, initialStatePagination, initialStateSort, isLoading, isLoadingByPagination, paginationButtonDisableAll, paginationButtonEnableAll, paginationButtonEnableOther, paginationButtonNextFetch, paginationButtonPrevFetch, setLoading, updatePaginationState, view, viewHeaderRowHelp, State)
 
 {-|
 
-@docs Column, columnCustom, columnSimple, columnWithAttrs, columnWithViews, config, configWithAccordionRow, customConfig, getActiveFilters, getPaginationStateRecord, initialStateFilters, initialStatePagination, initialStateSort, isLoading, isLoadingByPagination, paginationButtonDisableAll, paginationButtonEnableAll, paginationButtonEnableOther, paginationButtonNextFetch, paginationButtonPrevFetch, setLoading, updatePaginationState, view, viewHeaderRowHelp
+@docs Column, columnCustom, columnSimple, columnWithAttrs, columnWithViews, config, configWithAccordionRow, customConfig, getActiveFilters, getPaginationStateRecord, initialStateFilters, initialStatePagination, initialStateSort, isLoading, isLoadingByPagination, paginationButtonDisableAll, paginationButtonEnableAll, paginationButtonEnableOther, paginationButtonNextFetch, paginationButtonPrevFetch, setLoading, updatePaginationState, view, viewHeaderRowHelp, State
 
 -}
 
@@ -434,3 +434,7 @@ view palette conf state data =
         , viewBody palette conf state data
         , Element.map conf.toMsg paginator
         ]
+
+
+type alias State =
+    R10.Table.State.State

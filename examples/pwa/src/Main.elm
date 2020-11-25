@@ -50,17 +50,18 @@ import Url
 import Url.Parser exposing ((</>))
 
 
-heroColor : Color
-heroColor =
+heroColor : R10.Theme.Theme -> Color
+heroColor theme =
     -- R10.Color.Utils.colorToElementColor <|
     --     R10.Color.Internal.Primary.toColor { mode = R10.Mode.Light } R10.Color.Primary.Blue
     -- rgb255 18 147 216
-    rgb255 17 123 180
+    -- rgb255 17 123 180
+    R10.Color.Utils.colorToElementColor <| R10.Color.Svg.primary theme
 
 
-heroBackgroundColor : Attr decorative msg
-heroBackgroundColor =
-    Background.color heroColor
+heroBackgroundColor : R10.Theme.Theme -> Attr decorative msg
+heroBackgroundColor theme =
+    Background.color <| heroColor theme
 
 
 type alias Flags =
@@ -92,22 +93,21 @@ type alias Model =
     , mouse : Position
     , isTop : Bool
     , theme : R10.Theme.Theme
-
-    --
-    , header : R10.Header.Model
+    , header : R10.Header.Header
 
     -- PAGES
-    , pageExamples : Pages.Overview.Model
-    , pageExample1 : Pages.UIFormBoilerplate.Model
-    , pageExample2 : Pages.UIFormBoilerplate2.Model
-    , pageExample3 : Pages.UIFormComponentsPhoneSelect.Model
-    , pageExample4 : Pages.UIFormComponentsSingle.Model
-    , pageExample5 : Pages.UIFormComponentsStates.Model
-    , pageExample6 : Pages.UIFormComponentsText.Model
-    , pageExample7 : Pages.UIFormIntroduction.Model
-    , pageExample8 : Pages.UIComponents.Model
+    --
+    , pageOverview : Pages.Overview.Model
+    , pageUIFormBoilerplate : Pages.UIFormBoilerplate.Model
+    , pageUIFormBoilerplate2 : Pages.UIFormBoilerplate2.Model
+    , pageUIFormComponentsPhoneSelect : Pages.UIFormComponentsPhoneSelect.Model
+    , pageUIFormComponentsSingle : Pages.UIFormComponentsSingle.Model
+    , pageUIFormComponentsStates : Pages.UIFormComponentsStates.Model
+    , pageUIFormComponentsText : Pages.UIFormComponentsText.Model
+    , pageUIFormIntroduction : Pages.UIFormIntroduction.Model
+    , pageUIComponents : Pages.UIComponents.Model
     , pageCounter : Pages.Counter.Model
-    , pageTable : Pages.TableExample.Model
+    , pageTableExample : Pages.TableExample.Model
     }
 
 
@@ -158,38 +158,25 @@ init flags =
             { header
                 | debuggingMode = debuggingMode
                 , userMenuOpen = False
-                , backgroundColor = Just heroColor
+                , backgroundColor = Just <| heroColor initTheme
                 , session = R10.Header.SessionNotRequired
                 , supportedLanguageList = languageSupportedList
             }
-      , pageExamples = Pages.Overview.init
-      , pageExample1 = Pages.UIFormBoilerplate.init
-      , pageExample2 = Pages.UIFormBoilerplate2.init
-      , pageExample3 = Pages.UIFormComponentsPhoneSelect.init
-      , pageExample4 = Pages.UIFormComponentsSingle.init
-      , pageExample5 = Pages.UIFormComponentsStates.init
-      , pageExample6 = Pages.UIFormComponentsText.init
+      , pageOverview = Pages.Overview.init
+      , pageUIFormBoilerplate = Pages.UIFormBoilerplate.init
+      , pageUIFormBoilerplate2 = Pages.UIFormBoilerplate2.init
+      , pageUIFormComponentsPhoneSelect = Pages.UIFormComponentsPhoneSelect.init
+      , pageUIFormComponentsSingle = Pages.UIFormComponentsSingle.init
+      , pageUIFormComponentsStates = Pages.UIFormComponentsStates.init
+      , pageUIFormComponentsText = Pages.UIFormComponentsText.init
 
       -- TODO - Add local storage
-      , pageExample7 = Pages.UIFormIntroduction.init { localStorage = Dict.empty }
-      , pageExample8 = Pages.UIComponents.init
+      , pageUIFormIntroduction = Pages.UIFormIntroduction.init { localStorage = Dict.empty }
+      , pageUIComponents = Pages.UIComponents.init
       , pageCounter = Pages.Counter.init
-      , pageTable = Pages.TableExample.init
+      , pageTableExample = Pages.TableExample.init
       }
-    , Cmd.batch
-        [ updateHtmlMeta flags.starter route
-        , if debuggingMode then
-            Cmd.none
-
-          else if flags.sessionCookieExists then
-            Cmd.map Header (R10.Header.getSession 0)
-
-          else
-            -- If the cookie doesn't
-            -- exsist we skeep the ajax call and we already assume
-            -- that the user is not logged in.
-            Cmd.none
-        ]
+    , updateHtmlMeta flags.starter route
     )
 
 
@@ -286,59 +273,59 @@ update msg model =
             ( { model | theme = newTheme }, Cmd.none )
 
         Msg_Overview pageMsg ->
-            ( { model | pageExamples = Pages.Overview.update pageMsg model.pageExamples }, Cmd.none )
+            ( { model | pageOverview = Pages.Overview.update pageMsg model.pageOverview }, Cmd.none )
 
         Msg_UIFormBoilerplate pageMsg ->
-            ( { model | pageExample1 = Pages.UIFormBoilerplate.update pageMsg model.pageExample1 }, Cmd.none )
+            ( { model | pageUIFormBoilerplate = Pages.UIFormBoilerplate.update pageMsg model.pageUIFormBoilerplate }, Cmd.none )
 
         Msg_UIFormBoilerplate2 pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormBoilerplate2.update pageMsg model.pageExample2
+                    Pages.UIFormBoilerplate2.update pageMsg model.pageUIFormBoilerplate2
             in
-            ( { model | pageExample2 = modelPageExample }, Cmd.map Msg_UIFormBoilerplate2 cmdPageExample )
+            ( { model | pageUIFormBoilerplate2 = modelPageExample }, Cmd.map Msg_UIFormBoilerplate2 cmdPageExample )
 
         Msg_UIFormComponentsPhoneSelect pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsPhoneSelect.update pageMsg model.pageExample3
+                    Pages.UIFormComponentsPhoneSelect.update pageMsg model.pageUIFormComponentsPhoneSelect
             in
-            ( { model | pageExample3 = modelPageExample }, Cmd.map Msg_UIFormComponentsPhoneSelect cmdPageExample )
+            ( { model | pageUIFormComponentsPhoneSelect = modelPageExample }, Cmd.map Msg_UIFormComponentsPhoneSelect cmdPageExample )
 
         Msg_UIFormComponentsSingle pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsSingle.update pageMsg model.pageExample4
+                    Pages.UIFormComponentsSingle.update pageMsg model.pageUIFormComponentsSingle
             in
-            ( { model | pageExample4 = modelPageExample }, Cmd.map Msg_UIFormComponentsSingle cmdPageExample )
+            ( { model | pageUIFormComponentsSingle = modelPageExample }, Cmd.map Msg_UIFormComponentsSingle cmdPageExample )
 
         Msg_UIFormComponentsStates pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsStates.update pageMsg model.pageExample5
+                    Pages.UIFormComponentsStates.update pageMsg model.pageUIFormComponentsStates
             in
-            ( { model | pageExample5 = modelPageExample }, Cmd.map Msg_UIFormComponentsStates cmdPageExample )
+            ( { model | pageUIFormComponentsStates = modelPageExample }, Cmd.map Msg_UIFormComponentsStates cmdPageExample )
 
         Msg_UIFormComponentsText pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsText.update pageMsg model.pageExample6
+                    Pages.UIFormComponentsText.update pageMsg model.pageUIFormComponentsText
             in
-            ( { model | pageExample6 = modelPageExample }, Cmd.map Msg_UIFormComponentsText cmdPageExample )
+            ( { model | pageUIFormComponentsText = modelPageExample }, Cmd.map Msg_UIFormComponentsText cmdPageExample )
 
         Msg_UIFormIntroduction pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormIntroduction.update pageMsg model.pageExample7
+                    Pages.UIFormIntroduction.update pageMsg model.pageUIFormIntroduction
             in
-            ( { model | pageExample7 = modelPageExample }, Cmd.map Msg_UIFormIntroduction cmdPageExample )
+            ( { model | pageUIFormIntroduction = modelPageExample }, Cmd.map Msg_UIFormIntroduction cmdPageExample )
 
         Msg_UIComponents pageMsg ->
             let
                 modelPageExample =
-                    Pages.UIComponents.update pageMsg model.pageExample8
+                    Pages.UIComponents.update pageMsg model.pageUIComponents
             in
-            ( { model | pageExample8 = modelPageExample }, Cmd.none )
+            ( { model | pageUIComponents = modelPageExample }, Cmd.none )
 
         Msg_Counter pageMsg ->
             let
@@ -350,9 +337,9 @@ update msg model =
         Msg_PagesTable pageMsg ->
             let
                 modelPageExample =
-                    Pages.TableExample.update pageMsg model.pageTable
+                    Pages.TableExample.update pageMsg model.pageTableExample
             in
-            ( { model | pageTable = modelPageExample }, Cmd.none )
+            ( { model | pageTableExample = modelPageExample }, Cmd.none )
 
         MouseMove mouse ->
             ( { model | mouse = mouse }, Cmd.none )
@@ -429,7 +416,12 @@ view model =
             case model.route of
                 RouteTop _ ->
                     column [ width fill ]
-                        [ Pages.Top.view model.theme (routeToLanguage model.route) heroBackgroundColor (links model.route language) OnClick
+                        [ Pages.Top.view
+                            model.theme
+                            (routeToLanguage model.route)
+                            (heroBackgroundColor model.theme)
+                            (links model.route language)
+                            OnClick
                         , viewFooter model
                         ]
 
@@ -443,37 +435,37 @@ view model =
                             -- of the panda in the page
                             { mouse | y = mouse.y - 7000 }
                     in
-                    mainLayout model Pages.Overview.title (List.map (map Msg_Overview) (Pages.Overview.view model.pageExamples model.theme mouseCorrected model.windowSize))
+                    mainLayout model Pages.Overview.title (List.map (map Msg_Overview) (Pages.Overview.view model.pageOverview model.theme mouseCorrected model.windowSize))
 
                 Route_UIFormBoilerplate lang ->
-                    mainLayout model Pages.UIFormBoilerplate.title (List.map (map Msg_UIFormBoilerplate) (Pages.UIFormBoilerplate.view model.pageExample1 model.theme))
+                    mainLayout model Pages.UIFormBoilerplate.title (List.map (map Msg_UIFormBoilerplate) (Pages.UIFormBoilerplate.view model.pageUIFormBoilerplate model.theme))
 
                 Route_UIFormBoilerplate2 lang ->
-                    mainLayout model Pages.UIFormBoilerplate2.title (List.map (map Msg_UIFormBoilerplate2) (Pages.UIFormBoilerplate2.view model.pageExample2 model.theme))
+                    mainLayout model Pages.UIFormBoilerplate2.title (List.map (map Msg_UIFormBoilerplate2) (Pages.UIFormBoilerplate2.view model.pageUIFormBoilerplate2 model.theme))
 
                 Route_UIFormComponentsPhoneSelect lang ->
-                    mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map Msg_UIFormComponentsPhoneSelect) (Pages.UIFormComponentsPhoneSelect.view model.pageExample3 model.theme))
+                    mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map Msg_UIFormComponentsPhoneSelect) (Pages.UIFormComponentsPhoneSelect.view model.pageUIFormComponentsPhoneSelect model.theme))
 
                 Route_UIFormComponentsSingle lang ->
-                    mainLayout model Pages.UIFormComponentsSingle.title (List.map (map Msg_UIFormComponentsSingle) (Pages.UIFormComponentsSingle.view model.pageExample4 model.theme))
+                    mainLayout model Pages.UIFormComponentsSingle.title (List.map (map Msg_UIFormComponentsSingle) (Pages.UIFormComponentsSingle.view model.pageUIFormComponentsSingle model.theme))
 
                 Route_UIFormComponentsStates lang ->
-                    mainLayout model Pages.UIFormComponentsStates.title (List.map (map Msg_UIFormComponentsStates) (Pages.UIFormComponentsStates.view model.pageExample5 model.theme))
+                    mainLayout model Pages.UIFormComponentsStates.title (List.map (map Msg_UIFormComponentsStates) (Pages.UIFormComponentsStates.view model.pageUIFormComponentsStates model.theme))
 
                 Route_UIFormComponentsText lang ->
-                    mainLayout model Pages.UIFormComponentsText.title (List.map (map Msg_UIFormComponentsText) (Pages.UIFormComponentsText.view model.pageExample6 model.theme))
+                    mainLayout model Pages.UIFormComponentsText.title (List.map (map Msg_UIFormComponentsText) (Pages.UIFormComponentsText.view model.pageUIFormComponentsText model.theme))
 
                 Route_UIFormIntroduction lang ->
-                    mainLayout model Pages.UIFormIntroduction.title (List.map (map Msg_UIFormIntroduction) (Pages.UIFormIntroduction.view model.pageExample7 model.theme))
+                    mainLayout model Pages.UIFormIntroduction.title (List.map (map Msg_UIFormIntroduction) (Pages.UIFormIntroduction.view model.pageUIFormIntroduction model.theme))
 
                 Route_UIComponents lang ->
-                    mainLayout model Pages.UIComponents.title (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageExample8 model.theme))
+                    mainLayout model Pages.UIComponents.title (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageUIComponents model.theme))
 
                 Route_Counter lang ->
                     mainLayout model Pages.Counter.title (List.map (map Msg_Counter) (Pages.Counter.view model.pageCounter model.theme))
 
                 Route_TableExample lang ->
-                    mainLayout model Pages.TableExample.title (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTable model.theme))
+                    mainLayout model Pages.TableExample.title (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTableExample model.theme))
 
                 NotFound lang ->
                     mainLayout model translationsError <|
@@ -540,9 +532,16 @@ colorsMenu theme =
                     , padding 0
                     , htmlAttribute <| Html.Attributes.style "transition" "0.4s"
                     , Font.color <| R10.Color.Utils.colorToElementColor <| R10.Color.Svg.primary { theme | primaryColor = type_ }
+                    , centerY
+                    , moveUp <|
+                        if theme.primaryColor == type_ then
+                            2
+
+                        else
+                            0
                     , Font.size <|
                         if theme.primaryColor == type_ then
-                            28
+                            30
 
                         else
                             16

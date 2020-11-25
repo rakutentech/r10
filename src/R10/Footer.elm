@@ -15,7 +15,7 @@ import R10.Header
 
 
 {-| -}
-view : R10.Header.Model -> R10.Header.ViewArgs msg route -> Element msg
+view : R10.Header.Header -> R10.Header.ViewArgs msg route -> Element msg
 view model args =
     column
         [ width fill

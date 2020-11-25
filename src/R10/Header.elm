@@ -1,8 +1,8 @@
-module R10.Header exposing (view, Model, LanguageSystem(..), Msg(..), Session(..), SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample)
+module R10.Header exposing (view, Header, LanguageSystem(..), Msg(..), Session(..), SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample)
 
 {-| This create a generic header.
 
-@docs view, Model, LanguageSystem, Msg, Session, SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample
+@docs view, Header, LanguageSystem, Msg, Session, SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample
 
 -}
 
@@ -47,7 +47,7 @@ userExample =
 
 
 {-| -}
-closeMenu : Model -> Model
+closeMenu : Header -> Header
 closeMenu model =
     { model | sideMenuOpen = False }
 
@@ -70,7 +70,7 @@ type Session
 
 
 {-| -}
-type alias Model =
+type alias Header =
     { sideMenuOpen : Bool
     , userMenuOpen : Bool
     , maxWidth : Int
@@ -103,7 +103,7 @@ type alias ViewArgs msg route =
 
 
 {-| -}
-init : Model
+init : Header
 init =
     { sideMenuOpen = False
     , userMenuOpen = False
@@ -194,7 +194,7 @@ decodeSession =
 
 
 {-| -}
-update : Msg -> Model -> Model
+update : Msg -> Header -> Header
 update msg model =
     case msg of
         Logout ->
@@ -280,7 +280,7 @@ menuSeparator =
 
 
 {-| -}
-subscriptions : Model -> (Msg -> msg) -> List (Sub msg)
+subscriptions : Header -> (Msg -> msg) -> List (Sub msg)
 subscriptions model msgMapper =
     if model.userMenuOpen then
         [ Sub.map msgMapper <| Browser.Events.onClick (Json.Decode.map Click decoderPart1)
@@ -421,7 +421,7 @@ fontColorHeader args =
 
 
 {-| -}
-view : Model -> ViewArgs msg route -> Element msg
+view : Header -> ViewArgs msg route -> Element msg
 view model args =
     el
         [ padding 0
@@ -465,7 +465,7 @@ view model args =
 
 
 {-| -}
-header : Model -> ViewArgs msg route -> Element msg
+header : Header -> ViewArgs msg route -> Element msg
 header model args =
     el
         [ width fill
@@ -509,7 +509,7 @@ header model args =
 
 
 {-| -}
-userSection : Model -> ViewArgs msg route -> List (Element msg)
+userSection : Header -> ViewArgs msg route -> List (Element msg)
 userSection model args =
     [ el
         [ htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"
@@ -563,7 +563,7 @@ userSection model args =
 
 
 {-| -}
-rightArea : Model -> ViewArgs msg route -> Element Msg -> Element msg
+rightArea : Header -> ViewArgs msg route -> Element Msg -> Element msg
 rightArea model args loginButtonElement =
     map args.msgMapper <|
         Input.button
@@ -632,7 +632,7 @@ dontBreakOut =
 
 
 {-| -}
-userMenu : Model -> ViewArgs msg route -> Element msg
+userMenu : Header -> ViewArgs msg route -> Element msg
 userMenu model args =
     let
         loginArea =
@@ -735,7 +735,7 @@ userMenu model args =
 
 
 {-| -}
-logoutLink : Model -> ViewArgs msg route -> Element Msg
+logoutLink : Header -> ViewArgs msg route -> Element Msg
 logoutLink model args =
     if model.debuggingMode then
         Input.button
@@ -749,7 +749,7 @@ logoutLink model args =
 
 
 {-| -}
-loginLink : Model -> ViewArgs msg route -> Element Msg
+loginLink : Header -> ViewArgs msg route -> Element Msg
 loginLink model args =
     if model.debuggingMode then
         Input.button
@@ -763,13 +763,13 @@ loginLink model args =
 
 
 {-| -}
-loginUrl : Model -> ViewArgs msg route -> String
+loginUrl : Header -> ViewArgs msg route -> String
 loginUrl model args =
     model.urlLogin ++ "?from=" ++ args.from
 
 
 {-| -}
-loginButton : Model -> ViewArgs msg route -> Element Msg
+loginButton : Header -> ViewArgs msg route -> Element Msg
 loginButton model args =
     if model.debuggingMode then
         Input.button (attrsButton ++ [ alignRight ])
@@ -839,7 +839,7 @@ logoColor darkHeader theme =
 
 
 {-| -}
-humbergAndLogo : Model -> ViewArgs msg route -> Element msg
+humbergAndLogo : Header -> ViewArgs msg route -> Element msg
 humbergAndLogo model args =
     row
         [ paddingXY 10 0
@@ -947,7 +947,7 @@ argsToLanguage args =
 
 
 {-| -}
-sideMenu : Model -> ViewArgs msg route -> Element msg
+sideMenu : Header -> ViewArgs msg route -> Element msg
 sideMenu model args =
     column
         [ R10.Color.AttrsBackground.surface2dp args.theme
@@ -992,7 +992,7 @@ sideMenu model args =
 
 
 {-| -}
-languageMenu : Model -> ViewArgs msg route -> List (Element msg)
+languageMenu : Header -> ViewArgs msg route -> List (Element msg)
 languageMenu model args =
     List.map
         (\language ->

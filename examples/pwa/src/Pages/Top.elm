@@ -29,6 +29,7 @@ view theme language heroBackgroundColor content onClick =
             , paddingXY 0 80
             , spacing 60
             , heroBackgroundColor
+            , htmlAttribute <| Html.Attributes.style "transition" "background-color 1.2s"
             ]
             [ row [ spacing 40, centerX, centerY, moveDown 40 ]
                 [ R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 155

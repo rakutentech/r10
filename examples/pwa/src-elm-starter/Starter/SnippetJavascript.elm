@@ -118,7 +118,6 @@ portPushUrl =
 // Change the URL upon request, inform app of the change.
 if (ElmApp && ElmApp.ports && ElmApp.ports.pushUrl) {
     ElmApp.ports.pushUrl.subscribe(function(url) {
-        console.log("xxx", url);
         history.pushState({}, '', url);
         window.scrollTo(0, 0);
         if (ElmApp && ElmApp.ports && ElmApp.ports.onUrlChange) {

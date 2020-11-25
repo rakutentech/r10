@@ -30,6 +30,7 @@ index flags =
                    , meta [ name "description", content flags.description ] []
                    , meta [ name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no" ] []
                    , meta [ httpEquiv "x-ua-compatible", content "ie=edge" ] []
+                   , meta [ name "google-site-verification", content "tGNSt1ck8wNsQPiRNpvQH1yfHT2orQANTOMUTca75Ek" ] []
                    , link [ rel "icon", href (Starter.Icon.iconFileName relative 64) ] []
                    , link [ rel "apple-touch-icon", href (Starter.Icon.iconFileName relative 152) ] []
                    , style_ []

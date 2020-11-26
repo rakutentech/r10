@@ -1,11 +1,11 @@
-module R10.Table.Update exposing (..)
+module R10.Table.Update exposing (update)
 
 import Dict
 import R10.Form
 import R10.Form.Msg
 import R10.FormComponents.Single.Common
 import R10.Table.Msg
-import R10.Table.State exposing (FiltersState(..))
+import R10.Table.State
 import R10.Table.Types
 
 
@@ -150,10 +150,10 @@ update msg state =
 
         R10.Table.Msg.FilterClear key ->
             case state.filters of
-                NoFilters ->
+                R10.Table.State.NoFilters ->
                     state
 
-                Filters filtersState ->
+                R10.Table.State.Filters filtersState ->
                     let
                         newFiltersState : R10.Table.State.FiltersStateRecord
                         newFiltersState =
@@ -166,10 +166,10 @@ update msg state =
 
         R10.Table.Msg.FiltersTogglePopup filter ->
             case state.filters of
-                NoFilters ->
+                R10.Table.State.NoFilters ->
                     state
 
-                Filters filtersState ->
+                R10.Table.State.Filters filtersState ->
                     let
                         key : String
                         key =
@@ -191,20 +191,20 @@ update msg state =
         R10.Table.Msg.FiltersPopupFormMsg formMsg ->
             -- TODO possibly separate actions for FilterValuesUpdate and internal management
             case ( state.filters, formMsg ) of
-                ( NoFilters, _ ) ->
+                ( R10.Table.State.NoFilters, _ ) ->
                     state
 
-                ( Filters filtersState, R10.Form.Msg.LoseFocus _ _ ) ->
+                ( R10.Table.State.Filters filtersState, R10.Form.Msg.LoseFocus _ _ ) ->
                     { state
                         | filters = R10.Table.State.Filters <| updateFilterValuesAndCloseForm filtersState
                     }
 
-                ( Filters filtersState, R10.Form.Msg.OnSingleMsg _ _ _ (R10.FormComponents.Single.Common.OnLoseFocus _) ) ->
+                ( R10.Table.State.Filters filtersState, R10.Form.Msg.OnSingleMsg _ _ _ (R10.FormComponents.Single.Common.OnLoseFocus _) ) ->
                     { state
                         | filters = R10.Table.State.Filters <| updateFilterValuesAndCloseForm filtersState
                     }
 
-                ( Filters filtersState, _ ) ->
+                ( R10.Table.State.Filters filtersState, _ ) ->
                     let
                         -- todo add formCmd emit
                         ( formState, _ ) =

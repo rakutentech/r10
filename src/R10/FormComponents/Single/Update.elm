@@ -1,4 +1,10 @@
-module R10.FormComponents.Single.Update exposing (..)
+module R10.FormComponents.Single.Update exposing
+    ( dropdownHingeHeight
+    , getDropdownHeight
+    , getOptionIndex
+    , getOptionY
+    , update
+    )
 
 import Browser.Dom
 import List.Extra

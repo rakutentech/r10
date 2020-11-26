@@ -4,14 +4,14 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
-import Html exposing (Html)
+import Html
 import Html.Attributes
 import Html.Events
 import R10.Form
-import R10.Table.Config exposing (PaginationConfig)
+import R10.Table.Config
 import R10.Table.Msg
-import R10.Table.State exposing (PaginationButtonState(..), PaginationState(..), PaginationStateRecord)
-import R10.Table.Svg exposing (arrowNext, arrowPrev)
+import R10.Table.State
+import R10.Table.Svg
 import Svg
 
 
@@ -27,12 +27,12 @@ buttonStyle =
     ]
 
 
-intToOption : Int -> Html msg
+intToOption : Int -> Html.Html msg
 intToOption v =
     Html.option [ Html.Attributes.value (String.fromInt v) ] [ Html.text (String.fromInt v) ]
 
 
-numberOfRowsSelector : PaginationConfig -> PaginationStateRecord -> Element R10.Table.Msg.Msg
+numberOfRowsSelector : R10.Table.Config.PaginationConfig -> R10.Table.State.PaginationStateRecord -> Element R10.Table.Msg.Msg
 numberOfRowsSelector paginationConfig state =
     row
         [ alignRight
@@ -53,12 +53,12 @@ numberOfRowsSelector paginationConfig state =
         ]
 
 
-viewPaginationButton : R10.Table.Msg.Msg -> (String -> Int -> Svg.Svg R10.Table.Msg.Msg) -> PaginationButtonState -> Element R10.Table.Msg.Msg
+viewPaginationButton : R10.Table.Msg.Msg -> (String -> Int -> Svg.Svg R10.Table.Msg.Msg) -> R10.Table.State.PaginationButtonState -> Element R10.Table.Msg.Msg
 viewPaginationButton msg icon state =
     el
         (buttonStyle
             ++ (case state of
-                    PaginationButtonEnabled ->
+                    R10.Table.State.PaginationButtonEnabled ->
                         [ Events.onClick <| msg
                         , pointer
                         , mouseOver [ alpha 1, Background.color <| rgba 0 0 0 0.035 ]
@@ -71,12 +71,12 @@ viewPaginationButton msg icon state =
         (html <| icon "black" 22)
 
 
-view : R10.Form.Palette -> PaginationConfig -> PaginationState -> Element R10.Table.Msg.Msg
+view : R10.Form.Palette -> R10.Table.Config.PaginationConfig -> R10.Table.State.PaginationState -> Element R10.Table.Msg.Msg
 view _ paginationConfig paginationState =
     case paginationState of
         -- todo refactor it so pagination would work with default state initially,
         -- creating custom state on pagination change
-        Pagination state ->
+        R10.Table.State.Pagination state ->
             row
                 [ width fill
                 , height <| px 56
@@ -85,12 +85,12 @@ view _ paginationConfig paginationState =
                 ]
                 [ numberOfRowsSelector paginationConfig state
                 , row [ spacing 16 ]
-                    [ viewPaginationButton R10.Table.Msg.PaginatorPrevPage arrowPrev state.prevButtonState
-                    , viewPaginationButton R10.Table.Msg.PaginatorNextPage arrowNext state.nextButtonState
+                    [ viewPaginationButton R10.Table.Msg.PaginatorPrevPage R10.Table.Svg.arrowPrev state.prevButtonState
+                    , viewPaginationButton R10.Table.Msg.PaginatorNextPage R10.Table.Svg.arrowNext state.nextButtonState
                     ]
                 ]
 
-        NoPagination ->
+        R10.Table.State.NoPagination ->
             none
 
 
@@ -107,10 +107,10 @@ paginationButtonNextFetch_ state =
                 | pagination =
                     R10.Table.State.Pagination
                         { paginationStateRecord
-                            | nextButtonState = PaginationButtonLoading
+                            | nextButtonState = R10.Table.State.PaginationButtonLoading
                             , prevButtonState =
-                                if paginationStateRecord.prevButtonState == PaginationButtonLoading then
-                                    PaginationButtonOtherLoading
+                                if paginationStateRecord.prevButtonState == R10.Table.State.PaginationButtonLoading then
+                                    R10.Table.State.PaginationButtonOtherLoading
 
                                 else
                                     paginationStateRecord.prevButtonState
@@ -130,12 +130,12 @@ paginationButtonPrevFetch_ state =
                     R10.Table.State.Pagination
                         { paginationStateRecord
                             | nextButtonState =
-                                if paginationStateRecord.nextButtonState == PaginationButtonLoading then
-                                    PaginationButtonOtherLoading
+                                if paginationStateRecord.nextButtonState == R10.Table.State.PaginationButtonLoading then
+                                    R10.Table.State.PaginationButtonOtherLoading
 
                                 else
                                     paginationStateRecord.nextButtonState
-                            , prevButtonState = PaginationButtonLoading
+                            , prevButtonState = R10.Table.State.PaginationButtonLoading
                         }
             }
 
@@ -151,8 +151,8 @@ paginationButtonEnableAll_ state =
                 | pagination =
                     R10.Table.State.Pagination
                         { paginationStateRecord
-                            | nextButtonState = PaginationButtonEnabled
-                            , prevButtonState = PaginationButtonEnabled
+                            | nextButtonState = R10.Table.State.PaginationButtonEnabled
+                            , prevButtonState = R10.Table.State.PaginationButtonEnabled
                         }
             }
 
@@ -168,8 +168,8 @@ paginationButtonDisableAll_ state =
                 | pagination =
                     R10.Table.State.Pagination
                         { paginationStateRecord
-                            | nextButtonState = PaginationButtonDisabled
-                            , prevButtonState = PaginationButtonDisabled
+                            | nextButtonState = R10.Table.State.PaginationButtonDisabled
+                            , prevButtonState = R10.Table.State.PaginationButtonDisabled
                         }
             }
 
@@ -182,20 +182,20 @@ paginationButtonEnableOther_ state =
     case getPaginationStateRecord_ state of
         Just paginationStateRecord ->
             let
-                nextState : PaginationButtonState -> PaginationButtonState
+                nextState : R10.Table.State.PaginationButtonState -> R10.Table.State.PaginationButtonState
                 nextState current =
                     case current of
-                        PaginationButtonDisabled ->
-                            PaginationButtonDisabled
+                        R10.Table.State.PaginationButtonDisabled ->
+                            R10.Table.State.PaginationButtonDisabled
 
-                        PaginationButtonLoading ->
-                            PaginationButtonDisabled
+                        R10.Table.State.PaginationButtonLoading ->
+                            R10.Table.State.PaginationButtonDisabled
 
-                        PaginationButtonOtherLoading ->
-                            PaginationButtonEnabled
+                        R10.Table.State.PaginationButtonOtherLoading ->
+                            R10.Table.State.PaginationButtonEnabled
 
-                        PaginationButtonEnabled ->
-                            PaginationButtonEnabled
+                        R10.Table.State.PaginationButtonEnabled ->
+                            R10.Table.State.PaginationButtonEnabled
             in
             { state
                 | pagination =

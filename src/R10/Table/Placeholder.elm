@@ -40,6 +40,7 @@ toHex color =
         |> String.join ""
 
 
+placeholderSvg : Color -> Element msg
 placeholderSvg color =
     let
         stringColor =

@@ -1,4 +1,10 @@
-module R10.FormComponents.Phone.Update exposing (..)
+module R10.FormComponents.Phone.Update exposing
+    ( dropdownHingeHeight
+    , extractCountry
+    , getDropdownHeight
+    , getMsgOnFlagClick
+    , update
+    )
 
 import Browser.Dom
 import List.Extra

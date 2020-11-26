@@ -14,7 +14,6 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Html exposing (Html)
 import Html.Attributes
 import Json.Decode
 import Json.Encode

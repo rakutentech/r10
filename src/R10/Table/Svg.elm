@@ -1,4 +1,10 @@
-module R10.Table.Svg exposing (..)
+module R10.Table.Svg exposing
+    ( arrowDown
+    , arrowNext
+    , arrowPrev
+    , filterList
+    , removeCircle
+    )
 
 import Svg
 import Svg.Attributes as SA

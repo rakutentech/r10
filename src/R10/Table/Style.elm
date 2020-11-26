@@ -1,4 +1,8 @@
-module R10.Table.Style exposing (..)
+module R10.Table.Style exposing
+    ( defaultCellAttrs
+    , defaultHeaderAttrs
+    , defaultRowAttrs
+    )
 
 import Element exposing (..)
 import Element.Border as Border

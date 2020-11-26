@@ -1,6 +1,13 @@
-module R10.Table.State exposing (..)
+module R10.Table.State exposing
+    ( FiltersState(..)
+    , FiltersStateRecord
+    , PaginationButtonState(..)
+    , PaginationState(..)
+    , PaginationStateRecord
+    , State
+    )
 
-import Dict exposing (Dict)
+import Dict
 import R10.Form
 
 
@@ -48,7 +55,7 @@ type alias SortState =
 
 type alias FiltersStateRecord =
     { filterEditor : Maybe ( String, R10.Form.Form ) -- ( open on filter with key, popup inner form model)
-    , filterValues : Dict String String
+    , filterValues : Dict.Dict String String
     }
 
 

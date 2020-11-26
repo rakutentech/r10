@@ -10,7 +10,6 @@ module Pages.UIFormComponentsPhoneSelect exposing
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
-import Html exposing (Html)
 import R10.Form
 import R10.Language
 import R10.Theme

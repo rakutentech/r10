@@ -1,6 +1,6 @@
 module R10.Table.Filters exposing (view)
 
-import Dict exposing (Dict)
+import Dict
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border

@@ -8,7 +8,7 @@ import R10.Form
 import R10.Table.Config
 import R10.Table.State
 import R10.Table.Style
-import R10.Table.Svg exposing (arrowDown)
+import R10.Table.Svg
 import R10.Table.Types
 
 
@@ -152,7 +152,7 @@ viewHeaderSortArrow ( buttonType, isReversed ) =
             ]
         <|
             html <|
-                arrowDown "black" 18
+                R10.Table.Svg.arrowDown "black" 18
 
 
 simpleHeader : List (Attribute msg) -> R10.Form.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg

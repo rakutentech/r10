@@ -1,4 +1,8 @@
-module R10.Table.Sorter exposing (..)
+module R10.Table.Sorter exposing
+    ( increasingOrDecreasingBy
+    , sort
+    , unsortable
+    )
 
 import R10.Table.Config
 import R10.Table.State

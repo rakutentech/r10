@@ -170,8 +170,8 @@ import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils.FocusOut
-import R10.FormComponents.Utils.SimpleMarkdown
 import R10.FormComponents.Validations
+import R10.SimpleMarkdown
 import R10.Theme
 
 
@@ -1146,7 +1146,7 @@ colorToCssString =
 {-| -}
 elementMarkdown : String -> List (Element msg)
 elementMarkdown =
-    R10.FormComponents.Utils.SimpleMarkdown.elementMarkdown
+    R10.SimpleMarkdown.elementMarkdown
 
 
 {-| -}

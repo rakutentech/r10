@@ -22,8 +22,8 @@ import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils
-import R10.FormComponents.Utils.SimpleMarkdown
 import R10.FormComponents.Validations
+import R10.SimpleMarkdown
 import String.Extra
 
 
@@ -75,7 +75,7 @@ defaultToOptionEl { search, msgOnSelect } { label, value } =
         , htmlAttribute <| Html.Attributes.style "mask-image" "linear-gradient(right, rgba(255,255,0,0), rgba(255,255,0, 1) 16px)"
         , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
         ]
-        (withBold |> R10.FormComponents.Utils.SimpleMarkdown.elementMarkdown)
+        (withBold |> R10.SimpleMarkdown.elementMarkdown)
 
 
 defaultTrailingIcon : { a | opened : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg

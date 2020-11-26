@@ -33,7 +33,7 @@ import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Const
 import R10.FormComponents.UI.Icon
 import R10.FormComponents.UI.Palette
-import R10.FormComponents.Utils.SimpleMarkdown
+import R10.SimpleMarkdown
 import Svg
 
 
@@ -70,7 +70,7 @@ viewHelperText palette attrs maybeHelperText =
                     ++ attrs
                 )
             <|
-                R10.FormComponents.Utils.SimpleMarkdown.elementMarkdownAdvanced
+                R10.SimpleMarkdown.elementMarkdownAdvanced
                     { link = [ Font.color <| R10.FormComponents.UI.Color.primary palette ] }
                     helperText
 

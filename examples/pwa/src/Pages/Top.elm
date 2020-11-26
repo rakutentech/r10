@@ -2,7 +2,6 @@ module Pages.Top exposing (view)
 
 import Color
 import Element exposing (..)
-import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes
 import Markdown

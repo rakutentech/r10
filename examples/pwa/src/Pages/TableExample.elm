@@ -7,7 +7,6 @@ module Pages.TableExample exposing
     , view
     )
 
-import Color
 import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Background as Background
@@ -17,15 +16,12 @@ import Element.Font as Font
 import Html.Attributes
 import Json.Encode
 import Markdown
-import Pages.Shared.Utils
 import R10.Button
 import R10.Card
-import R10.Color
 import R10.Color.Utils
 import R10.Form
 import R10.Language
 import R10.Libu
-import R10.Mode
 import R10.Table
 import R10.Table.Config
 import R10.Table.Header

@@ -26,9 +26,7 @@ module R10.FormComponents.UI.Palette exposing
     )
 
 import Color
-import Color.Manipulate
 import R10.Color.Svg
-import R10.Mode
 import R10.Theme
 
 

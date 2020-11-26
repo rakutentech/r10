@@ -21,9 +21,7 @@ import Http
 import Json.Decode
 import Process
 import R10.Card
-import R10.Color
 import R10.Color.AttrsBackground
-import R10.Color.Internal.Derived
 import R10.Color.Internal.Primary
 import R10.Color.Svg
 import R10.Color.Utils
@@ -31,7 +29,6 @@ import R10.I18n
 import R10.Language
 import R10.Libu
 import R10.Mode
-import R10.Svg.Logos
 import R10.Theme
 import R10.Translations
 import Task

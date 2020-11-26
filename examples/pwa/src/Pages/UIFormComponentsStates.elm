@@ -11,7 +11,6 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Pages.Shared.Utils
 import R10.Form
 import R10.FormComponents
 import R10.FormComponents.Binary

@@ -35,7 +35,7 @@ defaultCodeError =
     "GENERIC"
 
 
-type alias Model =
+type alias Okaimonopanda =
     { mouse : Position
     , screen : Position
     , flags : Flags
@@ -44,7 +44,7 @@ type alias Model =
     }
 
 
-init : Flags -> ( Model, Cmd Msg )
+init : Flags -> ( Okaimonopanda, Cmd Msg )
 init flags =
     ( { mouse = { x = flags.x // 2, y = flags.y // 2 }
       , screen = { x = flags.x, y = flags.y }
@@ -63,7 +63,7 @@ type Msg
     | ChangeCodeError String
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Okaimonopanda -> ( Okaimonopanda, Cmd Msg )
 update msg model =
     case msg of
         MouseMove mouse ->
@@ -159,7 +159,7 @@ view model =
     ]
 
 
-viewFullPage : Model -> Html Msg
+viewFullPage : Okaimonopanda -> Html Msg
 viewFullPage model =
     let
         windowRatio =
@@ -352,7 +352,7 @@ type alias Translation =
     }
 
 
-main : Program Flags Model Msg
+main : Program Flags Okaimonopanda Msg
 main =
     Browser.element
         { init = init

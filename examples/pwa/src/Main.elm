@@ -6,8 +6,6 @@ import Color
 import Dict
 import Element exposing (..)
 import Element.Background as Background
-import Element.Border as Border
-import Element.Events as Events
 import Element.Font as Font
 import Html
 import Html.Attributes
@@ -25,7 +23,6 @@ import Pages.UIFormComponentsSingle
 import Pages.UIFormComponentsStates
 import Pages.UIFormComponentsText
 import Pages.UIFormIntroduction
-import R10.Button
 import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground

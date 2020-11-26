@@ -10,13 +10,10 @@ module Pages.UIFormBoilerplate exposing
 import Element exposing (..)
 import Html.Attributes
 import Markdown
-import Pages.Shared.Utils
 import R10.Button
-import R10.Color
 import R10.Form
 import R10.Language
 import R10.Libu
-import R10.Mode
 import R10.Theme
 
 

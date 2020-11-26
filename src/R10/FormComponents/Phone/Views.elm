@@ -3,13 +3,10 @@ module R10.FormComponents.Phone.Views exposing (view)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events as Events
 import Element.Font as Font
 import Element.Keyed as Keyed
-import Element.Lazy
 import Html.Attributes
 import Html.Events
-import List.Extra
 import R10.FormComponents.Phone.Common as Common
 import R10.FormComponents.Phone.Country exposing (Country)
 import R10.FormComponents.Phone.Update

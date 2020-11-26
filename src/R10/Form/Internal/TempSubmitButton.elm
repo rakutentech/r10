@@ -5,7 +5,6 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Form
 import R10.Form.Internal.Msg
 import R10.Form.Internal.Update
 

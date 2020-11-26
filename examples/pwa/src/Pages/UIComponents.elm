@@ -7,8 +7,6 @@ module Pages.UIComponents exposing
     , view
     )
 
-import Color
-import Color.Convert
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -20,7 +18,6 @@ import R10.Button
 import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
-import R10.Color.Utils
 import R10.Form
 import R10.FormComponents
 import R10.Language

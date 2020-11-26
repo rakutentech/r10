@@ -15,9 +15,7 @@ import Element.Input as Input
 import Html exposing (Html)
 import Html.Attributes
 import Markdown
-import Pages.Shared.Utils
 import R10.Card
-import R10.Color
 import R10.Color.Utils
 import R10.Form
 import R10.FormComponents
@@ -25,7 +23,6 @@ import R10.FormComponents.IconButton
 import R10.FormComponents.Text
 import R10.FormComponents.Validations
 import R10.Language
-import R10.Mode
 import R10.Svg.IconsExtra
 import R10.Theme
 

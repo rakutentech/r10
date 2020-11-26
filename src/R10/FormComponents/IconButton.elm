@@ -3,7 +3,6 @@ module R10.FormComponents.IconButton exposing (view)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events as Events
 import Html.Attributes
 import Html.Events
 import Json.Decode

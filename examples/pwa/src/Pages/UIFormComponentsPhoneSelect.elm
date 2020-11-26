@@ -11,12 +11,8 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Html exposing (Html)
-import Pages.Shared.Utils
-import R10.Card
-import R10.Color
 import R10.Form
 import R10.Language
-import R10.Mode
 import R10.Theme
 
 

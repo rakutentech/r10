@@ -7,7 +7,6 @@ module R10.Svg.Utils exposing (wrapperWithViewbox, wrapper32)
 -}
 
 import Element exposing (..)
-import Html
 import Html.Attributes
 import Svg
 import Svg.Attributes as SA

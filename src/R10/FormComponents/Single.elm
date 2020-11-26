@@ -10,7 +10,6 @@ module R10.FormComponents.Single exposing
     )
 
 import Element exposing (..)
-import Element.Background as Background
 import Html.Attributes
 import R10.FormComponents.IconButton
 import R10.FormComponents.Single.Combobox

@@ -22,15 +22,12 @@ import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.AttrsBorder
-import R10.Color.AttrsFont
 import R10.Color.Svg
 import R10.Color.Utils
 import R10.FontSize
 import R10.Form
 import R10.FormComponents
-import R10.I18n
 import R10.Language
-import R10.LanguageSelector
 import R10.Libu
 import R10.Link
 import R10.Mode
@@ -38,9 +35,7 @@ import R10.Okaimonopanda
 import R10.Paragraph
 import R10.Svg.Icons
 import R10.Svg.Lists
-import R10.Svg.LogosExtra
 import R10.Theme
-import R10.Translations
 
 
 title : R10.Language.Translations

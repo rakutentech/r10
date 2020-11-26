@@ -9,39 +9,13 @@ module Pages.Counter exposing
     )
 
 import Browser.Events
-import Color
-import Color.Accessibility
-import Color.Convert
 import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
 import Element.Font as Font
-import Element.Input as Input
-import Html
-import Html.Attributes
-import Markdown
 import R10.Button
-import R10.Color
-import R10.Color.AttrsBackground
-import R10.Color.AttrsBorder
-import R10.Color.AttrsFont
-import R10.Color.Svg
-import R10.Color.Utils
 import R10.Counter
-import R10.FontSize
-import R10.Form
-import R10.FormComponents
-import R10.I18n
 import R10.Language
-import R10.LanguageSelector
 import R10.Libu
-import R10.Mode
-import R10.Okaimonopanda
-import R10.Paragraph
-import R10.Svg.Icons
-import R10.Svg.Lists
 import R10.Theme
-import R10.Translations
 import Time
 
 

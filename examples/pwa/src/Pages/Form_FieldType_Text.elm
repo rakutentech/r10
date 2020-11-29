@@ -1,4 +1,4 @@
-module Pages.UIFormComponentsSingle exposing
+module Pages.Form_FieldType_Text exposing
     ( Model
     , Msg
     , init
@@ -18,7 +18,9 @@ import R10.Card
 import R10.Color.Utils
 import R10.Form
 import R10.FormComponents
-import R10.FormComponents.Single.Common
+import R10.FormComponents.IconButton
+import R10.FormComponents.Text
+import R10.FormComponents.Validations
 import R10.Language
 import R10.Svg.IconsExtra
 import R10.Theme
@@ -27,49 +29,63 @@ import R10.Theme
 title : R10.Language.Translations
 title =
     { key = "title"
-    , en_us = "Forms - Single"
-    , ja_jp = "Forms - Single"
-    , zh_tw = "Forms - Single"
-    , es_es = "Forms - Single"
-    , fr_fr = "Forms - Single"
-    , de_de = "Forms - Single"
-    , it_it = "Forms - Single"
-    , nl_nl = "Forms - Single"
-    , pt_pt = "Forms - Single"
-    , nb_no = "Forms - Single"
-    , fi_fl = "Forms - Single"
-    , da_dk = "Forms - Single"
-    , sv_se = "Forms - Single"
+    , en_us = "Form Field Type - Text"
+    , ja_jp = "Form Field Type - Text"
+    , zh_tw = "Form Field Type - Text"
+    , es_es = "Form Field Type - Text"
+    , fr_fr = "Form Field Type - Text"
+    , de_de = "Form Field Type - Text"
+    , it_it = "Form Field Type - Text"
+    , nl_nl = "Form Field Type - Text"
+    , pt_pt = "Form Field Type - Text"
+    , nb_no = "Form Field Type - Text"
+    , fi_fl = "Form Field Type - Text"
+    , da_dk = "Form Field Type - Text"
+    , sv_se = "Form Field Type - Text"
     }
 
 
 type alias Model =
-    { singleModel : R10.Form.SingleModel
-    , disabled : Bool
-    , helperShow : Bool
-    , helperText : String
-    , requiredShow : Bool
-    , requiredText : String
+    { messages : List String
+    , value : String
     , label : String
+    , focused : Bool
+    , showPassword : Bool
     , leadingIcon : Maybe Icon
-    , messages : List String
-    , selectOptionHeight : Int
-    , maxDisplayCount : Int
     , trailingIcon : Maybe Icon
-    , type_ : R10.Form.SingleType
-    , validation : R10.Form.Validation2
-    , fieldOptions : List R10.Form.SingleFieldOption
+    , validation : R10.FormComponents.Validations.Validation
+    , helperText : String
+    , helperShow : Bool
+    , requiredText : String
+    , requiredShow : Bool
+    , disabled : Bool
+    , textType : R10.FormComponents.Text.TextType
     }
 
 
-typeToString : R10.Form.SingleType -> String
-typeToString textType =
+textTypeToString : R10.FormComponents.Text.TextType -> String
+textTypeToString textType =
     case textType of
-        R10.FormComponents.Single.Common.SingleCombobox ->
-            "R10.Form.single.combobox"
+        R10.FormComponents.Text.TextPasswordNew ->
+            "TextPasswordNew"
 
-        R10.FormComponents.Single.Common.SingleRadio ->
-            "R10.Form.single.radio"
+        R10.FormComponents.Text.TextPasswordCurrent ->
+            "TextPasswordCurrent"
+
+        R10.FormComponents.Text.TextPlain ->
+            "TextPlain"
+
+        R10.FormComponents.Text.TextEmail ->
+            "TextEmail"
+
+        R10.FormComponents.Text.TextUsername ->
+            "TextUsername"
+
+        R10.FormComponents.Text.TextMultiline ->
+            "TextMultiline"
+
+        R10.FormComponents.Text.TextWithPattern pattern ->
+            "TextWithPattern:" ++ pattern
 
 
 iconToString : Maybe Icon -> String
@@ -85,31 +101,16 @@ iconToString icon =
             "Nothing"
 
 
-generateFieldOptions : Int -> List { label : String, value : String }
-generateFieldOptions count =
-    if count == 0 then
-        []
-
-    else
-        List.range 0 (count - 1)
-            |> List.map
-                (\index ->
-                    { label = "label #" ++ String.fromInt index
-                    , value = "value #" ++ String.fromInt index
-                    }
-                )
-
-
 type Icon
     = Play
     | Pause
 
 
-toIconEl : R10.Form.Palette -> Icon -> Element Msg
+toIconEl : R10.FormComponents.Palette -> Icon -> Element Msg
 toIconEl palette leadingIcon =
     case leadingIcon of
         Play ->
-            R10.Form.viewIconButton []
+            R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Play
                 , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 24
                 , palette = palette
@@ -117,7 +118,7 @@ toIconEl palette leadingIcon =
                 }
 
         Pause ->
-            R10.Form.viewIconButton []
+            R10.FormComponents.IconButton.view []
                 { msgOnClick = Just <| PlayPauseClick Pause
                 , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 30
                 , palette = palette
@@ -127,74 +128,67 @@ toIconEl palette leadingIcon =
 
 init : Model
 init =
-    { singleModel = R10.Form.initSingle
-    , disabled = False
+    { messages = []
+    , value = ""
+    , label = "Label"
+    , focused = False
     , helperShow = True
     , helperText = """Helper text ([Markdown](https://en.wikipedia.org/wiki/Markdown))"""
-    , label = "Label"
-    , leadingIcon = Just Play
-    , messages = []
     , requiredShow = True
     , requiredText = "required_text"
-    , selectOptionHeight = 36
-    , maxDisplayCount = 5
+    , disabled = False
+    , showPassword = False
+    , leadingIcon = Just Play
     , trailingIcon = Nothing
-    , type_ = R10.Form.typeSingle.combobox
-    , validation = R10.Form.componentValidation.notYetValidated
-    , fieldOptions = generateFieldOptions 10
+    , textType = R10.FormComponents.Text.TextPasswordNew
+    , validation = R10.FormComponents.Validations.NotYetValidated
     }
 
 
 type Msg
-    = -- component MSGs
-      NoOp
-    | OnSingleMsg R10.Form.SingleMsg
-      -- page MSGs
-    | ChangeFieldOptionLen String
-    | ChangeHelperText String
+    = OnChange String
+    | OnFocus
+    | OnLoseFocus
+      --
     | ChangeLabel String
-    | ChangeRequiredText String
-    | PlayPauseClick Icon
-    | RotateLeadingIcon
-    | RotateOpened
-    | RotateFocused
-    | SetValue String
-    | ChangeSelectOptionHeight String
-    | ChangeMaxDisplayCount String
-    | RotateTrailingIcon
-    | RotateType
     | RotateValidation
-    | ToggleDisabled
     | ToggleHelperShow
     | ToggleRequiredShow
+    | ChangeRequiredText String
+    | ToggleDisabled
+    | ToggleShowPassword
+    | ChangeHelperText String
+    | RotateTextType
+    | RotateLeadingIcon
+    | RotateTrailingIcon
+    | PlayPauseClick Icon
 
 
 validations :
-    { n1 : R10.Form.Validation2
-    , n2 : R10.Form.Validation2
-    , n3 : R10.Form.Validation2
-    , n4 : R10.Form.Validation2
+    { n1 : R10.FormComponents.Validations.Validation
+    , n2 : R10.FormComponents.Validations.Validation
+    , n3 : R10.FormComponents.Validations.Validation
+    , n4 : R10.FormComponents.Validations.Validation
     }
 validations =
-    { n1 = R10.Form.componentValidation.notYetValidated
-    , n2 = R10.Form.componentValidation.validated []
-    , n3 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!" ]
-    , n4 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!", R10.Form.validationMessage.error "Nope" ]
+    { n1 = R10.FormComponents.Validations.NotYetValidated
+    , n2 = R10.FormComponents.Validations.Validated []
+    , n3 = R10.FormComponents.Validations.Validated [ R10.FormComponents.Validations.MessageOk "Yeah!" ]
+    , n4 = R10.FormComponents.Validations.Validated [ R10.FormComponents.Validations.MessageOk "Yeah!", R10.FormComponents.Validations.MessageErr "Nope" ]
     }
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( { model | messages = "NoOp (after focus)" :: model.messages }, Cmd.none )
+        OnChange string ->
+            ( { model | messages = ("OnChange \"" ++ string ++ "\"") :: model.messages, value = string }, Cmd.none )
 
-        OnSingleMsg singleMsg ->
-            let
-                ( singleModel, singleCmd ) =
-                    R10.Form.updateSingle singleMsg model.singleModel
-            in
-            ( { model | singleModel = singleModel }, Cmd.map OnSingleMsg singleCmd )
+        OnFocus ->
+            ( { model | messages = "OnFocus" :: model.messages, focused = True }, Cmd.none )
+
+        OnLoseFocus ->
+            ( { model | messages = "OnLoseFocus" :: model.messages, focused = False }, Cmd.none )
 
         ChangeLabel string ->
             ( { model | label = string }, Cmd.none )
@@ -232,6 +226,9 @@ update msg model =
         ToggleDisabled ->
             ( { model | disabled = not model.disabled }, Cmd.none )
 
+        ToggleShowPassword ->
+            ( { model | messages = "OnTogglePasswordShow" :: model.messages, showPassword = not model.showPassword }, Cmd.none )
+
         RotateLeadingIcon ->
             ( { model
                 | leadingIcon =
@@ -245,36 +242,6 @@ update msg model =
                         Nothing ->
                             Just Play
               }
-            , Cmd.none
-            )
-
-        ChangeFieldOptionLen string ->
-            ( case String.toInt string of
-                Just int ->
-                    { model | fieldOptions = generateFieldOptions int }
-
-                Nothing ->
-                    model
-            , Cmd.none
-            )
-
-        ChangeSelectOptionHeight string ->
-            ( case String.toInt string of
-                Just int ->
-                    { model | selectOptionHeight = int }
-
-                Nothing ->
-                    model
-            , Cmd.none
-            )
-
-        ChangeMaxDisplayCount string ->
-            ( case String.toInt string of
-                Just int ->
-                    { model | maxDisplayCount = int }
-
-                Nothing ->
-                    model
             , Cmd.none
             )
 
@@ -308,43 +275,31 @@ update msg model =
             , Cmd.none
             )
 
-        RotateType ->
+        RotateTextType ->
             ( { model
-                | type_ =
-                    case model.type_ of
-                        R10.FormComponents.Single.Common.SingleCombobox ->
-                            R10.FormComponents.Single.Common.SingleRadio
+                | textType =
+                    case model.textType of
+                        R10.FormComponents.Text.TextPasswordNew ->
+                            R10.FormComponents.Text.TextPasswordCurrent
 
-                        R10.FormComponents.Single.Common.SingleRadio ->
-                            R10.FormComponents.Single.Common.SingleCombobox
+                        R10.FormComponents.Text.TextPasswordCurrent ->
+                            R10.FormComponents.Text.TextEmail
+
+                        R10.FormComponents.Text.TextEmail ->
+                            R10.FormComponents.Text.TextPlain
+
+                        R10.FormComponents.Text.TextPlain ->
+                            R10.FormComponents.Text.TextUsername
+
+                        R10.FormComponents.Text.TextUsername ->
+                            R10.FormComponents.Text.TextMultiline
+
+                        R10.FormComponents.Text.TextMultiline ->
+                            R10.FormComponents.Text.TextPasswordNew
+
+                        R10.FormComponents.Text.TextWithPattern pattern ->
+                            R10.FormComponents.Text.TextWithPattern pattern
               }
-            , Cmd.none
-            )
-
-        RotateOpened ->
-            let
-                singleModel =
-                    model.singleModel
-            in
-            ( { model | singleModel = { singleModel | opened = not singleModel.opened } }
-            , Cmd.none
-            )
-
-        RotateFocused ->
-            let
-                singleModel =
-                    model.singleModel
-            in
-            ( { model | singleModel = { singleModel | focused = not singleModel.focused } }
-            , Cmd.none
-            )
-
-        SetValue string ->
-            let
-                singleModel =
-                    model.singleModel
-            in
-            ( { model | singleModel = { singleModel | value = string } }
             , Cmd.none
             )
 
@@ -365,7 +320,7 @@ view model theme =
             R10.Form.themeToPalette theme
     in
     [ column
-        (R10.Card.normal theme ++ [ spacing 10 ])
+        [ spacing 10 ]
         [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
 Here you can simulate all the possible states of the component "Text". You can click on all yellow areas below to change the state in real time.
 
@@ -373,94 +328,96 @@ The messages on the right are all the messages that are fired by the component.
 """ ] ]
     , column [ spacing 20, width fill ]
         [ row
-            (R10.Card.normal theme ++ [ spacing 20 ])
-            [ R10.Form.viewSingleCustom
+            (R10.Card.noShadow theme ++ [ spacing 20 ])
+            [ R10.Form.viewText
+                [ width (fill |> maximum 600)
+                , centerY
+                ]
                 []
-                model.singleModel
-                { validation = model.validation
-                , toMsg = OnSingleMsg
-                , label = model.label
+                -- Stuff that doesn't change during
+                -- the life of the component
+                --
+                { label = model.label
                 , helperText =
                     if model.helperShow then
                         Just model.helperText
 
                     else
                         Nothing
-                , disabled = model.disabled
                 , requiredLabel =
                     if model.requiredShow then
                         Just model.requiredText
 
                     else
                         Nothing
-                , style = R10.Form.style.outlined
-                , key = ""
+                , textType = model.textType
+                , idDom = Nothing
+                , style = R10.FormComponents.style.outlined
                 , palette = palette
-                , singleType = model.type_
-                , fieldOptions = model.fieldOptions
-                , searchFn = R10.Form.defaultSearchFn
-                , toOptionEl =
-                    R10.Form.defaultToOptionEl
-                        { search = model.singleModel.search
-                        , msgOnSelect = R10.Form.singleMsg.onOptionSelect >> OnSingleMsg
-                        }
-                , selectOptionHeight = model.selectOptionHeight
-                , maxDisplayCount = model.maxDisplayCount
-                , leadingIcon = model.leadingIcon |> Maybe.map (toIconEl palette)
-                , trailingIcon =
-                    model.trailingIcon
-                        |> Maybe.map (toIconEl palette)
-                        |> Maybe.withDefault
-                            (R10.Form.defaultTrailingIcon
-                                { opened = model.singleModel.opened
-                                , palette = palette
-                                }
-                            )
-                        |> Just
+
+                -- Stuff that change during
+                -- the life of the component
+                --
+                , value = model.value
+                , focused = model.focused
+                , validation = model.validation
+                , disabled = model.disabled
+                , showPassword = model.showPassword
+                , leadingIcon = Maybe.map (toIconEl palette) model.leadingIcon
+                , trailingIcon = Maybe.map (toIconEl palette) model.trailingIcon
+
+                -- Messages
+                --
+                , msgOnChange = OnChange
+                , msgOnFocus = OnFocus
+                , msgOnLoseFocus = Just OnLoseFocus
+                , msgOnTogglePasswordShow = Just ToggleShowPassword
+                , msgOnEnter = Nothing
                 }
-            , R10.Form.viewSingleCustom
+            , R10.FormComponents.Text.view
+                [ width (fill |> maximum 600)
+                , centerY
+                ]
                 []
-                model.singleModel
-                { validation = model.validation
-                , toMsg = OnSingleMsg
-                , label = model.label
+                -- Stuff that doesn't change during
+                -- the life of the component
+                --
+                { label = model.label
                 , helperText =
                     if model.helperShow then
                         Just model.helperText
 
                     else
                         Nothing
-                , disabled = model.disabled
                 , requiredLabel =
                     if model.requiredShow then
                         Just model.requiredText
 
                     else
                         Nothing
-                , style = R10.Form.style.filled
-                , key = ""
+                , textType = model.textType
+                , idDom = Nothing
+                , style = R10.FormComponents.style.filled
                 , palette = palette
-                , singleType = model.type_
-                , fieldOptions = model.fieldOptions
-                , searchFn = R10.Form.defaultSearchFn
-                , toOptionEl =
-                    R10.Form.defaultToOptionEl
-                        { search = model.singleModel.search
-                        , msgOnSelect = R10.Form.singleMsg.onOptionSelect >> OnSingleMsg
-                        }
-                , selectOptionHeight = model.selectOptionHeight
-                , maxDisplayCount = model.maxDisplayCount
-                , leadingIcon = model.leadingIcon |> Maybe.map (toIconEl palette)
-                , trailingIcon =
-                    model.trailingIcon
-                        |> Maybe.map (toIconEl palette)
-                        |> Maybe.withDefault
-                            (R10.Form.defaultTrailingIcon
-                                { opened = model.singleModel.opened
-                                , palette = palette
-                                }
-                            )
-                        |> Just
+
+                -- Stuff that change during
+                -- the life of the component
+                --
+                , value = model.value
+                , focused = model.focused
+                , validation = model.validation
+                , disabled = model.disabled
+                , showPassword = model.showPassword
+                , leadingIcon = Maybe.map (toIconEl palette) model.leadingIcon
+                , trailingIcon = Maybe.map (toIconEl palette) model.trailingIcon
+
+                -- Messages
+                --
+                , msgOnChange = OnChange
+                , msgOnFocus = OnFocus
+                , msgOnLoseFocus = Just OnLoseFocus
+                , msgOnTogglePasswordShow = Just ToggleShowPassword
+                , msgOnEnter = Nothing
                 }
             ]
         ]
@@ -470,7 +427,7 @@ The messages on the right are all the messages that are fired by the component.
         , centerX
         ]
         [ column
-            (R10.Card.normal theme
+            (R10.Card.noShadow theme
                 ++ [ padding 20
                    , spacing 5
                    , width fill
@@ -480,7 +437,7 @@ The messages on the right are all the messages that are fired by the component.
                 [ Font.family [ Font.monospace ]
                 , spacing 5
                 ]
-                [ text "R10.Form.viewText [] []"
+                [ text "FormComponents.Text.view [] []"
                 , text " "
                 , text "    -- Stuff that doesn't change during"
                 , text "    -- the life of the component"
@@ -550,49 +507,10 @@ The messages on the right are all the messages that are fired by the component.
                         none
                     ]
                 , row []
-                    [ text "    , field option number = "
-                    , row [ width fill ]
-                        [ text " \""
-                        , Input.text attrs
-                            { label = Input.labelHidden ""
-                            , onChange = ChangeFieldOptionLen
-                            , placeholder = Nothing
-                            , text = String.fromInt <| List.length <| model.fieldOptions
-                            }
-                        , text "\""
-                        ]
-                    ]
-                , row []
-                    [ text "    , selectOptionHeight = "
-                    , row [ width fill ]
-                        [ text " \""
-                        , Input.text attrs
-                            { label = Input.labelHidden ""
-                            , onChange = ChangeSelectOptionHeight
-                            , placeholder = Nothing
-                            , text = String.fromInt <| model.selectOptionHeight
-                            }
-                        , text "\""
-                        ]
-                    ]
-                , row []
-                    [ text "    , maxDisplayCount = "
-                    , row [ width fill ]
-                        [ text " \""
-                        , Input.text attrs
-                            { label = Input.labelHidden ""
-                            , onChange = ChangeMaxDisplayCount
-                            , placeholder = Nothing
-                            , text = String.fromInt <| model.maxDisplayCount
-                            }
-                        , text "\""
-                        ]
-                    ]
-                , row []
                     [ text "    , textType = "
                     , Input.button [ backgroundColor ]
-                        { onPress = Just RotateType
-                        , label = text <| typeToString model.type_
+                        { onPress = Just RotateTextType
+                        , label = text <| textTypeToString model.textType
                         }
                     ]
                 , row []
@@ -617,51 +535,30 @@ The messages on the right are all the messages that are fired by the component.
                     [ text "    , value = \""
                     , Input.text attrs
                         { label = Input.labelHidden ""
-                        , onChange = SetValue
+                        , onChange = OnChange
                         , placeholder = Nothing
-                        , text = model.singleModel.value
-                        }
-                    , text "\""
-                    ]
-                , row []
-                    [ text "    , select = \""
-                    , Input.text attrs
-                        { label = Input.labelHidden ""
-                        , onChange = SetValue
-                        , placeholder = Nothing
-                        , text = model.singleModel.select
-                        }
-                    , text "\""
-                    ]
-                , row []
-                    [ text "    , search = \""
-                    , Input.text attrs
-                        { label = Input.labelHidden ""
-                        , onChange = SetValue
-                        , placeholder = Nothing
-                        , text = model.singleModel.search
+                        , text = model.value
                         }
                     , text "\""
                     ]
                 , row []
                     [ text "    , focused = "
                     , Input.button [ backgroundColor ]
-                        { onPress = Just RotateFocused
-                        , label = text <| R10.Form.boolToString model.singleModel.focused
-                        }
-                    ]
-                , row []
-                    [ text "    , opened = "
-                    , Input.button [ backgroundColor ]
-                        { onPress = Just RotateOpened
-                        , label = text <| R10.Form.boolToString model.singleModel.opened
+                        { onPress =
+                            Just <|
+                                if model.focused then
+                                    OnLoseFocus
+
+                                else
+                                    OnFocus
+                        , label = text <| R10.Form.boolToString model.focused
                         }
                     ]
                 , row []
                     [ text "    , validation = "
                     , Input.button [ backgroundColor ]
                         { onPress = Just RotateValidation
-                        , label = text <| R10.Form.validationToString model.validation
+                        , label = text <| R10.FormComponents.Validations.validationToString model.validation
                         }
                     ]
                 , row []
@@ -669,6 +566,13 @@ The messages on the right are all the messages that are fired by the component.
                     , Input.button [ backgroundColor ]
                         { onPress = Just ToggleDisabled
                         , label = text <| R10.Form.boolToString model.disabled
+                        }
+                    ]
+                , row []
+                    [ text "    , showPassword = "
+                    , Input.button [ backgroundColor ]
+                        { onPress = Just ToggleShowPassword
+                        , label = text <| R10.Form.boolToString model.showPassword
                         }
                     ]
                 , text " "
@@ -682,7 +586,7 @@ The messages on the right are all the messages that are fired by the component.
                 ]
             ]
         , column
-            (R10.Card.normal theme
+            (R10.Card.noShadow theme
                 ++ [ padding 20
                    , spacing 5
                    , width fill

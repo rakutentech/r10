@@ -158,6 +158,15 @@ cssFonts relative =
     ; font-weight: 700
     ; font-style: normal
     ; font-display: swap
+    }
+    
+@font-face
+    { font-family: 'OCRA'
+    ; src: url('""" ++ relative ++ """/fonts/OCRA.otf')
+    ; font-weight: normal
+    ; font-weight: 400
+    ; font-style: normal
+    ; font-display: swap
     }"""
 
 

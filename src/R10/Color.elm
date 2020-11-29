@@ -3,6 +3,7 @@ module R10.Color exposing
     , Primary, primary, primaryDefault, primaryToString, primaryDecoder, primaryDecoderExploration
     , Derived
     , listPrimary, listBase, listDerived
+    , maximumContrast
     )
 
 {-| These lists are just to be used to create documentations, not to actually use colors in the layout.
@@ -40,6 +41,11 @@ Rakuten Brand guideline: <https://global.rakuten.com/corp/brand/>
 These lists should only be used to generate documentation.
 
 @docs listPrimary, listBase, listDerived
+
+
+# Utils
+
+@docs maximumContrast
 
 -}
 
@@ -150,3 +156,10 @@ listBase theme =
 listDerived : R10.Theme.Theme -> List { color : Color.Color, name : String, description : String }
 listDerived theme =
     R10.Color.Internal.Derived.list theme
+
+
+{-| A sligtly modified version of `Color.Accessibility.maximumContrast`
+-}
+maximumContrast : Color.Color -> List Color.Color -> Maybe Color.Color
+maximumContrast =
+    R10.Color.Internal.Derived.maximumContrast

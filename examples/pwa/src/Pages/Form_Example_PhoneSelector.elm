@@ -1,4 +1,4 @@
-module Pages.UIFormComponentsPhoneSelect exposing
+module Pages.Form_Example_PhoneSelector exposing
     ( Model
     , Msg
     , init
@@ -18,19 +18,19 @@ import R10.Theme
 title : R10.Language.Translations
 title =
     { key = "title"
-    , en_us = "Forms - Phone Selector"
-    , ja_jp = "Forms - Phone Selector"
-    , zh_tw = "Forms - Phone Selector"
-    , es_es = "Forms - Phone Selector"
-    , fr_fr = "Forms - Phone Selector"
-    , de_de = "Forms - Phone Selector"
-    , it_it = "Forms - Phone Selector"
-    , nl_nl = "Forms - Phone Selector"
-    , pt_pt = "Forms - Phone Selector"
-    , nb_no = "Forms - Phone Selector"
-    , fi_fl = "Forms - Phone Selector"
-    , da_dk = "Forms - Phone Selector"
-    , sv_se = "Forms - Phone Selector"
+    , en_us = "Form Example - Phone Selector"
+    , ja_jp = "Form Example - Phone Selector"
+    , zh_tw = "Form Example - Phone Selector"
+    , es_es = "Form Example - Phone Selector"
+    , fr_fr = "Form Example - Phone Selector"
+    , de_de = "Form Example - Phone Selector"
+    , it_it = "Form Example - Phone Selector"
+    , nl_nl = "Form Example - Phone Selector"
+    , pt_pt = "Form Example - Phone Selector"
+    , nb_no = "Form Example - Phone Selector"
+    , fi_fl = "Form Example - Phone Selector"
+    , da_dk = "Form Example - Phone Selector"
+    , sv_se = "Form Example - Phone Selector"
     }
 
 

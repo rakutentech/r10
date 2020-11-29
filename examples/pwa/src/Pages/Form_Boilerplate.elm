@@ -1,4 +1,4 @@
-module Pages.UIFormBoilerplate exposing
+module Pages.Form_Boilerplate exposing
     ( Model
     , Msg
     , init
@@ -20,19 +20,19 @@ import R10.Theme
 title : R10.Language.Translations
 title =
     { key = "title"
-    , en_us = "Forms - Boilerplate"
-    , ja_jp = "Forms - Boilerplate"
-    , zh_tw = "Forms - Boilerplate"
-    , es_es = "Forms - Boilerplate"
-    , fr_fr = "Forms - Boilerplate"
-    , de_de = "Forms - Boilerplate"
-    , it_it = "Forms - Boilerplate"
-    , nl_nl = "Forms - Boilerplate"
-    , pt_pt = "Forms - Boilerplate"
-    , nb_no = "Forms - Boilerplate"
-    , fi_fl = "Forms - Boilerplate"
-    , da_dk = "Forms - Boilerplate"
-    , sv_se = "Forms - Boilerplate"
+    , en_us = "Form Boilerplate"
+    , ja_jp = "Form Boilerplate"
+    , zh_tw = "Form Boilerplate"
+    , es_es = "Form Boilerplate"
+    , fr_fr = "Form Boilerplate"
+    , de_de = "Form Boilerplate"
+    , it_it = "Form Boilerplate"
+    , nl_nl = "Form Boilerplate"
+    , pt_pt = "Form Boilerplate"
+    , nb_no = "Form Boilerplate"
+    , fi_fl = "Form Boilerplate"
+    , da_dk = "Form Boilerplate"
+    , sv_se = "Form Boilerplate"
     }
 
 

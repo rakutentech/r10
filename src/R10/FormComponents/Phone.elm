@@ -9,6 +9,7 @@ import Element exposing (..)
 import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes
+import R10.Color.Utils
 import R10.FormComponents.IconButton
 import R10.FormComponents.Phone.Common as Common
 import R10.FormComponents.Phone.Country exposing (Country)
@@ -39,7 +40,7 @@ defaultTrailingIcon { opened, palette } =
     R10.FormComponents.IconButton.view []
         { msgOnClick = Nothing
         , icon =
-            el
+            R10.FormComponents.UI.icons.combobox_arrow
                 [ rotate <|
                     degrees
                         (if opened then
@@ -50,11 +51,8 @@ defaultTrailingIcon { opened, palette } =
                         )
                 , htmlAttribute <| Html.Attributes.style "transition" "all 0.13s"
                 ]
-            <|
-                html <|
-                    R10.FormComponents.UI.icons.combobox_arrow_
-                        (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString)
-                        24
+                (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.label palette)
+                24
         , palette = palette
         , size = 24
         }
@@ -126,16 +124,14 @@ getFlagButton palette value msg =
                         , centerX
                         , moveDown 2
                         ]
-                , R10.FormComponents.UI.icons.combobox_arrow_
-                    (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString)
+                , R10.FormComponents.UI.icons.combobox_arrow
+                    [ width fill
+                    , moveLeft 1
+                    , centerY
+                    , centerX
+                    ]
+                    (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.label palette)
                     16
-                    |> html
-                    |> el
-                        [ width fill
-                        , moveLeft 1
-                        , centerY
-                        , centerX
-                        ]
                 ]
         , palette = palette
         , size = 24

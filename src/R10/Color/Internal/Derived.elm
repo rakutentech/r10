@@ -1,4 +1,4 @@
-module R10.Color.Internal.Derived exposing (Color(..), list, toColor)
+module R10.Color.Internal.Derived exposing (Color(..), list, maximumContrast, toColor)
 
 import Color
 import Color.Accessibility
@@ -156,6 +156,14 @@ list_ =
 -- in Light or Dark mode.
 
 
+maximumContrast : Color.Color -> List Color.Color -> Maybe Color.Color
+maximumContrast color listColor =
+    -- We make the color darker before calling Color.Accessibility.maximumContrast
+    -- because this seems giving better results.
+    --
+    Color.Accessibility.maximumContrast (Color.Manipulate.darken 0.16 color) listColor
+
+
 toColor : R10.Theme.Theme -> Color -> Color.Color
 toColor theme colorDerived =
     Tuple.first <| toColor_ theme colorDerived
@@ -221,9 +229,10 @@ toColor_ theme colorDerived =
 
         FontMediumEmphasisWithMaximumContrast ->
             let
-                goesOn : R10.Theme.Theme -> Color.Color
+                goesOn : Color.Color
                 goesOn =
-                    primary_
+                    theme
+                        |> primary_
 
                 color1 : Color.Color
                 color1 =
@@ -236,7 +245,7 @@ toColor_ theme colorDerived =
                 colorFont : Color.Color
                 colorFont =
                     Maybe.withDefault color1 <|
-                        Color.Accessibility.maximumContrast (goesOn theme) [ color1, color2 ]
+                        maximumContrast goesOn [ color1, color2 ]
             in
             ( colorFont
             , "A `mediumEmphasis` color for less important text that goes above a primary color"
@@ -244,9 +253,10 @@ toColor_ theme colorDerived =
 
         FontHighEmphasisWithMaximumContrast ->
             let
-                goesOn : R10.Theme.Theme -> Color.Color
+                goesOn : Color.Color
                 goesOn =
-                    primary_
+                    theme
+                        |> primary_
 
                 color1 : Color.Color
                 color1 =
@@ -259,7 +269,7 @@ toColor_ theme colorDerived =
                 colorFont : Color.Color
                 colorFont =
                     Maybe.withDefault color1 <|
-                        Color.Accessibility.maximumContrast (goesOn theme) [ color1, color2 ]
+                        maximumContrast goesOn [ color1, color2 ]
             in
             ( colorFont
             , "A `highEmphasis` color for regular text that goes above a primary color"

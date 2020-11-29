@@ -89,15 +89,18 @@ listIconsExtra size cl =
     , ( R10.Svg.IconsExtra.alarmClock [] cl size, "alarmClock" )
     , ( R10.Svg.IconsExtra.conversation [] cl size, "conversation" )
     , ( R10.Svg.IconsExtra.sun [] cl size, "sun" )
-    , ( R10.Svg.IconsExtra.checkBold_ [] cl size, "checkBold_" )
+    , ( R10.Svg.IconsExtra.checkBold [] cl size, "checkBold" )
     , ( R10.Svg.IconsExtra.keyboardArrowDown [] cl size, "keyboardArrowDown" )
     , ( R10.Svg.IconsExtra.delete [] cl size, "delete" )
     , ( R10.Svg.IconsExtra.restore [] cl size, "restore" )
     , ( R10.Svg.IconsExtra.keyboardArrowUp [] cl size, "keyboardArrowUp" )
     , ( R10.Svg.IconsExtra.search [] cl size, "search" )
-    , ( R10.Svg.IconsExtra.more_vert_ [] cl size, "more_vert_" )
+    , ( R10.Svg.IconsExtra.more_vert [] cl size, "more_vert" )
     , ( R10.Svg.IconsExtra.aToZ [] cl size, "aToZ" )
     , ( R10.Svg.IconsExtra.darkLight [] cl size, "darkLight" )
+    , ( R10.Svg.IconsExtra.validation_clear [] cl size, "validation_clear" )
+    , ( R10.Svg.IconsExtra.validation_error [] cl size, "validation_error" )
+    , ( R10.Svg.IconsExtra.validation_check [] cl size, "validation_check" )
     ]
 
 

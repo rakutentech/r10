@@ -1,4 +1,4 @@
-module Pages.UIFormComponentsStates exposing
+module Pages.Form_States exposing
     ( Model
     , Msg
     , init
@@ -23,19 +23,19 @@ import R10.Theme
 title : R10.Language.Translations
 title =
     { key = "title"
-    , en_us = "Forms - States"
-    , ja_jp = "Forms - States"
-    , zh_tw = "Forms - States"
-    , es_es = "Forms - States"
-    , fr_fr = "Forms - States"
-    , de_de = "Forms - States"
-    , it_it = "Forms - States"
-    , nl_nl = "Forms - States"
-    , pt_pt = "Forms - States"
-    , nb_no = "Forms - States"
-    , fi_fl = "Forms - States"
-    , da_dk = "Forms - States"
-    , sv_se = "Forms - States"
+    , en_us = "Form States"
+    , ja_jp = "Form States"
+    , zh_tw = "Form States"
+    , es_es = "Form States"
+    , fr_fr = "Form States"
+    , de_de = "Form States"
+    , it_it = "Form States"
+    , nl_nl = "Form States"
+    , pt_pt = "Form States"
+    , nb_no = "Form States"
+    , fi_fl = "Form States"
+    , da_dk = "Form States"
+    , sv_se = "Form States"
     }
 
 

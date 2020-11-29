@@ -177,7 +177,7 @@ paletteView theme list =
 
 fontColorMaxContrast : Color.Color -> Color
 fontColorMaxContrast color =
-    R10.Color.Utils.colorToElementColor <| Maybe.withDefault (Color.rgb 0 0 0) <| Color.Accessibility.maximumContrast color [ Color.rgb 1 1 1, Color.rgb 0 0 0 ]
+    R10.Color.Utils.colorToElementColor <| Maybe.withDefault (Color.rgb 0 0 0) <| R10.Color.maximumContrast color [ Color.rgb 1 1 1, Color.rgb 0 0 0 ]
 
 
 myTooltip : String -> Element msg
@@ -659,6 +659,13 @@ UI.Theme.Theme`contains two values:
 * http-trinity: https://github.com/rakutentech/http-trinity
 * rakutentech.github.io: https://github.com/rakutentech/rakutentech.github.io
 * Elm projects: https://rakutentech.github.io/#/filter/elm
+
+# Others
+
+* https://github.com/NoRedInk/noredink-ui
+* https://github.com/rakutentech/http-trinity/commits/master
+* https://elm.dmy.fr/packages/NoRedInk/noredink-ui/latest/
+
     
 """
     ]

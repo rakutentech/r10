@@ -315,7 +315,7 @@ defaultTranslator =
 
 
 {-| -}
-themeToPalette : R10.Theme.Theme -> R10.FormComponents.UI.Palette.Palette
+themeToPalette : R10.Theme.Theme -> Palette
 themeToPalette =
     R10.FormComponents.UI.Palette.fromTheme
 
@@ -1239,7 +1239,7 @@ viewText =
 
 
 {-| -}
-extraCssComponents : R10.FormComponents.UI.Palette.Palette -> String
+extraCssComponents : Palette -> String
 extraCssComponents =
     R10.FormComponents.ExtraCss.extraCss
 
@@ -1302,7 +1302,7 @@ phoneView :
         , helperText : Maybe String
         , key : String
         , label : String
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : Palette
         , requiredLabel : Maybe String
         , style : R10.FormComponents.Style.Style
         , toMsg : R10.FormComponents.Phone.Common.Msg -> msg

@@ -1,4 +1,4 @@
-module Pages.UIFormBoilerplate2 exposing
+module Pages.Form_Example_Table exposing
     ( Model
     , Msg
     , init
@@ -22,19 +22,19 @@ import R10.Theme
 title : R10.Language.Translations
 title =
     { key = "title"
-    , en_us = "Forms - Boilerplate 2"
-    , ja_jp = "Forms - Boilerplate 2"
-    , zh_tw = "Forms - Boilerplate 2"
-    , es_es = "Forms - Boilerplate 2"
-    , fr_fr = "Forms - Boilerplate 2"
-    , de_de = "Forms - Boilerplate 2"
-    , it_it = "Forms - Boilerplate 2"
-    , nl_nl = "Forms - Boilerplate 2"
-    , pt_pt = "Forms - Boilerplate 2"
-    , nb_no = "Forms - Boilerplate 2"
-    , fi_fl = "Forms - Boilerplate 2"
-    , da_dk = "Forms - Boilerplate 2"
-    , sv_se = "Forms - Boilerplate 2"
+    , en_us = "Form Example - Table"
+    , ja_jp = "Form Example - Table"
+    , zh_tw = "Form Example - Table"
+    , es_es = "Form Example - Table"
+    , fr_fr = "Form Example - Table"
+    , de_de = "Form Example - Table"
+    , it_it = "Form Example - Table"
+    , nl_nl = "Form Example - Table"
+    , pt_pt = "Form Example - Table"
+    , nb_no = "Form Example - Table"
+    , fi_fl = "Form Example - Table"
+    , da_dk = "Form Example - Table"
+    , sv_se = "Form Example - Table"
     }
 
 

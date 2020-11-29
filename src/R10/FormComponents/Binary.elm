@@ -10,6 +10,7 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes
+import R10.Color.Utils
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
@@ -170,13 +171,12 @@ checkboxIcon args value =
         checkMark : Element msg
         checkMark =
             if value then
-                el
+                R10.FormComponents.UI.icons.checkBold
                     [ centerX
                     , centerY
                     ]
-                <|
-                    html <|
-                        R10.FormComponents.UI.icons.checkBold_ (R10.FormComponents.UI.Color.onPrimary args.palette |> R10.FormComponents.UI.Color.toCssString) 10
+                    (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.onPrimary args.palette)
+                    18
 
             else
                 none

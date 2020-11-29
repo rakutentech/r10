@@ -13,6 +13,7 @@ import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes
+import R10.Color.Utils
 import R10.FormComponents.IconButton
 import R10.FormComponents.Style
 import R10.FormComponents.UI
@@ -20,6 +21,7 @@ import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Const as Constants
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
+import R10.Svg.Icons
 import Regex
 
 
@@ -39,10 +41,10 @@ viewShowHidePasswordButton { msgOnTogglePasswordShow, showPassword, palette } =
         icon : Element msg
         icon =
             if showPassword then
-                html <| R10.FormComponents.UI.icons.eye_ban_l_ (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString) 24
+                R10.Svg.Icons.eye_ban_l [] (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.label palette) 24
 
             else
-                html <| R10.FormComponents.UI.icons.eye_l_ (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString) 24
+                R10.Svg.Icons.eye_l [] (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.label palette) 24
     in
     case msgOnTogglePasswordShow of
         Just msgOnTogglePasswordShow_ ->
@@ -380,6 +382,10 @@ view attrs extraInputAttrs args =
                     [ alpha 1 ]
                )
             ++ attrs
+            -- Some other section of the form is setting a min width
+            -- here that cause the field not squeezing in small devices.
+            -- As a temporary fix, I am overwriting it to `width <| fill`
+            ++ [ width <| fill ]
         )
         [ viewInput newArgs <|
             [ getBorder styleArgs

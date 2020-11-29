@@ -1,8 +1,8 @@
-module R10.Svg.IconsExtra exposing (more_vert_, checkBold_, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight)
+module R10.Svg.IconsExtra exposing (more_vert, checkBold, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight, validation_check, validation_clear, validation_error)
 
 {-|
 
-@docs more_vert_, checkBold_, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight
+@docs more_vert, checkBold, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight, validation_check, validation_clear, validation_error
 
 -}
 
@@ -316,8 +316,8 @@ sun attrs cl size =
 
 
 {-| -}
-checkBold_ : List (Attribute msg) -> Color.Color -> Int -> Element msg
-checkBold_ attrs cl size =
+checkBold : List (Attribute msg) -> Color.Color -> Int -> Element msg
+checkBold attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
         size
@@ -376,8 +376,8 @@ search attrs cl size =
 
 
 {-| -}
-more_vert_ : List (Attribute msg) -> Color.Color -> Int -> Element msg
-more_vert_ attrs cl size =
+more_vert : List (Attribute msg) -> Color.Color -> Int -> Element msg
+more_vert attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 48 48"
         size
@@ -409,4 +409,31 @@ darkLight attrs cl size =
         "0 0 1024 1024"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M320 85a279 279 0 001 470 235 235 0 11-1-470m494 64l61 61-665 665-61-61 665-665M550 253l-63-40-62 43 18-73-59-45 75-5 24-70 29 69 74 2-58 48 22 71M409 407l-49-31-48 33 14-56-46-36 58-3 19-55 22 54 58 1-45 37 17 56m402 169a235 235 0 01-374 189l328-328c29 39 46 87 46 139M623 857l118-49-10 143-108-94m185-115l49-119 94 109-143 10m49-212l-49-119 143 11-94 108M411 808l118 49-108 93-10-142z" ] []
+        ]
+
+
+validation_clear : List (Attribute msg) -> Color.Color -> Int -> Element msg
+validation_clear attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "2 2 20 20"
+        size
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z" ] []
+        ]
+
+
+validation_error : List (Attribute msg) -> Color.Color -> Int -> Element msg
+validation_error attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 24 24"
+        size
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" ] []
+        ]
+
+
+validation_check : List (Attribute msg) -> Color.Color -> Int -> Element msg
+validation_check attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 24 24"
+        size
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M9 16.2l-3.5-3.5c-.39-.39-1.01-.39-1.4 0-.39.39-.39 1.01 0 1.4l4.19 4.19c.39.39 1.02.39 1.41 0L20.3 7.7c.39-.39.39-1.01 0-1.4-.39-.39-1.01-.39-1.4 0L9 16.2z" ] []
         ]

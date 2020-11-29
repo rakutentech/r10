@@ -19,6 +19,7 @@ module R10.FormComponents.UI exposing
     , viewSelectShadow
     )
 
+import Color
 import Dict
 import Element exposing (..)
 import Element.Background as Background
@@ -28,12 +29,14 @@ import Html
 import Html.Attributes
 import Html.Events
 import Json.Decode
+import R10.Color.Utils
 import R10.FormComponents.Style
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Const
-import R10.FormComponents.UI.Icon
 import R10.FormComponents.UI.Palette
 import R10.SimpleMarkdown
+import R10.Svg.Icons
+import R10.Svg.IconsExtra
 import Svg
 
 
@@ -112,32 +115,32 @@ getTextfieldPaddingEach args =
 
 
 icons :
-    { checkBold_ : String -> Int -> Svg.Svg msg1
-    , combobox_arrow_ : String -> Int -> Svg.Svg msg3
-    , eye_ban_l_ : String -> Int -> Svg.Svg msg4
-    , eye_l_ : String -> Int -> Svg.Svg msg5
-    , grid : String -> Int -> Svg.Svg msg6
-    , notice_generic_l_ : String -> Int -> Svg.Svg msg7
-    , search_ : String -> Int -> Svg.Svg msg8
-    , sign_warning_f_ : String -> Int -> Svg.Svg msg9
-    , sign_warning_l_ : String -> Int -> Svg.Svg msg10
-    , validation_check_ : String -> Int -> Svg.Svg msg11
-    , validation_clear_ : String -> Int -> Svg.Svg msg12
-    , validation_error_ : String -> Int -> Svg.Svg msg13
+    { checkBold : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , combobox_arrow : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , eye_ban_l : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , eye_l : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , grid : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , notice_generic_l : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , search : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , sign_warning_f : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , sign_warning_l : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , validation_check : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , validation_clear : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    , validation_error : List (Attribute msg) -> Color.Color -> Int -> Element msg
     }
 icons =
-    { checkBold_ = R10.FormComponents.UI.Icon.checkBold_
-    , combobox_arrow_ = R10.FormComponents.UI.Icon.keyboardArrowDown
-    , eye_ban_l_ = R10.FormComponents.UI.Icon.eye_ban_l_
-    , eye_l_ = R10.FormComponents.UI.Icon.eye_l_
-    , grid = R10.FormComponents.UI.Icon.grid
-    , notice_generic_l_ = R10.FormComponents.UI.Icon.notice_generic_l_
-    , search_ = R10.FormComponents.UI.Icon.search_
-    , sign_warning_f_ = R10.FormComponents.UI.Icon.sign_warning_f_
-    , sign_warning_l_ = R10.FormComponents.UI.Icon.sign_warning_l_
-    , validation_check_ = R10.FormComponents.UI.Icon.validation_check_
-    , validation_clear_ = R10.FormComponents.UI.Icon.validation_clear_
-    , validation_error_ = R10.FormComponents.UI.Icon.validation_error_
+    { checkBold = R10.Svg.IconsExtra.checkBold
+    , combobox_arrow = R10.Svg.IconsExtra.keyboardArrowDown
+    , eye_ban_l = R10.Svg.Icons.eye_ban_l
+    , eye_l = R10.Svg.IconsExtra.email
+    , grid = R10.Svg.IconsExtra.grid
+    , notice_generic_l = R10.Svg.Icons.notice_generic_l
+    , search = R10.Svg.IconsExtra.search
+    , sign_warning_f = R10.Svg.Icons.sign_warning_f
+    , sign_warning_l = R10.Svg.Icons.sign_warning_l
+    , validation_check = R10.Svg.IconsExtra.validation_check
+    , validation_clear = R10.Svg.IconsExtra.validation_clear
+    , validation_error = R10.Svg.IconsExtra.validation_error
     }
 
 
@@ -481,14 +484,11 @@ showValidationIcon_ { maybeValid, displayValidation, palette } =
             else
                 0
     in
-    el
+    icons.sign_warning_f
         [ htmlAttribute <| Html.Attributes.style "transition" "width 0.4s"
         , width <| px widthPx
         , height <| px 24
         , clip
         ]
-    <|
-        html <|
-            icons.sign_warning_f_
-                (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.error palette)
-                24
+        (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.error palette)
+        24

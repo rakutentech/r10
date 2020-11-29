@@ -12,6 +12,7 @@ import Element exposing (..)
 import Element.Font as Font
 import Html
 import Html.Attributes
+import R10.Color.Utils
 import R10.FormComponents.UI exposing (icons)
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
@@ -82,9 +83,9 @@ extraCss =
 viewValidationIcon : R10.FormComponents.UI.Palette.Palette -> ValidationIcon -> { validIcon : Element msg, invalidIcon : Element msg }
 viewValidationIcon palette validationIcon =
     let
-        iconContainer : Html.Html msg -> Element msg
-        iconContainer =
-            el [ width <| px 16, height <| px 16 ] << html
+        iconAttrs : List (Attribute msg)
+        iconAttrs =
+            [ width <| px 16, height <| px 16 ]
     in
     case validationIcon of
         NoIcon ->
@@ -93,13 +94,13 @@ viewValidationIcon palette validationIcon =
             }
 
         ClearOrCheck ->
-            { invalidIcon = iconContainer <| icons.validation_clear_ (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.error palette) 24
-            , validIcon = iconContainer <| icons.validation_check_ (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.success palette) 24
+            { invalidIcon = icons.validation_clear iconAttrs (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.error palette) 24
+            , validIcon = icons.validation_check iconAttrs (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.success palette) 24
             }
 
         ErrorOrCheck ->
-            { invalidIcon = iconContainer <| icons.validation_error_ (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.error palette) 24
-            , validIcon = iconContainer <| icons.validation_check_ (R10.FormComponents.UI.Color.toCssString <| R10.FormComponents.UI.Color.success palette) 24
+            { invalidIcon = icons.validation_error iconAttrs (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.error palette) 24
+            , validIcon = icons.validation_check iconAttrs (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.success palette) 24
             }
 
 

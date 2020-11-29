@@ -11,18 +11,22 @@ import Html
 import Html.Attributes
 import Json.Decode
 import Pages.Counter
+import Pages.Form_Boilerplate
+import Pages.Form_Entities
+import Pages.Form_Example_CreditCard
+import Pages.Form_Example_PhoneSelector
+import Pages.Form_Example_Table
+import Pages.Form_FieldType_Binary
+import Pages.Form_FieldType_Multi
+import Pages.Form_FieldType_Single
+import Pages.Form_FieldType_Text
+import Pages.Form_Introduction
+import Pages.Form_States
 import Pages.Overview
 import Pages.Shared.Utils
 import Pages.TableExample
 import Pages.Top
 import Pages.UIComponents
-import Pages.UIFormBoilerplate
-import Pages.UIFormBoilerplate2
-import Pages.UIFormComponentsPhoneSelect
-import Pages.UIFormComponentsSingle
-import Pages.UIFormComponentsStates
-import Pages.UIFormComponentsText
-import Pages.UIFormIntroduction
 import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
@@ -95,13 +99,21 @@ type alias Model =
     -- PAGES
     --
     , pageOverview : Pages.Overview.Model
-    , pageUIFormBoilerplate : Pages.UIFormBoilerplate.Model
-    , pageUIFormBoilerplate2 : Pages.UIFormBoilerplate2.Model
-    , pageUIFormComponentsPhoneSelect : Pages.UIFormComponentsPhoneSelect.Model
-    , pageUIFormComponentsSingle : Pages.UIFormComponentsSingle.Model
-    , pageUIFormComponentsStates : Pages.UIFormComponentsStates.Model
-    , pageUIFormComponentsText : Pages.UIFormComponentsText.Model
-    , pageUIFormIntroduction : Pages.UIFormIntroduction.Model
+    , pageForm_Entities : Pages.Form_Entities.Model
+    , pageForm_Example_CreditCard : Pages.Form_Example_CreditCard.Model
+    , pageForm_Boilerplate : Pages.Form_Boilerplate.Model
+    , pageForm_Example_Table : Pages.Form_Example_Table.Model
+    , pageForm_Example_PhoneSelector : Pages.Form_Example_PhoneSelector.Model
+    , pageForm_States : Pages.Form_States.Model
+
+    --
+    , pageForm_FieldType_Text : Pages.Form_FieldType_Text.Model
+    , pageForm_FieldType_Single : Pages.Form_FieldType_Single.Model
+    , pageForm_FieldType_Multi : Pages.Form_FieldType_Multi.Model
+    , pageForm_FieldType_Binary : Pages.Form_FieldType_Binary.Model
+
+    --
+    , pageForm_Introduction : Pages.Form_Introduction.Model
     , pageUIComponents : Pages.UIComponents.Model
     , pageCounter : Pages.Counter.Model
     , pageTableExample : Pages.TableExample.Model
@@ -160,15 +172,22 @@ init flags =
                 , supportedLanguageList = languageSupportedList
             }
       , pageOverview = Pages.Overview.init
-      , pageUIFormBoilerplate = Pages.UIFormBoilerplate.init
-      , pageUIFormBoilerplate2 = Pages.UIFormBoilerplate2.init
-      , pageUIFormComponentsPhoneSelect = Pages.UIFormComponentsPhoneSelect.init
-      , pageUIFormComponentsSingle = Pages.UIFormComponentsSingle.init
-      , pageUIFormComponentsStates = Pages.UIFormComponentsStates.init
-      , pageUIFormComponentsText = Pages.UIFormComponentsText.init
+      , pageForm_Entities = Pages.Form_Entities.init
+      , pageForm_Example_CreditCard = Pages.Form_Example_CreditCard.init
+      , pageForm_Boilerplate = Pages.Form_Boilerplate.init
+      , pageForm_Example_Table = Pages.Form_Example_Table.init
+      , pageForm_Example_PhoneSelector = Pages.Form_Example_PhoneSelector.init
+      , pageForm_States = Pages.Form_States.init
 
+      --
+      , pageForm_FieldType_Text = Pages.Form_FieldType_Text.init
+      , pageForm_FieldType_Single = Pages.Form_FieldType_Single.init
+      , pageForm_FieldType_Multi = Pages.Form_FieldType_Multi.init
+      , pageForm_FieldType_Binary = Pages.Form_FieldType_Binary.init
+
+      --
       -- TODO - Add local storage
-      , pageUIFormIntroduction = Pages.UIFormIntroduction.init { localStorage = Dict.empty }
+      , pageForm_Introduction = Pages.Form_Introduction.init { localStorage = Dict.empty }
       , pageUIComponents = Pages.UIComponents.init
       , pageCounter = Pages.Counter.init
       , pageTableExample = Pages.TableExample.init
@@ -222,13 +241,19 @@ type Msg
     | Header R10.Header.Msg
       --
     | Msg_Overview Pages.Overview.Msg
-    | Msg_UIFormBoilerplate Pages.UIFormBoilerplate.Msg
-    | Msg_UIFormBoilerplate2 Pages.UIFormBoilerplate2.Msg
-    | Msg_UIFormComponentsPhoneSelect Pages.UIFormComponentsPhoneSelect.Msg
-    | Msg_UIFormComponentsSingle Pages.UIFormComponentsSingle.Msg
-    | Msg_UIFormComponentsStates Pages.UIFormComponentsStates.Msg
-    | Msg_UIFormComponentsText Pages.UIFormComponentsText.Msg
-    | Msg_UIFormIntroduction Pages.UIFormIntroduction.Msg
+    | Msg_Form_Entities Pages.Form_Entities.Msg
+    | Msg_Form_Example_CreditCard Pages.Form_Example_CreditCard.Msg
+    | Msg_Form_Boilerplate Pages.Form_Boilerplate.Msg
+    | Msg_Form_Example_Table Pages.Form_Example_Table.Msg
+    | Msg_Form_Example_PhoneSelector Pages.Form_Example_PhoneSelector.Msg
+    | Msg_Form_States Pages.Form_States.Msg
+      --
+    | Msg_Form_FieldType_Text Pages.Form_FieldType_Text.Msg
+    | Msg_Form_FieldType_Single Pages.Form_FieldType_Single.Msg
+    | Msg_Form_FieldType_Multi Pages.Form_FieldType_Multi.Msg
+    | Msg_Form_FieldType_Binary Pages.Form_FieldType_Binary.Msg
+      --
+    | Msg_Form_Introduction Pages.Form_Introduction.Msg
     | Msg_UIComponents Pages.UIComponents.Msg
     | Msg_Counter Pages.Counter.Msg
     | Msg_PagesTable Pages.TableExample.Msg
@@ -272,50 +297,70 @@ update msg model =
         Msg_Overview pageMsg ->
             ( { model | pageOverview = Pages.Overview.update pageMsg model.pageOverview }, Cmd.none )
 
-        Msg_UIFormBoilerplate pageMsg ->
-            ( { model | pageUIFormBoilerplate = Pages.UIFormBoilerplate.update pageMsg model.pageUIFormBoilerplate }, Cmd.none )
+        Msg_Form_Entities pageMsg ->
+            ( { model | pageForm_Entities = Pages.Form_Entities.update pageMsg model.pageForm_Entities }, Cmd.none )
 
-        Msg_UIFormBoilerplate2 pageMsg ->
+        Msg_Form_Example_CreditCard pageMsg ->
+            ( { model | pageForm_Example_CreditCard = Pages.Form_Example_CreditCard.update pageMsg model.pageForm_Example_CreditCard }, Cmd.none )
+
+        Msg_Form_Boilerplate pageMsg ->
+            ( { model | pageForm_Boilerplate = Pages.Form_Boilerplate.update pageMsg model.pageForm_Boilerplate }, Cmd.none )
+
+        Msg_Form_Example_Table pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormBoilerplate2.update pageMsg model.pageUIFormBoilerplate2
+                    Pages.Form_Example_Table.update pageMsg model.pageForm_Example_Table
             in
-            ( { model | pageUIFormBoilerplate2 = modelPageExample }, Cmd.map Msg_UIFormBoilerplate2 cmdPageExample )
+            ( { model | pageForm_Example_Table = modelPageExample }, Cmd.map Msg_Form_Example_Table cmdPageExample )
 
-        Msg_UIFormComponentsPhoneSelect pageMsg ->
+        Msg_Form_Example_PhoneSelector pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsPhoneSelect.update pageMsg model.pageUIFormComponentsPhoneSelect
+                    Pages.Form_Example_PhoneSelector.update pageMsg model.pageForm_Example_PhoneSelector
             in
-            ( { model | pageUIFormComponentsPhoneSelect = modelPageExample }, Cmd.map Msg_UIFormComponentsPhoneSelect cmdPageExample )
+            ( { model | pageForm_Example_PhoneSelector = modelPageExample }, Cmd.map Msg_Form_Example_PhoneSelector cmdPageExample )
 
-        Msg_UIFormComponentsSingle pageMsg ->
+        Msg_Form_FieldType_Single pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsSingle.update pageMsg model.pageUIFormComponentsSingle
+                    Pages.Form_FieldType_Single.update pageMsg model.pageForm_FieldType_Single
             in
-            ( { model | pageUIFormComponentsSingle = modelPageExample }, Cmd.map Msg_UIFormComponentsSingle cmdPageExample )
+            ( { model | pageForm_FieldType_Single = modelPageExample }, Cmd.map Msg_Form_FieldType_Single cmdPageExample )
 
-        Msg_UIFormComponentsStates pageMsg ->
+        Msg_Form_States pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsStates.update pageMsg model.pageUIFormComponentsStates
+                    Pages.Form_States.update pageMsg model.pageForm_States
             in
-            ( { model | pageUIFormComponentsStates = modelPageExample }, Cmd.map Msg_UIFormComponentsStates cmdPageExample )
+            ( { model | pageForm_States = modelPageExample }, Cmd.map Msg_Form_States cmdPageExample )
 
-        Msg_UIFormComponentsText pageMsg ->
+        Msg_Form_FieldType_Text pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormComponentsText.update pageMsg model.pageUIFormComponentsText
+                    Pages.Form_FieldType_Text.update pageMsg model.pageForm_FieldType_Text
             in
-            ( { model | pageUIFormComponentsText = modelPageExample }, Cmd.map Msg_UIFormComponentsText cmdPageExample )
+            ( { model | pageForm_FieldType_Text = modelPageExample }, Cmd.map Msg_Form_FieldType_Text cmdPageExample )
 
-        Msg_UIFormIntroduction pageMsg ->
+        Msg_Form_FieldType_Multi pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
-                    Pages.UIFormIntroduction.update pageMsg model.pageUIFormIntroduction
+                    Pages.Form_FieldType_Multi.update pageMsg model.pageForm_FieldType_Multi
             in
-            ( { model | pageUIFormIntroduction = modelPageExample }, Cmd.map Msg_UIFormIntroduction cmdPageExample )
+            ( { model | pageForm_FieldType_Multi = modelPageExample }, Cmd.map Msg_Form_FieldType_Multi cmdPageExample )
+
+        Msg_Form_FieldType_Binary pageMsg ->
+            let
+                ( modelPageExample, cmdPageExample ) =
+                    Pages.Form_FieldType_Binary.update pageMsg model.pageForm_FieldType_Binary
+            in
+            ( { model | pageForm_FieldType_Binary = modelPageExample }, Cmd.map Msg_Form_FieldType_Binary cmdPageExample )
+
+        Msg_Form_Introduction pageMsg ->
+            let
+                ( modelPageExample, cmdPageExample ) =
+                    Pages.Form_Introduction.update pageMsg model.pageForm_Introduction
+            in
+            ( { model | pageForm_Introduction = modelPageExample }, Cmd.map Msg_Form_Introduction cmdPageExample )
 
         Msg_UIComponents pageMsg ->
             let
@@ -434,26 +479,38 @@ view model =
                     in
                     mainLayout model Pages.Overview.title (List.map (map Msg_Overview) (Pages.Overview.view model.pageOverview model.theme mouseCorrected model.windowSize))
 
-                Route_UIFormBoilerplate lang ->
-                    mainLayout model Pages.UIFormBoilerplate.title (List.map (map Msg_UIFormBoilerplate) (Pages.UIFormBoilerplate.view model.pageUIFormBoilerplate model.theme))
+                Route_Form_Entities lang ->
+                    mainLayout model Pages.Form_Entities.title (List.map (map Msg_Form_Entities) (Pages.Form_Entities.view model.pageForm_Entities model.theme))
 
-                Route_UIFormBoilerplate2 lang ->
-                    mainLayout model Pages.UIFormBoilerplate2.title (List.map (map Msg_UIFormBoilerplate2) (Pages.UIFormBoilerplate2.view model.pageUIFormBoilerplate2 model.theme))
+                Route_Form_Example_CreditCard lang ->
+                    mainLayout model Pages.Form_Example_CreditCard.title (List.map (map Msg_Form_Example_CreditCard) (Pages.Form_Example_CreditCard.view model.pageForm_Example_CreditCard model.theme))
 
-                Route_UIFormComponentsPhoneSelect lang ->
-                    mainLayout model Pages.UIFormComponentsPhoneSelect.title (List.map (map Msg_UIFormComponentsPhoneSelect) (Pages.UIFormComponentsPhoneSelect.view model.pageUIFormComponentsPhoneSelect model.theme))
+                Route_Form_Boilerplate lang ->
+                    mainLayout model Pages.Form_Boilerplate.title (List.map (map Msg_Form_Boilerplate) (Pages.Form_Boilerplate.view model.pageForm_Boilerplate model.theme))
 
-                Route_UIFormComponentsSingle lang ->
-                    mainLayout model Pages.UIFormComponentsSingle.title (List.map (map Msg_UIFormComponentsSingle) (Pages.UIFormComponentsSingle.view model.pageUIFormComponentsSingle model.theme))
+                Route_Form_Example_Table lang ->
+                    mainLayout model Pages.Form_Example_Table.title (List.map (map Msg_Form_Example_Table) (Pages.Form_Example_Table.view model.pageForm_Example_Table model.theme))
 
-                Route_UIFormComponentsStates lang ->
-                    mainLayout model Pages.UIFormComponentsStates.title (List.map (map Msg_UIFormComponentsStates) (Pages.UIFormComponentsStates.view model.pageUIFormComponentsStates model.theme))
+                Route_Form_Example_PhoneSelector lang ->
+                    mainLayout model Pages.Form_Example_PhoneSelector.title (List.map (map Msg_Form_Example_PhoneSelector) (Pages.Form_Example_PhoneSelector.view model.pageForm_Example_PhoneSelector model.theme))
 
-                Route_UIFormComponentsText lang ->
-                    mainLayout model Pages.UIFormComponentsText.title (List.map (map Msg_UIFormComponentsText) (Pages.UIFormComponentsText.view model.pageUIFormComponentsText model.theme))
+                Route_Form_FieldType_Single lang ->
+                    mainLayout model Pages.Form_FieldType_Single.title (List.map (map Msg_Form_FieldType_Single) (Pages.Form_FieldType_Single.view model.pageForm_FieldType_Single model.theme))
 
-                Route_UIFormIntroduction lang ->
-                    mainLayout model Pages.UIFormIntroduction.title (List.map (map Msg_UIFormIntroduction) (Pages.UIFormIntroduction.view model.pageUIFormIntroduction model.theme))
+                Route_Form_States lang ->
+                    mainLayout model Pages.Form_States.title (List.map (map Msg_Form_States) (Pages.Form_States.view model.pageForm_States model.theme))
+
+                Route_Form_FieldType_Text lang ->
+                    mainLayout model Pages.Form_FieldType_Text.title (List.map (map Msg_Form_FieldType_Text) (Pages.Form_FieldType_Text.view model.pageForm_FieldType_Text model.theme))
+
+                Route_Form_FieldType_Multi lang ->
+                    mainLayout model Pages.Form_FieldType_Multi.title (List.map (map Msg_Form_FieldType_Multi) (Pages.Form_FieldType_Multi.view model.pageForm_FieldType_Multi model.theme))
+
+                Route_Form_FieldType_Binary lang ->
+                    mainLayout model Pages.Form_FieldType_Binary.title (List.map (map Msg_Form_FieldType_Binary) (Pages.Form_FieldType_Binary.view model.pageForm_FieldType_Binary model.theme))
+
+                Route_Form_Introduction lang ->
+                    mainLayout model Pages.Form_Introduction.title (List.map (map Msg_Form_Introduction) (Pages.Form_Introduction.view model.pageForm_Introduction model.theme))
 
                 Route_UIComponents lang ->
                     mainLayout model Pages.UIComponents.title (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageUIComponents model.theme))
@@ -636,7 +693,7 @@ mainLayout model title content =
                        , spacing 40
                        ]
                 )
-                ([ el [ Font.size 40 ] <| text <| R10.I18n.t (routeToLanguage model.route) title ]
+                ([ paragraph [ Font.size 40 ] [ text <| R10.I18n.t (routeToLanguage model.route) title ] ]
                     ++ content
                 )
         , viewFooter model
@@ -876,13 +933,17 @@ languageSupportedList =
 type Route
     = RouteTop R10.Language.Language
     | Route_Overview R10.Language.Language
-    | Route_UIFormBoilerplate R10.Language.Language
-    | Route_UIFormBoilerplate2 R10.Language.Language
-    | Route_UIFormComponentsPhoneSelect R10.Language.Language
-    | Route_UIFormComponentsSingle R10.Language.Language
-    | Route_UIFormComponentsStates R10.Language.Language
-    | Route_UIFormComponentsText R10.Language.Language
-    | Route_UIFormIntroduction R10.Language.Language
+    | Route_Form_Entities R10.Language.Language
+    | Route_Form_Boilerplate R10.Language.Language
+    | Route_Form_Example_Table R10.Language.Language
+    | Route_Form_Example_CreditCard R10.Language.Language
+    | Route_Form_Example_PhoneSelector R10.Language.Language
+    | Route_Form_States R10.Language.Language
+    | Route_Form_FieldType_Text R10.Language.Language
+    | Route_Form_FieldType_Single R10.Language.Language
+    | Route_Form_FieldType_Multi R10.Language.Language
+    | Route_Form_FieldType_Binary R10.Language.Language
+    | Route_Form_Introduction R10.Language.Language
     | Route_UIComponents R10.Language.Language
     | Route_Counter R10.Language.Language
     | Route_TableExample R10.Language.Language
@@ -902,13 +963,17 @@ routesList : List (R10.Language.Language -> Route)
 routesList =
     [ Route_Overview
     , Route_UIComponents
-    , Route_UIFormIntroduction
-    , Route_UIFormBoilerplate
-    , Route_UIFormBoilerplate2
-    , Route_UIFormComponentsPhoneSelect
-    , Route_UIFormComponentsText
-    , Route_UIFormComponentsSingle
-    , Route_UIFormComponentsStates
+    , Route_Form_Introduction
+    , Route_Form_Entities
+    , Route_Form_Boilerplate
+    , Route_Form_Example_Table
+    , Route_Form_Example_CreditCard
+    , Route_Form_Example_PhoneSelector
+    , Route_Form_FieldType_Text
+    , Route_Form_FieldType_Single
+    , Route_Form_FieldType_Multi
+    , Route_Form_FieldType_Binary
+    , Route_Form_States
     , Route_Counter
     , Route_TableExample
     ]
@@ -935,45 +1000,69 @@ routeDetails route =
             , language = language
             }
 
-        Route_UIFormBoilerplate language ->
-            { title = Pages.UIFormBoilerplate.title
-            , routeLabel = "forms_boilerplate"
+        Route_Form_Entities language ->
+            { title = Pages.Form_Entities.title
+            , routeLabel = "form_entities"
             , language = language
             }
 
-        Route_UIFormBoilerplate2 language ->
-            { title = Pages.UIFormBoilerplate2.title
-            , routeLabel = "forms_bolierplate_2"
+        Route_Form_Example_CreditCard language ->
+            { title = Pages.Form_Example_CreditCard.title
+            , routeLabel = "form_example_credit_card"
             , language = language
             }
 
-        Route_UIFormComponentsPhoneSelect language ->
-            { title = Pages.UIFormComponentsPhoneSelect.title
-            , routeLabel = "forms_phoneselector"
+        Route_Form_Example_Table language ->
+            { title = Pages.Form_Example_Table.title
+            , routeLabel = "form_example_table"
             , language = language
             }
 
-        Route_UIFormComponentsSingle language ->
-            { title = Pages.UIFormComponentsSingle.title
-            , routeLabel = "forms_single"
+        Route_Form_Example_PhoneSelector language ->
+            { title = Pages.Form_Example_PhoneSelector.title
+            , routeLabel = "form_example_phone_selector"
             , language = language
             }
 
-        Route_UIFormComponentsStates language ->
-            { title = Pages.UIFormComponentsStates.title
-            , routeLabel = "forms_states"
+        Route_Form_Boilerplate language ->
+            { title = Pages.Form_Boilerplate.title
+            , routeLabel = "form_boilerplate"
             , language = language
             }
 
-        Route_UIFormComponentsText language ->
-            { title = Pages.UIFormComponentsText.title
-            , routeLabel = "forms_text"
+        Route_Form_FieldType_Text language ->
+            { title = Pages.Form_FieldType_Text.title
+            , routeLabel = "form_field_type_text"
             , language = language
             }
 
-        Route_UIFormIntroduction language ->
-            { title = Pages.UIFormIntroduction.title
-            , routeLabel = "forms"
+        Route_Form_FieldType_Single language ->
+            { title = Pages.Form_FieldType_Single.title
+            , routeLabel = "form_field_type_single"
+            , language = language
+            }
+
+        Route_Form_FieldType_Multi language ->
+            { title = Pages.Form_FieldType_Multi.title
+            , routeLabel = "form_field_type_multi"
+            , language = language
+            }
+
+        Route_Form_FieldType_Binary language ->
+            { title = Pages.Form_FieldType_Binary.title
+            , routeLabel = "form_field_type_binary"
+            , language = language
+            }
+
+        Route_Form_States language ->
+            { title = Pages.Form_States.title
+            , routeLabel = "form_states"
+            , language = language
+            }
+
+        Route_Form_Introduction language ->
+            { title = Pages.Form_Introduction.title
+            , routeLabel = "form"
             , language = language
             }
 

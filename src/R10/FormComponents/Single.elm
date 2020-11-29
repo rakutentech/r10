@@ -11,6 +11,7 @@ module R10.FormComponents.Single exposing
 
 import Element exposing (..)
 import Html.Attributes
+import R10.Color.Utils
 import R10.FormComponents.IconButton
 import R10.FormComponents.Single.Combobox
 import R10.FormComponents.Single.Common as Common
@@ -82,7 +83,7 @@ defaultTrailingIcon { opened, palette } =
     R10.FormComponents.IconButton.view []
         { msgOnClick = Nothing
         , icon =
-            el
+            R10.FormComponents.UI.icons.combobox_arrow
                 [ rotate <|
                     degrees
                         (if opened then
@@ -93,11 +94,8 @@ defaultTrailingIcon { opened, palette } =
                         )
                 , htmlAttribute <| Html.Attributes.style "transition" "all 0.13s"
                 ]
-            <|
-                html <|
-                    R10.FormComponents.UI.icons.combobox_arrow_
-                        (R10.FormComponents.UI.Color.label palette |> R10.FormComponents.UI.Color.toCssString)
-                        24
+                (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.label palette)
+                24
         , palette = palette
         , size = 24
         }

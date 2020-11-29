@@ -1,4 +1,4 @@
-module Pages.UIFormIntroduction exposing
+module Pages.Form_Introduction exposing
     ( Model
     , Msg
     , init
@@ -30,19 +30,19 @@ import R10.Theme
 title : R10.Language.Translations
 title =
     { key = "title"
-    , en_us = "Forms"
-    , ja_jp = "Forms"
-    , zh_tw = "Forms"
-    , es_es = "Forms"
-    , fr_fr = "Forms"
-    , de_de = "Forms"
-    , it_it = "Forms"
-    , nl_nl = "Forms"
-    , pt_pt = "Forms"
-    , nb_no = "Forms"
-    , fi_fl = "Forms"
-    , da_dk = "Forms"
-    , sv_se = "Forms"
+    , en_us = "Form"
+    , ja_jp = "Form"
+    , zh_tw = "Form"
+    , es_es = "Form"
+    , fr_fr = "Form"
+    , de_de = "Form"
+    , it_it = "Form"
+    , nl_nl = "Form"
+    , pt_pt = "Form"
+    , nb_no = "Form"
+    , fi_fl = "Form"
+    , da_dk = "Form"
+    , sv_se = "Form"
     }
 
 

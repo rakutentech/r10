@@ -27,14 +27,6 @@ import R10.Mode
 import R10.Theme
 
 
-
--- Bring this page! http://ft86nje023mzbpr69fb3rngdw4yy5o6ge35r3e3.surge.sh/
--- Link this page
--- https://github.com/NoRedInk/noredink-ui
--- https://github.com/rakutentech/http-trinity/commits/master
--- https://elm.dmy.fr/packages/NoRedInk/noredink-ui/latest/
-
-
 title : R10.Language.Translations
 title =
     { key = "title"

@@ -382,10 +382,10 @@ view attrs extraInputAttrs args =
                     [ alpha 1 ]
                )
             ++ attrs
-            -- Some other section of the form is setting a min width
-            -- here that cause the field not squeezing in small devices.
-            -- As a temporary fix, I am overwriting it to `width <| fill`
-            ++ [ width <| fill ]
+         -- Some other section of the form is setting a min width
+         -- here that cause the field not squeezing in small devices.
+         -- As a temporary fix, I am overwriting it to `width <| fill`
+         -- ++ [ width <| fill ]
         )
         [ viewInput newArgs <|
             [ getBorder styleArgs

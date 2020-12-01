@@ -1,59 +1,58 @@
-module Pages.Form_Example_CreditCard exposing
-    ( Model
-    , Msg
-    , init
-    , title
-    , update
-    , view
-    )
+module Main2 exposing (main)
 
-import Color.Manipulate
+import Browser
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html
 import Html.Attributes
-import Markdown
 import R10.Button
 import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.Svg
-import R10.Color.Utils
 import R10.FontSize
 import R10.Form
-import R10.FormComponents
+import R10.Form.Internal.Key
+import R10.FormComponents.UI.Palette
 import R10.Language
 import R10.Libu
-import R10.Link
 import R10.Mode
+import R10.Paragraph
 import R10.Svg.Logos
 import R10.Svg.LogosExtra
 import R10.Theme
 
 
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form Example - Credit Card"
-    , ja_jp = "フォームの例-クレジットカード"
-    , zh_tw = "Form Example - Credit Card"
-    , es_es = "Form Example - Credit Card"
-    , fr_fr = "Form Example - Credit Card"
-    , de_de = "Form Example - Credit Card"
-    , it_it = "Form Example - Credit Card"
-    , nl_nl = "Form Example - Credit Card"
-    , pt_pt = "Form Example - Credit Card"
-    , nb_no = "Form Example - Credit Card"
-    , fi_fl = "Form Example - Credit Card"
-    , da_dk = "Form Example - Credit Card"
-    , sv_se = "Form Example - Credit Card"
+
+--
+-- https://r10-form1.surge.sh/
+--
+
+
+theme : R10.Theme.Theme
+theme =
+    { mode = R10.Mode.Light
+    , primaryColor = R10.Color.primary.red
     }
+
+
+main : Program () Model Msg
+main =
+    Browser.sandbox
+        { init = init
+        , view = view
+        , update = update
+        }
 
 
 type alias Model =
     { form : R10.Form.Form }
+
+
+type Msg
+    = MsgForm R10.Form.Msg
 
 
 init : Model
@@ -129,10 +128,6 @@ init =
     }
 
 
-type Msg
-    = MsgForm R10.Form.Msg
-
-
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -154,8 +149,8 @@ update msg model =
             { model | form = newForm }
 
 
-viewCreditCard : R10.Theme.Theme -> R10.Form.State -> Element msg
-viewCreditCard theme formState =
+viewCreditCard : R10.Form.State -> Element msg
+viewCreditCard formState =
     let
         logo =
             logoCreaditCard formState
@@ -167,38 +162,17 @@ viewCreditCard theme formState =
         , spacing 30
         , Border.rounded 20
         , Border.shadow { offset = ( 0, 20 ), size = 0, blur = 40, color = rgba 0 0 0 0.2 }
-        , htmlAttribute <|
-            Html.Attributes.style "background"
-                ("radial-gradient(at 70% 30%, "
-                    ++ (R10.Color.Svg.primary theme
-                            |> Color.Manipulate.scaleHsl
-                                { saturationScale = -0.2
-                                , lightnessScale = 0.4
-                                , alphaScale = 0
-                                }
-                            |> R10.Color.Utils.toHex
-                       )
-                    ++ ", "
-                    ++ (R10.Color.Svg.primary theme
-                            |> Color.Manipulate.scaleHsl
-                                { saturationScale = -0.3
-                                , lightnessScale = 0
-                                , alphaScale = 0
-                                }
-                            |> R10.Color.Utils.toHex
-                       )
-                    ++ ")"
-                )
+        , htmlAttribute <| Html.Attributes.style "background" "radial-gradient(at 70% 30%, #EB606D, #C22337)"
         , clip
         ]
         [ row [ width fill ]
-            [ image [ height <| px 50, alignTop, moveDown 50, alpha 0.9 ]
+            [ image [ height <| px 50, alignTop ]
                 { description = "Sim Contacts", src = chip }
             , image [ height <| px logo.height, alignRight, alignTop ]
                 { description = "Visa Logo", src = logo.src }
             ]
         , column [ spacing 5, alignBottom ]
-            [ embossedValue formState [ Font.size 22 ] "cardNumber" "**** **** **** ****" ]
+            [ embossedValue formState [ Font.size 22 ] "cardNumber" "1234 5678 9012 3456" ]
         , row [ width fill ]
             [ column [ spacing 5 ]
                 [ textCreditCard [] "CARD HOLDER"
@@ -206,46 +180,51 @@ viewCreditCard theme formState =
                 ]
             , column [ spacing 5, alignRight ]
                 [ textCreditCard [] "EXPIRES"
-                , embossedValue formState [ alignRight ] "wrappable/expires" "MM/YY"
+                , embossedValue formState [ alignRight ] "expires" "MM/YY"
                 ]
             ]
         ]
 
 
-
--- view : Model -> R10.Theme.Theme -> Html.Html Msg
-
-
-view : Model -> R10.Theme.Theme -> List (Element Msg)
-view model theme =
-    [ column
-        (R10.Card.high theme
-            ++ [ centerX
-               , centerY
-               , width (fill |> maximum 460)
-               , height shrink
-               , spacing 30
-               , R10.Color.AttrsBackground.surface2dp theme
-               ]
+view : Model -> Html.Html Msg
+view model =
+    layoutWith
+        { options =
+            [ focusStyle
+                { borderColor = Nothing
+                , backgroundColor = Nothing
+                , shadow = Nothing
+                }
+            ]
+        }
+        [ R10.Color.AttrsBackground.background theme, padding 20, R10.FontSize.normal ]
+        (column
+            (R10.Card.high theme
+                ++ [ centerX
+                   , centerY
+                   , width (fill |> maximum 460)
+                   , height shrink
+                   , spacing 30
+                   ]
+            )
+            [ R10.Svg.Logos.rakuten [] (R10.Color.Svg.logo theme) 32
+            , viewCreditCard model.form.state
+            , column [ spacing 20, width fill ] <|
+                R10.Form.viewWithOptions model.form
+                    MsgForm
+                    { maker = Nothing
+                    , translator = Nothing
+                    , style = R10.Form.style.filled
+                    , palette = Just <| R10.Form.themeToPalette theme
+                    }
+            , Element.map MsgForm <|
+                R10.Button.primary []
+                    { label = text "Submit"
+                    , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
+                    , theme = theme
+                    }
+            ]
         )
-        [ R10.Svg.LogosExtra.r10 [ centerX ] (R10.Color.Svg.logo theme) 32
-        , viewCreditCard theme model.form.state
-        , column [ spacing 20, width fill ] <|
-            R10.Form.viewWithOptions model.form
-                MsgForm
-                { maker = Nothing
-                , translator = Nothing
-                , style = R10.Form.style.outlined
-                , palette = Just <| R10.Form.themeToPalette theme
-                }
-        , Element.map MsgForm <|
-            R10.Button.primary []
-                { label = text "Submit"
-                , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
-                , theme = theme
-                }
-        ]
-    ]
 
 
 
@@ -283,10 +262,8 @@ textCreditCard : List (Attribute msg) -> String -> Element msg
 textCreditCard attrs string =
     el
         ([ Font.size 13
-
-         -- , Font.glow (rgba 0 0 0 0.7) 6
          , htmlAttribute <| Html.Attributes.style "letter-spacing" "2px"
-         , Font.color <| rgba 1 1 1 0.8
+         , Font.color <| rgba 1 1 1 0.5
          ]
             ++ attrs
         )
@@ -325,9 +302,9 @@ textEmbossedCreditCard attrs string =
          -- https://github.com/opensourcedesign/fonts/issues/8
          -- https://tsukurimashou.osdn.jp/ocr.pdf
          -- https://github.com/opensourcedesign/fonts/tree/master/OCR
-         , Font.family [ Font.typeface "OCRA" ]
+         , Font.family [ Font.typeface "OCRA", Font.sansSerif ]
          , Font.size 18
-         , Font.color <| rgba 0 0 0 0
+         , Font.color <| rgba 0.8 0.8 0.8 0
          ]
             ++ attrs
         )

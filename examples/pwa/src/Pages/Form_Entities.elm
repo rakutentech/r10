@@ -99,7 +99,7 @@ entities =
 
 entitiesForTabs : List ( String, R10.Form.Entity )
 entitiesForTabs =
-    [ ( "Tab 1", inputFieldConf 1 ), ( "Tab 2", inputFieldConf 2 ), ( "Tab 3", inputFieldConf 3 ) ]
+    [ ( "Tabxx 1", inputFieldConf 1 ), ( "Tabxx 2", inputFieldConf 2 ), ( "Tabxx 3", inputFieldConf 3 ) ]
 
 
 helperForTitles : { helperText : Maybe a1, title : String, validationSpecs : Maybe a }
@@ -110,8 +110,8 @@ helperForTitles =
 section : String -> R10.Form.Form -> R10.Theme.Theme -> List (Element Msg)
 section entityAsString form theme =
     [ R10.Paragraph.xlarge [ Background.color <| rgba 1 1 0 0.5, padding 5 ] [ text entityAsString ]
-    , column [ Border.width 5, Border.color <| rgba 0.95 0.95 0 1 ] <| R10.Form.viewWithTheme form FormMsg theme
-    , column [ Border.width 5, Border.color <| rgba 0.95 0.95 0 1, width fill ] <| R10.Form.viewWithTheme form FormMsg theme
+    , row [ Border.width 5, Border.color <| rgba 0.95 0.95 0 1 ] <| R10.Form.viewWithTheme form FormMsg theme
+    , row [ Border.width 5, Border.color <| rgba 0.95 0.95 0 1, width fill ] <| R10.Form.viewWithTheme form FormMsg theme
     ]
 
 
@@ -135,7 +135,7 @@ There are 8 types of entity:
     
     1. R10.Form.entity.field
     2. R10.Form.entity.normal
-    3. R10.Form.entity.wrappable
+    3. R10.Form.entity.wrappable 
     4. R10.Form.entity.withBorder
     5. R10.Form.entity.withTabs
     6. R10.Form.entity.multi

@@ -629,6 +629,7 @@ UI.Theme.Theme`contains two values:
 # Other Design Frameworks
 
 * Material: https://material.io/components
+* Using Material Density on the Web: https://material.io/blog/material-density-web
 * Tailwind:  https://tailwindui.com/components
 * Semantic: https://semantic-ui.com/elements/button.html
 * Ant: https://ant.design/components/button/
@@ -647,6 +648,7 @@ UI.Theme.Theme`contains two values:
 * ReX demo booking: https://rakuten-rex.github.io/demo-booking/
 * ReX demo registration: https://rakuten-rex.github.io/demo-register/
 * ReX demo sign-up: https://rakuten-rex.github.io/demo-sign-up/
+* ReX CSS framework: https://rakuten-frontend.github.io/rex-css-framework/
     
 # Rakuten Branding Tram
 
@@ -664,10 +666,7 @@ UI.Theme.Theme`contains two values:
 
 * https://github.com/NoRedInk/noredink-ui
 * https://github.com/rakutentech/http-trinity/commits/master
-* https://elm.dmy.fr/packages/NoRedInk/noredink-ui/latest/
-
-    
-"""
+* https://elm.dmy.fr/packages/NoRedInk/noredink-ui/latest/"""
     ]
 
 

@@ -250,7 +250,7 @@ parse inputChar pattern =
 
 tokenize : Char -> Char -> Token
 tokenize inputChar pattern =
-    if pattern == inputChar || pattern == '_' then
+    if pattern == inputChar || pattern == '_' || pattern == 'M' || pattern == 'Y' then
         InputValue
 
     else
@@ -386,6 +386,7 @@ view attrs extraInputAttrs args =
          -- here that cause the field not squeezing in small devices.
          -- As a temporary fix, I am overwriting it to `width <| fill`
          -- ++ [ width <| fill ]
+         -- ++ [ width <| (fill |> minimum 100) ]
         )
         [ viewInput newArgs <|
             [ getBorder styleArgs

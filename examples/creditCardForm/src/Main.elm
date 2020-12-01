@@ -27,10 +27,8 @@ import R10.Theme
 
 
 --
--- <link rel="preconnect" href="https://fonts.gstatic.com">
--- <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@700&display=swap" rel="stylesheet">
+-- https://r10-form1.surge.sh/
 --
--- font-family: 'Inconsolata', monospace;
 
 
 theme : R10.Theme.Theme
@@ -182,7 +180,7 @@ viewCreditCard formState =
                 ]
             , column [ spacing 5, alignRight ]
                 [ textCreditCard [] "EXPIRES"
-                , embossedValue formState [ alignRight ] "expires" "YY/MM"
+                , embossedValue formState [ alignRight ] "expires" "MM/YY"
                 ]
             ]
         ]
@@ -277,21 +275,6 @@ textCreditCard attrs string =
 textEmbossedCreditCard : List (Attribute msg) -> String -> Element msg
 textEmbossedCreditCard attrs string =
     let
-        colorBelow =
-            -- White
-            "rgba(255, 255, 220, 1)"
-
-        colorRight =
-            -- Orange
-            "rgba(255, 127, 50, 1)"
-
-        colorAbove =
-            -- Blue
-            "rgba(0, 0, 255, 0.7)"
-
-        colorLeft =
-            "rgba(255, 0, 0, 1)"
-
         shadow x y color =
             String.join ""
                 [ String.fromInt x
@@ -305,10 +288,10 @@ textEmbossedCreditCard attrs string =
         shodowCSS =
             String.join
                 ", "
-                [ shadow 0 1 colorBelow
-                , shadow 1 0 colorRight
-                , shadow 0 -1 colorAbove
-                , shadow -1 0 colorLeft
+                [ shadow 0 1 "rgba(255, 255, 200, 1)"
+                , shadow 1 0 "rgba(200, 200, 200, 0.8)"
+                , shadow 0 -1 "rgba(0, 0, 255, 0.8)"
+                , shadow -1 0 "rgba(255, 0, 0, 1)"
                 ]
     in
     el
@@ -320,7 +303,7 @@ textEmbossedCreditCard attrs string =
          -- https://github.com/opensourcedesign/fonts/tree/master/OCR
          , Font.family [ Font.typeface "OCRA", Font.sansSerif ]
          , Font.size 18
-         , Font.color <| rgba 0 0 0 0
+         , Font.color <| rgba 0.8 0.8 0.8 0
          ]
             ++ attrs
         )

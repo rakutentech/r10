@@ -2,7 +2,6 @@ module Pages.Form_Introduction exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -22,28 +21,9 @@ import R10.Button
 import R10.Card
 import R10.Color.AttrsBackground
 import R10.Form
-import R10.Language
+import R10.FormTypes
 import R10.Libu
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form"
-    , ja_jp = "Form"
-    , zh_tw = "Form"
-    , es_es = "Form"
-    , fr_fr = "Form"
-    , de_de = "Form"
-    , it_it = "Form"
-    , nl_nl = "Form"
-    , pt_pt = "Form"
-    , nb_no = "Form"
-    , fi_fl = "Form"
-    , da_dk = "Form"
-    , sv_se = "Form"
-    }
 
 
 formQuantity : Int
@@ -150,7 +130,7 @@ formsInit =
                 [ R10.Form.entity.field
                     { id = "email"
                     , idDom = Nothing
-                    , type_ = R10.Form.fieldType.text R10.Form.text.email
+                    , type_ = R10.FormTypes.inputField.textEmail
                     , label = "Email"
                     , helperText = Just "Go to [example.com](http://example.com)"
                     , requiredLabel = Just "(required)"
@@ -158,7 +138,7 @@ formsInit =
                         Just
                             { showPassedValidationMessages = False
                             , hidePassedValidationStyle = False
-                            , validationIcon = R10.Form.validationIcon.noIcon
+                            , validationIcon = R10.FormTypes.NoIcon
                             , validation =
                                 [ R10.Form.commonValidation.email
                                 , R10.Form.validation.minLength 5
@@ -170,7 +150,7 @@ formsInit =
                 ]
           , code = """[ R10.Form.entity.field
     { id = "email"
-    , type_ = R10.Form.fieldType.text R10.Form.text.email
+    , type_ = R10.FormTypes.inputField.textEmail
     , label = "Email"
     , helperText = Just "Helper text"
     , required = True
@@ -186,7 +166,7 @@ formsInit =
                     [ R10.Form.entity.field
                         { id = "email"
                         , idDom = Nothing
-                        , type_ = R10.Form.fieldType.text R10.Form.text.email
+                        , type_ = R10.FormTypes.inputField.textEmail
                         , label = "Email"
                         , helperText = Just "Helper text"
                         , requiredLabel = Just "(required)"
@@ -194,7 +174,7 @@ formsInit =
                             Just
                                 { showPassedValidationMessages = False
                                 , hidePassedValidationStyle = False
-                                , validationIcon = R10.Form.validationIcon.noIcon
+                                , validationIcon = R10.FormTypes.NoIcon
                                 , validation =
                                     [ R10.Form.commonValidation.email
                                     , R10.Form.validation.minLength 5
@@ -207,14 +187,14 @@ formsInit =
                         { fieldConfInit
                             | id = "password"
                             , label = "Password"
-                            , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+                            , type_ = R10.FormTypes.inputField.textPasswordNew
                         }
                     ]
                 ]
           , code = """[ R10.Form.entity.multi ""
     [ R10.Form.entity.field
         { id = "email"
-        , type_ = R10.Form.fieldType.text R10.Form.text.email
+        , type_ = R10.FormTypes.inputField.textEmail
         , label = "Email"
         , helperText = Just "Helper text"
         , required = True
@@ -226,7 +206,7 @@ formsInit =
         { fieldConfInit
             | id = "password"
             , label = "Password"
-            , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+            , type_ = R10.FormTypes.inputField.textPasswordNew
         }
     ]
 ]"""
@@ -237,7 +217,7 @@ formsInit =
                     { fieldConfInit
                         | id = "countryCodeAndRegion"
                         , type_ =
-                            R10.Form.fieldType.single R10.Form.single.radio
+                            R10.FormTypes.inputField.singleRadio
                                 [ { value = "Japan", label = "Japan" }
                                 , { value = "United States", label = "United States" }
                                 , { value = "Taiwan", label = "Taiwan" }
@@ -249,7 +229,7 @@ formsInit =
                     { fieldConfInit
                         | id = "countryCodeAndRegion"
                         , type_ =
-                            R10.Form.fieldType.single R10.Form.single.combobox
+                            R10.FormTypes.inputField.singleCombobox
                                 [ { value = "Japan", label = "Japan" }
                                 , { value = "United States", label = "United States" }
                                 , { value = "Taiwan", label = "Taiwan" }
@@ -262,7 +242,7 @@ formsInit =
   { fieldConfInit
       | id = "countryCodeAndRegion"
       , type_ =
-          R10.Form.fieldType.single R10.Form.single.radio
+          R10.FormTypes.inputField.singleRadio
               [ { value = "Japan", label = "Japan" }
               , { value = "United States", label = "United States" }
               , { value = "Taiwan", label = "Taiwan" }
@@ -274,7 +254,7 @@ formsInit =
   { fieldConfInit
       | id = "countryCodeAndRegion"
       , type_ =
-          R10.Form.fieldType.single R10.Form.single.combobox
+          R10.FormTypes.inputField.singleCombobox
               [ { value = "Japan", label = "Japan" }
               , { value = "United States", label = "United States" }
               , { value = "Taiwan", label = "Taiwan" }
@@ -289,18 +269,18 @@ formsInit =
           , conf =
                 [ R10.Form.entity.withBorder ""
                     [ R10.Form.entity.subTitle "" { title = "Social Providers", helperText = Just "Select all social networks that you would like to activate", validationSpecs = Nothing }
-                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
-                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = R10.Form.fieldType.binary R10.Form.binary.switch }
-                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
-                    , R10.Form.entity.field { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = R10.FormTypes.inputField.binaryCheckbox }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = R10.FormTypes.inputField.binarySwitch }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = R10.FormTypes.inputField.binaryCheckbox }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = R10.FormTypes.inputField.binaryCheckbox }
                     ]
                 ]
           , code = """[ R10.Form.entity.withBorder ""
     [ R10.Form.entity.subTitle { title = "Social Providers", helperText = Just "Select all social networks that you would like to activate" }
-    , R10.Form.entity.field { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
-    , R10.Form.entity.field { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
-    , R10.Form.entity.field { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
-    , R10.Form.entity.field { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox }
+    , R10.Form.entity.field { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = R10.FormTypes.inputField.binaryCheckbox }
+    , R10.Form.entity.field { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = R10.FormTypes.inputField.binaryCheckbox }
+    , R10.Form.entity.field { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = R10.FormTypes.inputField.binaryCheckbox }
+    , R10.Form.entity.field { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = R10.FormTypes.inputField.binaryCheckbox }
     ]
 ]"""
           }
@@ -319,7 +299,7 @@ formsInit =
                             { fieldConfInit
                                 | id = "password"
                                 , label = "Password"
-                                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+                                , type_ = R10.FormTypes.inputField.textPasswordNew
                             }
                       )
                     ]
@@ -334,7 +314,7 @@ formsInit =
         { fieldConfInit
             | id = "password"
             , label = "Password"
-            , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+            , type_ = R10.FormTypes.inputField.textPasswordNew
         }
     ]
 ]

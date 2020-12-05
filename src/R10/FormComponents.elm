@@ -1,8 +1,11 @@
-module R10.FormComponents exposing (Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style)
+module R10.FormComponents exposing
+    ( style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
+    , Palette
+    )
 
 {-| This is what you need to add a form in your page.
 
-@docs Palette, style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
+@docs style, label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
 
 -}
 
@@ -13,13 +16,8 @@ import R10.FormComponents.Single.Common
 import R10.FormComponents.Style
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
-
-
-{-| -}
-type alias Palette =
-    R10.FormComponents.UI.Palette.Palette
+import R10.FormTypes
 
 
 {-| -}
@@ -35,11 +33,6 @@ type alias SingleModel =
 {-| -}
 type alias SingleMsg =
     R10.FormComponents.Single.Common.Msg
-
-
-{-| -}
-type alias SingleType =
-    R10.FormComponents.Single.Common.TypeSingle
 
 
 {-| -}
@@ -64,7 +57,7 @@ style =
 
 
 {-| -}
-label : Palette -> Color
+label : R10.FormTypes.Palette -> Color
 label =
     R10.FormComponents.UI.Color.label
 
@@ -81,7 +74,7 @@ viewIconButton :
     ->
         { icon : Element msg
         , msgOnClick : Maybe msg
-        , palette : Palette
+        , palette : R10.FormTypes.Palette
         , size : Int
         }
     -> Element msg
@@ -101,11 +94,11 @@ viewSingleCustom :
         , label : String
         , leadingIcon : Maybe (Element.Element msg)
         , maxDisplayCount : Int
-        , palette : Palette
+        , palette : R10.FormTypes.Palette
         , requiredLabel : Maybe String
         , searchFn : String -> SingleFieldOption -> Bool
         , selectOptionHeight : Int
-        , singleType : SingleType
+        , singleType : R10.FormTypes.TypeSingle
         , style : Style
         , toMsg : SingleMsg -> msg
         , toOptionEl : SingleFieldOption -> Element msg
@@ -127,17 +120,6 @@ defaultSearchFn =
 initSingle : SingleModel
 initSingle =
     R10.FormComponents.Single.Common.init
-
-
-{-| -}
-typeSingle :
-    { combobox : SingleType
-    , radio : SingleType
-    }
-typeSingle =
-    { radio = R10.FormComponents.Single.Common.SingleRadio
-    , combobox = R10.FormComponents.Single.Common.SingleCombobox
-    }
 
 
 
@@ -171,7 +153,7 @@ defaultToOptionEl =
 
 {-| -}
 defaultTrailingIcon :
-    { a | opened : Bool, palette : Palette }
+    { a | opened : Bool, palette : R10.FormTypes.Palette }
     -> Element msg
 defaultTrailingIcon =
     R10.FormComponents.Single.defaultTrailingIcon

@@ -4,7 +4,7 @@ import Element exposing (..)
 import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes
-import R10.Form
+import R10.FormTypes
 import R10.Table.Config
 import R10.Table.State
 import R10.Table.Style
@@ -155,7 +155,7 @@ viewHeaderSortArrow ( buttonType, isReversed ) =
                 R10.Table.Svg.arrowDown "black" 18
 
 
-simpleHeader : List (Attribute msg) -> R10.Form.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg
+simpleHeader : List (Attribute msg) -> R10.FormTypes.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg
 simpleHeader attrs palette headerInfo =
     el
         (R10.Table.Style.defaultHeaderAttrs

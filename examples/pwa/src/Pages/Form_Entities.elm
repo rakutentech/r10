@@ -2,7 +2,6 @@ module Pages.Form_Entities exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -10,41 +9,12 @@ module Pages.Form_Entities exposing
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Font as Font
-import Html
 import Html.Attributes
 import Markdown
-import R10.Button
-import R10.Card
-import R10.Color
-import R10.Color.AttrsBackground
 import R10.Form
-import R10.FormComponents
-import R10.Language
-import R10.Libu
-import R10.Link
-import R10.Mode
+import R10.FormTypes
 import R10.Paragraph
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form Entities"
-    , ja_jp = "Form Entities"
-    , zh_tw = "Form Entities"
-    , es_es = "Form Entities"
-    , fr_fr = "Form Entities"
-    , de_de = "Form Entities"
-    , it_it = "Form Entities"
-    , nl_nl = "Form Entities"
-    , pt_pt = "Form Entities"
-    , nb_no = "Form Entities"
-    , fi_fl = "Form Entities"
-    , da_dk = "Form Entities"
-    , sv_se = "Form Entities"
-    }
 
 
 type alias Model =
@@ -84,7 +54,7 @@ inputFieldConf id =
     R10.Form.entity.field
         { id = "text" ++ String.fromInt id
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.text R10.Form.text.plain
+        , type_ = R10.FormTypes.inputField.textPlain
         , label = "Text " ++ String.fromInt id
         , helperText = Nothing
         , requiredLabel = Nothing

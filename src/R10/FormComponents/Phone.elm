@@ -18,8 +18,8 @@ import R10.FormComponents.Phone.Views
 import R10.FormComponents.Style
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
+import R10.FormTypes
 
 
 
@@ -35,7 +35,7 @@ extraCss =
     ""
 
 
-defaultTrailingIcon : { a | opened : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
+defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> Element msg
 defaultTrailingIcon { opened, palette } =
     R10.FormComponents.IconButton.view []
         { msgOnClick = Nothing
@@ -109,7 +109,7 @@ viewOptionEl { search, msgOnSelect } country =
         ]
 
 
-getFlagButton : R10.FormComponents.UI.Palette.Palette -> String -> msg -> Element msg
+getFlagButton : R10.FormTypes.Palette -> String -> msg -> Element msg
 getFlagButton palette value msg =
     R10.FormComponents.IconButton.view []
         { msgOnClick = Just <| msg
@@ -155,7 +155,7 @@ view :
         , requiredLabel : Maybe String
         , style : R10.FormComponents.Style.Style
         , key : String
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
         , countryOptions : Maybe (List Country)
         }
     -> Element msg

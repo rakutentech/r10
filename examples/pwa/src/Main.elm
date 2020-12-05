@@ -40,6 +40,7 @@ import R10.Header
 import R10.I18n
 import R10.Language
 import R10.Libu
+import R10.Link
 import R10.Mode
 import R10.Okaimonopanda
 import R10.Svg.IconsExtra
@@ -211,7 +212,7 @@ subscriptions model =
             ++ (-- Pages with Okaimonopanda need to have the mouse muvement
                 -- detected to make the panda to move.
                 case model.route of
-                    NotFound _ ->
+                    Route_NotFound _ ->
                         [ Browser.Events.onMouseMove (Json.Decode.map MouseMove positionDecoder) ]
 
                     Route_Overview _ ->
@@ -456,7 +457,7 @@ view model =
             ]
           <|
             case model.route of
-                RouteTop _ ->
+                Route_Top _ ->
                     column [ width fill ]
                         [ Pages.Top.view
                             model.theme
@@ -477,52 +478,52 @@ view model =
                             -- of the panda in the page
                             { mouse | y = mouse.y - 7000 }
                     in
-                    mainLayout model Pages.Overview.title (List.map (map Msg_Overview) (Pages.Overview.view model.pageOverview model.theme mouseCorrected model.windowSize))
+                    mainLayout model (List.map (map Msg_Overview) (Pages.Overview.view model.pageOverview model.theme mouseCorrected model.windowSize))
 
                 Route_Form_Entities lang ->
-                    mainLayout model Pages.Form_Entities.title (List.map (map Msg_Form_Entities) (Pages.Form_Entities.view model.pageForm_Entities model.theme))
+                    mainLayout model (List.map (map Msg_Form_Entities) (Pages.Form_Entities.view model.pageForm_Entities model.theme))
 
                 Route_Form_Example_CreditCard lang ->
-                    mainLayout model Pages.Form_Example_CreditCard.title (List.map (map Msg_Form_Example_CreditCard) (Pages.Form_Example_CreditCard.view model.pageForm_Example_CreditCard model.theme))
+                    mainLayout model (List.map (map Msg_Form_Example_CreditCard) (Pages.Form_Example_CreditCard.view model.pageForm_Example_CreditCard model.theme))
 
                 Route_Form_Boilerplate lang ->
-                    mainLayout model Pages.Form_Boilerplate.title (List.map (map Msg_Form_Boilerplate) (Pages.Form_Boilerplate.view model.pageForm_Boilerplate model.theme))
+                    mainLayout model (List.map (map Msg_Form_Boilerplate) (Pages.Form_Boilerplate.view model.pageForm_Boilerplate model.theme))
 
                 Route_Form_Example_Table lang ->
-                    mainLayout model Pages.Form_Example_Table.title (List.map (map Msg_Form_Example_Table) (Pages.Form_Example_Table.view model.pageForm_Example_Table model.theme))
+                    mainLayout model (List.map (map Msg_Form_Example_Table) (Pages.Form_Example_Table.view model.pageForm_Example_Table model.theme))
 
                 Route_Form_Example_PhoneSelector lang ->
-                    mainLayout model Pages.Form_Example_PhoneSelector.title (List.map (map Msg_Form_Example_PhoneSelector) (Pages.Form_Example_PhoneSelector.view model.pageForm_Example_PhoneSelector model.theme))
+                    mainLayout model (List.map (map Msg_Form_Example_PhoneSelector) (Pages.Form_Example_PhoneSelector.view model.pageForm_Example_PhoneSelector model.theme))
 
                 Route_Form_FieldType_Single lang ->
-                    mainLayout model Pages.Form_FieldType_Single.title (List.map (map Msg_Form_FieldType_Single) (Pages.Form_FieldType_Single.view model.pageForm_FieldType_Single model.theme))
+                    mainLayout model (List.map (map Msg_Form_FieldType_Single) (Pages.Form_FieldType_Single.view model.pageForm_FieldType_Single model.theme))
 
                 Route_Form_States lang ->
-                    mainLayout model Pages.Form_States.title (List.map (map Msg_Form_States) (Pages.Form_States.view model.pageForm_States model.theme))
+                    mainLayout model (List.map (map Msg_Form_States) (Pages.Form_States.view model.pageForm_States model.theme))
 
                 Route_Form_FieldType_Text lang ->
-                    mainLayout model Pages.Form_FieldType_Text.title (List.map (map Msg_Form_FieldType_Text) (Pages.Form_FieldType_Text.view model.pageForm_FieldType_Text model.theme))
+                    mainLayout model (List.map (map Msg_Form_FieldType_Text) (Pages.Form_FieldType_Text.view model.pageForm_FieldType_Text model.theme))
 
                 Route_Form_FieldType_Multi lang ->
-                    mainLayout model Pages.Form_FieldType_Multi.title (List.map (map Msg_Form_FieldType_Multi) (Pages.Form_FieldType_Multi.view model.pageForm_FieldType_Multi model.theme))
+                    mainLayout model (List.map (map Msg_Form_FieldType_Multi) (Pages.Form_FieldType_Multi.view model.pageForm_FieldType_Multi model.theme))
 
                 Route_Form_FieldType_Binary lang ->
-                    mainLayout model Pages.Form_FieldType_Binary.title (List.map (map Msg_Form_FieldType_Binary) (Pages.Form_FieldType_Binary.view model.pageForm_FieldType_Binary model.theme))
+                    mainLayout model (List.map (map Msg_Form_FieldType_Binary) (Pages.Form_FieldType_Binary.view model.pageForm_FieldType_Binary model.theme))
 
                 Route_Form_Introduction lang ->
-                    mainLayout model Pages.Form_Introduction.title (List.map (map Msg_Form_Introduction) (Pages.Form_Introduction.view model.pageForm_Introduction model.theme))
+                    mainLayout model (List.map (map Msg_Form_Introduction) (Pages.Form_Introduction.view model.pageForm_Introduction model.theme))
 
                 Route_UIComponents lang ->
-                    mainLayout model Pages.UIComponents.title (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageUIComponents model.theme))
+                    mainLayout model (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageUIComponents model.theme))
 
                 Route_Counter lang ->
-                    mainLayout model Pages.Counter.title (List.map (map Msg_Counter) (Pages.Counter.view model.pageCounter model.theme))
+                    mainLayout model (List.map (map Msg_Counter) (Pages.Counter.view model.pageCounter model.theme))
 
                 Route_TableExample lang ->
-                    mainLayout model Pages.TableExample.title (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTableExample model.theme))
+                    mainLayout model (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTableExample model.theme))
 
-                NotFound lang ->
-                    mainLayout model translationsError <|
+                Route_NotFound lang ->
+                    mainLayout model <|
                         [ row [ centerX, spacing 50 ]
                             [ el [] <|
                                 html <|
@@ -671,12 +672,27 @@ viewFooter model =
     R10.Footer.view model.header (headerFooterArgs model)
 
 
+codeAvailable : R10.Theme.Theme -> String -> Element msg
+codeAvailable theme fileName =
+    paragraph []
+        [ text "The source code of this page is available at "
+        , newTabLink (R10.Link.attrs theme) { url = "https://github.com/rakutentech/r10/blob/master/examples/pwa/src/Pages/" ++ fileName, label = text fileName }
+        , text "."
+        ]
+
+
 mainLayout :
     Model
-    -> R10.Language.Translations
     -> List (Element Msg)
     -> Element Msg
-mainLayout model title content =
+mainLayout model content =
+    let
+        title =
+            .title (routeDetails model.route)
+
+        fileName =
+            .fileName (routeDetails model.route)
+    in
     column [ width fill ]
         [ headerPlaceholder
         , el
@@ -693,7 +709,9 @@ mainLayout model title content =
                        , spacing 40
                        ]
                 )
-                ([ paragraph [ Font.size 40 ] [ text <| R10.I18n.t (routeToLanguage model.route) title ] ]
+                ([ paragraph [ Font.size 40 ] [ text <| R10.I18n.t (routeToLanguage model.route) title ]
+                 , codeAvailable model.theme fileName
+                 ]
                     ++ content
                 )
         , viewFooter model
@@ -931,7 +949,7 @@ languageSupportedList =
 
 
 type Route
-    = RouteTop R10.Language.Language
+    = Route_Top R10.Language.Language
     | Route_Overview R10.Language.Language
     | Route_Form_Entities R10.Language.Language
     | Route_Form_Boilerplate R10.Language.Language
@@ -947,14 +965,14 @@ type Route
     | Route_UIComponents R10.Language.Language
     | Route_Counter R10.Language.Language
     | Route_TableExample R10.Language.Language
-    | NotFound R10.Language.Language
+    | Route_NotFound R10.Language.Language
 
 
 listForSSR : List String
 listForSSR =
     let
         routes =
-            RouteTop R10.Language.EN_US :: List.map (\route -> route R10.Language.EN_US) routesList
+            Route_Top R10.Language.EN_US :: List.map (\route -> route R10.Language.EN_US) routesList
     in
     List.map routeToPathWithoutLanguage routes
 
@@ -971,8 +989,8 @@ routesList =
     , Route_Form_Example_PhoneSelector
     , Route_Form_FieldType_Text
     , Route_Form_FieldType_Single
-    , Route_Form_FieldType_Multi
     , Route_Form_FieldType_Binary
+    , Route_Form_FieldType_Multi
     , Route_Form_States
     , Route_Counter
     , Route_TableExample
@@ -982,112 +1000,355 @@ routesList =
 routeDetails :
     Route
     ->
-        { title : R10.Language.Translations
-        , language : R10.Language.Language
+        { language : R10.Language.Language
         , routeLabel : String
+        , fileName : String
+        , title : R10.Language.Translations
         }
 routeDetails route =
     case route of
-        RouteTop language ->
-            { title = translationR10
-            , routeLabel = ""
+        Route_Top language ->
+            { routeLabel = ""
+            , fileName = "Top.elm"
             , language = language
+            , title = translationR10
             }
 
         Route_Overview language ->
-            { title = Pages.Overview.title
-            , routeLabel = "overview"
+            { routeLabel = "overview"
+            , fileName = "Overview.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Overview"
+                , ja_jp = "前書き"
+                , zh_tw = "Overview"
+                , es_es = "Overview"
+                , fr_fr = "Overview"
+                , de_de = "Overview"
+                , it_it = "Overview"
+                , nl_nl = "Overview"
+                , pt_pt = "Overview"
+                , nb_no = "Overview"
+                , fi_fl = "Overview"
+                , da_dk = "Overview"
+                , sv_se = "Overview"
+                }
             }
 
         Route_Form_Entities language ->
-            { title = Pages.Form_Entities.title
-            , routeLabel = "form_entities"
+            { routeLabel = "form_entities"
+            , fileName = "Form_Entities.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Form Entities"
+                , ja_jp = "Form Entities"
+                , zh_tw = "Form Entities"
+                , es_es = "Form Entities"
+                , fr_fr = "Form Entities"
+                , de_de = "Form Entities"
+                , it_it = "Form Entities"
+                , nl_nl = "Form Entities"
+                , pt_pt = "Form Entities"
+                , nb_no = "Form Entities"
+                , fi_fl = "Form Entities"
+                , da_dk = "Form Entities"
+                , sv_se = "Form Entities"
+                }
             }
 
         Route_Form_Example_CreditCard language ->
-            { title = Pages.Form_Example_CreditCard.title
-            , routeLabel = "form_example_credit_card"
+            { routeLabel = "form_example_credit_card"
+            , fileName = "Form_Example_CreditCard.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Form Example - Credit Card"
+                , ja_jp = "フォームの例-クレジットカード"
+                , zh_tw = "Form Example - Credit Card"
+                , es_es = "Form Example - Credit Card"
+                , fr_fr = "Form Example - Credit Card"
+                , de_de = "Form Example - Credit Card"
+                , it_it = "Form Example - Credit Card"
+                , nl_nl = "Form Example - Credit Card"
+                , pt_pt = "Form Example - Credit Card"
+                , nb_no = "Form Example - Credit Card"
+                , fi_fl = "Form Example - Credit Card"
+                , da_dk = "Form Example - Credit Card"
+                , sv_se = "Form Example - Credit Card"
+                }
             }
 
         Route_Form_Example_Table language ->
-            { title = Pages.Form_Example_Table.title
-            , routeLabel = "form_example_table"
+            { routeLabel = "form_example_table"
+            , fileName = "Form_Example_Table.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Form Example - Table"
+                , ja_jp = "Form Example - Table"
+                , zh_tw = "Form Example - Table"
+                , es_es = "Form Example - Table"
+                , fr_fr = "Form Example - Table"
+                , de_de = "Form Example - Table"
+                , it_it = "Form Example - Table"
+                , nl_nl = "Form Example - Table"
+                , pt_pt = "Form Example - Table"
+                , nb_no = "Form Example - Table"
+                , fi_fl = "Form Example - Table"
+                , da_dk = "Form Example - Table"
+                , sv_se = "Form Example - Table"
+                }
             }
 
         Route_Form_Example_PhoneSelector language ->
-            { title = Pages.Form_Example_PhoneSelector.title
-            , routeLabel = "form_example_phone_selector"
+            { routeLabel = "form_example_phone_selector"
+            , fileName = "Form_Example_PhoneSelector.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Form Example - Phone Selector"
+                , ja_jp = "Form Example - Phone Selector"
+                , zh_tw = "Form Example - Phone Selector"
+                , es_es = "Form Example - Phone Selector"
+                , fr_fr = "Form Example - Phone Selector"
+                , de_de = "Form Example - Phone Selector"
+                , it_it = "Form Example - Phone Selector"
+                , nl_nl = "Form Example - Phone Selector"
+                , pt_pt = "Form Example - Phone Selector"
+                , nb_no = "Form Example - Phone Selector"
+                , fi_fl = "Form Example - Phone Selector"
+                , da_dk = "Form Example - Phone Selector"
+                , sv_se = "Form Example - Phone Selector"
+                }
             }
 
         Route_Form_Boilerplate language ->
-            { title = Pages.Form_Boilerplate.title
-            , routeLabel = "form_boilerplate"
+            { routeLabel = "form_boilerplate"
+            , fileName = "Form_Boilerplate.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Form Boilerplate"
+                , ja_jp = "Form Boilerplate"
+                , zh_tw = "Form Boilerplate"
+                , es_es = "Form Boilerplate"
+                , fr_fr = "Form Boilerplate"
+                , de_de = "Form Boilerplate"
+                , it_it = "Form Boilerplate"
+                , nl_nl = "Form Boilerplate"
+                , pt_pt = "Form Boilerplate"
+                , nb_no = "Form Boilerplate"
+                , fi_fl = "Form Boilerplate"
+                , da_dk = "Form Boilerplate"
+                , sv_se = "Form Boilerplate"
+                }
             }
 
         Route_Form_FieldType_Text language ->
-            { title = Pages.Form_FieldType_Text.title
-            , routeLabel = "form_field_type_text"
+            { routeLabel = "form_field_type_text"
+            , fileName = "Form_FieldType_Text.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Input Field: Text"
+                , ja_jp = "Input Field: Text"
+                , zh_tw = "Input Field: Text"
+                , es_es = "Input Field: Text"
+                , fr_fr = "Input Field: Text"
+                , de_de = "Input Field: Text"
+                , it_it = "Input Field: Text"
+                , nl_nl = "Input Field: Text"
+                , pt_pt = "Input Field: Text"
+                , nb_no = "Input Field: Text"
+                , fi_fl = "Input Field: Text"
+                , da_dk = "Input Field: Text"
+                , sv_se = "Input Field: Text"
+                }
             }
 
         Route_Form_FieldType_Single language ->
-            { title = Pages.Form_FieldType_Single.title
-            , routeLabel = "form_field_type_single"
+            { routeLabel = "form_field_type_single"
+            , fileName = "Form_FieldType_Single.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Input Field: Single"
+                , ja_jp = "Input Field: Single"
+                , zh_tw = "Input Field: Single"
+                , es_es = "Input Field: Single"
+                , fr_fr = "Input Field: Single"
+                , de_de = "Input Field: Single"
+                , it_it = "Input Field: Single"
+                , nl_nl = "Input Field: Single"
+                , pt_pt = "Input Field: Single"
+                , nb_no = "Input Field: Single"
+                , fi_fl = "Input Field: Single"
+                , da_dk = "Input Field: Single"
+                , sv_se = "Input Field: Single"
+                }
             }
 
         Route_Form_FieldType_Multi language ->
-            { title = Pages.Form_FieldType_Multi.title
-            , routeLabel = "form_field_type_multi"
+            { routeLabel = "form_field_type_multi"
+            , fileName = "Form_FieldType_Multi.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Input Field: Multi"
+                , ja_jp = "Input Field: Multi"
+                , zh_tw = "Input Field: Multi"
+                , es_es = "Input Field: Multi"
+                , fr_fr = "Input Field: Multi"
+                , de_de = "Input Field: Multi"
+                , it_it = "Input Field: Multi"
+                , nl_nl = "Input Field: Multi"
+                , pt_pt = "Input Field: Multi"
+                , nb_no = "Input Field: Multi"
+                , fi_fl = "Input Field: Multi"
+                , da_dk = "Input Field: Multi"
+                , sv_se = "Input Field: Multi"
+                }
             }
 
         Route_Form_FieldType_Binary language ->
-            { title = Pages.Form_FieldType_Binary.title
-            , routeLabel = "form_field_type_binary"
+            { routeLabel = "form_field_type_binary"
+            , fileName = "Form_FieldType_Binary.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Input Field: Binary"
+                , ja_jp = "Input Field: Binary"
+                , zh_tw = "Input Field: Binary"
+                , es_es = "Input Field: Binary"
+                , fr_fr = "Input Field: Binary"
+                , de_de = "Input Field: Binary"
+                , it_it = "Input Field: Binary"
+                , nl_nl = "Input Field: Binary"
+                , pt_pt = "Input Field: Binary"
+                , nb_no = "Input Field: Binary"
+                , fi_fl = "Input Field: Binary"
+                , da_dk = "Input Field: Binary"
+                , sv_se = "Input Field: Binary"
+                }
             }
 
         Route_Form_States language ->
-            { title = Pages.Form_States.title
-            , routeLabel = "form_states"
+            { routeLabel = "form_states"
+            , fileName = "Form_States.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Form States"
+                , ja_jp = "Form States"
+                , zh_tw = "Form States"
+                , es_es = "Form States"
+                , fr_fr = "Form States"
+                , de_de = "Form States"
+                , it_it = "Form States"
+                , nl_nl = "Form States"
+                , pt_pt = "Form States"
+                , nb_no = "Form States"
+                , fi_fl = "Form States"
+                , da_dk = "Form States"
+                , sv_se = "Form States"
+                }
             }
 
         Route_Form_Introduction language ->
-            { title = Pages.Form_Introduction.title
-            , routeLabel = "form"
+            { routeLabel = "form"
+            , fileName = "Form_Introduction.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Form"
+                , ja_jp = "Form"
+                , zh_tw = "Form"
+                , es_es = "Form"
+                , fr_fr = "Form"
+                , de_de = "Form"
+                , it_it = "Form"
+                , nl_nl = "Form"
+                , pt_pt = "Form"
+                , nb_no = "Form"
+                , fi_fl = "Form"
+                , da_dk = "Form"
+                , sv_se = "Form"
+                }
             }
 
         Route_UIComponents language ->
-            { title = Pages.UIComponents.title
-            , routeLabel = "ui_components"
+            { routeLabel = "ui_components"
+            , fileName = "Form_FieldType_Text.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "UI Components"
+                , ja_jp = "UI Components"
+                , zh_tw = "UI Components"
+                , es_es = "UI Components"
+                , fr_fr = "UI Components"
+                , de_de = "UI Components"
+                , it_it = "UI Components"
+                , nl_nl = "UI Components"
+                , pt_pt = "UI Components"
+                , nb_no = "UI Components"
+                , fi_fl = "UI Components"
+                , da_dk = "UI Components"
+                , sv_se = "UI Components"
+                }
             }
 
         Route_Counter language ->
-            { title = Pages.Counter.title
-            , routeLabel = "counter"
+            { routeLabel = "counter"
+            , fileName = "Counter.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Counter"
+                , ja_jp = "カウンター"
+                , zh_tw = "Counter"
+                , es_es = "Counter"
+                , fr_fr = "Counter"
+                , de_de = "Counter"
+                , it_it = "Counter"
+                , nl_nl = "Counter"
+                , pt_pt = "Counter"
+                , nb_no = "Counter"
+                , fi_fl = "Counter"
+                , da_dk = "Counter"
+                , sv_se = "Counter"
+                }
             }
 
         Route_TableExample language ->
-            { title = Pages.TableExample.title
-            , routeLabel = "sortable_table"
+            { routeLabel = "sortable_table"
+            , fileName = "TableExample.elm"
             , language = language
+            , title =
+                { key = "title"
+                , en_us = "Sortable Table"
+                , ja_jp = "Sortable Table"
+                , zh_tw = "Sortable Table"
+                , es_es = "Sortable Table"
+                , fr_fr = "Sortable Table"
+                , de_de = "Sortable Table"
+                , it_it = "Sortable Table"
+                , nl_nl = "Sortable Table"
+                , pt_pt = "Sortable Table"
+                , nb_no = "Sortable Table"
+                , fi_fl = "Sortable Table"
+                , da_dk = "Sortable Table"
+                , sv_se = "Sortable Table"
+                }
             }
 
-        NotFound language ->
-            { title = translationsError
-            , routeLabel = "not_found"
+        Route_NotFound language ->
+            { routeLabel = "not_found"
+            , fileName = ""
             , language = language
+            , title = translationsError
             }
 
 
@@ -1109,7 +1370,7 @@ routeToPath language route =
         path =
             String.join "/" <|
                 case route of
-                    RouteTop _ ->
+                    Route_Top _ ->
                         lang
 
                     _ ->
@@ -1129,7 +1390,7 @@ routeToLanguage route =
 
 urlToRoute : Url.Url -> Route
 urlToRoute url =
-    Maybe.withDefault (NotFound languageDefault) <| Url.Parser.parse routeParser url
+    Maybe.withDefault (Route_NotFound languageDefault) <| Url.Parser.parse routeParser url
 
 
 fromLocationHref : String -> Route
@@ -1137,7 +1398,7 @@ fromLocationHref locationHref =
     locationHref
         |> Url.fromString
         |> Maybe.map urlToRoute
-        |> Maybe.withDefault (NotFound languageDefault)
+        |> Maybe.withDefault (Route_NotFound languageDefault)
 
 
 routeWithLanguage : (R10.Language.Language -> Route) -> Url.Parser.Parser (Route -> c) c
@@ -1154,8 +1415,8 @@ routeParser : Url.Parser.Parser (Route -> b) b
 routeParser =
     Url.Parser.oneOf
         -- The RouteTop is special because doesn't have any label
-        ([ Url.Parser.map RouteTop R10.Language.urlParser
-         , Url.Parser.map (RouteTop languageDefault) Url.Parser.top
+        ([ Url.Parser.map Route_Top R10.Language.urlParser
+         , Url.Parser.map (Route_Top languageDefault) Url.Parser.top
          ]
             -- Routes with language
             ++ List.map routeWithLanguage routesList

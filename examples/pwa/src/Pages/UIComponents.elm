@@ -2,7 +2,6 @@ module Pages.UIComponents exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -19,31 +18,11 @@ import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
 import R10.Form
-import R10.FormComponents
-import R10.Language
+import R10.FormTypes
 import R10.Libu
 import R10.Link
 import R10.Mode
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "UI Components"
-    , ja_jp = "UI Components"
-    , zh_tw = "UI Components"
-    , es_es = "UI Components"
-    , fr_fr = "UI Components"
-    , de_de = "UI Components"
-    , it_it = "UI Components"
-    , nl_nl = "UI Components"
-    , pt_pt = "UI Components"
-    , nb_no = "UI Components"
-    , fi_fl = "UI Components"
-    , da_dk = "UI Components"
-    , sv_se = "UI Components"
-    }
 
 
 type alias Model =
@@ -108,7 +87,7 @@ formConf =
     [ R10.Form.entity.field
         { id = "explain"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
+        , type_ = R10.FormTypes.inputField.binarySwitch
         , label = "Explain: OFF ⇔ ON"
         , helperText = Nothing
         , requiredLabel = Nothing
@@ -117,7 +96,7 @@ formConf =
     , R10.Form.entity.field
         { id = "width"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
+        , type_ = R10.FormTypes.inputField.binarySwitch
         , label = "Width: Fill ⇔ Shrink"
         , helperText = Nothing
         , requiredLabel = Nothing
@@ -478,7 +457,7 @@ components theme_ =
                         msgMapper
                         { maker = Nothing
                         , translator = Nothing
-                        , style = R10.FormComponents.style.filled
+                        , style = R10.Form.style.filled
                         , palette = Just <| R10.Form.themeToPalette theme_
                         }
       , componentAsStringCode = """R10.Form.viewWithOptions
@@ -488,7 +467,7 @@ components theme_ =
     msgMapper
     { maker = Nothing
     , translator = Nothing
-    , style = R10.FormComponents.style.filled
+    , style = R10.Form.style.filled
     , palette = Just <| R10.Form.themeToPalette theme_
     }"""
       }
@@ -528,7 +507,7 @@ components theme_ =
                         msgMapper
                         { maker = Nothing
                         , translator = Nothing
-                        , style = R10.FormComponents.style.filled
+                        , style = R10.Form.style.filled
                         , palette = Just <| R10.Form.themeToPalette theme_
                         }
       , componentAsStringCode = """                    R10.Form.viewWithOptions
@@ -538,7 +517,7 @@ components theme_ =
     msgMapper
     { maker = Nothing
     , translator = Nothing
-    , style = R10.FormComponents.style.filled
+    , style = R10.Form.style.filled
     , palette = Just <| R10.Form.themeToPalette theme_
     }"""
       }
@@ -550,7 +529,7 @@ v01 =
     [ R10.Form.entity.field
         { id = "userId"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.text R10.Form.text.username
+        , type_ = R10.FormTypes.inputField.textUsername
         , label = "Label"
         , helperText = Nothing
         , requiredLabel = Just "Required"
@@ -558,7 +537,7 @@ v01 =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.validationIcon.noIcon
+                , validationIcon = R10.FormTypes.NoIcon
                 , validation =
                     [ R10.Form.validation.required
                     , R10.Form.validation.minLength 6
@@ -576,7 +555,7 @@ v11 =
     [ R10.Form.entity.field
         { id = "password"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.text R10.Form.text.passwordCurrent
+        , type_ = R10.FormTypes.inputField.textPasswordCurrent
         , label = "Label"
         , helperText = Nothing
         , requiredLabel = Just "Required"
@@ -584,7 +563,7 @@ v11 =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.validationIcon.noIcon
+                , validationIcon = R10.FormTypes.NoIcon
                 , validation = [ R10.Form.validation.required ]
                 }
         }

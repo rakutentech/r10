@@ -13,9 +13,9 @@ import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes
 import R10.Form.Internal.Conf
-import R10.Form.Internal.Converter exposing (fromFormValidationIconToComponentValidationIcon)
+import R10.Form.Internal.Converter
 import R10.Form.Internal.Dict
-import R10.Form.Internal.FieldConf exposing (ValidationIcon(..))
+import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState exposing (ValidationOutcome(..))
 import R10.Form.Internal.Helpers
 import R10.Form.Internal.Key
@@ -31,6 +31,7 @@ import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
+import R10.FormTypes
 
 
 
@@ -61,7 +62,7 @@ type alias ArgsForFields =
     , key : R10.Form.Internal.Key.Key
     , translator : R10.Form.Internal.FieldConf.ValidationCode -> String
     , style : R10.FormComponents.Style.Style
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , palette : R10.FormTypes.Palette
     }
 
 
@@ -75,10 +76,10 @@ spacingGeneric =
     spacingXY 15 25
 
 
-extraCss : Maybe R10.FormComponents.UI.Palette.Palette -> String
+extraCss : Maybe R10.FormTypes.Palette -> String
 extraCss maybePalette =
     let
-        palette : R10.FormComponents.UI.Palette.Palette
+        palette : R10.FormTypes.Palette
         palette =
             Maybe.withDefault R10.FormComponents.UI.Palette.light maybePalette
     in
@@ -158,7 +159,7 @@ getFieldConfig entity =
 
 viewText :
     ArgsForFields
-    -> R10.Form.Internal.FieldConf.TypeText
+    -> R10.FormTypes.TypeText
     -> R10.Form.Internal.Conf.Conf
     -> Element R10.Form.Msg.Msg
 viewText args textType formConf =
@@ -199,7 +200,7 @@ viewText args textType formConf =
         , palette = args.palette
 
         -- Specific
-        , textType = R10.Form.Internal.Converter.textTypeFromFieldConfToComponent textType
+        , textType = textType
         }
 
 
@@ -213,7 +214,7 @@ viewText args textType formConf =
 
 viewBinary :
     ArgsForFields
-    -> R10.Form.Internal.FieldConf.TypeBinary
+    -> R10.FormTypes.TypeBinary
     -> R10.Form.Internal.Conf.Conf
     -> Element R10.Form.Msg.Msg
 viewBinary args typeBinary formConf =
@@ -255,7 +256,7 @@ viewBinary args typeBinary formConf =
         , palette = args.palette
 
         -- Specific stuff
-        , typeBinary = R10.Form.Internal.Converter.binaryTypeFromFieldConfToComponent typeBinary
+        , typeBinary = typeBinary
         }
 
 
@@ -269,8 +270,8 @@ viewBinary args typeBinary formConf =
 
 viewSingleSelection :
     ArgsForFields
-    -> R10.Form.Internal.FieldConf.TypeSingle
-    -> List R10.Form.Internal.FieldConf.FieldOption
+    -> R10.FormTypes.TypeSingle
+    -> List R10.FormTypes.FieldOption
     -> R10.Form.Internal.Conf.Conf
     -> Element.Element R10.Form.Msg.Msg
 viewSingleSelection args singleType fieldOptions formConf =
@@ -308,7 +309,7 @@ viewSingleSelection args singleType fieldOptions formConf =
         , palette = args.palette
 
         -- Specific
-        , singleType = R10.Form.Internal.Converter.singleTypeFromFieldConfToComponent singleType
+        , singleType = singleType
         , fieldOptions = fieldOptions
         }
 
@@ -777,23 +778,23 @@ viewEntityField args fieldConf formConf =
         field : Element R10.Form.Msg.Msg
         field =
             case fieldConf.type_ of
-                R10.Form.Internal.FieldConf.TypeText typeText ->
+                R10.FormTypes.TypeText typeText ->
                     viewText args2 typeText formConf
 
-                R10.Form.Internal.FieldConf.TypeBinary typeBinary ->
+                R10.FormTypes.TypeBinary typeBinary ->
                     viewBinary args2 typeBinary formConf
 
-                R10.Form.Internal.FieldConf.TypeSingle typeSingle options ->
+                R10.FormTypes.TypeSingle typeSingle options ->
                     viewSingleSelection args2 typeSingle options formConf
 
-                R10.Form.Internal.FieldConf.TypeMulti _ _ ->
+                R10.FormTypes.TypeMulti _ _ ->
                     text "TODO"
     in
     [ field ]
 
 
 viewEntityTitle :
-    R10.FormComponents.UI.Palette.Palette
+    R10.FormTypes.Palette
     -> R10.Form.Internal.Conf.TextConf
     -> List Outcome
 viewEntityTitle palette titleConf =
@@ -809,7 +810,7 @@ viewEntityTitle palette titleConf =
 
 
 viewEntitySubTitle :
-    R10.FormComponents.UI.Palette.Palette
+    R10.FormTypes.Palette
     -> R10.Form.Internal.Conf.TextConf
     -> List Outcome
 viewEntitySubTitle palette titleConf =
@@ -826,13 +827,12 @@ viewEntitySubTitle palette titleConf =
 viewWithValidationMessage : MakerArgs -> R10.Form.Internal.Conf.Entity -> List (Element msg) -> List (Element msg)
 viewWithValidationMessage args entity listEl =
     let
-        validationIcon : R10.FormComponents.Validations.ValidationIcon
+        validationIcon : R10.FormTypes.ValidationIcon
         validationIcon =
             getFieldConfig entity
                 |> .validationSpecs
                 |> Maybe.map .validationIcon
-                |> Maybe.withDefault NoIcon
-                |> fromFormValidationIconToComponentValidationIcon
+                |> Maybe.withDefault R10.FormTypes.NoIcon
     in
     [ column [ width fill, height fill ] <|
         listEl
@@ -860,7 +860,7 @@ type alias MakerArgs =
     , formState : R10.Form.Internal.State.State
     , translator : R10.Form.Internal.FieldConf.ValidationCode -> String
     , style : R10.FormComponents.Style.Style
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , palette : R10.FormTypes.Palette
     }
 
 

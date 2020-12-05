@@ -2,13 +2,11 @@ module Pages.Overview exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
 
 import Color
-import Color.Accessibility
 import Color.Convert
 import Element exposing (..)
 import Element.Background as Background
@@ -26,7 +24,7 @@ import R10.Color.Svg
 import R10.Color.Utils
 import R10.FontSize
 import R10.Form
-import R10.FormComponents
+import R10.FormTypes
 import R10.Language
 import R10.Libu
 import R10.Link
@@ -36,25 +34,6 @@ import R10.Paragraph
 import R10.Svg.Icons
 import R10.Svg.Lists
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Overview"
-    , ja_jp = "前書き"
-    , zh_tw = "Overview"
-    , es_es = "Overview"
-    , fr_fr = "Overview"
-    , de_de = "Overview"
-    , it_it = "Overview"
-    , nl_nl = "Overview"
-    , pt_pt = "Overview"
-    , nb_no = "Overview"
-    , fi_fl = "Overview"
-    , da_dk = "Overview"
-    , sv_se = "Overview"
-    }
 
 
 type alias Model =
@@ -221,7 +200,7 @@ formConf =
     [ R10.Form.entity.field
         { id = "binary"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.binary R10.Form.binary.switch
+        , type_ = R10.FormTypes.inputField.binarySwitch
         , label = "Binary Switch"
         , helperText = Just "Helper Text"
         , requiredLabel = Nothing
@@ -230,7 +209,7 @@ formConf =
     , R10.Form.entity.field
         { id = "binary"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox
+        , type_ = R10.FormTypes.inputField.binaryCheckbox
         , label = "Checkbox"
         , helperText = Nothing
         , requiredLabel = Just <| "Required"
@@ -238,14 +217,14 @@ formConf =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.validationIcon.noIcon
+                , validationIcon = R10.FormTypes.NoIcon
                 , validation = [ R10.Form.validation.required ]
                 }
         }
     , R10.Form.entity.field
         { id = "userId"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.text R10.Form.text.username
+        , type_ = R10.FormTypes.inputField.textUsername
         , label = "User ID"
         , helperText = Nothing
         , requiredLabel = Just "Required"
@@ -253,7 +232,7 @@ formConf =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.validationIcon.noIcon
+                , validationIcon = R10.FormTypes.NoIcon
                 , validation =
                     [ R10.Form.validation.required
                     , R10.Form.validation.minLength 6
@@ -266,7 +245,7 @@ formConf =
     , R10.Form.entity.field
         { id = "password"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.text R10.Form.text.passwordCurrent
+        , type_ = R10.FormTypes.inputField.textPasswordCurrent
         , label = "Password"
         , helperText = Nothing
         , requiredLabel = Just <| "Required"
@@ -274,7 +253,7 @@ formConf =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.validationIcon.noIcon
+                , validationIcon = R10.FormTypes.NoIcon
                 , validation = [ R10.Form.validation.required ]
                 }
         }
@@ -282,7 +261,7 @@ formConf =
         { id = "single"
         , idDom = Nothing
         , type_ =
-            R10.Form.fieldType.single R10.Form.single.radio
+            R10.FormTypes.inputField.singleRadio
                 [ { value = "option1"
                   , label = "Option 1"
                   }
@@ -299,7 +278,7 @@ formConf =
         { id = "single"
         , idDom = Nothing
         , type_ =
-            R10.Form.fieldType.single R10.Form.single.combobox
+            R10.FormTypes.inputField.singleCombobox
                 [ { value = "option1"
                   , label = "Option 1"
                   }
@@ -470,7 +449,7 @@ view model theme mouse windowSize =
                     MsgForm
                     { maker = Nothing
                     , translator = Nothing
-                    , style = R10.FormComponents.style.outlined
+                    , style = R10.Form.style.outlined
                     , palette = Just <| R10.Form.themeToPalette theme
                     }
         , column
@@ -490,7 +469,7 @@ view model theme mouse windowSize =
                     MsgForm
                     { maker = Nothing
                     , translator = Nothing
-                    , style = R10.FormComponents.style.filled
+                    , style = R10.Form.style.filled
                     , palette = Just <| R10.Form.themeToPalette theme
                     }
         ]
@@ -499,7 +478,7 @@ view model theme mouse windowSize =
     [ R10.Form.entity.field
         { id = "userId"
         , idDom = Nothing
-        , type_ = R10.Form.fieldType.text R10.Form.text.username
+        , type_ = R10.FormTypes.inputField.textUsername
         , label = "User ID"
         , helperText = Nothing
         , requiredLabel = Just "Required"
@@ -507,7 +486,7 @@ view model theme mouse windowSize =
             Just
                 { showPassedValidationMessages = False
                 , hidePassedValidationStyle = True
-                , validationIcon = R10.Form.validationIcon.noIcon
+                , validationIcon = R10.FormTypes.NoIcon
                 , validation =
                     R10.Form.validation.allOf
                         [ R10.Form.validation.required

@@ -1,6 +1,5 @@
 module R10.FormComponents.UI.Palette exposing
-    ( Palette
-    , black
+    ( black
     , crimson
     , crimsonLight
     , danger
@@ -27,12 +26,13 @@ module R10.FormComponents.UI.Palette exposing
 
 import Color
 import R10.Color.Svg
+import R10.FormTypes
 import R10.Theme
 
 
-{-| get Palette for use with R10.FormComponents lib
+{-| get R10.FormTypes.Palette for use with R10.FormComponents lib
 -}
-fromTheme : R10.Theme.Theme -> Palette
+fromTheme : R10.Theme.Theme -> R10.FormTypes.Palette
 fromTheme theme =
     { primary = R10.Color.Svg.primary theme
     , primaryVariant = R10.Color.Svg.primaryVariant theme
@@ -49,23 +49,6 @@ fromTheme theme =
 {- Utils for working with colors. -}
 
 
-type alias Palette =
-    { -- Colors
-      primary : Color.Color
-    , primaryVariant : Color.Color
-    , success : Color.Color
-    , error : Color.Color
-
-    -- Text Colors
-    , onSurface : Color.Color
-    , onPrimary : Color.Color
-
-    -- Background Colors
-    , surface : Color.Color -- Card, List background color https://material.io/design/color/dark-theme.html#properties
-    , background : Color.Color
-    }
-
-
 {-| Change Color opacity
 -}
 withOpacity : Float -> Color.Color -> Color.Color
@@ -75,11 +58,11 @@ withOpacity opacity =
 
 
 {-
-   Palette Colors Examples
+   R10.FormTypes.Palette Colors Examples
 -}
 
 
-dark : Palette
+dark : R10.FormTypes.Palette
 dark =
     { primary = indigo
     , primaryVariant = indigoVariant
@@ -92,7 +75,7 @@ dark =
     }
 
 
-light : Palette
+light : R10.FormTypes.Palette
 light =
     { primary = pink
     , primaryVariant = pinkVariant

@@ -14,10 +14,10 @@ import R10.FormComponents.Style
 import R10.FormComponents.Text
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils
 import R10.FormComponents.Utils.FocusOut
 import R10.FormComponents.Validations
+import R10.FormTypes
 
 
 viewComboboxDropdown : Common.Model -> Common.Args msg -> Element msg
@@ -100,7 +100,7 @@ viewComboboxDropdown model args =
         el [ height <| px contentHeight, width fill ] none
 
 
-comboboxOptionNoResults : { a | palette : R10.FormComponents.UI.Palette.Palette, selectOptionHeight : Int } -> Element msg
+comboboxOptionNoResults : { a | palette : R10.FormTypes.Palette, selectOptionHeight : Int } -> Element msg
 comboboxOptionNoResults { palette, selectOptionHeight } =
     el
         [ width fill
@@ -174,11 +174,11 @@ view attrs model args =
             , msgOnFocus : msg
             , msgOnLoseFocus : Maybe msg
             , msgOnTogglePasswordShow : Maybe a
-            , palette : R10.FormComponents.UI.Palette.Palette
+            , palette : R10.FormTypes.Palette
             , requiredLabel : Maybe String
             , showPassword : Bool
             , style : R10.FormComponents.Style.Style
-            , textType : R10.FormComponents.Text.TextType
+            , textType : R10.FormTypes.TypeText
             , trailingIcon : Maybe (Element msg)
             , validation : R10.FormComponents.Validations.Validation
             , value : String
@@ -201,7 +201,7 @@ view attrs model args =
             , palette = args.palette
             , style = args.style
             , showPassword = False
-            , textType = R10.FormComponents.Text.TextPlain
+            , textType = R10.FormTypes.TextPlain
             , leadingIcon = args.leadingIcon
             , trailingIcon = Nothing
             , value = model.value

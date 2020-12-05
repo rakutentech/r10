@@ -6,19 +6,18 @@ module R10.Form exposing
     , Maker, MakerArgs, maker
     , defaultTranslator, validationCodes, ValidationCode
     , style
-    , Palette
     , State, initState, stateToString, stringToState
     , extraCss
     , EntityId, TextConf, stringToConf, confToString, initConf
-    , FieldConf, TypeSingle, single, fieldType, text, validationIcon, validation, binary, initFieldConf
+    , FieldConf, validation, initFieldConf
     , update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
     , Msg, msg
     , keyToString
     , getFieldValueAsBool
     , commonValidation
     , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
-    , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
-    , FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette
+    , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
+    , Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText
     )
 
 {-| Useful things to build a form .
@@ -94,11 +93,6 @@ If you want to personalise the translations or you want to translate them in dif
 @docs style
 
 
-# Palette
-
-@docs Palette
-
-
 # State
 
 @docs State, initState, stateToString, stringToState
@@ -116,7 +110,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 # Fields related stuff
 
-@docs FieldConf, TypeSingle, single, fieldType, text, validationIcon, validation, binary, initFieldConf
+@docs FieldConf, validation, binary, initFieldConf
 
 @docs update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
 
@@ -130,9 +124,9 @@ If you want to personalise the translations or you want to translate them in dif
 
 @docs FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
 
-@docs label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, typeSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleType, SingleFieldOption, singleMsg, Style
+@docs label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
 
-@docs FieldOption, FieldType, Key, KeyAsString, PhoneModel, PhoneMsg, TextType, Validation2, ValidationMessage, binary2, binaryView, button, clearFieldValidation, colorToCssString, componentTextType, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette
+@docs Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, binary2, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText
 
 -}
 
@@ -171,6 +165,7 @@ import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils.FocusOut
 import R10.FormComponents.Validations
+import R10.FormTypes
 import R10.SimpleMarkdown
 import R10.Theme
 
@@ -181,7 +176,7 @@ type alias MakerArgs =
     , formState : State
     , translator : ValidationCode -> String
     , style : Style
-    , palette : Palette
+    , palette : R10.FormTypes.Palette
     }
 
 
@@ -203,7 +198,7 @@ type alias Options =
     { maker : Maybe Maker
     , translator : Maybe (ValidationCode -> String)
     , style : Style
-    , palette : Maybe Palette
+    , palette : Maybe R10.FormTypes.Palette
     }
 
 
@@ -262,7 +257,7 @@ view form msgMapper =
 
 {-| Use this version if you have a specific palette that you want to use.
 -}
-viewWithPalette : Form -> MsgMapper msg -> Palette -> List (Element msg)
+viewWithPalette : Form -> MsgMapper msg -> R10.FormTypes.Palette -> List (Element msg)
 viewWithPalette form msgMapper palette =
     viewWithOptions form
         msgMapper
@@ -315,7 +310,7 @@ defaultTranslator =
 
 
 {-| -}
-themeToPalette : R10.Theme.Theme -> Palette
+themeToPalette : R10.Theme.Theme -> R10.FormTypes.Palette
 themeToPalette =
     R10.FormComponents.UI.Palette.fromTheme
 
@@ -325,7 +320,7 @@ themeToPalette =
 
 
 {-| -}
-extraCss : Maybe Palette -> String
+extraCss : Maybe R10.FormTypes.Palette -> String
 extraCss =
     R10.Form.Internal.MakerForView.extraCss
 
@@ -408,41 +403,6 @@ type alias FieldConf =
 
 
 {-| -}
-type alias TypeSingle =
-    R10.Form.Internal.FieldConf.TypeSingle
-
-
-{-| -}
-type alias FieldType =
-    R10.Form.Internal.FieldConf.FieldType
-
-
-{-| -}
-type alias TypeBinary =
-    R10.Form.Internal.FieldConf.TypeBinary
-
-
-{-| -}
-type alias TypeMulti =
-    R10.Form.Internal.FieldConf.TypeMulti
-
-
-{-| -}
-type alias TypeText =
-    R10.Form.Internal.FieldConf.TypeText
-
-
-{-| -}
-type alias FieldOption =
-    R10.Form.Internal.FieldConf.FieldOption
-
-
-{-| -}
-type alias ValidationIcon =
-    R10.Form.Internal.FieldConf.ValidationIcon
-
-
-{-| -}
 type alias Validation =
     R10.Form.Internal.FieldConf.Validation
 
@@ -455,66 +415,6 @@ type alias ValidationMessage =
 {-| -}
 type alias ValidationSpecs =
     R10.Form.Internal.FieldConf.ValidationSpecs
-
-
-{-| -}
-fieldType :
-    { text : TypeText -> FieldType
-    , single : TypeSingle -> List FieldOption -> FieldType
-    , multi : TypeMulti -> List FieldOption -> FieldType
-    , binary : TypeBinary -> FieldType
-    }
-fieldType =
-    { text = R10.Form.Internal.FieldConf.TypeText
-    , single = R10.Form.Internal.FieldConf.TypeSingle
-    , multi = R10.Form.Internal.FieldConf.TypeMulti
-    , binary = R10.Form.Internal.FieldConf.TypeBinary
-    }
-
-
-{-| -}
-single :
-    { combobox : TypeSingle
-    , radio : TypeSingle
-    }
-single =
-    { combobox = R10.Form.Internal.FieldConf.SingleCombobox
-    , radio = R10.Form.Internal.FieldConf.SingleRadio
-    }
-
-
-{-| -}
-text :
-    { plain : TypeText
-    , email : TypeText
-    , username : TypeText
-    , passwordNew : TypeText
-    , passwordCurrent : TypeText
-    , multiline : TypeText
-    , withPattern : String -> TypeText
-    }
-text =
-    { plain = R10.Form.Internal.FieldConf.TextPlain
-    , email = R10.Form.Internal.FieldConf.TextEmail
-    , username = R10.Form.Internal.FieldConf.TextUsername
-    , passwordNew = R10.Form.Internal.FieldConf.TextPasswordNew
-    , passwordCurrent = R10.Form.Internal.FieldConf.TextPasswordCurrent
-    , multiline = R10.Form.Internal.FieldConf.TextMultiline
-    , withPattern = R10.Form.Internal.FieldConf.TextWithPattern
-    }
-
-
-{-| -}
-validationIcon :
-    { clearOrCheck : ValidationIcon
-    , errorOrCheck : ValidationIcon
-    , noIcon : ValidationIcon
-    }
-validationIcon =
-    { noIcon = R10.Form.Internal.FieldConf.NoIcon
-    , clearOrCheck = R10.Form.Internal.FieldConf.ClearOrCheck -- clear aka cross
-    , errorOrCheck = R10.Form.Internal.FieldConf.ErrorOrCheck -- "!" in circle, just like Google's
-    }
 
 
 {-| -}
@@ -545,28 +445,6 @@ validation =
     , regex = R10.Form.Internal.FieldConf.Regex
     , empty = R10.Form.Internal.FieldConf.Empty
     , not = R10.Form.Internal.FieldConf.Not
-    }
-
-
-{-| -}
-binary :
-    { checkbox : R10.Form.Internal.FieldConf.TypeBinary
-    , switch : R10.Form.Internal.FieldConf.TypeBinary
-    }
-binary =
-    { checkbox = R10.Form.Internal.FieldConf.BinaryCheckbox
-    , switch = R10.Form.Internal.FieldConf.BinarySwitch
-    }
-
-
-{-| -}
-binary2 :
-    { checkbox : R10.FormComponents.Binary.TypeBinary
-    , switch : R10.FormComponents.Binary.TypeBinary
-    }
-binary2 =
-    { checkbox = R10.FormComponents.Binary.BinaryCheckbox
-    , switch = R10.FormComponents.Binary.BinarySwitch
     }
 
 
@@ -809,36 +687,6 @@ isChangingValues =
 -- IMPORTING STUFF FROM FormComponents
 
 
-{-|
-
-    type alias Palette =
-        { primary : Color
-        , primaryVariant : Color
-        , success : Color
-        , error : Color
-
-        -- Text Colors
-        --
-        , onSurface : Color
-        , onPrimary : Color
-
-        -- Background Colors
-        --
-        , surface : Color
-        , background : Color
-        }
-
-Note that these are `Element.Color` from `elm-ui`.
-
-See <https://material.io/design/color/dark-theme.html#properties> for more details.
-
-If you want to use the default palette, just pass `Nothing`
-
--}
-type alias Palette =
-    R10.FormComponents.UI.Palette.Palette
-
-
 {-| -}
 type alias Style =
     R10.FormComponents.Style.Style
@@ -852,11 +700,6 @@ type alias SingleModel =
 {-| -}
 type alias SingleMsg =
     R10.FormComponents.Single.Common.Msg
-
-
-{-| -}
-type alias SingleType =
-    R10.FormComponents.Single.Common.TypeSingle
 
 
 {-| -}
@@ -881,7 +724,7 @@ style =
 
 
 {-| -}
-label : Palette -> Color
+label : R10.FormTypes.Palette -> Color
 label =
     R10.FormComponents.UI.Color.label
 
@@ -898,7 +741,7 @@ viewIconButton :
     ->
         { icon : Element msg
         , msgOnClick : Maybe msg
-        , palette : Palette
+        , palette : R10.FormTypes.Palette
         , size : Int
         }
     -> Element msg
@@ -918,11 +761,11 @@ viewSingleCustom :
         , label : String
         , leadingIcon : Maybe (Element.Element msg)
         , maxDisplayCount : Int
-        , palette : Palette
+        , palette : R10.FormTypes.Palette
         , requiredLabel : Maybe String
         , searchFn : String -> SingleFieldOption -> Bool
         , selectOptionHeight : Int
-        , singleType : SingleType
+        , singleType : R10.FormTypes.TypeSingle
         , style : Style
         , toMsg : SingleMsg -> msg
         , toOptionEl : SingleFieldOption -> Element msg
@@ -944,25 +787,6 @@ defaultSearchFn =
 initSingle : SingleModel
 initSingle =
     R10.FormComponents.Single.Common.init
-
-
-{-| -}
-typeSingle :
-    { combobox : SingleType
-    , radio : SingleType
-    }
-typeSingle =
-    { radio = R10.FormComponents.Single.Common.SingleRadio
-    , combobox = R10.FormComponents.Single.Common.SingleCombobox
-    }
-
-
-
---
--- updateSingle : SingleMsg -> SingleModel -> ( SingleModel, Cmd SingleMsg )
--- updateSingle =
---     R10.FormComponents.Single.update
---
 
 
 {-| -}
@@ -988,7 +812,7 @@ defaultToOptionEl =
 
 {-| -}
 defaultTrailingIcon :
-    { a | opened : Bool, palette : Palette }
+    { a | opened : Bool, palette : R10.FormTypes.Palette }
     -> Element msg
 defaultTrailingIcon =
     R10.FormComponents.Single.defaultTrailingIcon
@@ -1039,13 +863,7 @@ initFieldState =
 
 
 {-| -}
-updateSingle :
-    R10.FormComponents.Single.Common.Msg
-    -> R10.FormComponents.Single.Common.Model
-    ->
-        ( R10.FormComponents.Single.Common.Model
-        , Cmd R10.FormComponents.Single.Common.Msg
-        )
+updateSingle : SingleMsg -> SingleModel -> ( SingleModel, Cmd SingleMsg )
 updateSingle =
     R10.FormComponents.Single.Update.update
 
@@ -1218,28 +1036,58 @@ validationCodes =
 
 
 {-| -}
-type alias TextType =
-    R10.FormComponents.Text.TextType
-
-
-{-| -}
 validationToString : R10.FormComponents.Validations.Validation -> String
 validationToString =
     R10.FormComponents.Validations.validationToString
 
 
+
+--
+--
+--
+
+
 {-| -}
-viewText :
-    List (Attribute msg)
-    -> List (Attribute msg)
-    -> R10.FormComponents.Text.Args msg
-    -> Element msg
+type alias ArgsText msg =
+    R10.FormComponents.Text.Args msg
+
+
+{-| -}
+viewText : List (Attribute msg) -> List (Attribute msg) -> ArgsText msg -> Element msg
 viewText =
     R10.FormComponents.Text.view
 
 
 {-| -}
-extraCssComponents : Palette -> String
+type alias ArgsBinary msg =
+    R10.FormComponents.Binary.Args msg
+
+
+{-| -}
+viewBinary : List (Attribute msg) -> ArgsBinary msg -> Element msg
+viewBinary =
+    R10.FormComponents.Binary.view
+
+
+{-| -}
+type alias ArgsSingle msg =
+    R10.FormComponents.Single.Args msg
+
+
+{-| -}
+viewSingle : List (Attribute msg) -> SingleModel -> ArgsSingle msg -> Element msg
+viewSingle =
+    R10.FormComponents.Single.view
+
+
+
+--
+--
+--
+
+
+{-| -}
+extraCssComponents : R10.FormTypes.Palette -> String
 extraCssComponents =
     R10.FormComponents.ExtraCss.extraCss
 
@@ -1253,33 +1101,6 @@ validationMessage =
     { ok = R10.FormComponents.Validations.MessageOk
     , error = R10.FormComponents.Validations.MessageErr
     }
-
-
-{-| -}
-componentTextType :
-    { email : R10.FormComponents.Text.TextType
-    , multiline : R10.FormComponents.Text.TextType
-    , passwordCurrent : R10.FormComponents.Text.TextType
-    , passwordNew : R10.FormComponents.Text.TextType
-    , plain : R10.FormComponents.Text.TextType
-    , username : R10.FormComponents.Text.TextType
-    , withPattern : String -> R10.FormComponents.Text.TextType
-    }
-componentTextType =
-    { plain = R10.FormComponents.Text.TextPlain
-    , email = R10.FormComponents.Text.TextEmail
-    , username = R10.FormComponents.Text.TextUsername
-    , passwordNew = R10.FormComponents.Text.TextPasswordNew
-    , passwordCurrent = R10.FormComponents.Text.TextPasswordCurrent
-    , multiline = R10.FormComponents.Text.TextMultiline
-    , withPattern = R10.FormComponents.Text.TextWithPattern
-    }
-
-
-{-| -}
-binaryView : List (Attribute msg) -> R10.FormComponents.Binary.Args msg -> Element msg
-binaryView =
-    R10.FormComponents.Binary.view
 
 
 {-| -}
@@ -1302,7 +1123,7 @@ phoneView :
         , helperText : Maybe String
         , key : String
         , label : String
-        , palette : Palette
+        , palette : R10.FormTypes.Palette
         , requiredLabel : Maybe String
         , style : R10.FormComponents.Style.Style
         , toMsg : R10.FormComponents.Phone.Common.Msg -> msg

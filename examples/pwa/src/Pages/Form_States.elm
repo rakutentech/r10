@@ -2,7 +2,6 @@ module Pages.Form_States exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -12,31 +11,9 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import R10.Form
-import R10.FormComponents
-import R10.FormComponents.Binary
-import R10.FormComponents.Text
 import R10.FormComponents.Validations
-import R10.Language
+import R10.FormTypes
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form States"
-    , ja_jp = "Form States"
-    , zh_tw = "Form States"
-    , es_es = "Form States"
-    , fr_fr = "Form States"
-    , de_de = "Form States"
-    , it_it = "Form States"
-    , nl_nl = "Form States"
-    , pt_pt = "Form States"
-    , nb_no = "Form States"
-    , fi_fl = "Form States"
-    , da_dk = "Form States"
-    , sv_se = "Form States"
-    }
 
 
 type alias Model =
@@ -171,7 +148,7 @@ viewChecboxTable theme =
                                                         row []
                                                             [ el attrsCell <|
                                                                 el [ centerX ] <|
-                                                                    R10.FormComponents.Binary.view []
+                                                                    R10.Form.viewBinary []
                                                                         { label = "Label"
                                                                         , value = value_
                                                                         , focused = focused_
@@ -187,7 +164,7 @@ viewChecboxTable theme =
                                                                         , palette = R10.Form.themeToPalette theme
 
                                                                         --
-                                                                        , typeBinary = R10.FormComponents.Binary.BinaryCheckbox
+                                                                        , typeBinary = R10.FormTypes.BinaryCheckbox
                                                                         }
                                                             , el attrsCell <| text <| R10.Form.boolToString focused_
                                                             , el attrsCell <| text <| R10.Form.boolToString value_
@@ -303,7 +280,7 @@ viewJoinedTable theme =
                                                     (\disabled_ ->
                                                         row attrsRow
                                                             [ el (attrsElCell 2) <|
-                                                                R10.FormComponents.Text.view []
+                                                                R10.Form.viewText []
                                                                     []
                                                                     { value =
                                                                         if value_ then
@@ -327,15 +304,15 @@ viewJoinedTable theme =
                                                                     --
                                                                     , label = "Label"
                                                                     , helperText = Just "Helper Text"
-                                                                    , textType = R10.FormComponents.Text.TextPlain
+                                                                    , textType = R10.FormTypes.TextPlain
                                                                     , disabled = disabled_
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
-                                                                    , style = R10.FormComponents.style.filled
+                                                                    , style = R10.Form.style.filled
                                                                     , palette = R10.Form.themeToPalette theme
                                                                     }
                                                             , el (attrsElCell 2) <|
-                                                                R10.FormComponents.Text.view []
+                                                                R10.Form.viewText []
                                                                     []
                                                                     { value =
                                                                         if value_ then
@@ -359,15 +336,15 @@ viewJoinedTable theme =
                                                                     --
                                                                     , label = "Label"
                                                                     , helperText = Just "Helper Text"
-                                                                    , textType = R10.FormComponents.Text.TextPlain
+                                                                    , textType = R10.FormTypes.TextPlain
                                                                     , disabled = disabled_
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
-                                                                    , style = R10.FormComponents.style.outlined
+                                                                    , style = R10.Form.style.outlined
                                                                     , palette = R10.Form.themeToPalette theme
                                                                     }
                                                             , el (attrsElCell 1) <|
-                                                                R10.FormComponents.Binary.view []
+                                                                R10.Form.viewBinary []
                                                                     { label = "Label"
                                                                     , value = value_
                                                                     , focused = focused_
@@ -383,10 +360,10 @@ viewJoinedTable theme =
                                                                     , palette = R10.Form.themeToPalette theme
 
                                                                     --
-                                                                    , typeBinary = R10.FormComponents.Binary.BinarySwitch
+                                                                    , typeBinary = R10.FormTypes.BinarySwitch
                                                                     }
                                                             , el (attrsElCell 1) <|
-                                                                R10.FormComponents.Binary.view []
+                                                                R10.Form.viewBinary []
                                                                     { label = "Label"
                                                                     , value = value_
                                                                     , focused = focused_
@@ -402,7 +379,7 @@ viewJoinedTable theme =
                                                                     , palette = R10.Form.themeToPalette theme
 
                                                                     --
-                                                                    , typeBinary = R10.FormComponents.Binary.BinaryCheckbox
+                                                                    , typeBinary = R10.FormTypes.BinaryCheckbox
                                                                     }
                                                             , el attrsPropCell <| text <| R10.Form.boolToString focused_
                                                             , el attrsPropCell <| text <| R10.Form.boolToString value_
@@ -518,7 +495,7 @@ viewTextTable theme =
                                                     (\disabled_ ->
                                                         row []
                                                             [ el (attrsCell ++ [ width <| px 250, Font.alignLeft ]) <|
-                                                                R10.FormComponents.Text.view []
+                                                                R10.Form.viewText []
                                                                     []
                                                                     { value = "Value"
                                                                     , focused = focused_
@@ -537,15 +514,15 @@ viewTextTable theme =
                                                                     --
                                                                     , label = "Label"
                                                                     , helperText = Just "Helper Text"
-                                                                    , textType = R10.FormComponents.Text.TextPasswordNew
+                                                                    , textType = R10.FormTypes.TextPasswordNew
                                                                     , disabled = disabled_
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
-                                                                    , style = R10.FormComponents.style.filled
+                                                                    , style = R10.Form.style.filled
                                                                     , palette = R10.Form.themeToPalette theme
                                                                     }
                                                             , el (attrsCell ++ [ width <| px 250, Font.alignLeft ]) <|
-                                                                R10.FormComponents.Text.view []
+                                                                R10.Form.viewText []
                                                                     []
                                                                     { value = "Value"
                                                                     , focused = focused_
@@ -564,11 +541,11 @@ viewTextTable theme =
                                                                     --
                                                                     , label = "Label"
                                                                     , helperText = Just "Helper Text"
-                                                                    , textType = R10.FormComponents.Text.TextPasswordNew
+                                                                    , textType = R10.FormTypes.TextPasswordNew
                                                                     , disabled = disabled_
                                                                     , idDom = Nothing
                                                                     , requiredLabel = Just "(Required)"
-                                                                    , style = R10.FormComponents.style.outlined
+                                                                    , style = R10.Form.style.outlined
                                                                     , palette = R10.Form.themeToPalette theme
                                                                     }
                                                             , el attrsCell <| text <| R10.Form.boolToString focused_

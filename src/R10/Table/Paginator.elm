@@ -7,7 +7,7 @@ import Element.Events as Events
 import Html
 import Html.Attributes
 import Html.Events
-import R10.Form
+import R10.FormTypes
 import R10.Table.Config
 import R10.Table.Msg
 import R10.Table.State
@@ -71,7 +71,7 @@ viewPaginationButton msg icon state =
         (html <| icon "black" 22)
 
 
-view : R10.Form.Palette -> R10.Table.Config.PaginationConfig -> R10.Table.State.PaginationState -> Element R10.Table.Msg.Msg
+view : R10.FormTypes.Palette -> R10.Table.Config.PaginationConfig -> R10.Table.State.PaginationState -> Element R10.Table.Msg.Msg
 view _ paginationConfig paginationState =
     case paginationState of
         -- todo refactor it so pagination would work with default state initially,

@@ -2,7 +2,6 @@ module Pages.Form_FieldType_Text exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -12,37 +11,16 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Html.Attributes
-import Markdown
 import R10.Card
-import R10.Color.Utils
+import R10.Color.AttrsBackground
+import R10.Color.Svg
 import R10.Form
-import R10.FormComponents
-import R10.FormComponents.IconButton
-import R10.FormComponents.Text
 import R10.FormComponents.Validations
-import R10.Language
+import R10.FormIntrospection
+import R10.FormTypes
+import R10.Paragraph
 import R10.Svg.IconsExtra
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form Field Type - Text"
-    , ja_jp = "Form Field Type - Text"
-    , zh_tw = "Form Field Type - Text"
-    , es_es = "Form Field Type - Text"
-    , fr_fr = "Form Field Type - Text"
-    , de_de = "Form Field Type - Text"
-    , it_it = "Form Field Type - Text"
-    , nl_nl = "Form Field Type - Text"
-    , pt_pt = "Form Field Type - Text"
-    , nb_no = "Form Field Type - Text"
-    , fi_fl = "Form Field Type - Text"
-    , da_dk = "Form Field Type - Text"
-    , sv_se = "Form Field Type - Text"
-    }
 
 
 type alias Model =
@@ -53,39 +31,49 @@ type alias Model =
     , showPassword : Bool
     , leadingIcon : Maybe Icon
     , trailingIcon : Maybe Icon
-    , validation : R10.FormComponents.Validations.Validation
+    , validation : R10.Form.Validation2
     , helperText : String
     , helperShow : Bool
     , requiredText : String
     , requiredShow : Bool
     , disabled : Bool
-    , textType : R10.FormComponents.Text.TextType
+    , style : R10.Form.Style
+    , textType : R10.FormTypes.TypeText
     }
 
 
-textTypeToString : R10.FormComponents.Text.TextType -> String
+init : Model
+init =
+    { messages = []
+    , value = ""
+    , label = "Label"
+    , focused = False
+    , showPassword = False
+    , leadingIcon = Nothing
+    , trailingIcon = Nothing
+    , validation = R10.FormComponents.Validations.NotYetValidated
+    , helperText = """Helper text ([Markdown](https://en.wikipedia.org/wiki/Markdown))"""
+    , helperShow = True
+    , requiredText = "(Required)"
+    , requiredShow = True
+    , disabled = False
+    , style = R10.Form.style.outlined
+    , textType = R10.FormTypes.TextPasswordNew
+    }
+
+
+textTypeToString : R10.FormTypes.TypeText -> String
 textTypeToString textType =
-    case textType of
-        R10.FormComponents.Text.TextPasswordNew ->
-            "TextPasswordNew"
+    .string (R10.FormIntrospection.textTypeMetaData textType)
 
-        R10.FormComponents.Text.TextPasswordCurrent ->
-            "TextPasswordCurrent"
 
-        R10.FormComponents.Text.TextPlain ->
-            "TextPlain"
+styleToString : R10.Form.Style -> String
+styleToString style =
+    if style == R10.Form.style.outlined then
+        "R10.Form.style.outlined"
 
-        R10.FormComponents.Text.TextEmail ->
-            "TextEmail"
-
-        R10.FormComponents.Text.TextUsername ->
-            "TextUsername"
-
-        R10.FormComponents.Text.TextMultiline ->
-            "TextMultiline"
-
-        R10.FormComponents.Text.TextWithPattern pattern ->
-            "TextWithPattern:" ++ pattern
+    else
+        "R10.Form.style.filled"
 
 
 iconToString : Maybe Icon -> String
@@ -106,49 +94,31 @@ type Icon
     | Pause
 
 
-toIconEl : R10.FormComponents.Palette -> Icon -> Element Msg
-toIconEl palette leadingIcon =
+toIconEl : R10.Theme.Theme -> R10.FormTypes.Palette -> Icon -> Element Msg
+toIconEl theme palette leadingIcon =
     case leadingIcon of
         Play ->
-            R10.FormComponents.IconButton.view []
+            R10.Form.viewIconButton []
                 { msgOnClick = Just <| PlayPauseClick Play
-                , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 24
+                , icon = R10.Svg.IconsExtra.play [] (R10.Color.Svg.fontNormal theme) 24
                 , palette = palette
                 , size = 24
                 }
 
         Pause ->
-            R10.FormComponents.IconButton.view []
+            R10.Form.viewIconButton []
                 { msgOnClick = Just <| PlayPauseClick Pause
-                , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 30
+                , icon = R10.Svg.IconsExtra.pause [] (R10.Color.Svg.fontNormal theme) 30
                 , palette = palette
                 , size = 30
                 }
-
-
-init : Model
-init =
-    { messages = []
-    , value = ""
-    , label = "Label"
-    , focused = False
-    , helperShow = True
-    , helperText = """Helper text ([Markdown](https://en.wikipedia.org/wiki/Markdown))"""
-    , requiredShow = True
-    , requiredText = "required_text"
-    , disabled = False
-    , showPassword = False
-    , leadingIcon = Just Play
-    , trailingIcon = Nothing
-    , textType = R10.FormComponents.Text.TextPasswordNew
-    , validation = R10.FormComponents.Validations.NotYetValidated
-    }
 
 
 type Msg
     = OnChange String
     | OnFocus
     | OnLoseFocus
+    | OnEnter
       --
     | ChangeLabel String
     | RotateValidation
@@ -159,16 +129,17 @@ type Msg
     | ToggleShowPassword
     | ChangeHelperText String
     | RotateTextType
+    | RotateStyle
     | RotateLeadingIcon
     | RotateTrailingIcon
     | PlayPauseClick Icon
 
 
 validations :
-    { n1 : R10.FormComponents.Validations.Validation
-    , n2 : R10.FormComponents.Validations.Validation
-    , n3 : R10.FormComponents.Validations.Validation
-    , n4 : R10.FormComponents.Validations.Validation
+    { n1 : R10.Form.Validation2
+    , n2 : R10.Form.Validation2
+    , n3 : R10.Form.Validation2
+    , n4 : R10.Form.Validation2
     }
 validations =
     { n1 = R10.FormComponents.Validations.NotYetValidated
@@ -190,8 +161,23 @@ update msg model =
         OnLoseFocus ->
             ( { model | messages = "OnLoseFocus" :: model.messages, focused = False }, Cmd.none )
 
+        OnEnter ->
+            ( { model | messages = "OnEnter" :: model.messages }, Cmd.none )
+
         ChangeLabel string ->
             ( { model | label = string }, Cmd.none )
+
+        RotateStyle ->
+            ( { model
+                | style =
+                    if model.style == R10.Form.style.outlined then
+                        R10.Form.style.filled
+
+                    else
+                        R10.Form.style.outlined
+              }
+            , Cmd.none
+            )
 
         RotateValidation ->
             ( { model
@@ -278,173 +264,127 @@ update msg model =
         RotateTextType ->
             ( { model
                 | textType =
-                    case model.textType of
-                        R10.FormComponents.Text.TextPasswordNew ->
-                            R10.FormComponents.Text.TextPasswordCurrent
-
-                        R10.FormComponents.Text.TextPasswordCurrent ->
-                            R10.FormComponents.Text.TextEmail
-
-                        R10.FormComponents.Text.TextEmail ->
-                            R10.FormComponents.Text.TextPlain
-
-                        R10.FormComponents.Text.TextPlain ->
-                            R10.FormComponents.Text.TextUsername
-
-                        R10.FormComponents.Text.TextUsername ->
-                            R10.FormComponents.Text.TextMultiline
-
-                        R10.FormComponents.Text.TextMultiline ->
-                            R10.FormComponents.Text.TextPasswordNew
-
-                        R10.FormComponents.Text.TextWithPattern pattern ->
-                            R10.FormComponents.Text.TextWithPattern pattern
+                    .next (R10.FormIntrospection.textTypeMetaData model.textType)
               }
             , Cmd.none
             )
 
 
+attrYellowBackground : Attr decorative msg
+attrYellowBackground =
+    Background.color <| rgba 0.9 1 0.2 0.7
+
+
+attrsYellowBackground : List (Attribute msg)
+attrsYellowBackground =
+    [ padding 0
+    , Border.width 0
+    , attrYellowBackground
+    ]
+
+
 view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
-        attrs =
-            [ padding 0
-            , Border.width 0
-            , backgroundColor
-            ]
-
-        backgroundColor =
-            Background.color <| rgba 0.9 1 0.2 0.7
-
         palette =
             R10.Form.themeToPalette theme
     in
-    [ column
-        [ spacing 10 ]
-        [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] """
-Here you can simulate all the possible states of the component "Text". You can click on all yellow areas below to change the state in real time.
-
-The messages on the right are all the messages that are fired by the component.
-""" ] ]
-    , column [ spacing 20, width fill ]
-        [ row
-            (R10.Card.noShadow theme ++ [ spacing 20 ])
-            [ R10.Form.viewText
-                [ width (fill |> maximum 600)
-                , centerY
-                ]
-                []
-                -- Stuff that doesn't change during
-                -- the life of the component
-                --
-                { label = model.label
-                , helperText =
-                    if model.helperShow then
-                        Just model.helperText
-
-                    else
-                        Nothing
-                , requiredLabel =
-                    if model.requiredShow then
-                        Just model.requiredText
-
-                    else
-                        Nothing
-                , textType = model.textType
-                , idDom = Nothing
-                , style = R10.FormComponents.style.outlined
-                , palette = palette
-
-                -- Stuff that change during
-                -- the life of the component
-                --
-                , value = model.value
-                , focused = model.focused
-                , validation = model.validation
-                , disabled = model.disabled
-                , showPassword = model.showPassword
-                , leadingIcon = Maybe.map (toIconEl palette) model.leadingIcon
-                , trailingIcon = Maybe.map (toIconEl palette) model.trailingIcon
-
-                -- Messages
-                --
-                , msgOnChange = OnChange
-                , msgOnFocus = OnFocus
-                , msgOnLoseFocus = Just OnLoseFocus
-                , msgOnTogglePasswordShow = Just ToggleShowPassword
-                , msgOnEnter = Nothing
-                }
-            , R10.FormComponents.Text.view
-                [ width (fill |> maximum 600)
-                , centerY
-                ]
-                []
-                -- Stuff that doesn't change during
-                -- the life of the component
-                --
-                { label = model.label
-                , helperText =
-                    if model.helperShow then
-                        Just model.helperText
-
-                    else
-                        Nothing
-                , requiredLabel =
-                    if model.requiredShow then
-                        Just model.requiredText
-
-                    else
-                        Nothing
-                , textType = model.textType
-                , idDom = Nothing
-                , style = R10.FormComponents.style.filled
-                , palette = palette
-
-                -- Stuff that change during
-                -- the life of the component
-                --
-                , value = model.value
-                , focused = model.focused
-                , validation = model.validation
-                , disabled = model.disabled
-                , showPassword = model.showPassword
-                , leadingIcon = Maybe.map (toIconEl palette) model.leadingIcon
-                , trailingIcon = Maybe.map (toIconEl palette) model.trailingIcon
-
-                -- Messages
-                --
-                , msgOnChange = OnChange
-                , msgOnFocus = OnFocus
-                , msgOnLoseFocus = Just OnLoseFocus
-                , msgOnTogglePasswordShow = Just ToggleShowPassword
-                , msgOnEnter = Nothing
-                }
-            ]
+    [ R10.Paragraph.normal []
+        [ text "Here you can simulate all the possible states of the component "
+        , el [ Font.bold ] <| text "R10.Form.viewText"
+        , text ". You can click on all "
+        , el [ attrYellowBackground, padding 4 ] <| text "yellow areas"
+        , text " below to change the state in real time. The messages on the right are all the messages that are fired by the component.\n"
         ]
+    , R10.Paragraph.small []
+        [ text "Note: Usually you don't need to call "
+        , el [ Font.bold ] <| text "R10.Form.viewText"
+        , text " directly because it is going to be called by "
+        , el [ Font.bold ] <| text "R10.Form.view"
+        , text ". Only call this view for advanced usage of this library. This page is meant to be used to visually see all possible states on the Text Input field"
+        ]
+    , el
+        (R10.Card.normal theme
+            ++ [ R10.Color.AttrsBackground.surface2dp theme
+               , width (fill |> maximum 500)
+               , centerX
+               ]
+        )
+      <|
+        R10.Form.viewText
+            [ spacing 10 ]
+            []
+            -- Stuff that usually doesn't change
+            -- during the life of the component
+            --
+            { label = model.label
+            , helperText =
+                if model.helperShow then
+                    Just model.helperText
+
+                else
+                    Nothing
+            , requiredLabel =
+                if model.requiredShow then
+                    Just model.requiredText
+
+                else
+                    Nothing
+            , textType = model.textType
+            , idDom = Nothing
+            , style = model.style
+            , palette = palette
+
+            -- Stuff that usually change
+            -- during the life of the component
+            --
+            , value = model.value
+            , focused = model.focused
+            , validation = model.validation
+            , disabled = model.disabled
+            , showPassword = model.showPassword
+            , leadingIcon = Maybe.map (toIconEl theme palette) model.leadingIcon
+            , trailingIcon = Maybe.map (toIconEl theme palette) model.trailingIcon
+
+            -- Messages
+            --
+            , msgOnChange = OnChange
+            , msgOnFocus = OnFocus
+            , msgOnLoseFocus = Just OnLoseFocus
+            , msgOnTogglePasswordShow = Just ToggleShowPassword
+            , msgOnEnter = Just OnEnter
+            }
     , row
         [ spacing 20
         , width fill
-        , centerX
         ]
-        [ column
-            (R10.Card.noShadow theme
-                ++ [ padding 20
-                   , spacing 5
-                   , width fill
-                   ]
-            )
-            [ column
-                [ Font.family [ Font.monospace ]
-                , spacing 5
-                ]
-                [ text "FormComponents.Text.view [] []"
+        [ column [ spacing 10, width fill ]
+            [ R10.Paragraph.small [ alpha 0.5 ] [ text "Elm code" ]
+            , column
+                (R10.Card.normal theme
+                    ++ [ padding 20
+                       , width fill
+                       , R10.Color.AttrsBackground.surface2dp theme
+                       , scrollbars
+                       , height <| px 300
+                       , Font.family [ Font.monospace ]
+                       , Font.size 13
+                       , spacing 5
+                       ]
+                )
+                [ text "R10.Form.viewText :"
+                , text "    List (Attribute msg)"
+                , text "    -> List (Attribute msg)"
+                , text "    -> R10.Form.ArgsText msg"
+                , text "    -> Element msg"
+                , text "R10.Form.viewText [] []"
                 , text " "
-                , text "    -- Stuff that doesn't change during"
-                , text "    -- the life of the component"
+                , text "    -- Stuff that usually doesn't change"
+                , text "    -- during the life of the component"
                 , text " "
                 , row []
                     [ text "    { label = \""
-                    , Input.text attrs
+                    , Input.text attrsYellowBackground
                         { label = Input.labelHidden ""
                         , onChange = ChangeLabel
                         , placeholder = Nothing
@@ -454,7 +394,7 @@ The messages on the right are all the messages that are fired by the component.
                     ]
                 , row []
                     [ text "    , helperText = "
-                    , Input.button [ backgroundColor ]
+                    , Input.button [ attrYellowBackground ]
                         { onPress = Just ToggleHelperShow
                         , label =
                             text <|
@@ -467,7 +407,7 @@ The messages on the right are all the messages that are fired by the component.
                     , if model.helperShow then
                         row [ width fill ]
                             [ text " \""
-                            , Input.text attrs
+                            , Input.text attrsYellowBackground
                                 { label = Input.labelHidden ""
                                 , onChange = ChangeHelperText
                                 , placeholder = Nothing
@@ -481,7 +421,7 @@ The messages on the right are all the messages that are fired by the component.
                     ]
                 , row []
                     [ text "    , requiredLabel = "
-                    , Input.button [ backgroundColor ]
+                    , Input.button [ attrYellowBackground ]
                         { onPress = Just ToggleRequiredShow
                         , label =
                             text <|
@@ -494,7 +434,7 @@ The messages on the right are all the messages that are fired by the component.
                     , if model.requiredShow then
                         row [ width fill ]
                             [ text " \""
-                            , Input.text attrs
+                            , Input.text attrsYellowBackground
                                 { label = Input.labelHidden ""
                                 , onChange = ChangeRequiredText
                                 , placeholder = Nothing
@@ -508,32 +448,27 @@ The messages on the right are all the messages that are fired by the component.
                     ]
                 , row []
                     [ text "    , textType = "
-                    , Input.button [ backgroundColor ]
+                    , Input.button [ attrYellowBackground ]
                         { onPress = Just RotateTextType
                         , label = text <| textTypeToString model.textType
                         }
                     ]
                 , row []
-                    [ text "    , leadingIcon = "
-                    , Input.button [ backgroundColor ]
-                        { onPress = Just RotateLeadingIcon
-                        , label = text <| iconToString model.leadingIcon
+                    [ text "    , style = "
+                    , Input.button [ attrYellowBackground ]
+                        { onPress = Just RotateStyle
+                        , label = text <| styleToString model.style
                         }
                     ]
-                , row []
-                    [ text "    , trailingIcon = "
-                    , Input.button [ backgroundColor ]
-                        { onPress = Just RotateTrailingIcon
-                        , label = text <| iconToString model.trailingIcon
-                        }
-                    ]
+                , text "    , idDom = Nothing"
+                , text "    , palette = palette"
                 , text " "
-                , text "    -- Stuff that change during"
-                , text "    -- the life of the component"
+                , text "    -- Stuff that usually change"
+                , text "    -- during the life of the component"
                 , text " "
                 , row []
                     [ text "    , value = \""
-                    , Input.text attrs
+                    , Input.text attrsYellowBackground
                         { label = Input.labelHidden ""
                         , onChange = OnChange
                         , placeholder = Nothing
@@ -543,7 +478,7 @@ The messages on the right are all the messages that are fired by the component.
                     ]
                 , row []
                     [ text "    , focused = "
-                    , Input.button [ backgroundColor ]
+                    , Input.button [ attrYellowBackground ]
                         { onPress =
                             Just <|
                                 if model.focused then
@@ -556,23 +491,37 @@ The messages on the right are all the messages that are fired by the component.
                     ]
                 , row []
                     [ text "    , validation = "
-                    , Input.button [ backgroundColor ]
+                    , Input.button [ attrYellowBackground ]
                         { onPress = Just RotateValidation
-                        , label = text <| R10.FormComponents.Validations.validationToString model.validation
+                        , label = text <| R10.Form.validationToString model.validation
                         }
                     ]
                 , row []
                     [ text "    , disabled = "
-                    , Input.button [ backgroundColor ]
+                    , Input.button [ attrYellowBackground ]
                         { onPress = Just ToggleDisabled
                         , label = text <| R10.Form.boolToString model.disabled
                         }
                     ]
                 , row []
                     [ text "    , showPassword = "
-                    , Input.button [ backgroundColor ]
+                    , Input.button [ attrYellowBackground ]
                         { onPress = Just ToggleShowPassword
                         , label = text <| R10.Form.boolToString model.showPassword
+                        }
+                    ]
+                , row []
+                    [ text "    , leadingIcon = "
+                    , Input.button [ attrYellowBackground ]
+                        { onPress = Just RotateLeadingIcon
+                        , label = text <| iconToString model.leadingIcon
+                        }
+                    ]
+                , row []
+                    [ text "    , trailingIcon = "
+                    , Input.button [ attrYellowBackground ]
+                        { onPress = Just RotateTrailingIcon
+                        , label = text <| iconToString model.trailingIcon
                         }
                     ]
                 , text " "
@@ -582,21 +531,24 @@ The messages on the right are all the messages that are fired by the component.
                 , text "    , msgOnFocus = msgOnFocus"
                 , text "    , msgOnLoseFocus = msgOnLoseFocus"
                 , text "    , msgOnTogglePasswordShow = msgOnTogglePasswordShow"
+                , text "    , msgOnEnter = msgOnEnter"
                 , text "    }"
                 ]
             ]
-        , column
-            (R10.Card.noShadow theme
-                ++ [ padding 20
-                   , spacing 5
-                   , width fill
-                   ]
-            )
-            [ text <| "Messages"
+        , column [ spacing 10, width fill ]
+            [ R10.Paragraph.small [ alpha 0.5 ] [ text "Messages" ]
             , column
-                [ Font.family [ Font.monospace ]
-                , spacing 5
-                ]
+                (R10.Card.normal theme
+                    ++ [ padding 20
+                       , width fill
+                       , R10.Color.AttrsBackground.surface2dp theme
+                       , scrollbars
+                       , height <| px 300
+                       , Font.family [ Font.monospace ]
+                       , Font.size 13
+                       , spacing 5
+                       ]
+                )
               <|
                 List.indexedMap (\index message -> text <| String.fromInt (List.length model.messages - index) ++ " " ++ message) model.messages
             ]

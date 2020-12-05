@@ -3,7 +3,6 @@ module R10.FormComponents.Single.Common exposing
     , FieldOption
     , Model
     , Msg(..)
-    , TypeSingle(..)
     , dropdownContentId
     , getSelectedOrFirst
     , init
@@ -14,8 +13,8 @@ module R10.FormComponents.Single.Common exposing
 
 import Element exposing (..)
 import R10.FormComponents.Style
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
+import R10.FormTypes
 
 
 
@@ -56,11 +55,6 @@ type alias Model =
     }
 
 
-type TypeSingle
-    = SingleRadio
-    | SingleCombobox
-
-
 type alias FieldOption =
     { value : String
     , label : String
@@ -81,10 +75,10 @@ type alias Args msg =
     , requiredLabel : Maybe String
     , style : R10.FormComponents.Style.Style
     , key : String
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , palette : R10.FormTypes.Palette
 
     -- Specific
-    , singleType : TypeSingle
+    , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List FieldOption
     , toOptionEl : FieldOption -> Element msg
     , searchFn : String -> FieldOption -> Bool

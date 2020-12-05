@@ -13,7 +13,7 @@ import R10.Theme
 
 
 {-| -}
-palette : R10.Theme.Theme -> R10.FormComponents.UI.Palette.Palette
+palette : R10.Theme.Theme -> R10.FormTypes.Palette
 palette theme =
     { -- Colors
       primary = R10.Color.Internal.Derived.toColor theme R10.Color.Internal.Derived.Primary

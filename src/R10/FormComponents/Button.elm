@@ -13,7 +13,7 @@ import Html.Attributes
 import R10.FormComponents.Style
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
+import R10.FormTypes
 
 
 
@@ -244,7 +244,7 @@ type alias Args msg =
     , icon : Maybe (Element msg)
     , text : String
     , onClick : msg
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , palette : R10.FormTypes.Palette
     , style : R10.FormComponents.Style.Style
     , disabled : Bool
     }

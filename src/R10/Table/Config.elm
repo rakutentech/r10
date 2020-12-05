@@ -8,7 +8,7 @@ module R10.Table.Config exposing
     )
 
 import Element exposing (..)
-import R10.Form
+import R10.FormTypes
 import R10.Table.Msg
 import R10.Table.Types
 
@@ -64,8 +64,8 @@ type alias Config data msg =
 
 type alias ColumnConf data msg =
     { name : String
-    , viewCell : R10.Form.Palette -> Maybe data -> Element msg
-    , viewHeader : R10.Form.Palette -> HeaderInfo msg -> Element msg
+    , viewCell : R10.FormTypes.Palette -> Maybe data -> Element msg
+    , viewHeader : R10.FormTypes.Palette -> HeaderInfo msg -> Element msg
     , sorter : R10.Table.Types.Sorter data
     }
 

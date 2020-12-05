@@ -1,6 +1,5 @@
 module R10.FormComponents.Text exposing
     ( Args
-    , TextType(..)
     , extraCss
     , view
     , viewInput
@@ -19,23 +18,13 @@ import R10.FormComponents.Style
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Const as Constants
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
+import R10.FormTypes
 import R10.Svg.Icons
 import Regex
 
 
-type TextType
-    = TextPlain
-    | TextEmail
-    | TextUsername
-    | TextPasswordNew
-    | TextPasswordCurrent
-    | TextMultiline
-    | TextWithPattern String
-
-
-viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
+viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : R10.FormTypes.Palette } -> Element msg
 viewShowHidePasswordButton { msgOnTogglePasswordShow, showPassword, palette } =
     let
         icon : Element msg
@@ -54,16 +43,19 @@ viewShowHidePasswordButton { msgOnTogglePasswordShow, showPassword, palette } =
             none
 
 
-needShowHideIcon : TextType -> Bool
+needShowHideIcon : R10.FormTypes.TypeText -> Bool
 needShowHideIcon fieldType =
-    fieldType == TextPasswordCurrent || fieldType == TextPasswordNew
+    fieldType == R10.FormTypes.TextPasswordCurrent || fieldType == R10.FormTypes.TextPasswordNew
 
 
 type alias Args msg =
-    { -- Stuff that change
+    { -- Stuff that change during
+      -- the life of the component
+      --
       value : String
     , focused : Bool
     , validation : R10.FormComponents.Validations.Validation
+    , disabled : Bool
     , showPassword : Bool
     , leadingIcon : Maybe (Element msg)
     , trailingIcon : Maybe (Element msg)
@@ -75,17 +67,18 @@ type alias Args msg =
     , msgOnTogglePasswordShow : Maybe msg
     , msgOnEnter : Maybe msg
 
-    -- Stuff that doesn't change
+    -- Stuff that doesn't change during
+    -- the life of the component
+    --
     , label : String
     , helperText : Maybe String
-    , disabled : Bool
     , requiredLabel : Maybe String
     , idDom : Maybe String
     , style : R10.FormComponents.Style.Style
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , palette : R10.FormTypes.Palette
 
     -- Specific
-    , textType : TextType
+    , textType : R10.FormTypes.TypeText
     }
 
 
@@ -93,7 +86,7 @@ getBorder :
     { a
         | focused : Bool
         , style : R10.FormComponents.Style.Style
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
         , valid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
@@ -123,17 +116,17 @@ viewBehindPattern :
         , msgOnEnter : Maybe msg
         , msgOnFocus : msg
         , msgOnLoseFocus : Maybe msg
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
         , showPassword : Bool
         , style : R10.FormComponents.Style.Style
-        , textType : TextType
+        , textType : R10.FormTypes.TypeText
         , trailingIcon : Maybe (Element msg)
         , value : String
     }
     -> List (Attribute msg)
 viewBehindPattern args =
     case args.textType of
-        TextWithPattern pattern ->
+        R10.FormTypes.TextWithPattern pattern ->
             let
                 valueWithTrailingPattern : String
                 valueWithTrailingPattern =
@@ -153,7 +146,7 @@ viewBehindPattern args =
                 viewInput
                     { args
                         | value = valueWithTrailingPattern
-                        , textType = TextPlain
+                        , textType = R10.FormTypes.TextPlain
                     }
                     [ alpha 0.6
                     , htmlAttribute <| Html.Attributes.attribute "disabled" "true"
@@ -311,11 +304,11 @@ view attrs extraInputAttrs args =
             , msgOnFocus : msg
             , msgOnLoseFocus : Maybe msg
             , msgOnTogglePasswordShow : Maybe msg
-            , palette : R10.FormComponents.UI.Palette.Palette
+            , palette : R10.FormTypes.Palette
             , requiredLabel : Maybe String
             , showPassword : Bool
             , style : R10.FormComponents.Style.Style
-            , textType : TextType
+            , textType : R10.FormTypes.TypeText
             , trailingIcon : Maybe (Element msg)
             , validation : R10.FormComponents.Validations.Validation
             , value : String
@@ -345,7 +338,7 @@ view attrs extraInputAttrs args =
             , isMouseOver : Bool
             , label : String
             , leadingIcon : Maybe (Element msg)
-            , palette : R10.FormComponents.UI.Palette.Palette
+            , palette : R10.FormTypes.Palette
             , requiredLabel : Maybe String
             , style : R10.FormComponents.Style.Style
             , trailingIcon : Maybe (Element msg)
@@ -399,7 +392,7 @@ view attrs extraInputAttrs args =
                     Border.rounded 5
             , height <|
                 px <|
-                    if newArgs.textType == TextMultiline then
+                    if newArgs.textType == R10.FormTypes.TextMultiline then
                         200
 
                     else
@@ -433,10 +426,10 @@ viewInput :
         , msgOnEnter : Maybe msg
         , msgOnFocus : msg
         , msgOnLoseFocus : Maybe msg
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
         , showPassword : Bool
         , style : R10.FormComponents.Style.Style
-        , textType : TextType
+        , textType : R10.FormTypes.TypeText
         , trailingIcon : Maybe (Element msg)
         , value : String
     }
@@ -578,23 +571,23 @@ viewInput args extraAttr =
             }
     in
     case args.textType of
-        TextUsername ->
+        R10.FormTypes.TextUsername ->
             Input.username inputAttrs behavioursText
 
-        TextEmail ->
+        R10.FormTypes.TextEmail ->
             Input.email inputAttrs behavioursText
 
-        TextPasswordCurrent ->
+        R10.FormTypes.TextPasswordCurrent ->
             Input.currentPassword inputAttrs (behavioursPassword args.showPassword)
 
-        TextPasswordNew ->
+        R10.FormTypes.TextPasswordNew ->
             Input.newPassword inputAttrs (behavioursPassword args.showPassword)
 
-        TextPlain ->
+        R10.FormTypes.TextPlain ->
             Input.text inputAttrs behavioursText
 
-        TextMultiline ->
+        R10.FormTypes.TextMultiline ->
             Input.multiline inputAttrs behavioursMultiline
 
-        TextWithPattern pattern ->
+        R10.FormTypes.TextWithPattern pattern ->
             Input.text inputAttrs <| behavioursTextWithPattern pattern

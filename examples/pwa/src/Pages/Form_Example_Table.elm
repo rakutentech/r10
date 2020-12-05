@@ -2,7 +2,6 @@ module Pages.Form_Example_Table exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -14,28 +13,8 @@ import Element.Font as Font
 import Html.Attributes
 import Markdown
 import R10.Form
-import R10.FormComponents
-import R10.Language
+import R10.FormTypes
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form Example - Table"
-    , ja_jp = "Form Example - Table"
-    , zh_tw = "Form Example - Table"
-    , es_es = "Form Example - Table"
-    , fr_fr = "Form Example - Table"
-    , de_de = "Form Example - Table"
-    , it_it = "Form Example - Table"
-    , nl_nl = "Form Example - Table"
-    , pt_pt = "Form Example - Table"
-    , nb_no = "Form Example - Table"
-    , fi_fl = "Form Example - Table"
-    , da_dk = "Form Example - Table"
-    , sv_se = "Form Example - Table"
-    }
 
 
 type alias Model =
@@ -130,7 +109,7 @@ operationsTable theme formState =
         }
 
 
-checkbox : R10.FormComponents.Palette -> R10.Form.State -> (R10.Form.Msg -> msg) -> Int -> List (Element msg)
+checkbox : R10.FormTypes.Palette -> R10.Form.State -> (R10.Form.Msg -> msg) -> Int -> List (Element msg)
 checkbox palette state msgTransformer index =
     let
         initFieldConf : R10.Form.FieldConf
@@ -142,7 +121,7 @@ checkbox palette state msgTransformer index =
             [ R10.Form.entity.field
                 { initFieldConf
                     | id = String.fromInt index
-                    , type_ = R10.Form.fieldType.binary R10.Form.binary.checkbox
+                    , type_ = R10.FormTypes.inputField.binaryCheckbox
                 }
             ]
         , state = state

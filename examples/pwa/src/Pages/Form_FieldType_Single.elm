@@ -2,7 +2,6 @@ module Pages.Form_FieldType_Single exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -15,32 +14,11 @@ import Element.Input as Input
 import Html.Attributes
 import Markdown
 import R10.Card
-import R10.Color.Utils
+import R10.Color.Svg
 import R10.Form
-import R10.FormComponents
-import R10.FormComponents.Single.Common
-import R10.Language
+import R10.FormTypes
 import R10.Svg.IconsExtra
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form Field Type - Single"
-    , ja_jp = "Form Field Type - Single"
-    , zh_tw = "Form Field Type - Single"
-    , es_es = "Form Field Type - Single"
-    , fr_fr = "Form Field Type - Single"
-    , de_de = "Form Field Type - Single"
-    , it_it = "Form Field Type - Single"
-    , nl_nl = "Form Field Type - Single"
-    , pt_pt = "Form Field Type - Single"
-    , nb_no = "Form Field Type - Single"
-    , fi_fl = "Form Field Type - Single"
-    , da_dk = "Form Field Type - Single"
-    , sv_se = "Form Field Type - Single"
-    }
 
 
 type alias Model =
@@ -56,19 +34,19 @@ type alias Model =
     , selectOptionHeight : Int
     , maxDisplayCount : Int
     , trailingIcon : Maybe Icon
-    , type_ : R10.Form.SingleType
+    , type_ : R10.FormTypes.TypeSingle
     , validation : R10.Form.Validation2
     , fieldOptions : List R10.Form.SingleFieldOption
     }
 
 
-typeToString : R10.Form.SingleType -> String
+typeToString : R10.FormTypes.TypeSingle -> String
 typeToString textType =
     case textType of
-        R10.FormComponents.Single.Common.SingleCombobox ->
+        R10.FormTypes.SingleCombobox ->
             "R10.Form.single.combobox"
 
-        R10.FormComponents.Single.Common.SingleRadio ->
+        R10.FormTypes.SingleRadio ->
             "R10.Form.single.radio"
 
 
@@ -105,13 +83,13 @@ type Icon
     | Pause
 
 
-toIconEl : R10.Form.Palette -> Icon -> Element Msg
-toIconEl palette leadingIcon =
+toIconEl : R10.Theme.Theme -> R10.FormTypes.Palette -> Icon -> Element Msg
+toIconEl theme palette leadingIcon =
     case leadingIcon of
         Play ->
             R10.Form.viewIconButton []
                 { msgOnClick = Just <| PlayPauseClick Play
-                , icon = R10.Svg.IconsExtra.play [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 24
+                , icon = R10.Svg.IconsExtra.play [] (R10.Color.Svg.fontNormal theme) 24
                 , palette = palette
                 , size = 24
                 }
@@ -119,7 +97,7 @@ toIconEl palette leadingIcon =
         Pause ->
             R10.Form.viewIconButton []
                 { msgOnClick = Just <| PlayPauseClick Pause
-                , icon = R10.Svg.IconsExtra.pause [] (R10.FormComponents.label palette |> R10.Color.Utils.elementColorToColor) 30
+                , icon = R10.Svg.IconsExtra.pause [] (R10.Color.Svg.fontNormal theme) 30
                 , palette = palette
                 , size = 30
                 }
@@ -139,7 +117,7 @@ init =
     , selectOptionHeight = 36
     , maxDisplayCount = 5
     , trailingIcon = Nothing
-    , type_ = R10.Form.typeSingle.combobox
+    , type_ = R10.FormTypes.SingleCombobox
     , validation = R10.Form.componentValidation.notYetValidated
     , fieldOptions = generateFieldOptions 10
     }
@@ -312,11 +290,11 @@ update msg model =
             ( { model
                 | type_ =
                     case model.type_ of
-                        R10.FormComponents.Single.Common.SingleCombobox ->
-                            R10.FormComponents.Single.Common.SingleRadio
+                        R10.FormTypes.SingleCombobox ->
+                            R10.FormTypes.SingleRadio
 
-                        R10.FormComponents.Single.Common.SingleRadio ->
-                            R10.FormComponents.Single.Common.SingleCombobox
+                        R10.FormTypes.SingleRadio ->
+                            R10.FormTypes.SingleCombobox
               }
             , Cmd.none
             )
@@ -406,10 +384,10 @@ The messages on the right are all the messages that are fired by the component.
                         }
                 , selectOptionHeight = model.selectOptionHeight
                 , maxDisplayCount = model.maxDisplayCount
-                , leadingIcon = model.leadingIcon |> Maybe.map (toIconEl palette)
+                , leadingIcon = model.leadingIcon |> Maybe.map (toIconEl theme palette)
                 , trailingIcon =
                     model.trailingIcon
-                        |> Maybe.map (toIconEl palette)
+                        |> Maybe.map (toIconEl theme palette)
                         |> Maybe.withDefault
                             (R10.Form.defaultTrailingIcon
                                 { opened = model.singleModel.opened
@@ -450,10 +428,10 @@ The messages on the right are all the messages that are fired by the component.
                         }
                 , selectOptionHeight = model.selectOptionHeight
                 , maxDisplayCount = model.maxDisplayCount
-                , leadingIcon = model.leadingIcon |> Maybe.map (toIconEl palette)
+                , leadingIcon = model.leadingIcon |> Maybe.map (toIconEl theme palette)
                 , trailingIcon =
                     model.trailingIcon
-                        |> Maybe.map (toIconEl palette)
+                        |> Maybe.map (toIconEl theme palette)
                         |> Maybe.withDefault
                             (R10.Form.defaultTrailingIcon
                                 { opened = model.singleModel.opened

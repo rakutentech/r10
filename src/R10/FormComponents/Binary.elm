@@ -1,6 +1,5 @@
 module R10.FormComponents.Binary exposing
     ( Args
-    , TypeBinary(..)
     , view
     )
 
@@ -13,35 +12,34 @@ import Html.Attributes
 import R10.Color.Utils
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
-
-
-type TypeBinary
-    = BinaryCheckbox
-    | BinarySwitch
+import R10.FormTypes
 
 
 type alias Args msg =
-    { -- Stuff that change
-      value : Bool
+    --
+    -- Stuff that usually doesn't change
+    -- during the life of the component
+    --
+    { label : String
+    , helperText : Maybe String
+    , typeBinary : R10.FormTypes.TypeBinary
+    , palette : R10.FormTypes.Palette
+
+    -- Stuff that usually change
+    -- during the life of the component
+    --
+    , value : Bool
     , focused : Bool
     , validation : R10.FormComponents.Validations.Validation
+    , disabled : Bool
 
     -- Messages
+    --
     , msgOnChange : Bool -> msg
     , msgOnFocus : msg
     , msgOnLoseFocus : msg
     , msgOnClick : msg
-
-    -- Stuff that doesn't change
-    , label : String
-    , disabled : Bool
-    , helperText : Maybe String
-    , palette : R10.FormComponents.UI.Palette.Palette
-
-    -- Specific stuff
-    , typeBinary : TypeBinary
     }
 
 
@@ -221,10 +219,10 @@ view : List (Attribute msg) -> Args msg -> Element msg
 view attrs args =
     column [ width fill, centerY ] <|
         [ case args.typeBinary of
-            BinarySwitch ->
+            R10.FormTypes.BinarySwitch ->
                 viewBinarySwitch attrs args
 
-            BinaryCheckbox ->
+            R10.FormTypes.BinaryCheckbox ->
                 viewBinaryCheckbox attrs args
         , R10.FormComponents.UI.viewHelperText args.palette
             [ Font.size 14, alpha 0.5, paddingEach { top = R10.FormComponents.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ]

@@ -1,5 +1,6 @@
 module R10.FormComponents.Single exposing
-    ( defaultSearchFn
+    ( Args
+    , defaultSearchFn
     , defaultToOptionEl
     , defaultTrailingIcon
     , extraCss
@@ -20,9 +21,9 @@ import R10.FormComponents.Single.Update
 import R10.FormComponents.Style
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Utils
 import R10.FormComponents.Validations
+import R10.FormTypes
 import R10.SimpleMarkdown
 import String.Extra
 
@@ -78,7 +79,7 @@ defaultToOptionEl { search, msgOnSelect } { label, value } =
         (withBold |> R10.SimpleMarkdown.elementMarkdown)
 
 
-defaultTrailingIcon : { a | opened : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
+defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> Element msg
 defaultTrailingIcon { opened, palette } =
     R10.FormComponents.IconButton.view []
         { msgOnClick = Nothing
@@ -123,23 +124,26 @@ update =
     R10.FormComponents.Single.Update.update
 
 
+type alias Args msg =
+    { label : String
+    , helperText : Maybe String
+    , disabled : Bool
+    , requiredLabel : Maybe String
+    , key : String
+    , style : R10.FormComponents.Style.Style
+    , palette : R10.FormTypes.Palette
+    , singleType : R10.FormTypes.TypeSingle
+    , fieldOptions : List Common.FieldOption
+    , validation : R10.FormComponents.Validations.Validation
+    , toMsg : Common.Msg -> msg
+    }
+
+
 view :
     List (Attribute msg)
     -- Shared.Args msg - without [toOptionEl, searchFn]
     -> Common.Model
-    ->
-        { label : String
-        , helperText : Maybe String
-        , disabled : Bool
-        , requiredLabel : Maybe String
-        , key : String
-        , style : R10.FormComponents.Style.Style
-        , palette : R10.FormComponents.UI.Palette.Palette
-        , singleType : Common.TypeSingle
-        , fieldOptions : List Common.FieldOption
-        , validation : R10.FormComponents.Validations.Validation
-        , toMsg : Common.Msg -> msg
-        }
+    -> Args msg
     -> Element msg
 view attrs model conf =
     let
@@ -169,10 +173,10 @@ view attrs model conf =
             }
     in
     case args.singleType of
-        Common.SingleCombobox ->
+        R10.FormTypes.SingleCombobox ->
             R10.FormComponents.Single.Combobox.view attrs model args
 
-        Common.SingleRadio ->
+        R10.FormTypes.SingleRadio ->
             R10.FormComponents.Single.Radio.viewRadio attrs model args
 
 
@@ -187,8 +191,8 @@ viewCustom :
         , requiredLabel : Maybe String
         , key : String
         , style : R10.FormComponents.Style.Style
-        , palette : R10.FormComponents.UI.Palette.Palette
-        , singleType : Common.TypeSingle
+        , palette : R10.FormTypes.Palette
+        , singleType : R10.FormTypes.TypeSingle
         , fieldOptions : List Common.FieldOption
         , validation : R10.FormComponents.Validations.Validation
         , toMsg : Common.Msg -> msg
@@ -224,8 +228,8 @@ viewCustom attrs model conf =
             }
     in
     case args.singleType of
-        Common.SingleCombobox ->
+        R10.FormTypes.SingleCombobox ->
             R10.FormComponents.Single.Combobox.view attrs model args
 
-        Common.SingleRadio ->
+        R10.FormTypes.SingleRadio ->
             R10.FormComponents.Single.Radio.viewRadio attrs model args

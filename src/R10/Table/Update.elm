@@ -4,6 +4,7 @@ import Dict
 import R10.Form
 import R10.Form.Msg
 import R10.FormComponents.Single.Common
+import R10.FormTypes
 import R10.Table.Msg
 import R10.Table.State
 import R10.Table.Types
@@ -62,15 +63,15 @@ fieldStateInit =
 buildFormModel : R10.Table.Types.Filter -> Maybe String -> R10.Form.Form
 buildFormModel filter defaultValue =
     let
-        extra : { type_ : R10.Form.FieldType }
+        extra : { type_ : R10.FormTypes.FieldType }
         extra =
             case filter of
                 R10.Table.Types.FilterText { label, key } ->
-                    { type_ = R10.Form.fieldType.text R10.Form.text.plain
+                    { type_ = R10.FormTypes.TypeText R10.FormTypes.TextPlain
                     }
 
                 R10.Table.Types.FilterSelect { options } ->
-                    { type_ = R10.Form.fieldType.single R10.Form.single.combobox options
+                    { type_ = R10.FormTypes.TypeSingle R10.FormTypes.SingleCombobox options
                     }
     in
     { conf =

@@ -1,6 +1,5 @@
 module R10.FormComponents.Validations exposing
     ( Validation(..)
-    , ValidationIcon(..)
     , ValidationMessage(..)
     , extraCss
     , isValid
@@ -10,12 +9,11 @@ module R10.FormComponents.Validations exposing
 
 import Element exposing (..)
 import Element.Font as Font
-import Html
 import Html.Attributes
 import R10.Color.Utils
 import R10.FormComponents.UI exposing (icons)
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
+import R10.FormTypes
 
 
 isValid : Validation -> Maybe Bool
@@ -69,18 +67,12 @@ type Validation
     | Validated (List ValidationMessage)
 
 
-type ValidationIcon
-    = NoIcon
-    | ClearOrCheck -- clear aka cross
-    | ErrorOrCheck -- "!" in circle, just like Google's
-
-
 extraCss : String
 extraCss =
     ".markdown p {margin: 0}"
 
 
-viewValidationIcon : R10.FormComponents.UI.Palette.Palette -> ValidationIcon -> { validIcon : Element msg, invalidIcon : Element msg }
+viewValidationIcon : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> { validIcon : Element msg, invalidIcon : Element msg }
 viewValidationIcon palette validationIcon =
     let
         iconAttrs : List (Attribute msg)
@@ -88,23 +80,23 @@ viewValidationIcon palette validationIcon =
             [ width <| px 16, height <| px 16 ]
     in
     case validationIcon of
-        NoIcon ->
+        R10.FormTypes.NoIcon ->
             { invalidIcon = none
             , validIcon = none
             }
 
-        ClearOrCheck ->
+        R10.FormTypes.ClearOrCheck ->
             { invalidIcon = icons.validation_clear iconAttrs (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.error palette) 24
             , validIcon = icons.validation_check iconAttrs (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.success palette) 24
             }
 
-        ErrorOrCheck ->
+        R10.FormTypes.ErrorOrCheck ->
             { invalidIcon = icons.validation_error iconAttrs (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.error palette) 24
             , validIcon = icons.validation_check iconAttrs (R10.Color.Utils.elementColorToColor <| R10.FormComponents.UI.Color.success palette) 24
             }
 
 
-viewValidationMessage : R10.FormComponents.UI.Palette.Palette -> ValidationIcon -> ValidationMessage -> Element msg
+viewValidationMessage : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> ValidationMessage -> Element msg
 viewValidationMessage palette validationIcon validationMessage =
     case validationMessage of
         MessageOk string ->
@@ -126,7 +118,7 @@ viewValidationMessage palette validationIcon validationMessage =
                 ]
 
 
-viewValidation : R10.FormComponents.UI.Palette.Palette -> ValidationIcon -> Validation -> Element msg
+viewValidation : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> Validation -> Element msg
 viewValidation palette validationIcon validation =
     case validation of
         NotYetValidated ->

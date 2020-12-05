@@ -33,14 +33,13 @@ import R10.Color.Utils
 import R10.FormComponents.Style
 import R10.FormComponents.UI.Color
 import R10.FormComponents.UI.Const
-import R10.FormComponents.UI.Palette
+import R10.FormTypes
 import R10.SimpleMarkdown
 import R10.Svg.Icons
 import R10.Svg.IconsExtra
-import Svg
 
 
-borderEntityWithBorder : R10.FormComponents.UI.Palette.Palette -> List (Attribute msg)
+borderEntityWithBorder : R10.FormTypes.Palette -> List (Attribute msg)
 borderEntityWithBorder palette =
     [ Border.width 1
     , Border.color <| R10.FormComponents.UI.Color.container palette
@@ -63,7 +62,7 @@ genericSpacing =
     8
 
 
-viewHelperText : R10.FormComponents.UI.Palette.Palette -> List (Attr () msg) -> Maybe String -> Element msg
+viewHelperText : R10.FormTypes.Palette -> List (Attr () msg) -> Maybe String -> Element msg
 viewHelperText palette attrs maybeHelperText =
     case maybeHelperText of
         Just helperText ->
@@ -180,7 +179,7 @@ getBorderColor :
         , valid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
     }
     -> Color
 getBorderColor { disabled, focused, style, valid, displayValidation, isMouseOver, palette } =
@@ -226,7 +225,7 @@ textfieldLabelColor :
         , style : R10.FormComponents.Style.Style
         , valid : Maybe Bool
         , displayValidation : Bool
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
     }
     -> Color
 textfieldLabelColor { focused, style, valid, displayValidation, palette } =
@@ -253,7 +252,7 @@ textfieldLabelColor { focused, style, valid, displayValidation, palette } =
                     R10.FormComponents.UI.Color.label palette
 
 
-getSelectShadowColor : R10.FormComponents.UI.Palette.Palette -> Bool -> Bool -> Color
+getSelectShadowColor : R10.FormTypes.Palette -> Bool -> Bool -> Color
 getSelectShadowColor palette focused mouseOver =
     let
         alpha : Float
@@ -274,7 +273,7 @@ getSelectShadowColor palette focused mouseOver =
     R10.FormComponents.UI.Color.primaryA alpha palette
 
 
-viewSelectShadow : { a | palette : R10.FormComponents.UI.Palette.Palette, focused : Bool, disabled : Bool } -> Element msg -> Element msg
+viewSelectShadow : { a | palette : R10.FormTypes.Palette, focused : Bool, disabled : Bool } -> Element msg -> Element msg
 viewSelectShadow { palette, focused, disabled } element =
     el
         ([ width <| px 40
@@ -359,7 +358,7 @@ labelBuilder :
         , valid : Maybe Bool
         , displayValidation : Bool
         , style : R10.FormComponents.Style.Style
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
     }
     -> Element msg
 labelBuilder args =
@@ -473,7 +472,7 @@ labelBuilder args =
             labelEl
 
 
-showValidationIcon_ : { a | maybeValid : Maybe Bool, displayValidation : Bool, palette : R10.FormComponents.UI.Palette.Palette } -> Element msg
+showValidationIcon_ : { a | maybeValid : Maybe Bool, displayValidation : Bool, palette : R10.FormTypes.Palette } -> Element msg
 showValidationIcon_ { maybeValid, displayValidation, palette } =
     let
         widthPx : Int

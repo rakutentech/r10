@@ -10,6 +10,7 @@ import Html.Events
 import Json.Decode
 import R10.Form
 import R10.FormComponents.UI.Color
+import R10.FormTypes
 import R10.Table.Config
 import R10.Table.Msg
 import R10.Table.State
@@ -48,7 +49,7 @@ getFilterLabel filterType =
 
 
 viewEditPopup :
-    R10.Form.Palette
+    R10.FormTypes.Palette
     -> R10.Form.Form
     -> Element R10.Table.Msg.Msg
 viewEditPopup palette formModel =
@@ -94,7 +95,7 @@ viewChipRemoveButton key =
 
 
 viewChip :
-    R10.Form.Palette
+    R10.FormTypes.Palette
     -> R10.Table.State.FiltersStateRecord
     -> R10.Table.Types.Filter
     -> Element R10.Table.Msg.Msg
@@ -151,7 +152,7 @@ viewChip palette filtersState filterType =
 
 
 viewFilter :
-    R10.Form.Palette
+    R10.FormTypes.Palette
     -> R10.Table.State.FiltersStateRecord
     -> R10.Table.Types.Filter
     -> Element R10.Table.Msg.Msg
@@ -199,7 +200,7 @@ viewFilterPanelButton =
 
 
 view :
-    R10.Form.Palette
+    R10.FormTypes.Palette
     -> R10.Table.Config.FiltersConfig
     -> R10.Table.State.State
     -> Element R10.Table.Msg.Msg

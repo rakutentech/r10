@@ -2,7 +2,6 @@ module Pages.Form_Boilerplate exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -12,28 +11,9 @@ import Html.Attributes
 import Markdown
 import R10.Button
 import R10.Form
-import R10.Language
+import R10.FormTypes
 import R10.Libu
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form Boilerplate"
-    , ja_jp = "Form Boilerplate"
-    , zh_tw = "Form Boilerplate"
-    , es_es = "Form Boilerplate"
-    , fr_fr = "Form Boilerplate"
-    , de_de = "Form Boilerplate"
-    , it_it = "Form Boilerplate"
-    , nl_nl = "Form Boilerplate"
-    , pt_pt = "Form Boilerplate"
-    , nb_no = "Form Boilerplate"
-    , fi_fl = "Form Boilerplate"
-    , da_dk = "Form Boilerplate"
-    , sv_se = "Form Boilerplate"
-    }
 
 
 type alias Model =
@@ -47,7 +27,7 @@ init =
             [ R10.Form.entity.field
                 { id = "email"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.email
+                , type_ = R10.FormTypes.inputField.textEmail
                 , label = "Email"
                 , helperText = Just "Helper text for Email"
                 , requiredLabel = Just "(required)"
@@ -55,7 +35,7 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.commonValidation.email
                             , R10.Form.validation.minLength 5
@@ -67,7 +47,7 @@ init =
             , R10.Form.entity.field
                 { id = "password"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+                , type_ = R10.FormTypes.inputField.textPasswordNew
                 , label = "Password"
                 , helperText = Just "Helper text for Password"
                 , requiredLabel = Just "(required)"
@@ -75,7 +55,7 @@ init =
                     Just
                         { showPassedValidationMessages = True
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.commonValidation.password
                             , R10.Form.validation.minLength 5
@@ -87,7 +67,7 @@ init =
             , R10.Form.entity.field
                 { id = "password_repeat"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+                , type_ = R10.FormTypes.inputField.textPasswordNew
                 , label = "Repeat Password"
                 , helperText = Just "Helper text for Repeat  Password"
                 , requiredLabel = Just "(required)"
@@ -95,7 +75,7 @@ init =
                     Just
                         { showPassedValidationMessages = True
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.commonValidation.password
                             , R10.Form.validation.minLength 5
@@ -180,7 +160,7 @@ init _ _ =
                     }
                 , R10.Form.entity.field
                     { id = "password"
-                    , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+                    , type_ = R10.FormTypes.inputField.textPasswordNew
                     , label = "Password"
                     , helperText = Just "Helper text for Password"
                     , required = True

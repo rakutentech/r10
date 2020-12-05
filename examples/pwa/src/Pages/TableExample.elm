@@ -2,7 +2,6 @@ module Pages.TableExample exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -20,7 +19,6 @@ import R10.Button
 import R10.Card
 import R10.Color.Utils
 import R10.Form
-import R10.Language
 import R10.Libu
 import R10.Table
 import R10.Table.Config
@@ -32,25 +30,6 @@ import R10.Table.Style
 import R10.Table.Types
 import R10.Table.Update
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Sortable Table"
-    , ja_jp = "Sortable Table"
-    , zh_tw = "Sortable Table"
-    , es_es = "Sortable Table"
-    , fr_fr = "Sortable Table"
-    , de_de = "Sortable Table"
-    , it_it = "Sortable Table"
-    , nl_nl = "Sortable Table"
-    , pt_pt = "Sortable Table"
-    , nb_no = "Sortable Table"
-    , fi_fl = "Sortable Table"
-    , da_dk = "Sortable Table"
-    , sv_se = "Sortable Table"
-    }
 
 
 type Theme

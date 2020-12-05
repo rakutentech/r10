@@ -3,7 +3,6 @@ module Pages.Counter exposing
     , Msg
     , init
     , subscriptions
-    , title
     , update
     , view
     )
@@ -13,29 +12,9 @@ import Element exposing (..)
 import Element.Font as Font
 import R10.Button
 import R10.Counter
-import R10.Language
 import R10.Libu
 import R10.Theme
 import Time
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Counter"
-    , ja_jp = "カウンター"
-    , zh_tw = "Counter"
-    , es_es = "Counter"
-    , fr_fr = "Counter"
-    , de_de = "Counter"
-    , it_it = "Counter"
-    , nl_nl = "Counter"
-    , pt_pt = "Counter"
-    , nb_no = "Counter"
-    , fi_fl = "Counter"
-    , da_dk = "Counter"
-    , sv_se = "Counter"
-    }
 
 
 type alias Model =

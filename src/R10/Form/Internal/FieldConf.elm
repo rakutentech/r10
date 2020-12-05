@@ -1,14 +1,7 @@
 module R10.Form.Internal.FieldConf exposing
     ( FieldConf
-    , FieldOption
-    , FieldType(..)
-    , TypeBinary(..)
-    , TypeMulti
-    , TypeSingle(..)
-    , TypeText(..)
     , Validation(..)
     , ValidationCode
-    , ValidationIcon(..)
     , ValidationMessage
     , ValidationPayload
     , ValidationSpecs
@@ -24,6 +17,7 @@ import Json.Decode as D
 import Json.Encode as E
 import Json.Encode.Extra as E
 import R10.Form.Internal.Key
+import R10.FormTypes
 
 
 type alias ValidationMessage =
@@ -49,55 +43,12 @@ type Validation
     | Regex String
 
 
-type ValidationIcon
-    = NoIcon
-    | ClearOrCheck -- clear aka cross
-    | ErrorOrCheck -- "!" in circle, just like Google's
-
-
 
 -- ████████ ██    ██ ██████  ███████ ███████
 --    ██     ██  ██  ██   ██ ██      ██
 --    ██      ████   ██████  █████   ███████
 --    ██       ██    ██      ██           ██
 --    ██       ██    ██      ███████ ███████
-
-
-type alias FieldOption =
-    { value : String
-    , label : String
-    }
-
-
-type TypeText
-    = TextPlain
-    | TextEmail
-    | TextUsername
-    | TextPasswordNew
-    | TextPasswordCurrent
-    | TextMultiline
-    | TextWithPattern String
-
-
-type TypeSingle
-    = SingleRadio
-    | SingleCombobox
-
-
-type TypeBinary
-    = BinaryCheckbox
-    | BinarySwitch
-
-
-type TypeMulti
-    = MultiCombobox -- TODO
-
-
-type FieldType
-    = TypeText TypeText
-    | TypeSingle TypeSingle (List FieldOption)
-    | TypeMulti TypeMulti (List FieldOption)
-    | TypeBinary TypeBinary
 
 
 type alias ValidationCode =
@@ -112,7 +63,7 @@ type alias ValidationPayload =
 type alias FieldConf =
     { id : String
     , idDom : Maybe String
-    , type_ : FieldType
+    , type_ : R10.FormTypes.FieldType
     , label : String
     , helperText : Maybe String
     , requiredLabel : Maybe String
@@ -132,7 +83,7 @@ type alias ValidationSpecs =
     { showPassedValidationMessages : Bool
     , hidePassedValidationStyle : Bool
     , validation : List Validation
-    , validationIcon : ValidationIcon
+    , validationIcon : R10.FormTypes.ValidationIcon
     }
 
 
@@ -140,7 +91,7 @@ init : FieldConf
 init =
     { id = ""
     , idDom = Nothing
-    , type_ = TypeText TextPlain
+    , type_ = R10.FormTypes.TypeText R10.FormTypes.TextPlain
     , label = ""
     , helperText = Nothing
     , requiredLabel = Nothing
@@ -153,7 +104,7 @@ initValidationSpecs =
     { showPassedValidationMessages = False
     , hidePassedValidationStyle = False
     , validation = [ NoValidation ]
-    , validationIcon = NoIcon
+    , validationIcon = R10.FormTypes.NoIcon
     }
 
 
@@ -202,89 +153,89 @@ decoderFieldConf =
         (D.field "validationSpecs" (D.maybe decoderValidationSpecs))
 
 
-encoderFieldType : FieldType -> E.Value
+encoderFieldType : R10.FormTypes.FieldType -> E.Value
 encoderFieldType fieldType =
     case fieldType of
-        TypeText testType ->
+        R10.FormTypes.TypeText testType ->
             case testType of
-                TextPlain ->
+                R10.FormTypes.TextPlain ->
                     E.string "TypeTextPlain"
 
-                TextEmail ->
+                R10.FormTypes.TextEmail ->
                     E.string "TypeTextEmail"
 
-                TextUsername ->
+                R10.FormTypes.TextUsername ->
                     E.string "TypeTextUsername"
 
-                TextPasswordNew ->
+                R10.FormTypes.TextPasswordNew ->
                     E.string "TypeTextPasswordNew"
 
-                TextPasswordCurrent ->
+                R10.FormTypes.TextPasswordCurrent ->
                     E.string "TypeTextPasswordCurrent"
 
-                TextMultiline ->
+                R10.FormTypes.TextMultiline ->
                     E.string "TypeTextMultiline"
 
-                TextWithPattern pattern ->
+                R10.FormTypes.TextWithPattern pattern ->
                     E.string <| "TextWithPattern" ++ jsonSeparator ++ pattern
 
-        TypeBinary typeBinary ->
+        R10.FormTypes.TypeBinary typeBinary ->
             case typeBinary of
-                BinaryCheckbox ->
+                R10.FormTypes.BinaryCheckbox ->
                     E.string "TypeBinaryCheckbox"
 
-                BinarySwitch ->
+                R10.FormTypes.BinarySwitch ->
                     E.string "TypeBinarySwitch"
 
-        TypeSingle singleType _ ->
+        R10.FormTypes.TypeSingle singleType _ ->
             case singleType of
-                SingleRadio ->
+                R10.FormTypes.SingleRadio ->
                     E.string "TypeSingleRadio"
 
-                SingleCombobox ->
+                R10.FormTypes.SingleCombobox ->
                     E.string "TypeSingleCombobox"
 
-        TypeMulti typeMulti _ ->
+        R10.FormTypes.TypeMulti typeMulti _ ->
             case typeMulti of
-                MultiCombobox ->
+                R10.FormTypes.MultiCombobox ->
                     E.string "TypeMultiCombobox"
 
 
-decoderFieldType : D.Decoder FieldType
+decoderFieldType : D.Decoder R10.FormTypes.FieldType
 decoderFieldType =
     D.string
         |> D.andThen
             (\str ->
                 case String.split jsonSeparator str of
                     [ "TypeTextPlain" ] ->
-                        D.succeed (TypeText TextPlain)
+                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextPlain)
 
                     [ "TypeTextEmail" ] ->
-                        D.succeed (TypeText TextEmail)
+                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextEmail)
 
                     [ "TypeTextUsername" ] ->
-                        D.succeed (TypeText TextUsername)
+                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextUsername)
 
                     [ "TypeTextPasswordNew" ] ->
-                        D.succeed (TypeText TextPasswordNew)
+                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextPasswordNew)
 
                     [ "TypeTextPasswordCurrent" ] ->
-                        D.succeed (TypeText TextPasswordCurrent)
+                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextPasswordCurrent)
 
                     [ "TypeTextMultiline" ] ->
-                        D.succeed (TypeText TextMultiline)
+                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextMultiline)
 
                     [ "TextWithPattern", pattern ] ->
-                        D.succeed (TypeText <| TextWithPattern pattern)
+                        D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextWithPattern pattern)
 
                     [ "TypeSingleRadio" ] ->
-                        D.succeed (TypeSingle SingleRadio [])
+                        D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleRadio [])
 
                     [ "TypeSingleCombobox" ] ->
-                        D.succeed (TypeSingle SingleCombobox [])
+                        D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleCombobox [])
 
                     [ "TypeBinaryCheckbox" ] ->
-                        D.succeed (TypeBinary BinaryCheckbox)
+                        D.succeed (R10.FormTypes.TypeBinary R10.FormTypes.BinaryCheckbox)
 
                     somethingElse ->
                         D.fail <| "Unknown FieldType: " ++ List.foldl (++) "" somethingElse ++ ". It should be something like TypeTextPlain, TypeTextEmail, TypeTextUsername, TypeTextPasswordNew, TypeTextPasswordCurrent, TypeCheckbox, TypeRadio, TypeDate, TypePhoneNumber, TypeBirthday or TypeCombobox."
@@ -358,16 +309,16 @@ encodeValidation validation =
             E.string "empty"
 
 
-encodeValidationIcon : ValidationIcon -> E.Value
+encodeValidationIcon : R10.FormTypes.ValidationIcon -> E.Value
 encodeValidationIcon validationIcon =
     case validationIcon of
-        NoIcon ->
+        R10.FormTypes.NoIcon ->
             E.string "no_icon"
 
-        ClearOrCheck ->
+        R10.FormTypes.ClearOrCheck ->
             E.string "clear_or_check"
 
-        ErrorOrCheck ->
+        R10.FormTypes.ErrorOrCheck ->
             E.string "error_or_check"
 
 
@@ -385,20 +336,20 @@ decoderValidation =
         ]
 
 
-decoderValidationIcon : D.Decoder ValidationIcon
+decoderValidationIcon : D.Decoder R10.FormTypes.ValidationIcon
 decoderValidationIcon =
     D.string
         |> D.andThen
             (\str ->
                 case str of
                     "no_icon" ->
-                        D.succeed NoIcon
+                        D.succeed R10.FormTypes.NoIcon
 
                     "clear_or_check" ->
-                        D.succeed ClearOrCheck
+                        D.succeed R10.FormTypes.ClearOrCheck
 
                     "error_or_check" ->
-                        D.succeed ErrorOrCheck
+                        D.succeed R10.FormTypes.ErrorOrCheck
 
                     somethingElse ->
                         D.fail <| "Unknown ValidationIcon: " ++ somethingElse ++ ". It should be something like NoValidation."

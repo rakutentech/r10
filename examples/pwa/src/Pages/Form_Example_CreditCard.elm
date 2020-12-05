@@ -2,54 +2,25 @@ module Pages.Form_Example_CreditCard exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
 
 import Color.Manipulate
 import Element exposing (..)
-import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Html
 import Html.Attributes
-import Markdown
 import R10.Button
 import R10.Card
-import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.Svg
 import R10.Color.Utils
-import R10.FontSize
 import R10.Form
-import R10.FormComponents
-import R10.Language
+import R10.FormTypes
 import R10.Libu
-import R10.Link
-import R10.Mode
-import R10.Svg.Logos
 import R10.Svg.LogosExtra
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form Example - Credit Card"
-    , ja_jp = "フォームの例-クレジットカード"
-    , zh_tw = "Form Example - Credit Card"
-    , es_es = "Form Example - Credit Card"
-    , fr_fr = "Form Example - Credit Card"
-    , de_de = "Form Example - Credit Card"
-    , it_it = "Form Example - Credit Card"
-    , nl_nl = "Form Example - Credit Card"
-    , pt_pt = "Form Example - Credit Card"
-    , nb_no = "Form Example - Credit Card"
-    , fi_fl = "Form Example - Credit Card"
-    , da_dk = "Form Example - Credit Card"
-    , sv_se = "Form Example - Credit Card"
-    }
 
 
 type alias Model =
@@ -63,7 +34,7 @@ init =
             [ R10.Form.entity.field
                 { id = "cardNumber"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text <| R10.Form.text.withPattern "____ ____ ____ ____"
+                , type_ = R10.FormTypes.inputField.textWithPattern "____ ____ ____ ____"
                 , label = "Card Number"
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
@@ -71,14 +42,14 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation = [ R10.Form.validation.required ]
                         }
                 }
             , R10.Form.entity.field
                 { id = "cardHolder"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.plain
+                , type_ = R10.FormTypes.inputField.textPlain
                 , label = "Card Holder"
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
@@ -86,7 +57,7 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.validation.required ]
                         }
@@ -95,7 +66,7 @@ init =
                 [ R10.Form.entity.field
                     { id = "expires"
                     , idDom = Nothing
-                    , type_ = R10.Form.fieldType.text <| R10.Form.text.withPattern "MM/YY"
+                    , type_ = R10.FormTypes.inputField.textWithPattern "MM/YY"
                     , label = "Expires"
                     , helperText = Nothing
                     , requiredLabel = requiredLabel
@@ -103,14 +74,14 @@ init =
                         Just
                             { showPassedValidationMessages = False
                             , hidePassedValidationStyle = False
-                            , validationIcon = R10.Form.validationIcon.noIcon
+                            , validationIcon = R10.FormTypes.NoIcon
                             , validation = [ R10.Form.validation.required ]
                             }
                     }
                 , R10.Form.entity.field
                     { id = "cvv"
                     , idDom = Nothing
-                    , type_ = R10.Form.fieldType.text <| R10.Form.text.withPattern "___"
+                    , type_ = R10.FormTypes.inputField.textWithPattern "___"
                     , label = "CVV"
                     , helperText = Nothing
                     , requiredLabel = requiredLabel
@@ -118,7 +89,7 @@ init =
                         Just
                             { showPassedValidationMessages = False
                             , hidePassedValidationStyle = False
-                            , validationIcon = R10.Form.validationIcon.noIcon
+                            , validationIcon = R10.FormTypes.NoIcon
                             , validation = [ R10.Form.validation.required ]
                             }
                     }
@@ -210,10 +181,6 @@ viewCreditCard theme formState =
                 ]
             ]
         ]
-
-
-
--- view : Model -> R10.Theme.Theme -> Html.Html Msg
 
 
 view : Model -> R10.Theme.Theme -> List (Element Msg)

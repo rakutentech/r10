@@ -4,11 +4,11 @@ import Element
 import R10.FormComponents.Single
 import R10.FormComponents.Text
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
+import R10.FormTypes
 
 
-extraCss : R10.FormComponents.UI.Palette.Palette -> String
+extraCss : R10.FormTypes.Palette -> String
 extraCss palette =
     R10.FormComponents.Text.extraCss
         ++ R10.FormComponents.Single.extraCss

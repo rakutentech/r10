@@ -2,7 +2,6 @@ module Pages.Form_Example_PhoneSelector exposing
     ( Model
     , Msg
     , init
-    , title
     , update
     , view
     )
@@ -11,27 +10,7 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import R10.Form
-import R10.Language
 import R10.Theme
-
-
-title : R10.Language.Translations
-title =
-    { key = "title"
-    , en_us = "Form Example - Phone Selector"
-    , ja_jp = "Form Example - Phone Selector"
-    , zh_tw = "Form Example - Phone Selector"
-    , es_es = "Form Example - Phone Selector"
-    , fr_fr = "Form Example - Phone Selector"
-    , de_de = "Form Example - Phone Selector"
-    , it_it = "Form Example - Phone Selector"
-    , nl_nl = "Form Example - Phone Selector"
-    , pt_pt = "Form Example - Phone Selector"
-    , nb_no = "Form Example - Phone Selector"
-    , fi_fl = "Form Example - Phone Selector"
-    , da_dk = "Form Example - Phone Selector"
-    , sv_se = "Form Example - Phone Selector"
-    }
 
 
 type alias Model =

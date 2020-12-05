@@ -8,7 +8,7 @@ import Html.Events
 import Json.Decode
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
+import R10.FormTypes
 
 
 view :
@@ -16,7 +16,7 @@ view :
     ->
         { msgOnClick : Maybe msg
         , icon : Element msg
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
         , size : Int
         }
     -> Element msg

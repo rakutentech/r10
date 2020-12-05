@@ -11,8 +11,8 @@ module R10.FormComponents.Phone.Common exposing
 import Element exposing (..)
 import R10.FormComponents.Phone.Country exposing (Country)
 import R10.FormComponents.Style
-import R10.FormComponents.UI.Palette
 import R10.FormComponents.Validations
+import R10.FormTypes
 import Time
 
 
@@ -75,7 +75,7 @@ type alias Args msg =
     , requiredLabel : Maybe String
     , style : R10.FormComponents.Style.Style
     , key : String
-    , palette : R10.FormComponents.UI.Palette.Palette
+    , palette : R10.FormTypes.Palette
 
     -- Specific
     , countryOptions : List Country

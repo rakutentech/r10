@@ -11,7 +11,7 @@ module R10.Table exposing (Column, columnCustom, columnSimple, columnWithAttrs, 
 import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Keyed as Keyed
-import R10.Form
+import R10.FormTypes
 import R10.Table.Accordion
 import R10.Table.Cell
 import R10.Table.Config
@@ -288,8 +288,8 @@ columnWithAttrs { name, toStr, maybeToCmp, maybeAttrs } =
 {-| -}
 columnWithViews :
     { name : String
-    , viewCell : R10.Form.Palette -> Maybe data -> Element msg
-    , viewHeader : R10.Form.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg
+    , viewCell : R10.FormTypes.Palette -> Maybe data -> Element msg
+    , viewHeader : R10.FormTypes.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg
     , maybeToCmp : Maybe (data -> comparable)
     }
     -> Column data msg
@@ -311,8 +311,8 @@ columnWithViews { name, viewCell, viewHeader, maybeToCmp } =
 {-| -}
 columnCustom :
     { name : String
-    , viewCell : R10.Form.Palette -> Maybe data -> Element msg
-    , viewHeader : R10.Form.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg
+    , viewCell : R10.FormTypes.Palette -> Maybe data -> Element msg
+    , viewHeader : R10.FormTypes.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg
     , sorter : R10.Table.Types.Sorter data
     }
     -> Column data msg
@@ -326,17 +326,17 @@ columnCustom { name, viewCell, viewHeader, sorter } =
 
 
 {-| -}
-viewHeaderRowHelp : R10.Form.Palette -> R10.Table.State.State -> List (R10.Table.Config.ColumnConf data msg) -> (String -> Bool -> msg) -> Element msg
+viewHeaderRowHelp : R10.FormTypes.Palette -> R10.Table.State.State -> List (R10.Table.Config.ColumnConf data msg) -> (String -> Bool -> msg) -> Element msg
 viewHeaderRowHelp palette state columns sortMsg =
     row [ width fill ] (List.map (viewHeaderRow_ palette state sortMsg) columns)
 
 
-viewHeaderRow_ : R10.Form.Palette -> R10.Table.State.State -> (String -> Bool -> msg) -> R10.Table.Config.ColumnConf data msg -> Element msg
+viewHeaderRow_ : R10.FormTypes.Palette -> R10.Table.State.State -> (String -> Bool -> msg) -> R10.Table.Config.ColumnConf data msg -> Element msg
 viewHeaderRow_ palette state sortMsg column =
     column.viewHeader palette (R10.Table.Header.toHeaderInfo state column sortMsg)
 
 
-viewRowHelp : R10.Form.Palette -> List (R10.Table.Config.ColumnConf data msg) -> (Maybe data -> List (Attribute msg)) -> Maybe data -> Element msg
+viewRowHelp : R10.FormTypes.Palette -> List (R10.Table.Config.ColumnConf data msg) -> (Maybe data -> List (Attribute msg)) -> Maybe data -> Element msg
 viewRowHelp palette columns toRowAttrs maybeData =
     row
         (toRowAttrs maybeData)
@@ -344,7 +344,7 @@ viewRowHelp palette columns toRowAttrs maybeData =
 
 
 viewBody :
-    R10.Form.Palette
+    R10.FormTypes.Palette
     -> R10.Table.Config.Config data msg
     -> R10.Table.State.State
     -> List data
@@ -402,7 +402,7 @@ statically, and look for a different library if you need something crazier than
 that.
 
 -}
-view : R10.Form.Palette -> R10.Table.Config.Config data msg -> R10.Table.State.State -> List data -> Element msg
+view : R10.FormTypes.Palette -> R10.Table.Config.Config data msg -> R10.Table.State.State -> List data -> Element msg
 view palette conf state data =
     let
         filters : Element R10.Table.Msg.Msg

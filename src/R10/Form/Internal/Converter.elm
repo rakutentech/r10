@@ -1,17 +1,8 @@
-module R10.Form.Internal.Converter exposing
-    ( binaryTypeFromFieldConfToComponent
-    , fromFieldStateValidationToComponentValidation
-    , fromFormValidationIconToComponentValidationIcon
-    , singleTypeFromFieldConfToComponent
-    , textTypeFromFieldConfToComponent
-    )
+module R10.Form.Internal.Converter exposing (fromFieldStateValidationToComponentValidation)
 
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
 import R10.Form.Internal.ValidationCode
-import R10.FormComponents.Binary
-import R10.FormComponents.Single.Common
-import R10.FormComponents.Text
 import R10.FormComponents.Validations
 
 
@@ -25,64 +16,9 @@ import R10.FormComponents.Validations
 --
 --  This module helps to convert stuff from form-recursive to form-components
 --
-
-
-binaryTypeFromFieldConfToComponent : R10.Form.Internal.FieldConf.TypeBinary -> R10.FormComponents.Binary.TypeBinary
-binaryTypeFromFieldConfToComponent typeText =
-    case typeText of
-        R10.Form.Internal.FieldConf.BinaryCheckbox ->
-            R10.FormComponents.Binary.BinaryCheckbox
-
-        R10.Form.Internal.FieldConf.BinarySwitch ->
-            R10.FormComponents.Binary.BinarySwitch
-
-
-singleTypeFromFieldConfToComponent : R10.Form.Internal.FieldConf.TypeSingle -> R10.FormComponents.Single.Common.TypeSingle
-singleTypeFromFieldConfToComponent typeText =
-    case typeText of
-        R10.Form.Internal.FieldConf.SingleRadio ->
-            R10.FormComponents.Single.Common.SingleRadio
-
-        R10.Form.Internal.FieldConf.SingleCombobox ->
-            R10.FormComponents.Single.Common.SingleCombobox
-
-
-textTypeFromFieldConfToComponent : R10.Form.Internal.FieldConf.TypeText -> R10.FormComponents.Text.TextType
-textTypeFromFieldConfToComponent typeText =
-    case typeText of
-        R10.Form.Internal.FieldConf.TextPlain ->
-            R10.FormComponents.Text.TextPlain
-
-        R10.Form.Internal.FieldConf.TextUsername ->
-            R10.FormComponents.Text.TextUsername
-
-        R10.Form.Internal.FieldConf.TextEmail ->
-            R10.FormComponents.Text.TextEmail
-
-        R10.Form.Internal.FieldConf.TextPasswordCurrent ->
-            R10.FormComponents.Text.TextPasswordCurrent
-
-        R10.Form.Internal.FieldConf.TextPasswordNew ->
-            R10.FormComponents.Text.TextPasswordNew
-
-        R10.Form.Internal.FieldConf.TextMultiline ->
-            R10.FormComponents.Text.TextMultiline
-
-        R10.Form.Internal.FieldConf.TextWithPattern pattern ->
-            R10.FormComponents.Text.TextWithPattern pattern
-
-
-fromFormValidationIconToComponentValidationIcon : R10.Form.Internal.FieldConf.ValidationIcon -> R10.FormComponents.Validations.ValidationIcon
-fromFormValidationIconToComponentValidationIcon formIcon =
-    case formIcon of
-        R10.Form.Internal.FieldConf.NoIcon ->
-            R10.FormComponents.Validations.NoIcon
-
-        R10.Form.Internal.FieldConf.ClearOrCheck ->
-            R10.FormComponents.Validations.ClearOrCheck
-
-        R10.Form.Internal.FieldConf.ErrorOrCheck ->
-            R10.FormComponents.Validations.ErrorOrCheck
+-- TODO - Remove this function and make the two "Validations"
+-- (R10.Form.Internal.FieldState.Validation and R10.FormComponents.Validations.Validation)
+-- to be only one
 
 
 fromFieldStateValidationToComponentValidation :

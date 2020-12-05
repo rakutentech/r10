@@ -10,7 +10,7 @@ import Html.Attributes
 import R10.FormComponents.Single.Common as Common
 import R10.FormComponents.UI
 import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
+import R10.FormTypes
 
 
 isSelected : Input.OptionState -> Bool
@@ -29,7 +29,7 @@ isSelected optionState =
 viewRadioOption :
     { a
         | disabled : Bool
-        , palette : R10.FormComponents.UI.Palette.Palette
+        , palette : R10.FormTypes.Palette
         , focused : Bool
         , value : String
         , label : String
@@ -128,7 +128,7 @@ viewRadioOptions args focused fieldOption =
         )
 
 
-viewRadioLabel : R10.FormComponents.UI.Palette.Palette -> String -> Maybe String -> Element msg
+viewRadioLabel : R10.FormTypes.Palette -> String -> Maybe String -> Element msg
 viewRadioLabel palette label helperText =
     if label == "" then
         none

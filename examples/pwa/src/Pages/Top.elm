@@ -31,7 +31,7 @@ view theme language heroBackgroundColor content onClick =
             , htmlAttribute <| Html.Attributes.style "transition" "background-color 1.2s"
             ]
             [ row [ spacing 40, centerX, centerY, moveDown 40 ]
-                [ R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 155
+                [ R10.Svg.LogosExtra.elm_monochrome [] (Color.rgb 1 1 1) 155
                 , R10.Svg.Icons.x [ moveRight 15 ] (Color.rgb 1 1 1) 100
                 , R10.Svg.Logos.r [ moveDown 19 ] (Color.rgb 1 1 1) 200
                 ]

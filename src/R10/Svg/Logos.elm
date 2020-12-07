@@ -1,8 +1,8 @@
-module R10.Svg.Logos exposing (authenticator, authenticator_monocrome, r, rakuten, rakutenMarketing, rakutenRagri, rakutenReady)
+module R10.Svg.Logos exposing (authenticator, authenticator_monochrome, r, rakuten, rakutenMarketing, rakutenRagri, rakutenReady)
 
 {-|
 
-@docs authenticator, authenticator_monocrome, r, rakuten, rakutenMarketing, rakutenRagri, rakutenReady
+@docs authenticator, authenticator_monochrome, r, rakuten, rakutenMarketing, rakutenRagri, rakutenReady
 
 -}
 
@@ -112,8 +112,8 @@ authenticator attrs cl size =
 
 
 {-| -}
-authenticator_monocrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
-authenticator_monocrome attrs cl size =
+authenticator_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+authenticator_monochrome attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 77 77"
         size

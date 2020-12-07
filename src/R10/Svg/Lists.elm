@@ -31,7 +31,11 @@ listOthers size cl =
 listLogosExtra : Int -> Color.Color -> List ( Element msg, String )
 listLogosExtra size cl =
     [ ( R10.Svg.LogosExtra.elm [] size, "elm" )
-    , ( R10.Svg.LogosExtra.elm_monocrome [] cl size, "elm_monocrome" )
+    , ( R10.Svg.LogosExtra.elm_monochrome [] cl size, "elm_monochrome" )
+    , ( R10.Svg.LogosExtra.visa [] size, "visa" )
+    , ( R10.Svg.LogosExtra.visa_monochrome [] cl size, "visa_monochrome" )
+    , ( R10.Svg.LogosExtra.americanExpress [] size, "americanExpress" )
+    , ( R10.Svg.LogosExtra.americanExpress_monochrome [] cl size, "americanExpress_monochrome" )
     , ( R10.Svg.LogosExtra.apple [] size, "apple" )
     , ( R10.Svg.LogosExtra.apple_monochrome [] cl size, "apple_monochrome" )
     , ( R10.Svg.LogosExtra.facebook [] size, "facebook" )
@@ -43,6 +47,11 @@ listLogosExtra size cl =
     , ( R10.Svg.LogosExtra.pcHome24hours [] size, "pcHome24hours" )
     , ( R10.Svg.LogosExtra.pcHome24hours_monochrome [] cl size, "pcHome24hours_monochrome" )
     , ( R10.Svg.LogosExtra.github [] cl size, "github" )
+    , ( R10.Svg.LogosExtra.cardVisa [] size, "cardVisa" )
+    , ( R10.Svg.LogosExtra.cardMasterCard [] size, "cardMasterCard" )
+    , ( R10.Svg.LogosExtra.cardDiscover [] size, "cardDiscover" )
+    , ( R10.Svg.LogosExtra.cardJCB [] size, "cardJCB" )
+    , ( R10.Svg.LogosExtra.cardAmericanExpress [] size, "cardAmericanExpress" )
     ]
 
 
@@ -50,7 +59,7 @@ listLogosExtra size cl =
 listLogos : Int -> Color.Color -> List ( Element msg, String )
 listLogos size cl =
     [ ( R10.Svg.Logos.authenticator [] cl size, "authenticator" )
-    , ( R10.Svg.Logos.authenticator_monocrome [] cl size, "authenticator_monocrome" )
+    , ( R10.Svg.Logos.authenticator_monochrome [] cl size, "authenticator_monochrome" )
     , ( R10.Svg.Logos.r [] cl size, "r" )
     , ( R10.Svg.Logos.rakuten [] cl size, "rakuten" )
     , ( R10.Svg.Logos.rakutenMarketing [] cl size, "rakutenMarketing" )

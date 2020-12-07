@@ -622,7 +622,7 @@ headerFooterArgs model =
                 , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
                 }
             , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
-                { label = R10.Svg.LogosExtra.elm_monocrome [] (Color.rgb 1 1 1) 24
+                { label = R10.Svg.LogosExtra.elm_monochrome [] (Color.rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
                 }
             ]

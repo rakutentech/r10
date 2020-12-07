@@ -17,7 +17,7 @@ module R10.Form exposing
     , commonValidation
     , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
     , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
-    , Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText
+    , Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText
     )
 
 {-| Useful things to build a form .
@@ -133,6 +133,7 @@ If you want to personalise the translations or you want to translate them in dif
 import Dict
 import Element exposing (..)
 import Json.Decode
+import R10.Country
 import R10.Form.Internal.Conf
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
@@ -153,7 +154,6 @@ import R10.FormComponents.ExtraCss
 import R10.FormComponents.IconButton
 import R10.FormComponents.Phone
 import R10.FormComponents.Phone.Common
-import R10.FormComponents.Phone.Country
 import R10.FormComponents.Phone.Update
 import R10.FormComponents.Single
 import R10.FormComponents.Single.Common
@@ -1101,7 +1101,7 @@ phoneView :
     List (Attribute msg)
     -> R10.FormComponents.Phone.Common.Model
     ->
-        { countryOptions : Maybe (List R10.FormComponents.Phone.Country.Country)
+        { countryOptions : Maybe (List R10.Country.Country)
         , disabled : Bool
         , helperText : Maybe String
         , key : String
@@ -1121,10 +1121,7 @@ phoneView =
 phoneUpdate :
     R10.FormComponents.Phone.Common.Msg
     -> R10.FormComponents.Phone.Common.Model
-    ->
-        ( R10.FormComponents.Phone.Common.Model
-        , Cmd R10.FormComponents.Phone.Common.Msg
-        )
+    -> ( R10.FormComponents.Phone.Common.Model, Cmd R10.FormComponents.Phone.Common.Msg )
 phoneUpdate =
     R10.FormComponents.Phone.Update.update
 

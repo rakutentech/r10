@@ -7,8 +7,8 @@ import Element.Font as Font
 import Element.Keyed as Keyed
 import Html.Attributes
 import Html.Events
+import R10.Country exposing (Country)
 import R10.FormComponents.Phone.Common as Common
-import R10.FormComponents.Phone.Country exposing (Country)
 import R10.FormComponents.Phone.Update
 import R10.FormComponents.Style
 import R10.FormComponents.Text
@@ -55,7 +55,7 @@ viewComboboxDropdown model args =
                     |> R10.FormComponents.Utils.listSlice visibleFrom visibleTo
                     |> List.map
                         (\country ->
-                            ( country |> R10.FormComponents.Phone.Country.toString
+                            ( country |> R10.Country.toString
                             , viewComboboxOption model.value model.select args country
                             )
                         )

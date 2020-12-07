@@ -135,13 +135,14 @@ encoderFieldState v =
         (\v_ ->
             E.object
                 [ ( "lostFocusOneOrMoreTime", E.bool v_.lostFocusOneOrMoreTime )
-                , ( "showPassword", E.bool v_.showPassword )
                 , ( "value", E.string v_.value )
                 , ( "search", E.string v_.search )
+                , ( "select", E.string v_.search )
                 , ( "scroll", E.float v_.scroll )
                 , ( "dirty", E.bool v_.dirty )
                 , ( "disabled", E.bool v_.disabled )
                 , ( "validation", encoderValidation v_.validation )
+                , ( "showPassword", E.bool v_.showPassword )
                 ]
         )
         v

@@ -26,12 +26,12 @@ type Msg
     | OnFocus String
     | OnLoseFocus String
     | OnScroll Float
-    | OnSearch (List FieldOption) String -- newSearch, newSelect
+    | OnSearch { key : String, fieldOptions : List FieldOption } String
     | OnOptionSelect String --newValue
-    | OnArrowUp { selectOptionHeight : Int, maxDisplayCount : Int, fieldOptions : List FieldOption } -- newSelect selectionY
-    | OnArrowDown { selectOptionHeight : Int, maxDisplayCount : Int, fieldOptions : List FieldOption } -- newSelect selectionY
+    | OnArrowUp { key : String, selectOptionHeight : Int, maxDisplayCount : Int, fieldOptions : List FieldOption } -- newSelect selectionY
+    | OnArrowDown { key : String, selectOptionHeight : Int, maxDisplayCount : Int, fieldOptions : List FieldOption } -- newSelect selectionY
     | OnEsc
-    | OnInputClick Float -- selectionY
+    | OnInputClick { key : String, selectedY : Float }
 
 
 init : Model

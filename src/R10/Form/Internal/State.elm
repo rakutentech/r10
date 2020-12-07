@@ -8,12 +8,12 @@ module R10.Form.Internal.State exposing
 import Dict
 import Json.Decode as D
 import Json.Decode.Extra as D
-import Json.Decode.Pipeline as D
+import Json.Decode.Pipeline as D exposing (required)
 import Json.Encode as E
 import Json.Encode.Extra as E
-import R10.Form.Internal.FieldState
+import R10.Form.Internal.FieldState exposing (Validation(..))
 import R10.Form.Internal.Key
-import R10.Form.Internal.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
+import R10.Form.Internal.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted(..))
 import Set
 
 
@@ -81,6 +81,9 @@ encoder v =
         , ( "multiplicableQuantities", E.dict identity E.int v.multiplicableQuantities )
         , ( "activeTabs", E.dict identity E.string v.activeTabs )
         , ( "focused", E.maybe E.string v.focused )
+
+        -- We don't want to save active state since it can cause incorrect render on load
+        , ( "active", E.maybe E.string Nothing )
         , ( "removed", E.list E.string (Set.toList v.removed) )
         , ( "qtySubmitAttempted", E.int (QtySubmitAttempted.toInt v.qtySubmitAttempted) )
         , ( "changesSinceLastSubmissions", E.bool v.changesSinceLastSubmissions )
@@ -93,8 +96,8 @@ decoder =
         |> D.required "fieldsState" R10.Form.Internal.FieldState.decoderFieldState
         |> D.required "multiplicableQuantities" (D.dict D.int)
         |> D.required "activeTabs" (D.dict D.string)
-        |> D.optional "focused" (D.maybe D.string) Nothing
-        |> D.optional "active" (D.maybe D.string) Nothing
+        |> D.required "focused" (D.nullable D.string)
+        |> D.required "active" (D.nullable D.string)
         |> D.required "removed" (D.set D.string)
         |> D.required "qtySubmitAttempted" (D.map QtySubmitAttempted.fromInt D.int)
         |> D.required "changesSinceLastSubmissions" D.bool

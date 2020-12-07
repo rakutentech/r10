@@ -66,7 +66,7 @@ getMsgOnInputClick model args filteredOptions =
         selectedY =
             R10.FormComponents.Single.Update.getOptionY model.scroll args selectedOptionIndex (List.length filteredOptions)
     in
-    Common.OnInputClick selectedY
+    Common.OnInputClick { key = args.key, selectedY = selectedY }
 
 
 viewComboboxDropdown : Common.Model -> Common.Args msg -> List Common.FieldOption -> Element msg
@@ -237,7 +237,7 @@ view attrs model args =
             { disabled = args.disabled
             , focused = model.focused
             , label = args.label
-            , msgOnChange = args.toMsg << Common.OnSearch args.fieldOptions
+            , msgOnChange = args.toMsg << Common.OnSearch { key = args.key, fieldOptions = args.fieldOptions }
             , msgOnFocus = args.toMsg <| Common.OnFocus model.value
             , msgOnLoseFocus = Nothing
             , msgOnEnter = Nothing
@@ -277,7 +277,8 @@ view attrs model args =
             R10.FormComponents.UI.onKeyPressBatch <|
                 [ ( R10.FormComponents.UI.keyCode.down
                   , Common.OnArrowDown
-                        { selectOptionHeight = args.selectOptionHeight
+                        { key = args.key
+                        , selectOptionHeight = args.selectOptionHeight
                         , maxDisplayCount = args.maxDisplayCount
                         , fieldOptions = args.fieldOptions
                         }
@@ -285,7 +286,8 @@ view attrs model args =
                   )
                 , ( R10.FormComponents.UI.keyCode.up
                   , Common.OnArrowUp
-                        { selectOptionHeight = args.selectOptionHeight
+                        { key = args.key
+                        , selectOptionHeight = args.selectOptionHeight
                         , maxDisplayCount = args.maxDisplayCount
                         , fieldOptions = args.fieldOptions
                         }

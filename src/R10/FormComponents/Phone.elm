@@ -10,9 +10,9 @@ import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes
 import R10.Color.Utils
+import R10.Country exposing (Country)
 import R10.FormComponents.IconButton
 import R10.FormComponents.Phone.Common as Common
-import R10.FormComponents.Phone.Country exposing (Country)
 import R10.FormComponents.Phone.Update
 import R10.FormComponents.Phone.Views
 import R10.FormComponents.Style
@@ -75,10 +75,10 @@ getFlagIcon size maybeCountry =
         text
             (case maybeCountry of
                 Just country ->
-                    R10.FormComponents.Phone.Country.toFlag country
+                    R10.Country.toFlag country
 
                 Nothing ->
-                    R10.FormComponents.Phone.Country.emptyFlag
+                    R10.Country.emptyFlag
             )
 
 
@@ -104,8 +104,8 @@ viewOptionEl { search, msgOnSelect } country =
         , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
         ]
         [ getFlagIcon 24 <| Just country
-        , text (R10.FormComponents.Phone.Country.toString country)
-        , el [ alpha 0.5 ] <| text ("(" ++ R10.FormComponents.Phone.Country.toCountryCode country ++ ")")
+        , text (R10.Country.toString country)
+        , el [ alpha 0.5 ] <| text ("(" ++ R10.Country.toCountryTelCode country ++ ")")
         ]
 
 
@@ -140,7 +140,7 @@ getFlagButton palette value msg =
 
 countryOptions : List Country
 countryOptions =
-    R10.FormComponents.Phone.Country.list
+    R10.Country.list
 
 
 view :

@@ -17,21 +17,21 @@ dropdownHingeHeight =
     10
 
 
-onArrowHelper : Common.Model -> String -> Float -> ( Common.Model, Cmd Common.Msg )
-onArrowHelper model value float =
+onArrowHelper : String -> Common.Model -> String -> Float -> ( Common.Model, Cmd Common.Msg )
+onArrowHelper key model value float =
     ( { model | scroll = float, select = value }
     , Task.attempt
         (always Common.NoOp)
         (Browser.Dom.setViewportOf
-            (Common.dropdownContentId "")
+            (Common.dropdownContentId key)
             0
             float
         )
     )
 
 
-onOpenHelper : Common.Model -> Float -> ( Common.Model, Cmd Common.Msg )
-onOpenHelper model float =
+onOpenHelper : String -> Common.Model -> Float -> ( Common.Model, Cmd Common.Msg )
+onOpenHelper key model float =
     ( { model
         | opened = True
         , scroll = float
@@ -39,7 +39,7 @@ onOpenHelper model float =
     , Task.attempt
         (always Common.NoOp)
         (Browser.Dom.setViewportOf
-            (Common.dropdownContentId "")
+            (Common.dropdownContentId key)
             0
             float
         )
@@ -185,7 +185,7 @@ update msg model =
         Common.NoOp ->
             ( model, Cmd.none )
 
-        Common.OnSearch fieldOptions search ->
+        Common.OnSearch args search ->
             let
                 newSelect : String
                 newSelect =
@@ -193,7 +193,7 @@ update msg model =
                         ""
 
                     else
-                        getOptionByLabel fieldOptions search
+                        getOptionByLabel args.fieldOptions search
                             |> Maybe.map .value
                             |> Maybe.withDefault ""
 
@@ -209,7 +209,7 @@ update msg model =
                 newModel =
                     { model | search = search, value = newVal, select = newSelect }
             in
-            onOpenHelper newModel newModel.scroll
+            onOpenHelper args.key newModel newModel.scroll
 
         Common.OnOptionSelect value ->
             ( { model | value = value, opened = False, select = "", search = "" }, Cmd.none )
@@ -217,12 +217,12 @@ update msg model =
         Common.OnScroll scroll ->
             ( { model | scroll = scroll }, Cmd.none )
 
-        Common.OnInputClick scroll ->
+        Common.OnInputClick args ->
             if model.opened then
-                ( { model | scroll = scroll, opened = False }, Cmd.none )
+                ( { model | scroll = args.selectedY, opened = False }, Cmd.none )
 
             else
-                onOpenHelper model scroll
+                onOpenHelper args.key model args.selectedY
 
         Common.OnLoseFocus value ->
             ( { model | focused = False, opened = False, value = value, select = "", search = "" }, Cmd.none )
@@ -233,18 +233,18 @@ update msg model =
         Common.OnArrowUp args ->
             if model.opened then
                 getPrevNewSelectAndY model args
-                    |> (\( newValue, newY ) -> onArrowHelper model newValue newY)
+                    |> (\( newValue, newY ) -> onArrowHelper args.key model newValue newY)
 
             else
-                onOpenHelper model model.scroll
+                onOpenHelper args.key model model.scroll
 
         Common.OnArrowDown args ->
             if model.opened then
                 getNextNewSelectAndY model args
-                    |> (\( newValue, newY ) -> onArrowHelper model newValue newY)
+                    |> (\( newValue, newY ) -> onArrowHelper args.key model newValue newY)
 
             else
-                onOpenHelper model model.scroll
+                onOpenHelper args.key model model.scroll
 
         Common.OnEsc ->
             ( { model | search = "", opened = False }, Cmd.none )

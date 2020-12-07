@@ -603,15 +603,83 @@ viewEntityWithTabs args titleEntityList formConf =
             []
 
 
-viewEntityMultiHelper :
+viewEntityMultiSingleRow :
     MakerArgs
-    -> Int
-    -> Int
     -> R10.Form.Internal.Key.Key
     -> List R10.Form.Internal.Conf.Entity
     -> R10.Form.Internal.Conf.Conf
     -> List (Element R10.Form.Msg.Msg)
-viewEntityMultiHelper args quantity index newKey entities formConf =
+viewEntityMultiSingleRow args newKey entities formConf =
+    let
+        iconSize : Int
+        iconSize =
+            18
+
+        shadow : Float -> Float -> Attr decorative msg
+        shadow size_ a =
+            Border.shadow
+                { offset = ( 0, 0 )
+                , size = size_
+                , blur = 0
+                , color = R10.FormComponents.UI.Color.labelA a args.palette
+                }
+
+        buttonAttrs : List (Attr () msg)
+        buttonAttrs =
+            [ Border.width 1
+            , Border.rounded 5
+            , htmlAttribute <| Html.Attributes.class <| "ripple"
+            , htmlAttribute <| Html.Attributes.style "transition" "all 0.11s ease-out"
+            , padding 8
+            , width <| px 28
+            , height fill
+            , shadow 10 0
+            , Border.color <| R10.FormComponents.UI.Color.containerA 0.5 args.palette
+            , mouseOver <| [ Border.color <| R10.FormComponents.UI.Color.containerA 1 args.palette ]
+            , focused <| [ alpha 1, shadow 1 1, Border.color <| R10.FormComponents.UI.Color.containerA 1 args.palette ]
+            ]
+
+        removeColor : Color
+        removeColor =
+            R10.FormComponents.UI.Color.label args.palette
+
+        iconCommonAttrs : Int -> Int -> Color -> Float -> List (Attribute msg)
+        iconCommonAttrs widthPx heightPx color rotateDeg =
+            [ htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
+            , Border.rounded 2
+            , centerX
+            , centerY
+            , width <| px widthPx
+            , height <| px heightPx
+            , Background.color color
+            , rotate <| degrees rotateDeg
+            ]
+
+        buttonToRemoveEntity : R10.Form.Internal.Key.Key -> Element R10.Form.Msg.Msg
+        buttonToRemoveEntity key_ =
+            Input.button buttonAttrs
+                { label =
+                    el
+                        [ width <| px iconSize
+                        , height <| px iconSize
+                        , htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
+                        , inFront <| el (iconCommonAttrs iconSize 2 removeColor 45) none
+                        , inFront <| el (iconCommonAttrs 2 iconSize removeColor -135) none
+                        ]
+                    <|
+                        none
+                , onPress = Just <| R10.Form.Msg.RemoveEntity key_
+                }
+    in
+    [ row [ spacing 10, width fill ]
+        [ buttonToRemoveEntity newKey
+        , column [ width fill, spacingGeneric ] <| maker_ { args | key = newKey } entities formConf
+        ]
+    ]
+
+
+viewEntityMultiLastRow : MakerArgs -> Element R10.Form.Msg.Msg
+viewEntityMultiLastRow args =
     let
         iconSize : Int
         iconSize =
@@ -645,10 +713,6 @@ viewEntityMultiHelper args quantity index newKey entities formConf =
         plusColor =
             R10.FormComponents.UI.Color.label args.palette
 
-        removeColor : Color
-        removeColor =
-            R10.FormComponents.UI.Color.label args.palette
-
         iconCommonAttrs : Int -> Int -> Color -> Float -> List (Attribute msg)
         iconCommonAttrs widthPx heightPx color rotateDeg =
             [ htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
@@ -675,32 +739,11 @@ viewEntityMultiHelper args quantity index newKey entities formConf =
                         none
                 , onPress = Just <| R10.Form.Msg.AddEntity args.key
                 }
-
-        buttonToRemoveEntity : R10.Form.Internal.Key.Key -> Element R10.Form.Msg.Msg
-        buttonToRemoveEntity key_ =
-            Input.button buttonAttrs
-                { label =
-                    el
-                        [ width <| px iconSize
-                        , height <| px iconSize
-                        , htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
-                        , inFront <| el (iconCommonAttrs iconSize 2 removeColor 45) none
-                        , inFront <| el (iconCommonAttrs 2 iconSize removeColor -135) none
-                        ]
-                    <|
-                        none
-                , onPress = Just <| R10.Form.Msg.RemoveEntity key_
-                }
     in
-    [ row [ spacing 10, width fill ]
-        [ if quantity - 1 == index then
-            buttonToAddEntity
-
-          else
-            buttonToRemoveEntity newKey
-        , column [ width fill, spacingGeneric ] <| maker_ { args | key = newKey } entities formConf
+    row [ spacing 10, width fill ]
+        [ buttonToAddEntity
+        , el [ width fill, spacingGeneric ] none
         ]
-    ]
 
 
 viewEntityMulti :
@@ -719,11 +762,10 @@ viewEntityMulti args entities formConf =
             List.length activeKeys
     in
     activeKeys
-        |> List.indexedMap
-            (\index newKey ->
-                viewEntityMultiHelper args quantity index newKey entities formConf
-            )
+        |> List.map
+            (\newKey -> viewEntityMultiSingleRow args newKey entities formConf)
         |> List.concat
+        |> (\rows -> rows ++ [ viewEntityMultiLastRow args ])
         |> column [ spacing 10, width fill ]
         |> List.singleton
 

@@ -9,7 +9,7 @@ module R10.FormComponents.Phone.Common exposing
     )
 
 import Element exposing (..)
-import R10.FormComponents.Phone.Country exposing (Country)
+import R10.Country exposing (Country)
 import R10.FormComponents.Style
 import R10.FormComponents.Validations
 import R10.FormTypes

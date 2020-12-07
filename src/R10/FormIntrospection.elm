@@ -1,8 +1,8 @@
-module R10.FormIntrospection exposing (textTypeMetaData, binaryTypeMetaData)
+module R10.FormIntrospection exposing (textTypeMetaData, binaryTypeMetaData, singleTypeMetaData)
 
 {-| Only used for form debuggin
 
-@docs textTypeMetaData, binaryTypeMetaData
+@docs textTypeMetaData, binaryTypeMetaData, singleTypeMetaData
 
 -}
 
@@ -65,4 +65,21 @@ binaryTypeMetaData textType =
         R10.FormTypes.BinarySwitch ->
             { string = "R10.FormTypes.BinarySwitch"
             , next = R10.FormTypes.BinaryCheckbox
+            }
+
+
+{-| -}
+singleTypeMetaData :
+    R10.FormTypes.TypeSingle
+    -> { next : R10.FormTypes.TypeSingle, string : String }
+singleTypeMetaData singleType =
+    case singleType of
+        R10.FormTypes.SingleRadio ->
+            { string = "R10.FormTypes.SingleRadio"
+            , next = R10.FormTypes.SingleCombobox
+            }
+
+        R10.FormTypes.SingleCombobox ->
+            { string = "R10.FormTypes.SingleCombobox"
+            , next = R10.FormTypes.SingleRadio
             }

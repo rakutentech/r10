@@ -1,5 +1,6 @@
 module R10.FormComponents.Single exposing
     ( Args
+    , ArgsCustom
     , defaultSearchFn
     , defaultToOptionEl
     , defaultTrailingIcon
@@ -180,29 +181,32 @@ view attrs model conf =
             R10.FormComponents.Single.Radio.viewRadio attrs model args
 
 
+type alias ArgsCustom msg =
+    { label : String
+    , helperText : Maybe String
+    , requiredLabel : Maybe String
+    , disabled : Bool
+    , key : String
+    , style : R10.FormComponents.Style.Style
+    , palette : R10.FormTypes.Palette
+    , singleType : R10.FormTypes.TypeSingle
+    , fieldOptions : List Common.FieldOption
+    , validation : R10.FormComponents.Validations.Validation
+    , toMsg : Common.Msg -> msg
+    , searchFn : String -> Common.FieldOption -> Bool
+    , toOptionEl : Common.FieldOption -> Element msg
+    , selectOptionHeight : Int
+    , maxDisplayCount : Int
+    , leadingIcon : Maybe (Element msg)
+    , trailingIcon : Maybe (Element msg)
+    }
+
+
 viewCustom :
     List (Attribute msg)
     -- Shared.Args msg - without [toOptionEl, searchFn]
     -> Common.Model
-    ->
-        { label : String
-        , helperText : Maybe String
-        , disabled : Bool
-        , requiredLabel : Maybe String
-        , key : String
-        , style : R10.FormComponents.Style.Style
-        , palette : R10.FormTypes.Palette
-        , singleType : R10.FormTypes.TypeSingle
-        , fieldOptions : List Common.FieldOption
-        , validation : R10.FormComponents.Validations.Validation
-        , toMsg : Common.Msg -> msg
-        , searchFn : String -> Common.FieldOption -> Bool
-        , toOptionEl : Common.FieldOption -> Element msg
-        , selectOptionHeight : Int
-        , maxDisplayCount : Int
-        , leadingIcon : Maybe (Element msg)
-        , trailingIcon : Maybe (Element msg)
-        }
+    -> ArgsCustom msg
     -> Element msg
 viewCustom attrs model conf =
     let

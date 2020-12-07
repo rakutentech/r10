@@ -17,7 +17,6 @@ import Pages.Form_Example_CreditCard
 import Pages.Form_Example_PhoneSelector
 import Pages.Form_Example_Table
 import Pages.Form_FieldType_Binary
-import Pages.Form_FieldType_Multi
 import Pages.Form_FieldType_Single
 import Pages.Form_FieldType_Text
 import Pages.Form_Introduction
@@ -110,7 +109,6 @@ type alias Model =
     --
     , pageForm_FieldType_Text : Pages.Form_FieldType_Text.Model
     , pageForm_FieldType_Single : Pages.Form_FieldType_Single.Model
-    , pageForm_FieldType_Multi : Pages.Form_FieldType_Multi.Model
     , pageForm_FieldType_Binary : Pages.Form_FieldType_Binary.Model
 
     --
@@ -183,7 +181,6 @@ init flags =
       --
       , pageForm_FieldType_Text = Pages.Form_FieldType_Text.init
       , pageForm_FieldType_Single = Pages.Form_FieldType_Single.init
-      , pageForm_FieldType_Multi = Pages.Form_FieldType_Multi.init
       , pageForm_FieldType_Binary = Pages.Form_FieldType_Binary.init
 
       --
@@ -251,7 +248,6 @@ type Msg
       --
     | Msg_Form_FieldType_Text Pages.Form_FieldType_Text.Msg
     | Msg_Form_FieldType_Single Pages.Form_FieldType_Single.Msg
-    | Msg_Form_FieldType_Multi Pages.Form_FieldType_Multi.Msg
     | Msg_Form_FieldType_Binary Pages.Form_FieldType_Binary.Msg
       --
     | Msg_Form_Introduction Pages.Form_Introduction.Msg
@@ -341,13 +337,6 @@ update msg model =
                     Pages.Form_FieldType_Text.update pageMsg model.pageForm_FieldType_Text
             in
             ( { model | pageForm_FieldType_Text = modelPageExample }, Cmd.map Msg_Form_FieldType_Text cmdPageExample )
-
-        Msg_Form_FieldType_Multi pageMsg ->
-            let
-                ( modelPageExample, cmdPageExample ) =
-                    Pages.Form_FieldType_Multi.update pageMsg model.pageForm_FieldType_Multi
-            in
-            ( { model | pageForm_FieldType_Multi = modelPageExample }, Cmd.map Msg_Form_FieldType_Multi cmdPageExample )
 
         Msg_Form_FieldType_Binary pageMsg ->
             let
@@ -503,9 +492,6 @@ view model =
 
                 Route_Form_FieldType_Text lang ->
                     mainLayout model (List.map (map Msg_Form_FieldType_Text) (Pages.Form_FieldType_Text.view model.pageForm_FieldType_Text model.theme))
-
-                Route_Form_FieldType_Multi lang ->
-                    mainLayout model (List.map (map Msg_Form_FieldType_Multi) (Pages.Form_FieldType_Multi.view model.pageForm_FieldType_Multi model.theme))
 
                 Route_Form_FieldType_Binary lang ->
                     mainLayout model (List.map (map Msg_Form_FieldType_Binary) (Pages.Form_FieldType_Binary.view model.pageForm_FieldType_Binary model.theme))
@@ -959,7 +945,6 @@ type Route
     | Route_Form_States R10.Language.Language
     | Route_Form_FieldType_Text R10.Language.Language
     | Route_Form_FieldType_Single R10.Language.Language
-    | Route_Form_FieldType_Multi R10.Language.Language
     | Route_Form_FieldType_Binary R10.Language.Language
     | Route_Form_Introduction R10.Language.Language
     | Route_UIComponents R10.Language.Language
@@ -990,7 +975,6 @@ routesList =
     , Route_Form_FieldType_Text
     , Route_Form_FieldType_Single
     , Route_Form_FieldType_Binary
-    , Route_Form_FieldType_Multi
     , Route_Form_States
     , Route_Counter
     , Route_TableExample
@@ -1187,28 +1171,6 @@ routeDetails route =
                 , fi_fl = "Input Field: Single"
                 , da_dk = "Input Field: Single"
                 , sv_se = "Input Field: Single"
-                }
-            }
-
-        Route_Form_FieldType_Multi language ->
-            { routeLabel = "form_field_type_multi"
-            , fileName = "Form_FieldType_Multi.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Input Field: Multi"
-                , ja_jp = "Input Field: Multi"
-                , zh_tw = "Input Field: Multi"
-                , es_es = "Input Field: Multi"
-                , fr_fr = "Input Field: Multi"
-                , de_de = "Input Field: Multi"
-                , it_it = "Input Field: Multi"
-                , nl_nl = "Input Field: Multi"
-                , pt_pt = "Input Field: Multi"
-                , nb_no = "Input Field: Multi"
-                , fi_fl = "Input Field: Multi"
-                , da_dk = "Input Field: Multi"
-                , sv_se = "Input Field: Multi"
                 }
             }
 

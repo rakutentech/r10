@@ -290,6 +290,15 @@ view model theme =
             R10.Form.themeToPalette theme
     in
     [ R10.Paragraph.normal []
+        [ text "Input field of type "
+        , el [ Font.bold ] <| text "Binary"
+        , text " includes these sub-types:"
+        ]
+    , column [ spacing 5, paddingEach { top = 0, right = 0, bottom = 0, left = 20 } ]
+        [ paragraph [] [ text "◆ Checkbox" ]
+        , paragraph [] [ text "◆ Switch" ]
+        ]
+    , R10.Paragraph.normal []
         [ text "Here you can simulate all the possible states of the component "
         , el [ Font.bold ] <| text "R10.Form.viewBinary"
         , text ". You can click on all "

@@ -162,7 +162,19 @@ update msg model =
             ( { model | messages = "OnLoseFocus" :: model.messages, focused = False }, Cmd.none )
 
         OnEnter ->
-            ( { model | messages = "OnEnter" :: model.messages }, Cmd.none )
+            ( { model
+                | messages = "OnEnter" :: model.messages
+                , value =
+                    model.value
+                        ++ (if model.textType == R10.FormTypes.TextMultiline then
+                                "\n"
+
+                            else
+                                ""
+                           )
+              }
+            , Cmd.none
+            )
 
         ChangeLabel string ->
             ( { model | label = string }, Cmd.none )
@@ -290,6 +302,20 @@ view model theme =
             R10.Form.themeToPalette theme
     in
     [ R10.Paragraph.normal []
+        [ text "Input field of type "
+        , el [ Font.bold ] <| text "Text"
+        , text " includes these sub-types:"
+        ]
+    , column [ spacing 5, paddingEach { top = 0, right = 0, bottom = 0, left = 20 } ]
+        [ paragraph [] [ text "◆ Plain" ]
+        , paragraph [] [ text "◆ Password New" ]
+        , paragraph [] [ text "◆ Password Current" ]
+        , paragraph [] [ text "◆ Email" ]
+        , paragraph [] [ text "◆ Username" ]
+        , paragraph [] [ text "◆ Multiline" ]
+        , paragraph [] [ text "◆ With Pattern" ]
+        ]
+    , R10.Paragraph.normal []
         [ text "Here you can simulate all the possible states of the component "
         , el [ Font.bold ] <| text "R10.Form.viewText"
         , text ". You can click on all "
@@ -382,148 +408,24 @@ view model theme =
                 , text "    -- Stuff that usually doesn't change"
                 , text "    -- during the life of the component"
                 , text " "
-                , row []
-                    [ text "    { label = \""
-                    , Input.text attrsYellowBackground
-                        { label = Input.labelHidden ""
-                        , onChange = ChangeLabel
-                        , placeholder = Nothing
-                        , text = model.label
-                        }
-                    , text "\""
-                    ]
-                , row []
-                    [ text "    , helperText = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just ToggleHelperShow
-                        , label =
-                            text <|
-                                if model.helperShow then
-                                    "Just"
-
-                                else
-                                    "Nothing"
-                        }
-                    , if model.helperShow then
-                        row [ width fill ]
-                            [ text " \""
-                            , Input.text attrsYellowBackground
-                                { label = Input.labelHidden ""
-                                , onChange = ChangeHelperText
-                                , placeholder = Nothing
-                                , text = model.helperText
-                                }
-                            , text "\""
-                            ]
-
-                      else
-                        none
-                    ]
-                , row []
-                    [ text "    , requiredLabel = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just ToggleRequiredShow
-                        , label =
-                            text <|
-                                if model.requiredShow then
-                                    "Just"
-
-                                else
-                                    "Nothing"
-                        }
-                    , if model.requiredShow then
-                        row [ width fill ]
-                            [ text " \""
-                            , Input.text attrsYellowBackground
-                                { label = Input.labelHidden ""
-                                , onChange = ChangeRequiredText
-                                , placeholder = Nothing
-                                , text = model.requiredText
-                                }
-                            , text "\""
-                            ]
-
-                      else
-                        none
-                    ]
-                , row []
-                    [ text "    , textType = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just RotateTextType
-                        , label = text <| textTypeToString model.textType
-                        }
-                    ]
-                , row []
-                    [ text "    , style = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just RotateStyle
-                        , label = text <| styleToString model.style
-                        }
-                    ]
+                , rowLabel model
+                , rowHelperText model
+                , rowRequiredLabel model
+                , rowTextType model
+                , rowStyle model
                 , text "    , idDom = Nothing"
                 , text "    , palette = palette"
                 , text " "
                 , text "    -- Stuff that usually change"
                 , text "    -- during the life of the component"
                 , text " "
-                , row []
-                    [ text "    , value = \""
-                    , Input.text attrsYellowBackground
-                        { label = Input.labelHidden ""
-                        , onChange = OnChange
-                        , placeholder = Nothing
-                        , text = model.value
-                        }
-                    , text "\""
-                    ]
-                , row []
-                    [ text "    , focused = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress =
-                            Just <|
-                                if model.focused then
-                                    OnLoseFocus
-
-                                else
-                                    OnFocus
-                        , label = text <| R10.Form.boolToString model.focused
-                        }
-                    ]
-                , row []
-                    [ text "    , validation = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just RotateValidation
-                        , label = text <| R10.Form.validationToString model.validation
-                        }
-                    ]
-                , row []
-                    [ text "    , disabled = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just ToggleDisabled
-                        , label = text <| R10.Form.boolToString model.disabled
-                        }
-                    ]
-                , row []
-                    [ text "    , showPassword = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just ToggleShowPassword
-                        , label = text <| R10.Form.boolToString model.showPassword
-                        }
-                    ]
-                , row []
-                    [ text "    , leadingIcon = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just RotateLeadingIcon
-                        , label = text <| iconToString model.leadingIcon
-                        }
-                    ]
-                , row []
-                    [ text "    , trailingIcon = "
-                    , Input.button [ attrYellowBackground ]
-                        { onPress = Just RotateTrailingIcon
-                        , label = text <| iconToString model.trailingIcon
-                        }
-                    ]
+                , rowValue model
+                , rowFocused model
+                , rowValidation model
+                , rowDisable model
+                , rowShowPassword model
+                , rowLeadingIcon model
+                , rowTrailingIcon model
                 , text " "
                 , text "    -- Messages"
                 , text " "
@@ -554,3 +456,187 @@ view model theme =
             ]
         ]
     ]
+
+
+rowLabel : { a | label : String } -> Element Msg
+rowLabel model =
+    row []
+        [ text "    { label = \""
+        , Input.text attrsYellowBackground
+            { label = Input.labelHidden ""
+            , onChange = ChangeLabel
+            , placeholder = Nothing
+            , text = model.label
+            }
+        , text "\""
+        ]
+
+
+rowHelperText : { a | helperShow : Bool, helperText : String } -> Element Msg
+rowHelperText model =
+    row []
+        [ text "    , helperText = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just ToggleHelperShow
+            , label =
+                text <|
+                    if model.helperShow then
+                        "Just"
+
+                    else
+                        "Nothing"
+            }
+        , if model.helperShow then
+            row [ width fill ]
+                [ text " \""
+                , Input.text attrsYellowBackground
+                    { label = Input.labelHidden ""
+                    , onChange = ChangeHelperText
+                    , placeholder = Nothing
+                    , text = model.helperText
+                    }
+                , text "\""
+                ]
+
+          else
+            none
+        ]
+
+
+rowRequiredLabel : { a | requiredShow : Bool, requiredText : String } -> Element Msg
+rowRequiredLabel model =
+    row []
+        [ text "    , requiredLabel = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just ToggleRequiredShow
+            , label =
+                text <|
+                    if model.requiredShow then
+                        "Just"
+
+                    else
+                        "Nothing"
+            }
+        , if model.requiredShow then
+            row [ width fill ]
+                [ text " \""
+                , Input.text attrsYellowBackground
+                    { label = Input.labelHidden ""
+                    , onChange = ChangeRequiredText
+                    , placeholder = Nothing
+                    , text = model.requiredText
+                    }
+                , text "\""
+                ]
+
+          else
+            none
+        ]
+
+
+rowTextType : { a | textType : R10.FormTypes.TypeText } -> Element Msg
+rowTextType model =
+    row []
+        [ text "    , textType = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just RotateTextType
+            , label = text <| textTypeToString model.textType
+            }
+        ]
+
+
+rowStyle : { a | style : R10.Form.Style } -> Element Msg
+rowStyle model =
+    row []
+        [ text "    , style = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just RotateStyle
+            , label = text <| styleToString model.style
+            }
+        ]
+
+
+rowValue : { a | value : String } -> Element Msg
+rowValue model =
+    row []
+        [ text "    , value = \""
+        , Input.text attrsYellowBackground
+            { label = Input.labelHidden ""
+            , onChange = OnChange
+            , placeholder = Nothing
+            , text = model.value
+            }
+        , text "\""
+        ]
+
+
+rowFocused : { a | focused : Bool } -> Element Msg
+rowFocused model =
+    row []
+        [ text "    , focused = "
+        , Input.button [ attrYellowBackground ]
+            { onPress =
+                Just <|
+                    if model.focused then
+                        OnLoseFocus
+
+                    else
+                        OnFocus
+            , label = text <| R10.Form.boolToString model.focused
+            }
+        ]
+
+
+rowValidation : { a | validation : R10.FormComponents.Validations.Validation } -> Element Msg
+rowValidation model =
+    row []
+        [ text "    , validation = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just RotateValidation
+            , label = text <| R10.Form.validationToString model.validation
+            }
+        ]
+
+
+rowDisable : { a | disabled : Bool } -> Element Msg
+rowDisable model =
+    row []
+        [ text "    , disabled = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just ToggleDisabled
+            , label = text <| R10.Form.boolToString model.disabled
+            }
+        ]
+
+
+rowShowPassword : { a | showPassword : Bool } -> Element Msg
+rowShowPassword model =
+    row []
+        [ text "    , showPassword = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just ToggleShowPassword
+            , label = text <| R10.Form.boolToString model.showPassword
+            }
+        ]
+
+
+rowLeadingIcon : { a | leadingIcon : Maybe Icon } -> Element Msg
+rowLeadingIcon model =
+    row []
+        [ text "    , leadingIcon = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just RotateLeadingIcon
+            , label = text <| iconToString model.leadingIcon
+            }
+        ]
+
+
+rowTrailingIcon : { a | trailingIcon : Maybe Icon } -> Element Msg
+rowTrailingIcon model =
+    row []
+        [ text "    , trailingIcon = "
+        , Input.button [ attrYellowBackground ]
+            { onPress = Just RotateTrailingIcon
+            , label = text <| iconToString model.trailingIcon
+            }
+        ]

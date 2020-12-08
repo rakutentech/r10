@@ -40,9 +40,9 @@ There are three functions to rennder the form, each with a different degree of c
 This function is to convert specific form messages (`Msg`) into generic messages (`msg`). Tipically you would define this function like this in your application:
 
     type Msg
-        = MsgForm R10.Form.Msg
+        = MsgForm R10.Form.Internal.Msg
 
-`MsgForm` can now be used as `MsgMapper` that convert `R10.Form.Msg` into `Msg`.
+`MsgForm` can now be used as `MsgMapper` that convert `R10.Form.Internal.Msg` into `Msg`.
 
 For a code example have a look at this [simple form](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm).
 
@@ -141,30 +141,30 @@ import R10.Form.Internal.Helpers
 import R10.Form.Internal.Key
 import R10.Form.Internal.MakerForValues
 import R10.Form.Internal.MakerForView
+import R10.Form.Internal.Msg
 import R10.Form.Internal.Shared
 import R10.Form.Internal.State
 import R10.Form.Internal.StateForValues
 import R10.Form.Internal.Update
 import R10.Form.Internal.Validation
 import R10.Form.Internal.ValidationCode
-import R10.Form.Msg
-import R10.FormComponents.Binary
-import R10.FormComponents.Button
-import R10.FormComponents.ExtraCss
-import R10.FormComponents.IconButton
-import R10.FormComponents.Phone
-import R10.FormComponents.Phone.Common
-import R10.FormComponents.Phone.Update
-import R10.FormComponents.Single
-import R10.FormComponents.Single.Common
-import R10.FormComponents.Single.Update
-import R10.FormComponents.Style
-import R10.FormComponents.Text
-import R10.FormComponents.UI
-import R10.FormComponents.UI.Color
-import R10.FormComponents.UI.Palette
-import R10.FormComponents.Utils.FocusOut
-import R10.FormComponents.Validations
+import R10.FormComponents.Internal.Binary
+import R10.FormComponents.Internal.Button
+import R10.FormComponents.Internal.ExtraCss
+import R10.FormComponents.Internal.IconButton
+import R10.FormComponents.Internal.Phone
+import R10.FormComponents.Internal.Phone.Common
+import R10.FormComponents.Internal.Phone.Update
+import R10.FormComponents.Internal.Single
+import R10.FormComponents.Internal.Single.Common
+import R10.FormComponents.Internal.Single.Update
+import R10.FormComponents.Internal.Style
+import R10.FormComponents.Internal.Text
+import R10.FormComponents.Internal.UI
+import R10.FormComponents.Internal.UI.Color
+import R10.FormComponents.Internal.UI.Palette
+import R10.FormComponents.Internal.Utils.FocusOut
+import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 import R10.SimpleMarkdown
 import R10.Theme
@@ -190,7 +190,7 @@ type alias ValidationCode =
 type alias Maker =
     MakerArgs
     -> List R10.Form.Internal.Conf.Entity
-    -> List (Element R10.Form.Msg.Msg)
+    -> List (Element R10.Form.Internal.Msg.Msg)
 
 
 {-| -}
@@ -274,7 +274,7 @@ viewWithTheme : Form -> MsgMapper msg -> R10.Theme.Theme -> List (Element msg)
 viewWithTheme form msgMapper theme =
     let
         palette =
-            R10.FormComponents.UI.Palette.fromTheme theme
+            R10.FormComponents.Internal.UI.Palette.fromTheme theme
     in
     viewWithOptions form
         msgMapper
@@ -297,7 +297,7 @@ viewWithOptions form msgMapper args =
             , formState = form.state
             , translator = Maybe.withDefault defaultTranslator args.translator
             , style = args.style
-            , palette = Maybe.withDefault R10.FormComponents.UI.Palette.light args.palette
+            , palette = Maybe.withDefault R10.FormComponents.Internal.UI.Palette.light args.palette
             }
             form.conf
         )
@@ -312,7 +312,7 @@ defaultTranslator =
 {-| -}
 themeToPalette : R10.Theme.Theme -> R10.FormTypes.Palette
 themeToPalette =
-    R10.FormComponents.UI.Palette.fromTheme
+    R10.FormComponents.Internal.UI.Palette.fromTheme
 
 
 
@@ -562,18 +562,18 @@ isFormSubmittableAndSubmitted =
 
 
 
--- EXPOSING STUFF FROM R10.Form.Msg
+-- EXPOSING STUFF FROM R10.Form.Internal.Msg
 
 
 {-| -}
 type alias Msg =
-    R10.Form.Msg.Msg
+    R10.Form.Internal.Msg.Msg
 
 
 {-| -}
 msg : { submit : Conf -> Msg }
 msg =
-    { submit = R10.Form.Msg.Submit }
+    { submit = R10.Form.Internal.Msg.Submit }
 
 
 
@@ -680,7 +680,7 @@ validate =
 {-| -}
 isChangingValues : Msg -> Bool
 isChangingValues =
-    R10.Form.Msg.isChangingValues
+    R10.Form.Internal.Msg.isChangingValues
 
 
 
@@ -689,27 +689,27 @@ isChangingValues =
 
 {-| -}
 type alias Style =
-    R10.FormComponents.Style.Style
+    R10.FormComponents.Internal.Style.Style
 
 
 {-| -}
 type alias SingleModel =
-    R10.FormComponents.Single.Common.Model
+    R10.FormComponents.Internal.Single.Common.Model
 
 
 {-| -}
 type alias SingleMsg =
-    R10.FormComponents.Single.Common.Msg
+    R10.FormComponents.Internal.Single.Common.Msg
 
 
 {-| -}
 type alias SingleFieldOption =
-    R10.FormComponents.Single.Common.FieldOption
+    R10.FormComponents.Internal.Single.Common.FieldOption
 
 
 {-| -}
 type alias Validation2 =
-    R10.FormComponents.Validations.Validation
+    R10.FormComponents.Internal.Validations.Validation
 
 
 {-| -}
@@ -718,21 +718,21 @@ style :
     , outlined : Style
     }
 style =
-    { filled = R10.FormComponents.Style.Filled
-    , outlined = R10.FormComponents.Style.Outlined
+    { filled = R10.FormComponents.Internal.Style.Filled
+    , outlined = R10.FormComponents.Internal.Style.Outlined
     }
 
 
 {-| -}
 label : R10.FormTypes.Palette -> Color
 label =
-    R10.FormComponents.UI.Color.label
+    R10.FormComponents.Internal.UI.Color.label
 
 
 {-| -}
 onClickWithStopPropagation : msg -> Attribute msg
 onClickWithStopPropagation =
-    R10.FormComponents.UI.onClickWithStopPropagation
+    R10.FormComponents.Internal.UI.onClickWithStopPropagation
 
 
 {-| -}
@@ -746,31 +746,31 @@ viewIconButton :
         }
     -> Element msg
 viewIconButton =
-    R10.FormComponents.IconButton.view
+    R10.FormComponents.Internal.IconButton.view
 
 
 {-| -}
 defaultSearchFn : String -> SingleFieldOption -> Bool
 defaultSearchFn =
-    R10.FormComponents.Single.defaultSearchFn
+    R10.FormComponents.Internal.Single.defaultSearchFn
 
 
 {-| -}
 initSingle : SingleModel
 initSingle =
-    R10.FormComponents.Single.Common.init
+    R10.FormComponents.Internal.Single.Common.init
 
 
 {-| -}
 normalizeString : String -> String
 normalizeString =
-    R10.FormComponents.Single.normalizeString
+    R10.FormComponents.Internal.Single.normalizeString
 
 
 {-| -}
 insertBold : List Int -> String -> String
 insertBold =
-    R10.FormComponents.Single.insertBold
+    R10.FormComponents.Internal.Single.insertBold
 
 
 {-| -}
@@ -779,7 +779,7 @@ defaultToOptionEl :
     -> SingleFieldOption
     -> Element msg
 defaultToOptionEl =
-    R10.FormComponents.Single.defaultToOptionEl
+    R10.FormComponents.Internal.Single.defaultToOptionEl
 
 
 {-| -}
@@ -787,13 +787,13 @@ defaultTrailingIcon :
     { a | opened : Bool, palette : R10.FormTypes.Palette }
     -> Element msg
 defaultTrailingIcon =
-    R10.FormComponents.Single.defaultTrailingIcon
+    R10.FormComponents.Internal.Single.defaultTrailingIcon
 
 
 {-| -}
 singleMsg : { onOptionSelect : String -> SingleMsg }
 singleMsg =
-    { onOptionSelect = R10.FormComponents.Single.Common.OnOptionSelect }
+    { onOptionSelect = R10.FormComponents.Internal.Single.Common.OnOptionSelect }
 
 
 
@@ -837,7 +837,7 @@ initFieldState =
 {-| -}
 updateSingle : SingleMsg -> SingleModel -> ( SingleModel, Cmd SingleMsg )
 updateSingle =
-    R10.FormComponents.Single.Update.update
+    R10.FormComponents.Internal.Single.Update.update
 
 
 {-| -}
@@ -871,23 +871,23 @@ headId =
 
 
 {-| -}
-viewButton : List (Attribute msg) -> R10.FormComponents.Button.Args msg -> Element msg
+viewButton : List (Attribute msg) -> R10.FormComponents.Internal.Button.Args msg -> Element msg
 viewButton =
-    R10.FormComponents.Button.view
+    R10.FormComponents.Internal.Button.view
 
 
 {-| -}
 button :
-    { contained : R10.FormComponents.Button.Button
-    , outlined : R10.FormComponents.Button.Button
-    , text : R10.FormComponents.Button.Button
-    , icon : R10.FormComponents.Button.Button
+    { contained : R10.FormComponents.Internal.Button.Button
+    , outlined : R10.FormComponents.Internal.Button.Button
+    , text : R10.FormComponents.Internal.Button.Button
+    , icon : R10.FormComponents.Internal.Button.Button
     }
 button =
-    { outlined = R10.FormComponents.Button.Outlined
-    , contained = R10.FormComponents.Button.Contained
-    , text = R10.FormComponents.Button.Text
-    , icon = R10.FormComponents.Button.Icon
+    { outlined = R10.FormComponents.Internal.Button.Outlined
+    , contained = R10.FormComponents.Internal.Button.Contained
+    , text = R10.FormComponents.Internal.Button.Text
+    , icon = R10.FormComponents.Internal.Button.Icon
     }
 
 
@@ -930,7 +930,7 @@ isExistingFormFieldsValid =
 {-| -}
 colorToCssString : Color -> String
 colorToCssString =
-    R10.FormComponents.UI.Color.toCssString
+    R10.FormComponents.Internal.UI.Color.toCssString
 
 
 {-| -}
@@ -941,21 +941,21 @@ elementMarkdown =
 
 {-| -}
 componentValidation :
-    { notYetValidated : R10.FormComponents.Validations.Validation
+    { notYetValidated : R10.FormComponents.Internal.Validations.Validation
     , validated :
-        List R10.FormComponents.Validations.ValidationMessage
-        -> R10.FormComponents.Validations.Validation
+        List R10.FormComponents.Internal.Validations.ValidationMessage
+        -> R10.FormComponents.Internal.Validations.Validation
     }
 componentValidation =
-    { notYetValidated = R10.FormComponents.Validations.NotYetValidated
-    , validated = R10.FormComponents.Validations.Validated
+    { notYetValidated = R10.FormComponents.Internal.Validations.NotYetValidated
+    , validated = R10.FormComponents.Internal.Validations.Validated
     }
 
 
 {-| -}
 onFocusOut : String -> msg -> Json.Decode.Decoder msg
 onFocusOut =
-    R10.FormComponents.Utils.FocusOut.onFocusOut
+    R10.FormComponents.Internal.Utils.FocusOut.onFocusOut
 
 
 {-| -}
@@ -1008,9 +1008,9 @@ validationCodes =
 
 
 {-| -}
-validationToString : R10.FormComponents.Validations.Validation -> String
+validationToString : R10.FormComponents.Internal.Validations.Validation -> String
 validationToString =
-    R10.FormComponents.Validations.validationToString
+    R10.FormComponents.Internal.Validations.validationToString
 
 
 
@@ -1021,46 +1021,46 @@ validationToString =
 
 {-| -}
 type alias ArgsText msg =
-    R10.FormComponents.Text.Args msg
+    R10.FormComponents.Internal.Text.Args msg
 
 
 {-| -}
 viewText : List (Attribute msg) -> List (Attribute msg) -> ArgsText msg -> Element msg
 viewText =
-    R10.FormComponents.Text.view
+    R10.FormComponents.Internal.Text.view
 
 
 {-| -}
 type alias ArgsBinary msg =
-    R10.FormComponents.Binary.Args msg
+    R10.FormComponents.Internal.Binary.Args msg
 
 
 {-| -}
 viewBinary : List (Attribute msg) -> ArgsBinary msg -> Element msg
 viewBinary =
-    R10.FormComponents.Binary.view
+    R10.FormComponents.Internal.Binary.view
 
 
 {-| -}
 type alias ArgsSingle msg =
-    R10.FormComponents.Single.Args msg
+    R10.FormComponents.Internal.Single.Args msg
 
 
 {-| -}
 viewSingle : List (Attribute msg) -> SingleModel -> ArgsSingle msg -> Element msg
 viewSingle =
-    R10.FormComponents.Single.view
+    R10.FormComponents.Internal.Single.view
 
 
 {-| -}
 type alias ArgsSingleCustom msg =
-    R10.FormComponents.Single.ArgsCustom msg
+    R10.FormComponents.Internal.Single.ArgsCustom msg
 
 
 {-| -}
 viewSingleCustom : List (Element.Attribute msg) -> SingleModel -> ArgsSingleCustom msg -> Element msg
 viewSingleCustom =
-    R10.FormComponents.Single.viewCustom
+    R10.FormComponents.Internal.Single.viewCustom
 
 
 
@@ -1072,34 +1072,34 @@ viewSingleCustom =
 {-| -}
 extraCssComponents : R10.FormTypes.Palette -> String
 extraCssComponents =
-    R10.FormComponents.ExtraCss.extraCss
+    R10.FormComponents.Internal.ExtraCss.extraCss
 
 
 {-| -}
 validationMessage :
-    { error : String -> R10.FormComponents.Validations.ValidationMessage
-    , ok : String -> R10.FormComponents.Validations.ValidationMessage
+    { error : String -> R10.FormComponents.Internal.Validations.ValidationMessage
+    , ok : String -> R10.FormComponents.Internal.Validations.ValidationMessage
     }
 validationMessage =
-    { ok = R10.FormComponents.Validations.MessageOk
-    , error = R10.FormComponents.Validations.MessageErr
+    { ok = R10.FormComponents.Internal.Validations.MessageOk
+    , error = R10.FormComponents.Internal.Validations.MessageErr
     }
 
 
 {-| -}
 type alias PhoneModel =
-    R10.FormComponents.Phone.Common.Model
+    R10.FormComponents.Internal.Phone.Common.Model
 
 
 {-| -}
 type alias PhoneMsg =
-    R10.FormComponents.Phone.Common.Msg
+    R10.FormComponents.Internal.Phone.Common.Msg
 
 
 {-| -}
 phoneView :
     List (Attribute msg)
-    -> R10.FormComponents.Phone.Common.Model
+    -> R10.FormComponents.Internal.Phone.Common.Model
     ->
         { countryOptions : Maybe (List R10.Country.Country)
         , disabled : Bool
@@ -1108,25 +1108,25 @@ phoneView :
         , label : String
         , palette : R10.FormTypes.Palette
         , requiredLabel : Maybe String
-        , style : R10.FormComponents.Style.Style
-        , toMsg : R10.FormComponents.Phone.Common.Msg -> msg
-        , validation : R10.FormComponents.Validations.Validation
+        , style : R10.FormComponents.Internal.Style.Style
+        , toMsg : R10.FormComponents.Internal.Phone.Common.Msg -> msg
+        , validation : R10.FormComponents.Internal.Validations.Validation
         }
     -> Element msg
 phoneView =
-    R10.FormComponents.Phone.view
+    R10.FormComponents.Internal.Phone.view
 
 
 {-| -}
 phoneUpdate :
-    R10.FormComponents.Phone.Common.Msg
-    -> R10.FormComponents.Phone.Common.Model
-    -> ( R10.FormComponents.Phone.Common.Model, Cmd R10.FormComponents.Phone.Common.Msg )
+    R10.FormComponents.Internal.Phone.Common.Msg
+    -> R10.FormComponents.Internal.Phone.Common.Model
+    -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
 phoneUpdate =
-    R10.FormComponents.Phone.Update.update
+    R10.FormComponents.Internal.Phone.Update.update
 
 
 {-| -}
-phoneInit : R10.FormComponents.Phone.Common.Model
+phoneInit : R10.FormComponents.Internal.Phone.Common.Model
 phoneInit =
-    R10.FormComponents.Phone.Common.init
+    R10.FormComponents.Internal.Phone.Common.init

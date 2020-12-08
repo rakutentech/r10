@@ -23,12 +23,12 @@ import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
 import R10.Form.Internal.Key
 import R10.Form.Internal.MakerForValidationKeys
+import R10.Form.Internal.Msg
 import R10.Form.Internal.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
 import R10.Form.Internal.State
 import R10.Form.Internal.Validation
-import R10.Form.Msg
-import R10.FormComponents.Single.Common
-import R10.FormComponents.Single.Update
+import R10.FormComponents.Internal.Single.Common
+import R10.FormComponents.Internal.Single.Update
 import Set
 
 
@@ -334,9 +334,9 @@ submittable conf state =
         isEntireFormValid conf state
 
 
-isFormSubmittableAndSubmitted : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> R10.Form.Msg.Msg -> Bool
+isFormSubmittableAndSubmitted : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> R10.Form.Internal.Msg.Msg -> Bool
 isFormSubmittableAndSubmitted conf state formMsg =
-    submittable conf state && R10.Form.Msg.isSubmitted formMsg
+    submittable conf state && R10.Form.Internal.Msg.isSubmitted formMsg
 
 
 
@@ -441,36 +441,36 @@ onChangeSelect key string formState =
     { formState | fieldsState = formState.fieldsState |> R10.Form.Internal.Dict.update key (helperUpdateSelect string) }
 
 
-update : R10.Form.Msg.Msg -> R10.Form.Internal.State.State -> ( R10.Form.Internal.State.State, Cmd R10.Form.Msg.Msg )
+update : R10.Form.Internal.Msg.Msg -> R10.Form.Internal.State.State -> ( R10.Form.Internal.State.State, Cmd R10.Form.Internal.Msg.Msg )
 update msg formStateBeforeHandleChangesSinceLastSubmissions =
     let
         formState : R10.Form.Internal.State.State
         formState =
             { formStateBeforeHandleChangesSinceLastSubmissions
                 | changesSinceLastSubmissions =
-                    R10.Form.Msg.handleChangesSinceLastSubmissions
+                    R10.Form.Internal.Msg.handleChangesSinceLastSubmissions
                         formStateBeforeHandleChangesSinceLastSubmissions.changesSinceLastSubmissions
                         msg
             }
     in
     case msg of
-        R10.Form.Msg.NoOp ->
+        R10.Form.Internal.Msg.NoOp ->
             ( formState, Cmd.none )
 
-        R10.Form.Msg.Submit formConf ->
+        R10.Form.Internal.Msg.Submit formConf ->
             ( submit formConf formState, Cmd.none )
 
-        R10.Form.Msg.GetFocus key ->
+        R10.Form.Internal.Msg.GetFocus key ->
             ( onGetFocus key formState
             , Cmd.none
             )
 
-        R10.Form.Msg.LoseFocus key fieldConf ->
+        R10.Form.Internal.Msg.LoseFocus key fieldConf ->
             ( onLoseFocus key fieldConf formState
             , Cmd.none
             )
 
-        R10.Form.Msg.TogglePasswordShow key ->
+        R10.Form.Internal.Msg.TogglePasswordShow key ->
             ( { formState
                 | fieldsState =
                     formState.fieldsState
@@ -479,7 +479,7 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
             , Cmd.none
             )
 
-        R10.Form.Msg.ChangeTab key string ->
+        R10.Form.Internal.Msg.ChangeTab key string ->
             ( { formState
                 | activeTabs =
                     formState.activeTabs
@@ -488,7 +488,7 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
             , Cmd.none
             )
 
-        R10.Form.Msg.AddEntity key ->
+        R10.Form.Internal.Msg.AddEntity key ->
             let
                 presentQuantity : Int
                 presentQuantity =
@@ -502,7 +502,7 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
             , Cmd.none
             )
 
-        R10.Form.Msg.RemoveEntity key ->
+        R10.Form.Internal.Msg.RemoveEntity key ->
             ( { formState
                 | removed =
                     formState.removed
@@ -511,17 +511,17 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
             , Cmd.none
             )
 
-        R10.Form.Msg.ChangeValue key fieldConf formConf string ->
+        R10.Form.Internal.Msg.ChangeValue key fieldConf formConf string ->
             ( onChangeValue key fieldConf formConf string formState, Cmd.none )
 
-        R10.Form.Msg.OnSingleMsg key fieldConf formConf singleMsg ->
+        R10.Form.Internal.Msg.OnSingleMsg key fieldConf formConf singleMsg ->
             let
                 fieldState : R10.Form.Internal.FieldState.FieldState
                 fieldState =
                     R10.Form.Internal.Dict.get key formState.fieldsState
                         |> stateWithDefault
 
-                singleModel : R10.FormComponents.Single.Common.Model
+                singleModel : R10.FormComponents.Internal.Single.Common.Model
                 singleModel =
                     { value = fieldState.value
                     , search = fieldState.search
@@ -532,7 +532,7 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
                     }
 
                 ( newSingleModel, singleCmd ) =
-                    R10.FormComponents.Single.Update.update singleMsg singleModel
+                    R10.FormComponents.Internal.Single.Update.update singleMsg singleModel
 
                 newFormState : R10.Form.Internal.State.State
                 newFormState =
@@ -583,5 +583,5 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
                            )
             in
             ( newFormState
-            , Cmd.map (R10.Form.Msg.OnSingleMsg key fieldConf formConf) singleCmd
+            , Cmd.map (R10.Form.Internal.Msg.OnSingleMsg key fieldConf formConf) singleCmd
             )

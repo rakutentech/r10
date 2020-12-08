@@ -7,39 +7,39 @@ module R10.FormComponents exposing (style, label, onClickWithStopPropagation, vi
 -}
 
 import Element exposing (..)
-import R10.FormComponents.IconButton
-import R10.FormComponents.Single
-import R10.FormComponents.Single.Common
-import R10.FormComponents.Style
-import R10.FormComponents.UI
-import R10.FormComponents.UI.Color
-import R10.FormComponents.Validations
+import R10.FormComponents.Internal.IconButton
+import R10.FormComponents.Internal.Single
+import R10.FormComponents.Internal.Single.Common
+import R10.FormComponents.Internal.Style
+import R10.FormComponents.Internal.UI
+import R10.FormComponents.Internal.UI.Color
+import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 
 
 {-| -}
 type alias Style =
-    R10.FormComponents.Style.Style
+    R10.FormComponents.Internal.Style.Style
 
 
 {-| -}
 type alias SingleModel =
-    R10.FormComponents.Single.Common.Model
+    R10.FormComponents.Internal.Single.Common.Model
 
 
 {-| -}
 type alias SingleMsg =
-    R10.FormComponents.Single.Common.Msg
+    R10.FormComponents.Internal.Single.Common.Msg
 
 
 {-| -}
 type alias SingleFieldOption =
-    R10.FormComponents.Single.Common.FieldOption
+    R10.FormComponents.Internal.Single.Common.FieldOption
 
 
 {-| -}
 type alias Validation =
-    R10.FormComponents.Validations.Validation
+    R10.FormComponents.Internal.Validations.Validation
 
 
 {-| -}
@@ -48,21 +48,21 @@ style :
     , outlined : Style
     }
 style =
-    { filled = R10.FormComponents.Style.Filled
-    , outlined = R10.FormComponents.Style.Outlined
+    { filled = R10.FormComponents.Internal.Style.Filled
+    , outlined = R10.FormComponents.Internal.Style.Outlined
     }
 
 
 {-| -}
 label : R10.FormTypes.Palette -> Color
 label =
-    R10.FormComponents.UI.Color.label
+    R10.FormComponents.Internal.UI.Color.label
 
 
 {-| -}
 onClickWithStopPropagation : msg -> Attribute msg
 onClickWithStopPropagation =
-    R10.FormComponents.UI.onClickWithStopPropagation
+    R10.FormComponents.Internal.UI.onClickWithStopPropagation
 
 
 {-| -}
@@ -76,7 +76,7 @@ viewIconButton :
         }
     -> Element msg
 viewIconButton =
-    R10.FormComponents.IconButton.view
+    R10.FormComponents.Internal.IconButton.view
 
 
 {-| -}
@@ -104,39 +104,39 @@ viewSingleCustom :
         }
     -> Element msg
 viewSingleCustom =
-    R10.FormComponents.Single.viewCustom
+    R10.FormComponents.Internal.Single.viewCustom
 
 
 {-| -}
 defaultSearchFn : String -> SingleFieldOption -> Bool
 defaultSearchFn =
-    R10.FormComponents.Single.defaultSearchFn
+    R10.FormComponents.Internal.Single.defaultSearchFn
 
 
 {-| -}
 initSingle : SingleModel
 initSingle =
-    R10.FormComponents.Single.Common.init
+    R10.FormComponents.Internal.Single.Common.init
 
 
 
 --
 -- updateSingle : SingleMsg -> SingleModel -> ( SingleModel, Cmd SingleMsg )
 -- updateSingle =
---     R10.FormComponents.Single.update
+--     R10.FormComponents.Internal.Single.update
 --
 
 
 {-| -}
 normalizeString : String -> String
 normalizeString =
-    R10.FormComponents.Single.normalizeString
+    R10.FormComponents.Internal.Single.normalizeString
 
 
 {-| -}
 insertBold : List Int -> String -> String
 insertBold =
-    R10.FormComponents.Single.insertBold
+    R10.FormComponents.Internal.Single.insertBold
 
 
 {-| -}
@@ -145,7 +145,7 @@ defaultToOptionEl :
     -> SingleFieldOption
     -> Element msg
 defaultToOptionEl =
-    R10.FormComponents.Single.defaultToOptionEl
+    R10.FormComponents.Internal.Single.defaultToOptionEl
 
 
 {-| -}
@@ -153,10 +153,10 @@ defaultTrailingIcon :
     { a | opened : Bool, palette : R10.FormTypes.Palette }
     -> Element msg
 defaultTrailingIcon =
-    R10.FormComponents.Single.defaultTrailingIcon
+    R10.FormComponents.Internal.Single.defaultTrailingIcon
 
 
 {-| -}
 singleMsg : { onOptionSelect : String -> SingleMsg }
 singleMsg =
-    { onOptionSelect = R10.FormComponents.Single.Common.OnOptionSelect }
+    { onOptionSelect = R10.FormComponents.Internal.Single.Common.OnOptionSelect }

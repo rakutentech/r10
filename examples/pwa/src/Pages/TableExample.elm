@@ -21,14 +21,14 @@ import R10.Color.Utils
 import R10.Form
 import R10.Libu
 import R10.Table
-import R10.Table.Config
-import R10.Table.Header
-import R10.Table.Msg
-import R10.Table.Placeholder
-import R10.Table.State
-import R10.Table.Style
-import R10.Table.Types
-import R10.Table.Update
+import R10.Table.Internal.Config
+import R10.Table.Internal.Header
+import R10.Table.Internal.Msg
+import R10.Table.Internal.Placeholder
+import R10.Table.Internal.State
+import R10.Table.Internal.Style
+import R10.Table.Internal.Types
+import R10.Table.Internal.Update
 import R10.Theme
 
 
@@ -52,14 +52,14 @@ type alias TableRecord =
 
 type alias Model =
     { tableRecords : Dict String TableRecord
-    , table1State : R10.Table.State.State
-    , table2State : R10.Table.State.State
+    , table1State : R10.Table.Internal.State.State
+    , table2State : R10.Table.Internal.State.State
     }
 
 
 type Msg
-    = Table1Msg R10.Table.Msg.Msg
-    | Table2Msg R10.Table.Msg.Msg
+    = Table1Msg R10.Table.Internal.Msg.Msg
+    | Table2Msg R10.Table.Internal.Msg.Msg
     | Table2ToggleLoadingMsg
     | AccordionToggle String
 
@@ -78,7 +78,7 @@ actionColumn columnName headerAttrs theme =
     R10.Table.columnWithViews
         { name = columnName
         , viewCell = always <| viewActionRow theme
-        , viewHeader = R10.Table.Header.simpleHeader headerAttrs
+        , viewHeader = R10.Table.Internal.Header.simpleHeader headerAttrs
         , maybeToCmp = Nothing
         }
 
@@ -88,7 +88,7 @@ viewActionRow theme maybeRecord =
     -- todo create Icon button
     -- todo move accordion button to Components
     row
-        (R10.Table.Style.defaultCellAttrs ++ [ spacing 8, width <| px 56 ])
+        (R10.Table.Internal.Style.defaultCellAttrs ++ [ spacing 8, width <| px 56 ])
         [ el
             ([ width <| px 40
              , height <| px 40
@@ -180,12 +180,12 @@ encodeColor color =
 -- color column
 
 
-colorColumn : Theme -> String -> (TableRecord -> String) -> Maybe (R10.Table.Config.ColumnAttrs Msg) -> R10.Table.Column TableRecord Msg
+colorColumn : Theme -> String -> (TableRecord -> String) -> Maybe (R10.Table.Internal.Config.ColumnAttrs Msg) -> R10.Table.Column TableRecord Msg
 colorColumn theme columnName toStr _ =
     R10.Table.columnWithViews
         { name = columnName
         , viewCell = always <| viewColorColumn theme
-        , viewHeader = R10.Table.Header.simpleHeader []
+        , viewHeader = R10.Table.Internal.Header.simpleHeader []
         , maybeToCmp = Just toStr
         }
 
@@ -193,7 +193,7 @@ colorColumn theme columnName toStr _ =
 viewColorColumn : Theme -> Maybe TableRecord -> Element Msg
 viewColorColumn theme maybeRecord =
     row
-        (R10.Table.Style.defaultCellAttrs ++ [ spacing 8 ])
+        (R10.Table.Internal.Style.defaultCellAttrs ++ [ spacing 8 ])
         (case maybeRecord of
             Just record ->
                 [ el [ Background.color record.color, paddingXY 8 6, width fill ] <|
@@ -202,7 +202,7 @@ viewColorColumn theme maybeRecord =
                 ]
 
             Nothing ->
-                [ R10.Table.Placeholder.view colorPrimary [] ]
+                [ R10.Table.Internal.Placeholder.view colorPrimary [] ]
         )
 
 
@@ -235,7 +235,7 @@ update msg model =
             }
 
         Table1Msg tableMsg ->
-            { model | table1State = R10.Table.Update.update tableMsg model.table1State }
+            { model | table1State = R10.Table.Internal.Update.update tableMsg model.table1State }
 
         Table2ToggleLoadingMsg ->
             { model
@@ -245,7 +245,7 @@ update msg model =
             }
 
         Table2Msg tableMsg ->
-            { model | table2State = R10.Table.Update.update tableMsg model.table2State }
+            { model | table2State = R10.Table.Internal.Update.update tableMsg model.table2State }
 
 
 buildFilterOptions : List String -> List { value : String, label : String }
@@ -317,11 +317,11 @@ view model theme =
                     , filters =
                         Just
                             { filterFields =
-                                [ R10.Table.Types.FilterText
+                                [ R10.Table.Internal.Types.FilterText
                                     { label = "Name label"
                                     , key = "name"
                                     }
-                                , R10.Table.Types.FilterSelect
+                                , R10.Table.Internal.Types.FilterSelect
                                     { label = "Color label"
                                     , key = "color"
                                     , options = buildFilterOptions (Dict.values model.tableRecords |> List.map colorAsString)
@@ -379,7 +379,7 @@ view model theme =
                             , Border.width 3
                             , mouseOver [ Background.color <| rgba 0 0 0 0.1 ]
                             ]
-                                ++ R10.Table.Style.defaultRowAttrs
+                                ++ R10.Table.Internal.Style.defaultRowAttrs
                     , pagination = Nothing
                     , filters = Nothing
                     }

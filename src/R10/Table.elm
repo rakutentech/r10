@@ -12,17 +12,17 @@ import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Keyed as Keyed
 import R10.FormTypes
-import R10.Table.Accordion
-import R10.Table.Cell
-import R10.Table.Config
-import R10.Table.Filters
-import R10.Table.Header
-import R10.Table.Msg
-import R10.Table.Paginator
-import R10.Table.Sorter
-import R10.Table.State
-import R10.Table.Style
-import R10.Table.Types
+import R10.Table.Internal.Accordion
+import R10.Table.Internal.Cell
+import R10.Table.Internal.Config
+import R10.Table.Internal.Filters
+import R10.Table.Internal.Header
+import R10.Table.Internal.Msg
+import R10.Table.Internal.Paginator
+import R10.Table.Internal.Sorter
+import R10.Table.Internal.State
+import R10.Table.Internal.Style
+import R10.Table.Internal.Types
 
 
 {-| Create a table state. By providing a column name, you determine which
@@ -34,34 +34,34 @@ yachts to be sorted by length by default, you might say:
     R10.Table.initialSort "Length"
 
 -}
-initialStateSort : { name : String, isReversed : Bool } -> R10.Table.State.State
+initialStateSort : { name : String, isReversed : Bool } -> R10.Table.Internal.State.State
 initialStateSort { name, isReversed } =
     { sort = { name = name, isReversed = isReversed }
-    , pagination = R10.Table.State.NoPagination
-    , filters = R10.Table.State.NoFilters
+    , pagination = R10.Table.Internal.State.NoPagination
+    , filters = R10.Table.Internal.State.NoFilters
     , loading = False
     }
 
 
 {-| -}
-initialStatePagination : { length : Int } -> R10.Table.State.State -> R10.Table.State.State
+initialStatePagination : { length : Int } -> R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 initialStatePagination { length } state =
     { state
         | pagination =
-            R10.Table.State.Pagination
+            R10.Table.Internal.State.Pagination
                 { length = length
-                , nextButtonState = R10.Table.State.PaginationButtonDisabled
-                , prevButtonState = R10.Table.State.PaginationButtonDisabled
+                , nextButtonState = R10.Table.Internal.State.PaginationButtonDisabled
+                , prevButtonState = R10.Table.Internal.State.PaginationButtonDisabled
                 }
     }
 
 
 {-| -}
-initialStateFilters : { filterValues : Dict String String } -> R10.Table.State.State -> R10.Table.State.State
+initialStateFilters : { filterValues : Dict String String } -> R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 initialStateFilters { filterValues } state =
     { state
         | filters =
-            R10.Table.State.Filters
+            R10.Table.Internal.State.Filters
                 { filterEditor = Nothing
                 , filterValues = filterValues
                 }
@@ -69,79 +69,79 @@ initialStateFilters { filterValues } state =
 
 
 {-| -}
-updatePaginationState : R10.Table.State.PaginationStateRecord -> R10.Table.State.State -> R10.Table.State.State
+updatePaginationState : R10.Table.Internal.State.PaginationStateRecord -> R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 updatePaginationState paginationStateRecord state =
-    R10.Table.Paginator.updatePaginationState_ paginationStateRecord state
+    R10.Table.Internal.Paginator.updatePaginationState_ paginationStateRecord state
 
 
 {-| -}
-paginationButtonNextFetch : R10.Table.State.State -> R10.Table.State.State
+paginationButtonNextFetch : R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 paginationButtonNextFetch state =
-    R10.Table.Paginator.paginationButtonNextFetch_ state
+    R10.Table.Internal.Paginator.paginationButtonNextFetch_ state
 
 
 {-| -}
-paginationButtonPrevFetch : R10.Table.State.State -> R10.Table.State.State
+paginationButtonPrevFetch : R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 paginationButtonPrevFetch state =
-    R10.Table.Paginator.paginationButtonPrevFetch_ state
+    R10.Table.Internal.Paginator.paginationButtonPrevFetch_ state
 
 
 {-| -}
-paginationButtonEnableAll : R10.Table.State.State -> R10.Table.State.State
+paginationButtonEnableAll : R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 paginationButtonEnableAll state =
-    R10.Table.Paginator.paginationButtonEnableAll_ state
+    R10.Table.Internal.Paginator.paginationButtonEnableAll_ state
 
 
 {-| -}
-paginationButtonDisableAll : R10.Table.State.State -> R10.Table.State.State
+paginationButtonDisableAll : R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 paginationButtonDisableAll state =
-    R10.Table.Paginator.paginationButtonDisableAll_ state
+    R10.Table.Internal.Paginator.paginationButtonDisableAll_ state
 
 
 {-| -}
-paginationButtonEnableOther : R10.Table.State.State -> R10.Table.State.State
+paginationButtonEnableOther : R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 paginationButtonEnableOther state =
-    R10.Table.Paginator.paginationButtonEnableOther_ state
+    R10.Table.Internal.Paginator.paginationButtonEnableOther_ state
 
 
 {-| -}
-getPaginationStateRecord : R10.Table.State.State -> Maybe R10.Table.State.PaginationStateRecord
+getPaginationStateRecord : R10.Table.Internal.State.State -> Maybe R10.Table.Internal.State.PaginationStateRecord
 getPaginationStateRecord state =
-    R10.Table.Paginator.getPaginationStateRecord_ state
+    R10.Table.Internal.Paginator.getPaginationStateRecord_ state
 
 
 {-| -}
-getActiveFilters : R10.Table.State.State -> Dict String String
+getActiveFilters : R10.Table.Internal.State.State -> Dict String String
 getActiveFilters state =
     case state.filters of
-        R10.Table.State.Filters { filterValues } ->
+        R10.Table.Internal.State.Filters { filterValues } ->
             filterValues
 
-        R10.Table.State.NoFilters ->
+        R10.Table.Internal.State.NoFilters ->
             Dict.empty
 
 
 {-| -}
-setLoading : Bool -> R10.Table.State.State -> R10.Table.State.State
+setLoading : Bool -> R10.Table.Internal.State.State -> R10.Table.Internal.State.State
 setLoading isLoading_ state =
     { state | loading = isLoading_ }
 
 
 {-| -}
-isLoading : R10.Table.State.State -> Bool
+isLoading : R10.Table.Internal.State.State -> Bool
 isLoading state =
     state.loading
 
 
 {-| -}
-isLoadingByPagination : R10.Table.State.State -> Bool
+isLoadingByPagination : R10.Table.Internal.State.State -> Bool
 isLoadingByPagination state =
     case state.pagination of
-        R10.Table.State.Pagination { nextButtonState, prevButtonState } ->
-            (nextButtonState == R10.Table.State.PaginationButtonLoading)
-                || (prevButtonState == R10.Table.State.PaginationButtonLoading)
+        R10.Table.Internal.State.Pagination { nextButtonState, prevButtonState } ->
+            (nextButtonState == R10.Table.Internal.State.PaginationButtonLoading)
+                || (prevButtonState == R10.Table.Internal.State.PaginationButtonLoading)
 
-        R10.Table.State.NoPagination ->
+        R10.Table.Internal.State.NoPagination ->
             False
 
 
@@ -153,9 +153,9 @@ have a column for name and age. We would create a `Config` like this:
 
     import Table
 
-    type Msg = NewTableTable.Model.State R10.Table.State.State | ...
+    type Msg = NewTableTable.Model.State R10.Table.Internal.State.State | ...
 
-    config : R10.Table.Config Person Msg
+    config : R10.Table.Internal.Config Person Msg
     config =
       R10.Table.config
         { toId = .name
@@ -181,17 +181,17 @@ See the [examples] to get a better feel for this!
 -}
 config :
     { toId : data -> String
-    , toMsg : R10.Table.Msg.Msg -> msg
+    , toMsg : R10.Table.Internal.Msg.Msg -> msg
     , columns : List (Column data msg)
     }
-    -> R10.Table.Config.Config data msg
+    -> R10.Table.Internal.Config.Config data msg
 config { toId, toMsg, columns } =
     --Table.Config.Config
     { toId = toId
     , toMsg = toMsg
     , columns = List.map (\(Column cData) -> cData) columns
     , bodyAttrs = [ width fill, height fill ]
-    , rowAttrsBuilder = always R10.Table.Style.defaultRowAttrs
+    , rowAttrsBuilder = always R10.Table.Internal.Style.defaultRowAttrs
     , maybePaginationConfig = Nothing
     , maybeFiltersConfig = Nothing
     }
@@ -201,14 +201,14 @@ config { toId, toMsg, columns } =
 -}
 customConfig :
     { toId : data -> String
-    , toMsg : R10.Table.Msg.Msg -> msg
+    , toMsg : R10.Table.Internal.Msg.Msg -> msg
     , columns : List (Column data msg)
     , bodyAttrs : List (Attribute msg)
     , rowAttrsBuilder : Maybe data -> List (Attribute msg)
-    , pagination : Maybe R10.Table.Config.PaginationConfig
-    , filters : Maybe R10.Table.Config.FiltersConfig
+    , pagination : Maybe R10.Table.Internal.Config.PaginationConfig
+    , filters : Maybe R10.Table.Internal.Config.FiltersConfig
     }
-    -> R10.Table.Config.Config data msg
+    -> R10.Table.Internal.Config.Config data msg
 customConfig { toId, toMsg, columns, bodyAttrs, rowAttrsBuilder, pagination, filters } =
     --Table.Config.Config
     { toId = toId
@@ -227,12 +227,12 @@ configWithAccordionRow :
     -> Int
     -> (Maybe data -> Bool)
     -> (Maybe data -> Bool)
-    -> R10.Table.Config.Config data msg
-    -> R10.Table.Config.Config data msg
+    -> R10.Table.Internal.Config.Config data msg
+    -> R10.Table.Internal.Config.Config data msg
 configWithAccordionRow viewContent expandedHeight getIsExpanded getIsLoading conf =
     { conf
         | rowAttrsBuilder =
-            R10.Table.Accordion.getAttrs viewContent expandedHeight getIsExpanded getIsLoading
+            R10.Table.Internal.Accordion.getAttrs viewContent expandedHeight getIsExpanded getIsLoading
     }
 
 
@@ -243,7 +243,7 @@ configWithAccordionRow viewContent expandedHeight getIsExpanded getIsLoading con
 {-| Describes how to turn `data` into a column in your table.
 -}
 type Column data msg
-    = Column (R10.Table.Config.ColumnConf data msg)
+    = Column (R10.Table.Internal.Config.ColumnConf data msg)
 
 
 {-| -}
@@ -251,9 +251,9 @@ columnSimple : { name : String, toStr : data -> String } -> Column data msg
 columnSimple { name, toStr } =
     Column
         { name = name
-        , viewCell = R10.Table.Cell.simpleCell [] (Maybe.map toStr)
-        , viewHeader = R10.Table.Header.simpleHeader []
-        , sorter = R10.Table.Sorter.increasingOrDecreasingBy toStr
+        , viewCell = R10.Table.Internal.Cell.simpleCell [] (Maybe.map toStr)
+        , viewHeader = R10.Table.Internal.Header.simpleHeader []
+        , sorter = R10.Table.Internal.Sorter.increasingOrDecreasingBy toStr
         }
 
 
@@ -273,15 +273,15 @@ columnWithAttrs { name, toStr, maybeToCmp, maybeAttrs } =
     in
     Column
         { name = name
-        , viewCell = R10.Table.Cell.simpleCell attrs.cell (Maybe.map toStr)
-        , viewHeader = R10.Table.Header.simpleHeader attrs.header
+        , viewCell = R10.Table.Internal.Cell.simpleCell attrs.cell (Maybe.map toStr)
+        , viewHeader = R10.Table.Internal.Header.simpleHeader attrs.header
         , sorter =
             case maybeToCmp of
                 Just toCmp ->
-                    R10.Table.Sorter.increasingOrDecreasingBy toCmp
+                    R10.Table.Internal.Sorter.increasingOrDecreasingBy toCmp
 
                 Nothing ->
-                    R10.Table.Sorter.unsortable
+                    R10.Table.Internal.Sorter.unsortable
         }
 
 
@@ -289,7 +289,7 @@ columnWithAttrs { name, toStr, maybeToCmp, maybeAttrs } =
 columnWithViews :
     { name : String
     , viewCell : R10.FormTypes.Palette -> Maybe data -> Element msg
-    , viewHeader : R10.FormTypes.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg
+    , viewHeader : R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> Element msg
     , maybeToCmp : Maybe (data -> comparable)
     }
     -> Column data msg
@@ -301,10 +301,10 @@ columnWithViews { name, viewCell, viewHeader, maybeToCmp } =
         , sorter =
             case maybeToCmp of
                 Just toCmp ->
-                    R10.Table.Sorter.increasingOrDecreasingBy toCmp
+                    R10.Table.Internal.Sorter.increasingOrDecreasingBy toCmp
 
                 Nothing ->
-                    R10.Table.Sorter.unsortable
+                    R10.Table.Internal.Sorter.unsortable
         }
 
 
@@ -312,8 +312,8 @@ columnWithViews { name, viewCell, viewHeader, maybeToCmp } =
 columnCustom :
     { name : String
     , viewCell : R10.FormTypes.Palette -> Maybe data -> Element msg
-    , viewHeader : R10.FormTypes.Palette -> R10.Table.Config.HeaderInfo msg -> Element msg
-    , sorter : R10.Table.Types.Sorter data
+    , viewHeader : R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> Element msg
+    , sorter : R10.Table.Internal.Types.Sorter data
     }
     -> Column data msg
 columnCustom { name, viewCell, viewHeader, sorter } =
@@ -326,17 +326,17 @@ columnCustom { name, viewCell, viewHeader, sorter } =
 
 
 {-| -}
-viewHeaderRowHelp : R10.FormTypes.Palette -> R10.Table.State.State -> List (R10.Table.Config.ColumnConf data msg) -> (String -> Bool -> msg) -> Element msg
+viewHeaderRowHelp : R10.FormTypes.Palette -> R10.Table.Internal.State.State -> List (R10.Table.Internal.Config.ColumnConf data msg) -> (String -> Bool -> msg) -> Element msg
 viewHeaderRowHelp palette state columns sortMsg =
     row [ width fill ] (List.map (viewHeaderRow_ palette state sortMsg) columns)
 
 
-viewHeaderRow_ : R10.FormTypes.Palette -> R10.Table.State.State -> (String -> Bool -> msg) -> R10.Table.Config.ColumnConf data msg -> Element msg
+viewHeaderRow_ : R10.FormTypes.Palette -> R10.Table.Internal.State.State -> (String -> Bool -> msg) -> R10.Table.Internal.Config.ColumnConf data msg -> Element msg
 viewHeaderRow_ palette state sortMsg column =
-    column.viewHeader palette (R10.Table.Header.toHeaderInfo state column sortMsg)
+    column.viewHeader palette (R10.Table.Internal.Header.toHeaderInfo state column sortMsg)
 
 
-viewRowHelp : R10.FormTypes.Palette -> List (R10.Table.Config.ColumnConf data msg) -> (Maybe data -> List (Attribute msg)) -> Maybe data -> Element msg
+viewRowHelp : R10.FormTypes.Palette -> List (R10.Table.Internal.Config.ColumnConf data msg) -> (Maybe data -> List (Attribute msg)) -> Maybe data -> Element msg
 viewRowHelp palette columns toRowAttrs maybeData =
     row
         (toRowAttrs maybeData)
@@ -345,8 +345,8 @@ viewRowHelp palette columns toRowAttrs maybeData =
 
 viewBody :
     R10.FormTypes.Palette
-    -> R10.Table.Config.Config data msg
-    -> R10.Table.State.State
+    -> R10.Table.Internal.Config.Config data msg
+    -> R10.Table.Internal.State.State
     -> List data
     -> Element msg
 viewBody palette { toId, columns, bodyAttrs, rowAttrsBuilder } state data =
@@ -362,7 +362,7 @@ viewBody palette { toId, columns, bodyAttrs, rowAttrsBuilder } state data =
                     |> List.map (always Nothing)
 
             else
-                R10.Table.Sorter.sort state columns data
+                R10.Table.Internal.Sorter.sort state columns data
                     |> List.map Just
     in
     Keyed.column (width fill :: bodyAttrs) <|
@@ -402,30 +402,30 @@ statically, and look for a different library if you need something crazier than
 that.
 
 -}
-view : R10.FormTypes.Palette -> R10.Table.Config.Config data msg -> R10.Table.State.State -> List data -> Element msg
+view : R10.FormTypes.Palette -> R10.Table.Internal.Config.Config data msg -> R10.Table.Internal.State.State -> List data -> Element msg
 view palette conf state data =
     let
-        filters : Element R10.Table.Msg.Msg
+        filters : Element R10.Table.Internal.Msg.Msg
         filters =
             case conf.maybeFiltersConfig of
                 Just filtersConfig ->
-                    R10.Table.Filters.view palette filtersConfig state
+                    R10.Table.Internal.Filters.view palette filtersConfig state
 
                 Nothing ->
                     none
 
-        paginator : Element R10.Table.Msg.Msg
+        paginator : Element R10.Table.Internal.Msg.Msg
         paginator =
             case ( conf.maybePaginationConfig, state ) of
                 ( Just paginationConfig, { pagination } ) ->
-                    R10.Table.Paginator.view palette paginationConfig pagination
+                    R10.Table.Internal.Paginator.view palette paginationConfig pagination
 
                 ( Nothing, _ ) ->
                     none
 
         sortMsg : String -> Bool -> msg
         sortMsg a b =
-            R10.Table.Msg.Sort a b |> conf.toMsg
+            R10.Table.Internal.Msg.Sort a b |> conf.toMsg
     in
     column
         [ width fill, height fill ]
@@ -437,4 +437,4 @@ view palette conf state data =
 
 
 type alias State =
-    R10.Table.State.State
+    R10.Table.Internal.State.State

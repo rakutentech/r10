@@ -1,5 +1,6 @@
 module R10.Form.Internal.FieldConf exposing
     ( FieldConf
+    , FieldId
     , Validation(..)
     , ValidationCode
     , ValidationMessage
@@ -60,8 +61,12 @@ type alias ValidationPayload =
     List String
 
 
+type alias FieldId =
+    String
+
+
 type alias FieldConf =
-    { id : String
+    { id : FieldId
     , idDom : Maybe String
     , type_ : R10.FormTypes.FieldType
     , label : String

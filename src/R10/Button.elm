@@ -51,7 +51,14 @@ type alias Data msg =
         }
 
 -}
-primary : List (Attribute msg) -> Data msg -> Element msg
+primary :
+    List (Attribute msg)
+    ->
+        { label : Element msg
+        , libu : R10.Libu.Type msg
+        , theme : R10.Theme.Theme
+        }
+    -> Element msg
 primary attrsExtra data =
     let
         attrs : R10.Theme.Theme -> List (Attribute msg)
@@ -71,7 +78,14 @@ primary attrsExtra data =
 
 {-| Secondary Button
 -}
-secondary : List (Attribute msg) -> Data msg -> Element msg
+secondary :
+    List (Attribute msg)
+    ->
+        { label : Element msg
+        , libu : R10.Libu.Type msg
+        , theme : R10.Theme.Theme
+        }
+    -> Element msg
 secondary attrsExtra data =
     let
         attrs : R10.Theme.Theme -> List (Attribute msg)
@@ -91,7 +105,14 @@ secondary attrsExtra data =
 
 {-| Tertiary Button
 -}
-tertiary : List (Attribute msg) -> Data msg -> Element msg
+tertiary :
+    List (Attribute msg)
+    ->
+        { label : Element msg
+        , libu : R10.Libu.Type msg
+        , theme : R10.Theme.Theme
+        }
+    -> Element msg
 tertiary attrsExtra data =
     R10.Libu.view
         (attrsTertiary data.theme ++ attrsExtra)
@@ -102,7 +123,14 @@ tertiary attrsExtra data =
 
 {-| Quaternary Button
 -}
-quaternary : List (Attribute msg) -> Data msg -> Element msg
+quaternary :
+    List (Attribute msg)
+    ->
+        { label : Element msg
+        , libu : R10.Libu.Type msg
+        , theme : R10.Theme.Theme
+        }
+    -> Element msg
 quaternary attrsExtra data =
     R10.Libu.view
         (attrsQuaternary data.theme ++ attrsExtra)

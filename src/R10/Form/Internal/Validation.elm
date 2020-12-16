@@ -8,7 +8,7 @@ import R10.Form.Internal.FieldConf exposing (Validation(..))
 import R10.Form.Internal.FieldState exposing (ValidationOutcome(..))
 import R10.Form.Internal.Key
 import R10.Form.Internal.State
-import R10.Form.Internal.ValidationCode exposing (validationCodes)
+import R10.Form.Internal.Translator
 import Regex
 
 
@@ -62,20 +62,54 @@ toMessageErr outcome =
             outcome
 
 
-validateDependant : String -> R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
-validateDependant value dependantKey formState validation =
+validateDependant :
+    R10.Form.Internal.Key.Key
+    -> R10.Form.Internal.Key.KeyAsString
+    -> R10.Form.Internal.State.State
+    -> Validation
+    -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
+validateDependant key dependantKey formState validation =
     let
-        newKey : R10.Form.Internal.Key.Key
-        newKey =
+        newLeafKey : R10.Form.Internal.Key.Key
+        newLeafKey =
+            R10.Form.Internal.Key.replaceLeaf dependantKey key
+
+        newFullKey : R10.Form.Internal.Key.Key
+        newFullKey =
             dependantKey |> R10.Form.Internal.Key.fromString
 
-        newContextValue : String
-        newContextValue =
-            Dict.get dependantKey formState.fieldsState
-                |> Maybe.map .value
-                |> Maybe.withDefault ""
+        -- newContextValue : String
+        -- newContextValue =
+        --     Dict.get dependantKey formState.fieldsState
+        --         |> Maybe.map .value
+        --         |> Maybe.withDefault ""
+        newLeafContextValue : Maybe ( String, R10.Form.Internal.Key.Key )
+        newLeafContextValue =
+            formState.fieldsState
+                |> Dict.get (newLeafKey |> R10.Form.Internal.Key.toString)
+                |> Maybe.map (\rec -> ( rec.value, newLeafKey ))
+
+        newFullContextValue : Maybe ( String, R10.Form.Internal.Key.Key )
+        newFullContextValue =
+            formState.fieldsState
+                |> Dict.get (newFullKey |> R10.Form.Internal.Key.toString)
+                |> Maybe.map (\rec -> ( rec.value, newFullKey ))
+
+        defaultContextValue : ( String, R10.Form.Internal.Key.Key )
+        defaultContextValue =
+            ( "", newFullKey )
+
+        result =
+            newLeafContextValue
+                |> Maybe.withDefault
+                    (newFullContextValue
+                        |> Maybe.withDefault defaultContextValue
+                    )
     in
-    validateValidationSpecs newKey newContextValue formState validation
+    result
+        |> (\( newContextValue, newKey ) ->
+                validateValidationSpecs newKey newContextValue formState validation
+           )
 
 
 validateEqual : String -> R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.ValidationOutcome
@@ -88,10 +122,10 @@ validateEqual value dependantKey formState =
                 |> Maybe.withDefault ""
     in
     if value == dependantValue then
-        R10.Form.Internal.FieldState.MessageOk validationCodes.equalInvalid []
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.equalInvalid []
 
     else
-        R10.Form.Internal.FieldState.MessageErr validationCodes.equalInvalid []
+        R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.equalInvalid []
 
 
 validateNot : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
@@ -121,13 +155,13 @@ validateAllOf key value formState validations =
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
-        R10.Form.Internal.FieldState.MessageOk validationCodes.allOf []
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.allOf []
 
     else if List.all isValid messages then
-        R10.Form.Internal.FieldState.MessageOk validationCodes.allOf []
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.allOf []
 
     else
-        R10.Form.Internal.FieldState.MessageErr validationCodes.allOf []
+        R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.allOf []
 
 
 validateOneOf : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> List Validation -> R10.Form.Internal.FieldState.ValidationOutcome
@@ -139,13 +173,13 @@ validateOneOf key value formState validations =
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
-        R10.Form.Internal.FieldState.MessageOk validationCodes.oneOf []
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.oneOf []
 
     else if List.any isValid messages then
-        R10.Form.Internal.FieldState.MessageOk validationCodes.oneOf []
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.oneOf []
 
     else
-        R10.Form.Internal.FieldState.MessageErr validationCodes.oneOf []
+        R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.oneOf []
 
 
 validateWithMsg : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.FieldConf.ValidationMessage -> R10.Form.Internal.State.State -> Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
@@ -170,47 +204,47 @@ validateWithMsg key value msg formState validation =
 validateRequired : String -> R10.Form.Internal.FieldState.ValidationOutcome
 validateRequired value =
     if String.isEmpty value then
-        R10.Form.Internal.FieldState.MessageErr validationCodes.required []
+        R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.required []
 
     else
-        R10.Form.Internal.FieldState.MessageOk validationCodes.required []
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.required []
 
 
 validateEmpty : String -> R10.Form.Internal.FieldState.ValidationOutcome
 validateEmpty value =
     if String.isEmpty value then
-        R10.Form.Internal.FieldState.MessageOk validationCodes.empty []
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.empty []
 
     else
-        R10.Form.Internal.FieldState.MessageErr validationCodes.empty []
+        R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.empty []
 
 
 validateMinLength : String -> Int -> R10.Form.Internal.FieldState.ValidationOutcome
 validateMinLength value length =
     if String.length value < length then
-        R10.Form.Internal.FieldState.MessageErr validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
+        R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
 
     else
-        R10.Form.Internal.FieldState.MessageOk validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.lengthTooSmallInvalid [ String.fromInt length ]
 
 
 validateMaxLength : String -> Int -> R10.Form.Internal.FieldState.ValidationOutcome
 validateMaxLength value length =
     if String.length value > length then
-        R10.Form.Internal.FieldState.MessageErr validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
+        R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
 
     else
-        R10.Form.Internal.FieldState.MessageOk validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
+        R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.lengthTooLargeInvalid [ String.fromInt length ]
 
 
 validateRegex : String -> String -> R10.Form.Internal.FieldState.ValidationOutcome
 validateRegex value regex =
     case runRegex regex value of
         Valid ->
-            R10.Form.Internal.FieldState.MessageOk validationCodes.formatInvalid []
+            R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.formatInvalid []
 
         NotValid ->
-            R10.Form.Internal.FieldState.MessageErr validationCodes.formatInvalid []
+            R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.formatInvalid []
 
 
 skipValidationIfEmpty : String -> R10.Form.Internal.FieldState.ValidationOutcome -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
@@ -229,7 +263,7 @@ validateValidationSpecs key value formState validation =
             validateWithMsg key value msg formState validation_
 
         Dependant dependantKey validation_ ->
-            validateDependant value dependantKey formState validation_
+            validateDependant key dependantKey formState validation_
 
         OneOf validations ->
             Just <| validateOneOf key value formState validations
@@ -278,6 +312,17 @@ validate key maybeValidationSpec formState state =
 
 
 
+--
+-- validateOld : Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState
+-- validateOld maybeValidationSpec formState state =
+--     { state
+--         | validation =
+--             Form.FieldState.Validated <|
+--                 validateValidationSpecs state.value
+--                     formState
+--                     (maybeValidationSpec |> Maybe.map .validation |> Maybe.withDefault NoValidation)
+--
+--     }
 -- ██████  ██    ██ ██      ███████ ███████
 -- ██   ██ ██    ██ ██      ██      ██
 -- ██████  ██    ██ ██      █████   ███████
@@ -325,33 +370,33 @@ commonValidation :
     }
 commonValidation =
     { phoneNumber =
-        R10.Form.Internal.FieldConf.WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
+        R10.Form.Internal.FieldConf.WithMsg { ok = R10.Form.Internal.Translator.validationCodes.formatValid, err = R10.Form.Internal.Translator.validationCodes.formatInvalid } <|
             Regex commonRegularExpression.phoneNumber
     , email =
-        WithMsg { ok = validationCodes.emailFormatInvalid, err = validationCodes.emailFormatInvalid } <|
+        WithMsg { ok = R10.Form.Internal.Translator.validationCodes.emailFormatInvalid, err = R10.Form.Internal.Translator.validationCodes.emailFormatInvalid } <|
             Regex commonRegularExpression.email
     , password =
         AllOf
-            [ WithMsg { ok = validationCodes.formatNoUppercaseInvalid, err = validationCodes.formatNoUppercaseInvalid } <|
+            [ WithMsg { ok = R10.Form.Internal.Translator.validationCodes.formatNoUppercaseInvalid, err = R10.Form.Internal.Translator.validationCodes.formatNoUppercaseInvalid } <|
                 Regex "[A-Z]"
-            , WithMsg { ok = validationCodes.formatNoNumberInvalid, err = validationCodes.formatNoNumberInvalid } <|
+            , WithMsg { ok = R10.Form.Internal.Translator.validationCodes.formatNoNumberInvalid, err = R10.Form.Internal.Translator.validationCodes.formatNoNumberInvalid } <|
                 Regex "[0-9]"
-            , WithMsg { ok = validationCodes.formatNoSpecialCharactersInvalid, err = validationCodes.formatNoSpecialCharactersInvalid } <|
+            , WithMsg { ok = R10.Form.Internal.Translator.validationCodes.formatNoSpecialCharactersInvalid, err = R10.Form.Internal.Translator.validationCodes.formatNoSpecialCharactersInvalid } <|
                 Regex "[~!@#$%^&*()_+|}{\\[\\]|\\><?:\\\";',./=-]"
             ]
     , alphaNumericDash =
-        WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
+        WithMsg { ok = R10.Form.Internal.Translator.validationCodes.formatValid, err = R10.Form.Internal.Translator.validationCodes.formatInvalid } <|
             Regex commonRegularExpression.alphaNumericDash
     , alphaNumericDashSpace =
-        WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
+        WithMsg { ok = R10.Form.Internal.Translator.validationCodes.formatValid, err = R10.Form.Internal.Translator.validationCodes.formatInvalid } <|
             Regex commonRegularExpression.alphaNumericDashSpace
     , url =
-        WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
+        WithMsg { ok = R10.Form.Internal.Translator.validationCodes.formatValid, err = R10.Form.Internal.Translator.validationCodes.formatInvalid } <|
             Regex commonRegularExpression.url
     , hexColor =
-        WithMsg { ok = validationCodes.hexColorFormatInvalid, err = validationCodes.hexColorFormatInvalid } <|
+        WithMsg { ok = R10.Form.Internal.Translator.validationCodes.hexColorFormatInvalid, err = R10.Form.Internal.Translator.validationCodes.hexColorFormatInvalid } <|
             Regex commonRegularExpression.hexColor
     , numeric =
-        WithMsg { ok = validationCodes.formatValid, err = validationCodes.formatInvalid } <|
+        WithMsg { ok = R10.Form.Internal.Translator.validationCodes.formatValid, err = R10.Form.Internal.Translator.validationCodes.formatInvalid } <|
             Regex commonRegularExpression.numeric
     }

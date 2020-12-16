@@ -21,6 +21,7 @@ import R10.Form.Internal.Helpers
 import R10.Form.Internal.Key
 import R10.Form.Internal.Msg
 import R10.Form.Internal.State
+import R10.Form.Internal.Translator
 import R10.Form.Internal.Update
 import R10.FormComponents.Internal.Binary
 import R10.FormComponents.Internal.ExtraCss
@@ -60,7 +61,7 @@ type alias ArgsForFields =
     , focused : Bool
     , active : Bool
     , key : R10.Form.Internal.Key.Key
-    , translator : R10.Form.Internal.FieldConf.ValidationCode -> String
+    , translator : R10.Form.Internal.Translator.Translator
     , style : R10.FormComponents.Internal.Style.Style
     , palette : R10.FormTypes.Palette
     }
@@ -866,6 +867,16 @@ viewEntitySubTitle palette titleConf =
     ]
 
 
+fromEntityToMaybeFieldId : R10.Form.Internal.Conf.Entity -> Maybe R10.Form.Internal.FieldConf.FieldId
+fromEntityToMaybeFieldId entity =
+    case entity of
+        R10.Form.Internal.Conf.EntityField field ->
+            Just field.id
+
+        _ ->
+            Nothing
+
+
 viewWithValidationMessage : MakerArgs -> R10.Form.Internal.Conf.Entity -> List (Element msg) -> List (Element msg)
 viewWithValidationMessage args entity listEl =
     let
@@ -900,7 +911,7 @@ viewWithValidationMessage args entity listEl =
 type alias MakerArgs =
     { key : R10.Form.Internal.Key.Key
     , formState : R10.Form.Internal.State.State
-    , translator : R10.Form.Internal.FieldConf.ValidationCode -> String
+    , translator : R10.Form.Internal.FieldConf.ValidationCode -> Maybe R10.Form.Internal.FieldConf.FieldId -> String
     , style : R10.FormComponents.Internal.Style.Style
     , palette : R10.FormTypes.Palette
     }

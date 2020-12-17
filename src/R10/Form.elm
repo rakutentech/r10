@@ -110,7 +110,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 # Fields related stuff
 
-@docs FieldConf, validation, binary, initFieldConf
+@docs FieldConf, validation, initFieldConf
 
 @docs update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
 
@@ -126,7 +126,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 @docs label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
 
-@docs Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, binary2, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator
+@docs Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, entitiesValidationOutcomes
 
 -}
 
@@ -571,6 +571,7 @@ entitiesWithErrors conf state =
     fieldsWithErrors_
 
 
+{-| -}
 entitiesValidationOutcomes : Conf -> State -> Maybe Translator -> List ( Key, R10.FormComponents.Internal.Validations.Validation )
 entitiesValidationOutcomes conf state maybeTranslator =
     let

@@ -3,6 +3,7 @@ module Main exposing (main)
 import Element exposing (..)
 import Html
 import R10.Form
+import R10.FormTypes
 
 
 formModel : R10.Form.Form
@@ -11,7 +12,7 @@ formModel =
         [ R10.Form.entity.field
             { id = "email"
             , idDom = Nothing
-            , type_ = R10.Form.fieldType.text R10.Form.text.email
+            , type_ = R10.FormTypes.TypeText R10.FormTypes.TextEmail
             , label = "Email"
             , helperText = Just "My first form"
             , requiredLabel = Nothing

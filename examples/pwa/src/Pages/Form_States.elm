@@ -11,7 +11,6 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import R10.Form
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 import R10.Theme
 
@@ -34,29 +33,30 @@ init =
     {}
 
 
-validationToStr : R10.FormComponents.Internal.Validations.Validation -> String
+validationToStr : R10.Form.Validation2 -> String
 validationToStr validation =
-    case validation of
-        R10.FormComponents.Internal.Validations.NotYetValidated ->
-            "Nothing"
-
-        R10.FormComponents.Internal.Validations.Validated msgList ->
-            if
-                List.all
-                    (\msg ->
-                        case msg of
-                            R10.FormComponents.Internal.Validations.MessageOk _ ->
-                                True
-
-                            R10.FormComponents.Internal.Validations.MessageErr _ ->
-                                False
-                    )
-                    msgList
-            then
-                "Valid"
-
-            else
-                "Invalid"
+    -- case validation of
+    --     R10.Form.componentValidation.notYetValidated ->
+    --         "Nothing"
+    --
+    --     R10.Form.componentValidation.validated msgList ->
+    --         if
+    --             List.all
+    --                 (\msg ->
+    --                     case msg of
+    --                         R10.Form.validationMessage.ok _ ->
+    --                             True
+    --
+    --                         R10.Form.validationMessage.error _ ->
+    --                             False
+    --                 )
+    --                 msgList
+    --         then
+    --             "Valid"
+    --
+    --         else
+    --             "Invalid"
+    R10.Form.validationToString validation
 
 
 viewChecboxTable : R10.Theme.Theme -> List (Element Msg)
@@ -125,14 +125,14 @@ viewChecboxTable theme =
                         [ True, False ]
 
                     validation =
-                        [ R10.FormComponents.Internal.Validations.NotYetValidated
-                        , R10.FormComponents.Internal.Validations.Validated
-                            [ R10.FormComponents.Internal.Validations.MessageOk "Succeeded 1"
-                            , R10.FormComponents.Internal.Validations.MessageOk "Succeeded 2"
+                        [ R10.Form.componentValidation.notYetValidated
+                        , R10.Form.componentValidation.validated
+                            [ R10.Form.validationMessage.ok "Succeeded 1"
+                            , R10.Form.validationMessage.ok "Succeeded 2"
                             ]
-                        , R10.FormComponents.Internal.Validations.Validated
-                            [ R10.FormComponents.Internal.Validations.MessageErr "Failed"
-                            , R10.FormComponents.Internal.Validations.MessageOk "Succeded"
+                        , R10.Form.componentValidation.validated
+                            [ R10.Form.validationMessage.error "Failed"
+                            , R10.Form.validationMessage.ok "Succeded"
                             ]
                         ]
 
@@ -258,14 +258,14 @@ viewJoinedTable theme =
                         [ True, False ]
 
                     validation =
-                        [ R10.FormComponents.Internal.Validations.NotYetValidated
-                        , R10.FormComponents.Internal.Validations.Validated
-                            [ R10.FormComponents.Internal.Validations.MessageOk "Succeeded 1"
-                            , R10.FormComponents.Internal.Validations.MessageOk "Succeeded 2"
+                        [ R10.Form.componentValidation.notYetValidated
+                        , R10.Form.componentValidation.validated
+                            [ R10.Form.validationMessage.ok "Succeeded 1"
+                            , R10.Form.validationMessage.ok "Succeeded 2"
                             ]
-                        , R10.FormComponents.Internal.Validations.Validated
-                            [ R10.FormComponents.Internal.Validations.MessageErr "Failed"
-                            , R10.FormComponents.Internal.Validations.MessageOk "Succeed"
+                        , R10.Form.componentValidation.validated
+                            [ R10.Form.validationMessage.error "Failed"
+                            , R10.Form.validationMessage.ok "Succeed"
                             ]
                         ]
 
@@ -467,14 +467,14 @@ viewTextTable theme =
                         [ True, False ]
 
                     validation =
-                        [ R10.FormComponents.Internal.Validations.NotYetValidated
-                        , R10.FormComponents.Internal.Validations.Validated
-                            [ R10.FormComponents.Internal.Validations.MessageOk "Succeeded 1"
-                            , R10.FormComponents.Internal.Validations.MessageOk "Succeeded 2"
+                        [ R10.Form.componentValidation.notYetValidated
+                        , R10.Form.componentValidation.validated
+                            [ R10.Form.validationMessage.ok "Succeeded 1"
+                            , R10.Form.validationMessage.ok "Succeeded 2"
                             ]
-                        , R10.FormComponents.Internal.Validations.Validated
-                            [ R10.FormComponents.Internal.Validations.MessageErr "Failed"
-                            , R10.FormComponents.Internal.Validations.MessageOk "Succeeded"
+                        , R10.Form.componentValidation.validated
+                            [ R10.Form.validationMessage.error "Failed"
+                            , R10.Form.validationMessage.ok "Succeeded"
                             ]
                         ]
 

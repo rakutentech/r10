@@ -15,7 +15,7 @@ import R10.Color.Svg
 import R10.FontSize
 import R10.Form
 import R10.Form.Internal.Key
-import R10.FormComponents.UI.Palette
+import R10.FormTypes
 import R10.Language
 import R10.Libu
 import R10.Mode
@@ -62,7 +62,7 @@ init =
             [ R10.Form.entity.field
                 { id = "cardNumber"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text <| R10.Form.text.withPattern "____ ____ ____ ____"
+                , type_ = R10.FormTypes.TypeText (R10.FormTypes.TextWithPattern "____ ____ ____ ____")
                 , label = "Card Number"
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
@@ -70,14 +70,14 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation = [ R10.Form.validation.required ]
                         }
                 }
             , R10.Form.entity.field
                 { id = "cardHolder"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.plain
+                , type_ = R10.FormTypes.TypeText R10.FormTypes.TextPlain
                 , label = "Card Holder"
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
@@ -85,7 +85,7 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.validation.required ]
                         }
@@ -93,7 +93,7 @@ init =
             , R10.Form.entity.field
                 { id = "expires"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text <| R10.Form.text.withPattern "__/__"
+                , type_ = R10.FormTypes.TypeText (R10.FormTypes.TextWithPattern "MM/YY")
                 , label = "Expires (MM/YY)"
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
@@ -101,14 +101,14 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation = [ R10.Form.validation.required ]
                         }
                 }
             , R10.Form.entity.field
                 { id = "cvv"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text <| R10.Form.text.withPattern "___"
+                , type_ = R10.FormTypes.TypeText (R10.FormTypes.TextWithPattern "___")
                 , label = "CVV"
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
@@ -116,7 +116,7 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation = [ R10.Form.validation.required ]
                         }
                 }

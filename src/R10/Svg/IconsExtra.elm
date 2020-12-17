@@ -412,6 +412,7 @@ darkLight attrs cl size =
         ]
 
 
+{-| -}
 validation_clear : List (Attribute msg) -> Color.Color -> Int -> Element msg
 validation_clear attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -421,6 +422,7 @@ validation_clear attrs cl size =
         ]
 
 
+{-| -}
 validation_error : List (Attribute msg) -> Color.Color -> Int -> Element msg
 validation_error attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -430,6 +432,7 @@ validation_error attrs cl size =
         ]
 
 
+{-| -}
 validation_check : List (Attribute msg) -> Color.Color -> Int -> Element msg
 validation_check attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs

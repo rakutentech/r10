@@ -436,5 +436,6 @@ view palette conf state data =
         ]
 
 
+{-| -}
 type alias State =
     R10.Table.Internal.State.State

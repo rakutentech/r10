@@ -1,19 +1,13 @@
-module R10.Country exposing
-    ( Country(..)
-    , emptyFlag
-    , fromCountryCode
-    , fromCountryTelCode
-    , fromString
-    , list
-    , listHead
-    , listTail
-    , toCountryCode
-    , toCountryTelCode
-    , toFlag
-    , toString
-    )
+module R10.Country exposing (Country(..), emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString)
+
+{-|
+
+@docs Country, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString
+
+-}
 
 
+{-| -}
 type Country
     = Afghanistan
     | Albania
@@ -256,26 +250,31 @@ type Country
     | Zimbabwe
 
 
+{-| -}
 emptyFlag : String
 emptyFlag =
     "🏳️"
 
 
+{-| -}
 list : List Country
 list =
     [ Afghanistan, Albania, Algeria, AmericanSamoa, Andorra, Angola, Anguilla, Antarctica, AntiguaandBarbuda, Argentina, Armenia, Aruba, Australia, Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belarus, Belgium, Belize, Benin, Bermuda, Bhutan, Bolivia, BosniaandHerzegovina, Botswana, Brazil, BritishIndianOceanTerritory, BritishVirginIslands, Brunei, Bulgaria, BurkinaFaso, Burundi, Cambodia, Cameroon, Canada, CapeVerde, CaymanIslands, CentralAfricanRepublic, Chad, Chile, China, ChristmasIsland, CocosIslands, Colombia, Comoros, CookIslands, CostaRica, Croatia, Cuba, Curacao, Cyprus, CzechRepublic, DemocraticRepublicoftheCongo, Denmark, Djibouti, Dominica, DominicanRepublic, EastTimor, Ecuador, Egypt, ElSalvador, EquatorialGuinea, Eritrea, Estonia, Ethiopia, FalklandIslands, FaroeIslands, Fiji, Finland, France, FrenchPolynesia, Gabon, Gambia, Georgia, Germany, Ghana, Gibraltar, Greece, Greenland, Grenada, Guam, Guatemala, Guernsey, Guinea, GuineaBissau, Guyana, Haiti, Honduras, HongKong, Hungary, Iceland, India, Indonesia, Iran, Iraq, Ireland, IsleofMan, Israel, Italy, IvoryCoast, Jamaica, Japan, Jersey, Jordan, Kazakhstan, Kenya, Kiribati, Kosovo, Kuwait, Kyrgyzstan, Laos, Latvia, Lebanon, Lesotho, Liberia, Libya, Liechtenstein, Lithuania, Luxembourg, Macau, Macedonia, Madagascar, Malawi, Malaysia, Maldives, Mali, Malta, MarshallIslands, Mauritania, Mauritius, Mayotte, Mexico, Micronesia, Moldova, Monaco, Mongolia, Montenegro, Montserrat, Morocco, Mozambique, Myanmar, Namibia, Nauru, Nepal, Netherlands, NewCaledonia, NewZealand, Nicaragua, Niger, Nigeria, Niue, NorthKorea, NorthernMarianaIslands, Norway, Oman, Pakistan, Palau, Palestine, Panama, PapuaNewGuinea, Paraguay, Peru, Philippines, Pitcairn, Poland, Portugal, PuertoRico, Qatar, RepublicoftheCongo, Reunion, Romania, Russia, Rwanda, SaintBarthelemy, SaintHelena, SaintKittsandNevis, SaintLucia, SaintMartin, SaintPierreandMiquelon, SaintVincentandTheGrenadines, Samoa, SanMarino, SaoTomeandPrincipe, SaudiArabia, Senegal, Serbia, Seychelles, SierraLeone, Singapore, SintMaarten, Slovakia, Slovenia, SolomonIslands, Somalia, SouthAfrica, SouthKorea, SouthSudan, Spain, SriLanka, Sudan, Suriname, SvalbardandJanMayen, Swaziland, Sweden, Switzerland, Syria, Taiwan, Tajikistan, Tanzania, Thailand, Togo, Tokelau, Tonga, TrinidadandTobago, Tunisia, Turkey, Turkmenistan, TurksandCaicosIslands, Tuvalu, USVirginIslands, Uganda, Ukraine, UnitedArabEmirates, UnitedKingdom, UnitedStates, Uruguay, Uzbekistan, Vanuatu, Vatican, Venezuela, Vietnam, WallisandFutuna, WesternSahara, Yemen, Zambia, Zimbabwe ]
 
 
+{-| -}
 listHead : Country
 listHead =
     Afghanistan
 
 
+{-| -}
 listTail : Country
 listTail =
     Zimbabwe
 
 
+{-| -}
 fromString : String -> Maybe Country
 fromString str =
     case str of
@@ -1000,6 +999,7 @@ fromString str =
             Nothing
 
 
+{-| -}
 fromCountryTelCode : String -> Maybe Country
 fromCountryTelCode code =
     case code of
@@ -1736,6 +1736,7 @@ fromCountryTelCode code =
             Nothing
 
 
+{-| -}
 toFlag : Country -> String
 toFlag country =
     case country of
@@ -2457,6 +2458,7 @@ toFlag country =
             "🇿🇼"
 
 
+{-| -}
 toString : Country -> String
 toString country =
     case country of
@@ -3178,6 +3180,7 @@ toString country =
             "Zimbabwe"
 
 
+{-| -}
 toCountryTelCode : Country -> String
 toCountryTelCode country =
     case country of

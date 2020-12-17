@@ -309,6 +309,7 @@ visa_monochrome attrs cl size =
     visa_ attrs cl cl size
 
 
+{-| -}
 visa_ : List (Attribute msg) -> Color.Color -> Color.Color -> Int -> Element.Element msg
 visa_ attrs cl1 cl2 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -319,16 +320,19 @@ visa_ attrs cl1 cl2 size =
         ]
 
 
+{-| -}
 americanExpress : List (Attribute msg) -> Int -> Element.Element msg
 americanExpress attrs size =
     americanExpress_ attrs (R10.Color.Utils.fromHex "#007fff") size
 
 
+{-| -}
 americanExpress_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
 americanExpress_monochrome attrs cl size =
     americanExpress_ attrs cl size
 
 
+{-| -}
 americanExpress_ : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
 americanExpress_ attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -347,6 +351,7 @@ americanExpress_ attrs cl size =
 -- brandCodes: ['Visa', 'MasterCard', 'Discover', 'JCB', 'American Express']
 
 
+{-| -}
 cardVisa : List (Attribute msg) -> Int -> Element.Element msg
 cardVisa attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
@@ -357,6 +362,7 @@ cardVisa attrs size =
         size
 
 
+{-| -}
 cardVisa_ : List (Attribute msg) -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
 cardVisa_ attrs cl1 cl2 cl3 size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
@@ -369,6 +375,7 @@ cardVisa_ attrs cl1 cl2 cl3 size =
         ]
 
 
+{-| -}
 cardMasterCard : List (Attribute msg) -> Int -> Element.Element msg
 cardMasterCard attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
@@ -386,6 +393,7 @@ cardMasterCard attrs size =
         ]
 
 
+{-| -}
 cardDiscover : List (Attribute msg) -> Int -> Element.Element msg
 cardDiscover attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
@@ -398,6 +406,7 @@ cardDiscover attrs size =
         ]
 
 
+{-| -}
 cardJCB : List (Attribute msg) -> Int -> Element.Element msg
 cardJCB attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
@@ -424,6 +433,7 @@ cardJCB attrs size =
         ]
 
 
+{-| -}
 cardAmericanExpress : List (Attribute msg) -> Int -> Element.Element msg
 cardAmericanExpress attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons

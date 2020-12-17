@@ -11,6 +11,7 @@ import R10.Color.AttrsBackground
 import R10.Color.Svg
 import R10.FontSize
 import R10.Form
+import R10.FormTypes
 import R10.Language
 import R10.Libu
 import R10.Mode
@@ -51,7 +52,7 @@ init =
             [ R10.Form.entity.field
                 { id = "email"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.email
+                , type_ = R10.FormTypes.TypeText R10.FormTypes.TextEmail
                 , label = "Email"
                 , helperText = Just "Helper text for Email"
                 , requiredLabel = Just "(required)"
@@ -59,7 +60,7 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.commonValidation.email
                             , R10.Form.validation.minLength 5
@@ -71,7 +72,7 @@ init =
             , R10.Form.entity.field
                 { id = "password"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+                , type_ = R10.FormTypes.TypeText R10.FormTypes.TextPasswordNew
                 , label = "Password"
                 , helperText = Just "Helper text for Password"
                 , requiredLabel = Just "(required)"
@@ -79,7 +80,7 @@ init =
                     Just
                         { showPassedValidationMessages = True
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.commonValidation.password
                             , R10.Form.validation.minLength 8
@@ -90,7 +91,7 @@ init =
             , R10.Form.entity.field
                 { id = "password_repeat"
                 , idDom = Nothing
-                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
+                , type_ = R10.FormTypes.TypeText R10.FormTypes.TextPasswordNew
                 , label = "Repeat Password"
                 , helperText = Just "Helper text for Repeat  Password"
                 , requiredLabel = Just "(required)"
@@ -98,7 +99,7 @@ init =
                     Just
                         { showPassedValidationMessages = True
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.Form.validationIcon.noIcon
+                        , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.validation.withMsg
                                 { ok = "Passwords are the same"

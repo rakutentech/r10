@@ -15,7 +15,6 @@ import R10.Card
 import R10.Color.AttrsBackground
 import R10.Color.Svg
 import R10.Form
-import R10.FormComponents.Internal.Validations
 import R10.FormIntrospection
 import R10.FormTypes
 import R10.Paragraph
@@ -51,7 +50,7 @@ init =
     , showPassword = False
     , leadingIcon = Nothing
     , trailingIcon = Nothing
-    , validation = R10.FormComponents.Internal.Validations.NotYetValidated
+    , validation = R10.Form.componentValidation.notYetValidated
     , helperText = """Helper text ([Markdown](https://en.wikipedia.org/wiki/Markdown))"""
     , helperShow = True
     , requiredText = "(Required)"
@@ -142,10 +141,10 @@ validations :
     , n4 : R10.Form.Validation2
     }
 validations =
-    { n1 = R10.FormComponents.Internal.Validations.NotYetValidated
-    , n2 = R10.FormComponents.Internal.Validations.Validated []
-    , n3 = R10.FormComponents.Internal.Validations.Validated [ R10.FormComponents.Internal.Validations.MessageOk "Yeah!" ]
-    , n4 = R10.FormComponents.Internal.Validations.Validated [ R10.FormComponents.Internal.Validations.MessageOk "Yeah!", R10.FormComponents.Internal.Validations.MessageErr "Nope" ]
+    { n1 = R10.Form.componentValidation.notYetValidated
+    , n2 = R10.Form.componentValidation.validated []
+    , n3 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!" ]
+    , n4 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!", R10.Form.validationMessage.error "Nope" ]
     }
 
 

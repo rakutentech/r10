@@ -30,7 +30,6 @@ import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.AttrsFont
-import R10.Color.Internal.Primary
 import R10.Color.Svg
 import R10.Color.Utils
 import R10.Footer
@@ -649,7 +648,7 @@ headerFooterArgs model =
 initTheme : R10.Theme.Theme
 initTheme =
     { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Internal.Primary.BlueSky
+    , primaryColor = R10.Color.primary.blueSky
     }
 
 

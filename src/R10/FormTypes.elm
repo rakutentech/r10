@@ -64,12 +64,14 @@ type TypeMulti
 --
 
 
+{-| -}
 type alias FieldOption =
     { value : String
     , label : String
     }
 
 
+{-| -}
 type FieldType
     = TypeText TypeText
     | TypeSingle TypeSingle (List FieldOption)
@@ -88,6 +90,7 @@ type FieldType
 --
 
 
+{-| -}
 inputField :
     { binaryCheckbox : FieldType
     , binarySwitch : FieldType
@@ -133,6 +136,7 @@ inputField =
 --
 
 
+{-| -}
 type ValidationIcon
     = NoIcon
     | ClearOrCheck -- clear aka cross

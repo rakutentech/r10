@@ -186,7 +186,7 @@ Thanks to Evan Czaplicki, Matthew Griffith, Richard Feldman, the folks at NoRedI
 
 These are real-life fully working code samples that render these views:
 
-![Examples](https://r10.netlify.app/images/examples.png)
+![Examples](https://r10.netlify.app/images/examples-600.png)
 
 The primary color and the light/dark mode can be changed through the `theme` definitions. For example:
 

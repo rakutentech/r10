@@ -4,7 +4,7 @@
 
 **R10** is a library of interactive building blocks written in [Elm](https://elm-lang.org/) and [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) that we use at [Rakuten](https://global.rakuten.com/) for creating user interfaces.
 
-![Examples](https://r10.netlify.app/images/examples.png)
+![Examples](https://r10.netlify.app/images/examples-600.png)
 
 ### Links
 
@@ -90,7 +90,7 @@ Thanks to Evan Czaplicki, Matthew Griffith, Richard Feldman, the folks at NoRedI
 
 These are real-life fully working code samples that render these views:
 
-![Examples](https://r10.netlify.app/images/examples.png)
+![Examples](https://r10.netlify.app/images/examples-600.png)
 
 The primary color and the light/dark mode can be changed through the `theme` definitions. For example:
 

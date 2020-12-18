@@ -17,7 +17,7 @@ module R10.Form exposing
     , commonValidation
     , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
     , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
-    , Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, entitiesValidationOutcomes
+    , Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, entitiesValidationOutcomes, onLoseFocus
     )
 
 {-| Useful things to build a form .
@@ -126,7 +126,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 @docs label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
 
-@docs Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, entitiesValidationOutcomes
+@docs Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, entitiesValidationOutcomes, onLoseFocus
 
 -}
 
@@ -1029,6 +1029,17 @@ componentValidation =
 onFocusOut : String -> msg -> Json.Decode.Decoder msg
 onFocusOut =
     R10.FormComponents.Internal.Utils.FocusOut.onFocusOut
+
+
+{-| -}
+onLoseFocus : (Key -> FieldConf -> any) -> Msg -> Maybe any
+onLoseFocus func msg_ =
+    case msg_ of
+        R10.Form.Internal.Msg.LoseFocus key conf ->
+            Just (func key conf)
+
+        _ ->
+            Nothing
 
 
 {-| -}

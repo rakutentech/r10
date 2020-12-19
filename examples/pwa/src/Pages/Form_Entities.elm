@@ -28,15 +28,11 @@ init =
 
 type Msg
     = FormMsg R10.Form.Msg
-    | DoNothing
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        DoNothing ->
-            model
-
         FormMsg formMsg ->
             let
                 ( newFormState, _ ) =
@@ -69,7 +65,7 @@ entities =
 
 entitiesForTabs : List ( String, R10.Form.Entity )
 entitiesForTabs =
-    [ ( "Tabxx 1", inputFieldConf 1 ), ( "Tabxx 2", inputFieldConf 2 ), ( "Tabxx 3", inputFieldConf 3 ) ]
+    [ ( "Tab 1", inputFieldConf 1 ), ( "Tab 2", inputFieldConf 2 ), ( "Tab 3", inputFieldConf 3 ) ]
 
 
 helperForTitles : { helperText : Maybe a1, title : String, validationSpecs : Maybe a }
@@ -88,6 +84,7 @@ section entityAsString form theme =
 view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
+        state : R10.Form.State
         state =
             model.formState
     in

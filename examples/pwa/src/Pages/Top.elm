@@ -17,11 +17,7 @@ import R10.Theme
 
 
 view : R10.Theme.Theme -> R10.Language.Language -> Attribute msg -> List (Element msg) -> (String -> msg) -> Element msg
-view theme language heroBackgroundColor content onClick =
-    let
-        columnAttrs =
-            [ padding 20 ]
-    in
+view theme language heroBackgroundColor content _ =
     column [ width fill ] <|
         [ column
             [ width fill

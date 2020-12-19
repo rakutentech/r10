@@ -7,9 +7,8 @@ module Pages.Form_Example_PhoneSelector exposing
     )
 
 import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
 import R10.Form
+import R10.FormTypes
 import R10.Theme
 
 
@@ -35,22 +34,6 @@ init =
 type Msg
     = OnPhoneMsg1 R10.Form.PhoneMsg
     | OnPhoneMsg2 R10.Form.PhoneMsg
-    | RotateValidation
-    | ToggleDisabled
-
-
-validations :
-    { n1 : R10.Form.Validation2
-    , n2 : R10.Form.Validation2
-    , n3 : R10.Form.Validation2
-    , n4 : R10.Form.Validation2
-    }
-validations =
-    { n1 = R10.Form.componentValidation.notYetValidated
-    , n2 = R10.Form.componentValidation.validated []
-    , n3 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!" ]
-    , n4 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!", R10.Form.validationMessage.error "Nope" ]
-    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -70,40 +53,11 @@ update msg model =
             in
             ( { model | phone2 = selectState }, Cmd.map OnPhoneMsg2 selectCmd )
 
-        RotateValidation ->
-            ( { model
-                | validation =
-                    if model.validation == validations.n1 then
-                        validations.n2
-
-                    else if model.validation == validations.n2 then
-                        validations.n3
-
-                    else if model.validation == validations.n3 then
-                        validations.n4
-
-                    else
-                        validations.n1
-              }
-            , Cmd.none
-            )
-
-        ToggleDisabled ->
-            ( { model | disabled = not model.disabled }, Cmd.none )
-
 
 view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
-        attrs =
-            [ padding 0
-            , Border.width 0
-            , backgroundColor
-            ]
-
-        backgroundColor =
-            Background.color <| rgba 0.9 1 0.2 0.7
-
+        palette : R10.FormTypes.Palette
         palette =
             R10.Form.themeToPalette theme
     in

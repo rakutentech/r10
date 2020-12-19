@@ -62,14 +62,17 @@ validationToStr validation =
 viewChecboxTable : R10.Theme.Theme -> List (Element Msg)
 viewChecboxTable theme =
     let
+        attrs : List (Attribute msg)
         attrs =
             [ Border.color <| rgba 0 0 0 0.1 ]
 
+        attrsTable : List (Attribute msg)
         attrsTable =
             attrs
                 ++ [ Border.widthEach { bottom = 0, left = 1, right = 0, top = 1 }
                    ]
 
+        attrsCell : List (Attribute msg)
         attrsCell =
             attrs
                 ++ [ Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
@@ -79,6 +82,7 @@ viewChecboxTable theme =
                    , Font.center
                    ]
 
+        attrsCellHeader : List (Attribute msg)
         attrsCellHeader =
             attrsCell
                 ++ [ Font.bold
@@ -115,15 +119,19 @@ viewChecboxTable theme =
             , el attrsCellHeader <| text "Disabled"
             ]
             :: (let
+                    disabled : List Bool
                     disabled =
                         [ True, False ]
 
+                    focused : List Bool
                     focused =
                         [ True, False ]
 
+                    value : List Bool
                     value =
                         [ True, False ]
 
+                    validation : List R10.Form.Validation2
                     validation =
                         [ R10.Form.componentValidation.notYetValidated
                         , R10.Form.componentValidation.validated
@@ -136,6 +144,7 @@ viewChecboxTable theme =
                             ]
                         ]
 
+                    result : List (List (List (List (Element Msg))))
                     result =
                         List.map
                             (\focused_ ->
@@ -189,20 +198,24 @@ viewChecboxTable theme =
 viewJoinedTable : R10.Theme.Theme -> List (Element Msg)
 viewJoinedTable theme =
     let
+        attrs : List (Attribute msg)
         attrs =
             [ Border.color <| rgba 0 0 0 0.1 ]
 
+        attrsTable : List (Attribute msg)
         attrsTable =
             attrs
                 ++ [ Border.widthEach { bottom = 0, left = 1, right = 0, top = 1 }
                    , width fill
                    ]
 
+        attrsRow : List (Attribute msg)
         attrsRow =
             attrs
                 ++ [ width fill
                    ]
 
+        attrsElCell : Int -> List (Attribute msg)
         attrsElCell portion =
             attrs
                 ++ [ Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
@@ -213,12 +226,14 @@ viewJoinedTable theme =
                    , centerY
                    ]
 
+        attrsElCellHeader : Int -> List (Attribute msg)
         attrsElCellHeader portion =
             attrsElCell portion
                 ++ [ Font.bold
                    , Background.color <| rgba 0 0 0 0.1
                    ]
 
+        attrsPropCell : List (Attribute msg)
         attrsPropCell =
             attrs
                 ++ [ Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
@@ -228,6 +243,7 @@ viewJoinedTable theme =
                    , Font.center
                    ]
 
+        attrsPropCellHeader : List (Attribute msg)
         attrsPropCellHeader =
             attrsPropCell
                 ++ [ Font.bold
@@ -248,15 +264,19 @@ viewJoinedTable theme =
             , el attrsPropCellHeader <| text "Disabled"
             ]
             :: (let
+                    disabled : List Bool
                     disabled =
                         [ True, False ]
 
+                    focused : List Bool
                     focused =
                         [ True, False ]
 
+                    value : List Bool
                     value =
                         [ True, False ]
 
+                    validation : List R10.Form.Validation2
                     validation =
                         [ R10.Form.componentValidation.notYetValidated
                         , R10.Form.componentValidation.validated
@@ -269,6 +289,7 @@ viewJoinedTable theme =
                             ]
                         ]
 
+                    result : List (List (List (List (Element Msg))))
                     result =
                         List.map
                             (\focused_ ->
@@ -404,14 +425,17 @@ viewJoinedTable theme =
 viewTextTable : R10.Theme.Theme -> List (Element Msg)
 viewTextTable theme =
     let
+        attrs : List (Attribute msg)
         attrs =
             [ Border.color <| rgba 0 0 0 0.1 ]
 
+        attrsTable : List (Attribute msg)
         attrsTable =
             attrs
                 ++ [ Border.widthEach { bottom = 0, left = 1, right = 0, top = 1 }
                    ]
 
+        attrsCell : List (Attribute msg)
         attrsCell =
             attrs
                 ++ [ Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
@@ -421,6 +445,7 @@ viewTextTable theme =
                    , Font.center
                    ]
 
+        attrsCellHeader : List (Attribute msg)
         attrsCellHeader =
             attrsCell
                 ++ [ Font.bold
@@ -463,9 +488,11 @@ viewTextTable theme =
             , el attrsCellHeader <| text "Disabled"
             ]
             :: (let
+                    focused : List Bool
                     focused =
                         [ True, False ]
 
+                    validation : List R10.Form.Validation2
                     validation =
                         [ R10.Form.componentValidation.notYetValidated
                         , R10.Form.componentValidation.validated
@@ -478,12 +505,15 @@ viewTextTable theme =
                             ]
                         ]
 
+                    displayValidation : List Bool
                     displayValidation =
                         [ True, False ]
 
+                    disabled : List Bool
                     disabled =
                         [ True, False ]
 
+                    result : List (List (List (List (Element Msg))))
                     result =
                         List.map
                             (\focused_ ->
@@ -569,7 +599,7 @@ viewTextTable theme =
 
 
 view : Model -> R10.Theme.Theme -> List (Element Msg)
-view model theme =
+view _ theme =
     [ column
         [ width fill
         ]

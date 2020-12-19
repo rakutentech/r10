@@ -44,6 +44,7 @@ type alias Model =
 init : { localStorage : Dict.Dict String String } -> Model
 init shared =
     let
+        paramsDict : Dict.Dict String String
         paramsDict =
             shared.localStorage
 
@@ -59,10 +60,12 @@ init shared =
                 ( [], [], 0 )
                 (List.repeat formQuantity ())
 
+        formState : Array.Array R10.Form.State
         formState =
             Array.fromList <|
                 List.reverse formsState
 
+        initHelper : Int -> R10.Form.Form
         initHelper index =
             { conf = Maybe.withDefault R10.Form.initConf <| Maybe.map .conf <| Array.get index formsInit
             , state = Maybe.withDefault R10.Form.initState <| Array.get index formState
@@ -340,6 +343,7 @@ update msg model =
 
         ChangeState index string ->
             let
+                form : R10.Form.Form
                 form =
                     getForm index model.forms
 
@@ -361,9 +365,11 @@ update msg model =
 
         ChangeConf index string ->
             let
+                form : R10.Form.Form
                 form =
                     getForm index model.forms
 
+                formState : R10.Form.State
                 formState =
                     form.state
 
@@ -375,12 +381,14 @@ update msg model =
                         Err err ->
                             ( form.conf, Json.Decode.errorToString err )
 
+                allKeys : List ( R10.Form.Key, Maybe R10.Form.ValidationSpecs )
                 allKeys =
                     R10.Form.allValidationKeysMaker newFormConf form.state
 
                 -- Re-running existing validations because if the validations rules
                 -- changed in the configuration would only be picked up after changing
                 -- a related input field.
+                newFieldsState : Dict.Dict R10.Form.KeyAsString R10.Form.FieldState
                 newFieldsState =
                     R10.Form.runOnlyExistingValidations allKeys form.state form.state.fieldsState
             in
@@ -400,11 +408,13 @@ update msg model =
 
         Reset index ->
             let
+                newForm : R10.Form.Form
                 newForm =
                     { conf = .conf (getForm index model.forms)
                     , state = R10.Form.initState
                     }
 
+                initStateAsString : String
                 initStateAsString =
                     R10.Form.stateToString R10.Form.initState
             in
@@ -419,6 +429,7 @@ update msg model =
 
         ResetAll ->
             let
+                initStateAsString : String
                 initStateAsString =
                     R10.Form.stateToString R10.Form.initState
             in
@@ -442,6 +453,7 @@ update msg model =
 
         MsgForm index formMsg ->
             let
+                form : R10.Form.Form
                 form =
                     getForm index model.forms
 
@@ -499,6 +511,7 @@ secondaryTitle =
 viewRow : Int -> Model -> R10.Theme.Theme -> List (Element Msg)
 viewRow index model theme =
     let
+        multilineAttrs : List (Attribute msg)
         multilineAttrs =
             [ width fill
             , height fill
@@ -513,12 +526,15 @@ viewRow index model theme =
             , htmlAttribute <| Html.Attributes.style "font-family" "monospace"
             ]
 
+        formDesc : { code : String, conf : List R10.Form.Entity, title : String }
         formDesc =
             getFormInit index
 
+        msgTransformer : R10.Form.Msg -> Msg
         msgTransformer =
             MsgForm index
 
+        form : R10.Form.Form
         form =
             getForm index model.forms
     in
@@ -530,9 +546,7 @@ viewRow index model theme =
                 (R10.Form.viewWithPalette form msgTransformer (R10.Form.themeToPalette theme)
                     ++ [ if R10.Form.shouldShowTheValidationOverview form.state then
                             let
-                                allKeys_ =
-                                    R10.Form.allValidationKeysMaker form.conf form.state
-
+                                allErrors : List ( R10.Form.Key, Maybe R10.Form.ValidationSpecs )
                                 allErrors =
                                     -- R10.Form.entitiesWithErrors allKeys_ form.state.fieldsState
                                     R10.Form.entitiesWithErrors form.conf form.state
@@ -611,6 +625,7 @@ viewRow index model theme =
 viewError : Int -> Array.Array String -> Element msg
 viewError index errors =
     let
+        error : String
         error =
             Maybe.withDefault "" <| Array.get index errors
     in

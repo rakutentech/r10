@@ -63,12 +63,14 @@ operations =
 operationsTable : R10.Theme.Theme -> R10.Form.State -> Element Msg
 operationsTable theme formState =
     let
+        cellAttrs : List (Attribute msg)
         cellAttrs =
             [ Border.widthEach { bottom = 1, left = 1, right = 0, top = 0 }
             , padding 10
             , height fill
             ]
 
+        headerAttrs : List (Attribute msg)
         headerAttrs =
             [ Border.widthEach { bottom = 1, left = 1, right = 0, top = 0 }
             , Font.bold
@@ -77,6 +79,7 @@ operationsTable theme formState =
             , Font.center
             ]
 
+        tableAttrs : List (Attribute msg)
         tableAttrs =
             [ Border.widthEach { bottom = 0, left = 0, right = 1, top = 1 }
             , width fill
@@ -133,6 +136,7 @@ checkbox palette state msgTransformer index =
 view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
+        checked : Dict.Dict String R10.Form.FieldState
         checked =
             Dict.filter (\_ value -> R10.Form.stringToBool value.value) model.formState.fieldsState
     in

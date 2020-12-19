@@ -14,7 +14,6 @@ import R10.Button
 import R10.Counter
 import R10.Libu
 import R10.Theme
-import Time
 
 
 type alias Model =
@@ -30,7 +29,7 @@ init =
 
 
 type Msg
-    = OnAnimationFrame Time.Posix
+    = OnAnimationFrame
     | GoTo Int
     | Add Int
 
@@ -38,7 +37,7 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        OnAnimationFrame _ ->
+        OnAnimationFrame ->
             { model | counter = R10.Counter.update model.counter }
 
         GoTo value ->
@@ -89,7 +88,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch <|
         if R10.Counter.areMoving [ model.counter ] then
-            [ Browser.Events.onAnimationFrame OnAnimationFrame ]
+            [ Browser.Events.onAnimationFrame (\_ -> OnAnimationFrame) ]
 
         else
             []

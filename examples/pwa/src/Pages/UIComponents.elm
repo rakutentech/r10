@@ -15,7 +15,6 @@ import Html.Attributes
 import Markdown
 import R10.Button
 import R10.Card
-import R10.Color
 import R10.Color.AttrsBackground
 import R10.Form
 import R10.FormTypes
@@ -51,28 +50,6 @@ update msg model =
                     R10.Form.update formMsg model.formState
             in
             { model | formState = newFormState }
-
-
-codeAttrs : List (Attribute msg)
-codeAttrs =
-    [ Background.color <| rgb 0.95 0.95 0.95
-    , Font.color <| rgb 0.3 0.3 0.3
-    , padding 20
-    , width <| fillPortion 3
-    , scrollbarX
-    , Border.rounded 5
-    ]
-
-
-exampleAttrs : List (Attribute msg)
-exampleAttrs =
-    [ width <| fillPortion 2
-    , alignTop
-    , Border.rounded 5
-    , Border.color <| rgb 0.8 0.8 0.8
-    , padding 30
-    , height fill
-    ]
 
 
 rowAttrs : List (Attribute msg)
@@ -113,11 +90,6 @@ formView theme formState msgMapper =
         }
         msgMapper
         theme
-
-
-subTitleAttrs : List (Attr () msg)
-subTitleAttrs =
-    [ Font.size 20, Font.bold, paddingXY 0 20 ]
 
 
 titleAttrs : List (Attribute msg)
@@ -179,24 +151,6 @@ section title_ content =
 view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
-        mode : R10.Mode.Mode
-        mode =
-            case R10.Form.getFieldValueAsBool "mode" model.formState of
-                Just True ->
-                    R10.Mode.fromString "dark"
-
-                _ ->
-                    R10.Mode.fromString "light"
-
-        primaryColor : R10.Color.Primary
-        primaryColor =
-            case R10.Form.getFieldValueAsBool "primaryColor" model.formState of
-                Just True ->
-                    R10.Color.primary.blue
-
-                _ ->
-                    R10.Color.primary.pink
-
         widthMode : Attribute msg
         widthMode =
             case R10.Form.getFieldValueAsBool "width" model.formState of

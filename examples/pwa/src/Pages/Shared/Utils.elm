@@ -1,7 +1,4 @@
-module Pages.Shared.Utils exposing
-    ( maxWidth
-    , maxWidthPx
-    )
+module Pages.Shared.Utils exposing (maxWidth)
 
 import Element exposing (..)
 

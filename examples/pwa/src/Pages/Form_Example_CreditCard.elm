@@ -128,6 +128,7 @@ update msg model =
 viewCreditCard : R10.Theme.Theme -> R10.Form.State -> Element msg
 viewCreditCard theme formState =
     let
+        logo : { height : number, src : String }
         logo =
             logoCreaditCard formState
     in
@@ -222,6 +223,7 @@ view model theme =
 logoCreaditCard : R10.Form.State -> { height : number, src : String }
 logoCreaditCard formState =
     let
+        counter : Int
         counter =
             formState
                 |> R10.Form.getFieldValue "cardNumber"
@@ -325,9 +327,11 @@ logoVisa : String
 logoVisa =
     let
         -- Original colors: color1 = 00579f, color2= faa61a
+        color1 : String
         color1 =
             "fff"
 
+        color2 : String
         color2 =
             "fff"
     in
@@ -337,6 +341,7 @@ logoVisa =
 logoMasterCard : String
 logoMasterCard =
     let
+        color : String
         color =
             "fff"
     in
@@ -346,6 +351,7 @@ logoMasterCard =
 logoAmericanExpress : String
 logoAmericanExpress =
     let
+        color : String
         color =
             -- "0277a6"
             "fff"

@@ -1,6 +1,7 @@
 module Pages.TableExample exposing
     ( Model
     , Msg
+    , TableRecord
     , init
     , update
     , view
@@ -30,16 +31,6 @@ import R10.Table.Internal.Style
 import R10.Table.Internal.Types
 import R10.Table.Internal.Update
 import R10.Theme
-
-
-type Theme
-    = DarkTheme
-    | LightTheme
-
-
-defaultTheme : Theme
-defaultTheme =
-    LightTheme
 
 
 type alias TableRecord =
@@ -73,18 +64,18 @@ tableData =
         ]
 
 
-actionColumn : String -> List (Attribute Msg) -> Theme -> R10.Table.Column TableRecord Msg
-actionColumn columnName headerAttrs theme =
+actionColumn : String -> List (Attribute Msg) -> R10.Table.Column TableRecord Msg
+actionColumn columnName headerAttrs =
     R10.Table.columnWithViews
         { name = columnName
-        , viewCell = always <| viewActionRow theme
+        , viewCell = always <| viewActionRow
         , viewHeader = R10.Table.Internal.Header.simpleHeader headerAttrs
         , maybeToCmp = Nothing
         }
 
 
-viewActionRow : Theme -> Maybe TableRecord -> Element Msg
-viewActionRow theme maybeRecord =
+viewActionRow : Maybe TableRecord -> Element Msg
+viewActionRow maybeRecord =
     -- todo create Icon button
     -- todo move accordion button to Components
     row
@@ -136,8 +127,8 @@ accordionExpandedHeight =
     120
 
 
-viewAccordionContent : Theme -> TableRecord -> Element msg
-viewAccordionContent theme record =
+viewAccordionContent : TableRecord -> Element msg
+viewAccordionContent record =
     el [ width fill, height fill, Background.color grayLightest, paddingXY 16 12 ] <|
         el
             (subTitle
@@ -180,18 +171,18 @@ encodeColor color =
 -- color column
 
 
-colorColumn : Theme -> String -> (TableRecord -> String) -> Maybe (R10.Table.Internal.Config.ColumnAttrs Msg) -> R10.Table.Column TableRecord Msg
-colorColumn theme columnName toStr _ =
+colorColumn : String -> (TableRecord -> String) -> Maybe (R10.Table.Internal.Config.ColumnAttrs Msg) -> R10.Table.Column TableRecord Msg
+colorColumn columnName toStr _ =
     R10.Table.columnWithViews
         { name = columnName
-        , viewCell = always <| viewColorColumn theme
+        , viewCell = always <| viewColorColumn
         , viewHeader = R10.Table.Internal.Header.simpleHeader []
         , maybeToCmp = Just toStr
         }
 
 
-viewColorColumn : Theme -> Maybe TableRecord -> Element Msg
-viewColorColumn theme maybeRecord =
+viewColorColumn : Maybe TableRecord -> Element Msg
+viewColorColumn maybeRecord =
     row
         (R10.Table.Internal.Style.defaultCellAttrs ++ [ spacing 8 ])
         (case maybeRecord of
@@ -257,10 +248,10 @@ view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
         colorAsString : TableRecord -> String
-        colorAsString record =
+        colorAsString _ =
             recordColor
 
-        -- tableSimple
+        tableSimple : Element Msg
         tableSimple =
             R10.Table.view
                 (R10.Form.themeToPalette theme)
@@ -277,6 +268,7 @@ view model theme =
                 model.table1State
                 (Dict.values model.tableRecords)
 
+        tableWithAccordion : Element Msg
         tableWithAccordion =
             R10.Table.view
                 (R10.Form.themeToPalette theme)
@@ -287,11 +279,11 @@ view model theme =
                         [ R10.Table.columnSimple { name = "Id", toStr = .id }
                         , R10.Table.columnSimple { name = "Name", toStr = .name }
                         , R10.Table.columnSimple { name = "Color", toStr = colorAsString }
-                        , actionColumn "" [ width <| px 56 ] defaultTheme
+                        , actionColumn "" [ width <| px 56 ]
                         ]
                     }
                     |> R10.Table.configWithAccordionRow
-                        (Maybe.map (viewAccordionContent defaultTheme) >> Maybe.withDefault none)
+                        (Maybe.map viewAccordionContent >> Maybe.withDefault none)
                         accordionExpandedHeight
                         (Maybe.map .isAccordionExpanded >> Maybe.withDefault False)
                         (always False)
@@ -299,7 +291,7 @@ view model theme =
                 model.table1State
                 (Dict.values model.tableRecords)
 
-        -- tableWithPaginationAndFilters
+        tableWithPaginationAndFilters : Element Msg
         tableWithPaginationAndFilters =
             R10.Table.view
                 (R10.Form.themeToPalette theme)
@@ -309,7 +301,7 @@ view model theme =
                     , columns =
                         [ R10.Table.columnWithAttrs { name = "Id", toStr = .id, maybeToCmp = Nothing, maybeAttrs = Just { header = [ width <| px 100 ], cell = [ width <| px 100 ] } }
                         , R10.Table.columnSimple { name = "Name", toStr = .name }
-                        , colorColumn defaultTheme "Color" colorAsString Nothing
+                        , colorColumn "Color" colorAsString Nothing
                         ]
                     , pagination = Just { lengthOptions = [ 1, 2, 3 ] }
                     , bodyAttrs = []
@@ -333,7 +325,7 @@ view model theme =
                 model.table2State
                 (Dict.values model.tableRecords)
 
-        -- tableWithCustomStyles
+        tableWithCustomStyles : Element Msg
         tableWithCustomStyles =
             R10.Table.view
                 (R10.Form.themeToPalette theme)
@@ -388,10 +380,8 @@ view model theme =
                 (Dict.values model.tableRecords)
     in
     [ column [ width fill, height fill, spacing 30 ]
-        [ column [ width fill ]
-            [ el subTitle <| text "Data"
-            , paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] <| "```\n" ++ (Json.Encode.encode 4 <| tableRecordsEncoder model.tableRecords) ++ "```" ]
-            ]
+        [ el subTitle <| text "Data"
+        , paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] <| "```\n" ++ (Json.Encode.encode 4 <| tableRecordsEncoder model.tableRecords) ++ "```" ]
         , el subTitle <| text "Table simple"
         , column (R10.Card.normal theme) [ tableSimple ]
         , row [ width fill ]
@@ -436,11 +426,6 @@ subTitle =
 recordColor : String
 recordColor =
     "#ff00ff"
-
-
-buttonOutlined : List (Attribute msg)
-buttonOutlined =
-    [ Border.width 1 ]
 
 
 colorPrimary : Color

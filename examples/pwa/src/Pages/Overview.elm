@@ -25,7 +25,6 @@ import R10.Color.Utils
 import R10.FontSize
 import R10.Form
 import R10.FormTypes
-import R10.Language
 import R10.Libu
 import R10.Link
 import R10.Mode
@@ -56,16 +55,6 @@ update msg model =
             { model | formState = Tuple.first <| R10.Form.update msgForm model.formState }
 
 
-langauges : List R10.Language.Language
-langauges =
-    [ R10.Language.EN_US
-    , R10.Language.JA_JP
-    , R10.Language.ZH_TW
-    , R10.Language.Key
-    , R10.Language.Lollipop
-    ]
-
-
 titleSection : R10.Theme.Theme -> String -> Element msg
 titleSection theme string =
     R10.Paragraph.xxlarge
@@ -78,7 +67,7 @@ titleSection theme string =
 
 
 titleSubSection : R10.Theme.Theme -> String -> Element msg
-titleSubSection theme string =
+titleSubSection _ string =
     R10.Paragraph.xlarge [] [ text string ]
 
 

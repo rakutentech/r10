@@ -14,9 +14,11 @@ import Starter.SnippetJavascript
 index : Starter.Flags.Flags -> Html msg
 index flags =
     let
+        relative : String
         relative =
             Starter.Flags.toRelative flags
 
+        fileNames : Starter.FileNames.FileNames
         fileNames =
             Starter.FileNames.fileNames flags.version flags.commit
     in

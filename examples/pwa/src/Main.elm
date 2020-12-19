@@ -1,4 +1,4 @@
-port module Main exposing (conf, main)
+port module Main exposing (Flags, Model, Msg, Position, Route, conf, main)
 
 import Browser
 import Browser.Events
@@ -142,6 +142,7 @@ main =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
+        debuggingMode : Bool
         debuggingMode =
             -- flags.locationHref
             --     |> Url.fromString
@@ -149,9 +150,11 @@ init flags =
             --     |> Maybe.withDefault False
             False
 
+        route : Route
         route =
             fromLocationHref flags.locationHref
 
+        header : R10.Header.Header
         header =
             R10.Header.init
     in
@@ -272,9 +275,11 @@ update msg model =
     case msg of
         ChangePrimaryColor primaryColor ->
             let
+                theme : R10.Theme.Theme
                 theme =
                     model.theme
 
+                newTheme : R10.Theme.Theme
                 newTheme =
                     { theme | primaryColor = primaryColor }
             in
@@ -282,9 +287,11 @@ update msg model =
 
         ToggleMode ->
             let
+                theme : R10.Theme.Theme
                 theme =
                     model.theme
 
+                newTheme : R10.Theme.Theme
                 newTheme =
                     { theme | mode = R10.Mode.toggle theme.mode }
             in
@@ -353,6 +360,7 @@ update msg model =
 
         Msg_UIComponents pageMsg ->
             let
+                modelPageExample : Pages.UIComponents.Model
                 modelPageExample =
                     Pages.UIComponents.update pageMsg model.pageUIComponents
             in
@@ -360,6 +368,7 @@ update msg model =
 
         Msg_Counter pageMsg ->
             let
+                modelPageExample : Pages.Counter.Model
                 modelPageExample =
                     Pages.Counter.update pageMsg model.pageCounter
             in
@@ -367,6 +376,7 @@ update msg model =
 
         Msg_PagesTable pageMsg ->
             let
+                modelPageExample : Pages.TableExample.Model
                 modelPageExample =
                     Pages.TableExample.update pageMsg model.pageTableExample
             in
@@ -419,6 +429,7 @@ port onChangeIsTop : (Bool -> msg) -> Sub msg
 view : Model -> Html.Html Msg
 view model =
     let
+        language : R10.Language.Language
         language =
             routeToLanguage model.route
     in
@@ -456,11 +467,13 @@ view model =
                         , viewFooter model
                         ]
 
-                Route_Overview lang ->
+                Route_Overview _ ->
                     let
+                        mouse : Position
                         mouse =
                             model.mouse
 
+                        mouseCorrected : Position
                         mouseCorrected =
                             -- This correction depend on the vertical position
                             -- of the panda in the page
@@ -468,46 +481,46 @@ view model =
                     in
                     mainLayout model (List.map (map Msg_Overview) (Pages.Overview.view model.pageOverview model.theme mouseCorrected model.windowSize))
 
-                Route_Form_Entities lang ->
+                Route_Form_Entities _ ->
                     mainLayout model (List.map (map Msg_Form_Entities) (Pages.Form_Entities.view model.pageForm_Entities model.theme))
 
-                Route_Form_Example_CreditCard lang ->
+                Route_Form_Example_CreditCard _ ->
                     mainLayout model (List.map (map Msg_Form_Example_CreditCard) (Pages.Form_Example_CreditCard.view model.pageForm_Example_CreditCard model.theme))
 
-                Route_Form_Boilerplate lang ->
+                Route_Form_Boilerplate _ ->
                     mainLayout model (List.map (map Msg_Form_Boilerplate) (Pages.Form_Boilerplate.view model.pageForm_Boilerplate model.theme))
 
-                Route_Form_Example_Table lang ->
+                Route_Form_Example_Table _ ->
                     mainLayout model (List.map (map Msg_Form_Example_Table) (Pages.Form_Example_Table.view model.pageForm_Example_Table model.theme))
 
-                Route_Form_Example_PhoneSelector lang ->
+                Route_Form_Example_PhoneSelector _ ->
                     mainLayout model (List.map (map Msg_Form_Example_PhoneSelector) (Pages.Form_Example_PhoneSelector.view model.pageForm_Example_PhoneSelector model.theme))
 
-                Route_Form_FieldType_Single lang ->
+                Route_Form_FieldType_Single _ ->
                     mainLayout model (List.map (map Msg_Form_FieldType_Single) (Pages.Form_FieldType_Single.view model.pageForm_FieldType_Single model.theme))
 
-                Route_Form_States lang ->
+                Route_Form_States _ ->
                     mainLayout model (List.map (map Msg_Form_States) (Pages.Form_States.view model.pageForm_States model.theme))
 
-                Route_Form_FieldType_Text lang ->
+                Route_Form_FieldType_Text _ ->
                     mainLayout model (List.map (map Msg_Form_FieldType_Text) (Pages.Form_FieldType_Text.view model.pageForm_FieldType_Text model.theme))
 
-                Route_Form_FieldType_Binary lang ->
+                Route_Form_FieldType_Binary _ ->
                     mainLayout model (List.map (map Msg_Form_FieldType_Binary) (Pages.Form_FieldType_Binary.view model.pageForm_FieldType_Binary model.theme))
 
-                Route_Form_Introduction lang ->
+                Route_Form_Introduction _ ->
                     mainLayout model (List.map (map Msg_Form_Introduction) (Pages.Form_Introduction.view model.pageForm_Introduction model.theme))
 
-                Route_UIComponents lang ->
+                Route_UIComponents _ ->
                     mainLayout model (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageUIComponents model.theme))
 
-                Route_Counter lang ->
+                Route_Counter _ ->
                     mainLayout model (List.map (map Msg_Counter) (Pages.Counter.view model.pageCounter model.theme))
 
-                Route_TableExample lang ->
+                Route_TableExample _ ->
                     mainLayout model (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTableExample model.theme))
 
-                Route_NotFound lang ->
+                Route_NotFound _ ->
                     mainLayout model <|
                         [ row [ centerX, spacing 50 ]
                             [ el [] <|
@@ -545,10 +558,6 @@ transitionOpacity =
 
 viewHeader : Model -> Element Msg
 viewHeader model =
-    let
-        language =
-            routeToLanguage model.route
-    in
     R10.Header.view model.header (headerFooterArgs model)
 
 
@@ -566,7 +575,7 @@ colorsMenu : R10.Theme.Theme -> Element Msg
 colorsMenu theme =
     row [ spacing 1, centerX ] <|
         List.map
-            (\{ color, name, type_ } ->
+            (\{ type_ } ->
                 R10.Libu.view
                     [ width shrink
                     , padding 0
@@ -672,9 +681,11 @@ mainLayout :
     -> Element Msg
 mainLayout model content =
     let
+        title : R10.Language.Translations
         title =
             .title (routeDetails model.route)
 
+        fileName : String
         fileName =
             .fileName (routeDetails model.route)
     in
@@ -708,9 +719,7 @@ links currentRoute currentLanguage =
     List.map
         (\route ->
             let
-                url =
-                    routeToPathWithoutLanguage (route currentLanguage)
-
+                label : Element msg
                 label =
                     text <| R10.I18n.t currentLanguage (.title (routeDetails (route currentLanguage)))
             in
@@ -767,6 +776,7 @@ cssSkipLink =
 cssMarkdown : R10.Theme.Theme -> String
 cssMarkdown theme =
     let
+        codeBorder : String
         codeBorder =
             case theme.mode of
                 R10.Mode.Dark ->
@@ -955,6 +965,7 @@ type Route
 listForSSR : List String
 listForSSR =
     let
+        routes : List Route
         routes =
             Route_Top R10.Language.EN_US :: List.map (\route -> route R10.Language.EN_US) routesList
     in
@@ -1321,6 +1332,7 @@ routeToPathWithoutLanguage route =
 routeToPath : R10.Language.Language -> Route -> String
 routeToPath language route =
     let
+        lang : List String
         lang =
             if language == languageDefault then
                 []
@@ -1328,6 +1340,7 @@ routeToPath language route =
             else
                 [ R10.Language.toStringShort language ]
 
+        path : String
         path =
             String.join "/" <|
                 case route of

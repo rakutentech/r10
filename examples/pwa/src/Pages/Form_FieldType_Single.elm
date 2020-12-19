@@ -1,5 +1,6 @@
 module Pages.Form_FieldType_Single exposing
-    ( Model
+    ( Icon
+    , Model
     , Msg
     , init
     , update
@@ -261,6 +262,7 @@ update msg model =
 
         PlayPauseClick icon ->
             let
+                nextIcon : Maybe Icon
                 nextIcon =
                     case icon of
                         Play ->
@@ -298,6 +300,7 @@ attrsYellowBackground =
 view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
+        palette : R10.FormTypes.Palette
         palette =
             R10.Form.themeToPalette theme
     in

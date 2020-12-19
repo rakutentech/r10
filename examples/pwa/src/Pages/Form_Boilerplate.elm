@@ -105,6 +105,7 @@ update msg model =
     case msg of
         MsgForm formMsg ->
             let
+                form : R10.Form.Form
                 form =
                     model.form
 
@@ -117,12 +118,14 @@ update msg model =
 view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
+        viewForm : List (Element Msg)
         viewForm =
             R10.Form.viewWithPalette
                 model.form
                 MsgForm
                 (R10.Form.themeToPalette theme)
 
+        viewCTA : Element Msg
         viewCTA =
             Element.map MsgForm <|
                 R10.Button.primary [ width shrink ]

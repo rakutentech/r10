@@ -13,12 +13,10 @@ import Element.Font as Font
 import Element.Input as Input
 import R10.Card
 import R10.Color.AttrsBackground
-import R10.Color.Svg
 import R10.Form
 import R10.FormIntrospection
 import R10.FormTypes
 import R10.Paragraph
-import R10.Svg.IconsExtra
 import R10.Theme
 
 
@@ -28,8 +26,6 @@ type alias Model =
     , label : String
     , focused : Bool
     , showPassword : Bool
-    , leadingIcon : Maybe Icon
-    , trailingIcon : Maybe Icon
     , validation : R10.Form.Validation2
     , helperText : String
     , helperShow : Bool
@@ -48,8 +44,6 @@ init =
     , label = "Label"
     , focused = False
     , showPassword = False
-    , leadingIcon = Nothing
-    , trailingIcon = Nothing
     , validation = R10.Form.componentValidation.notYetValidated
     , helperText = """Helper text ([Markdown](https://en.wikipedia.org/wiki/Markdown))"""
     , helperShow = True
@@ -66,53 +60,6 @@ binaryTypeToString textType =
     .string (R10.FormIntrospection.binaryTypeMetaData textType)
 
 
-styleToString : R10.Form.Style -> String
-styleToString style =
-    if style == R10.Form.style.outlined then
-        "R10.Form.style.outlined"
-
-    else
-        "R10.Form.style.filled"
-
-
-iconToString : Maybe Icon -> String
-iconToString icon =
-    case icon of
-        Just Play ->
-            "Just Play"
-
-        Just Pause ->
-            "Just Pause"
-
-        Nothing ->
-            "Nothing"
-
-
-type Icon
-    = Play
-    | Pause
-
-
-toIconEl : R10.Theme.Theme -> R10.FormTypes.Palette -> Icon -> Element Msg
-toIconEl theme palette leadingIcon =
-    case leadingIcon of
-        Play ->
-            R10.Form.viewIconButton []
-                { msgOnClick = Just <| PlayPauseClick Play
-                , icon = R10.Svg.IconsExtra.play [] (R10.Color.Svg.fontNormal theme) 24
-                , palette = palette
-                , size = 24
-                }
-
-        Pause ->
-            R10.Form.viewIconButton []
-                { msgOnClick = Just <| PlayPauseClick Pause
-                , icon = R10.Svg.IconsExtra.pause [] (R10.Color.Svg.fontNormal theme) 30
-                , palette = palette
-                , size = 30
-                }
-
-
 type Msg
     = OnChange Bool
     | OnFocus
@@ -122,16 +69,9 @@ type Msg
     | ChangeLabel String
     | RotateValidation
     | ToggleHelperShow
-    | ToggleRequiredShow
-    | ChangeRequiredText String
     | ToggleDisabled
-    | ToggleShowPassword
     | ChangeHelperText String
     | RotateTextType
-    | RotateStyle
-    | RotateLeadingIcon
-    | RotateTrailingIcon
-    | PlayPauseClick Icon
 
 
 validations :
@@ -166,18 +106,6 @@ update msg model =
         ChangeLabel string ->
             ( { model | label = string }, Cmd.none )
 
-        RotateStyle ->
-            ( { model
-                | style =
-                    if model.style == R10.Form.style.outlined then
-                        R10.Form.style.filled
-
-                    else
-                        R10.Form.style.outlined
-              }
-            , Cmd.none
-            )
-
         RotateValidation ->
             ( { model
                 | validation =
@@ -202,63 +130,8 @@ update msg model =
         ChangeHelperText string ->
             ( { model | helperText = string }, Cmd.none )
 
-        ToggleRequiredShow ->
-            ( { model | requiredShow = not model.requiredShow }, Cmd.none )
-
-        ChangeRequiredText string ->
-            ( { model | requiredText = string }, Cmd.none )
-
         ToggleDisabled ->
             ( { model | disabled = not model.disabled }, Cmd.none )
-
-        ToggleShowPassword ->
-            ( { model | messages = "OnTogglePasswordShow" :: model.messages, showPassword = not model.showPassword }, Cmd.none )
-
-        RotateLeadingIcon ->
-            ( { model
-                | leadingIcon =
-                    case model.leadingIcon of
-                        Just Play ->
-                            Just Pause
-
-                        Just Pause ->
-                            Nothing
-
-                        Nothing ->
-                            Just Play
-              }
-            , Cmd.none
-            )
-
-        RotateTrailingIcon ->
-            ( { model
-                | trailingIcon =
-                    case model.trailingIcon of
-                        Just Play ->
-                            Just Pause
-
-                        Just Pause ->
-                            Nothing
-
-                        Nothing ->
-                            Just Play
-              }
-            , Cmd.none
-            )
-
-        PlayPauseClick icon ->
-            let
-                nextIcon =
-                    case icon of
-                        Play ->
-                            Just Pause
-
-                        Pause ->
-                            Just Play
-            in
-            ( { model | trailingIcon = nextIcon, leadingIcon = nextIcon }
-            , Cmd.none
-            )
 
         RotateTextType ->
             ( { model
@@ -285,6 +158,7 @@ attrsYellowBackground =
 view : Model -> R10.Theme.Theme -> List (Element Msg)
 view model theme =
     let
+        palette : R10.FormTypes.Palette
         palette =
             R10.Form.themeToPalette theme
     in

@@ -967,7 +967,8 @@ listForSSR =
     let
         routes : List Route
         routes =
-            Route_Top R10.Language.EN_US :: List.map (\route -> route R10.Language.EN_US) routesList
+            List.map (\lang -> Route_Top lang) languageSupportedList
+                ++ List.concat (List.map (\lang -> List.map (\route -> route lang) routesList) languageSupportedList)
     in
     List.map routeToPathWithoutLanguage routes
 

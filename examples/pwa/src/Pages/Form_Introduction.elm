@@ -503,9 +503,14 @@ formName index =
     "Form " ++ String.fromInt (index + 1)
 
 
-secondaryTitle : List (Attr decorative msg)
+secondaryTitle : List (Attribute msg)
 secondaryTitle =
-    [ Font.size 18 ]
+    [ Font.size 28, Font.bold, paddingEach { top = 20, right = 0, bottom = 0, left = 0 } ]
+
+
+tertiaryTitle : List (Attribute msg)
+tertiaryTitle =
+    [ Font.size 20 ]
 
 
 viewRow : Int -> Model -> R10.Theme.Theme -> List (Element Msg)
@@ -541,7 +546,7 @@ viewRow index model theme =
     [ el secondaryTitle <| text formDesc.title
     , row [ width fill, spacing 20 ]
         [ column (R10.Card.noShadow theme ++ [ R10.Color.AttrsBackground.surface2dp theme, spacing 20, height fill ])
-            [ paragraph secondaryTitle [ text <| formName index ]
+            [ paragraph tertiaryTitle [ text <| formName index ]
             , column [ width fill, spacing 20 ] <|
                 (R10.Form.viewWithPalette form msgTransformer (R10.Form.themeToPalette theme)
                     ++ [ if R10.Form.shouldShowTheValidationOverview form.state then
@@ -582,7 +587,7 @@ viewRow index model theme =
                 )
             ]
         , column (R10.Card.noShadow theme ++ [ R10.Color.AttrsBackground.surface2dp theme, spacing 20, height fill ])
-            [ paragraph secondaryTitle [ text <| formName index ++ " state Json - editable" ]
+            [ paragraph tertiaryTitle [ text <| formName index ++ " state Json - editable" ]
             , Input.multiline
                 multilineAttrs
                 { onChange = ChangeState index
@@ -594,9 +599,9 @@ viewRow index model theme =
             , viewError index model.buffersStateErrors
             ]
         ]
-    , row [ width fill, spacing 20 ]
+    , row [ width fill, spacing 20, moveUp 20 ]
         [ column (R10.Card.noShadow theme ++ [ R10.Color.AttrsBackground.surface2dp theme, spacing 20, height fill ])
-            [ paragraph secondaryTitle [ text <| formName index ++ " configuration Elm - read only" ]
+            [ paragraph tertiaryTitle [ text <| formName index ++ " configuration Elm - read only" ]
             , Input.multiline
                 (multilineAttrs ++ [ Background.color <| rgba 0 0 0 0.1 ])
                 { onChange = \_ -> DoNothing
@@ -607,7 +612,7 @@ viewRow index model theme =
                 }
             ]
         , column (R10.Card.noShadow theme ++ [ R10.Color.AttrsBackground.surface2dp theme, spacing 20, height fill ])
-            [ paragraph secondaryTitle [ text <| formName index ++ " configuration Json - editable" ]
+            [ paragraph tertiaryTitle [ text <| formName index ++ " configuration Json - editable" ]
             , workAroundMultiLine
                 multilineAttrs
                 { onChange = ChangeConf index
@@ -757,20 +762,26 @@ Field state contain data that can change in an input field
 Field types are grouped in 4 categories:
 
         type FieldType
-            = R10.Form.fieldType.text TypeText
+            = TypeText TypeText
+            | TypeBinary TypeBinary
             | TypeSingle TypeSingle (List FieldOption)
             | TypeMulti TypeMulti (List FieldOption)
-            | TypeBinary TypeBinary
 
 * `TypeText` is for types where the user is typing some text. Subtypes belonging to this category are:
 
         type TypeText
             = TextPlain
-            | R10.Form.text.email
+            | TextEmail
             | TextUsername
             | TextPasswordNew
             | TextPasswordCurrent
             | TextMultiline
+
+* `TypeBinary` is for type that allow two choices. Subtypes are:
+
+        type TypeBinary
+            = BinaryCheckbox
+            | BinarySwitch
 
 * `TypeSingle` is for types that allow a single choice. Subtypes are:
 
@@ -778,17 +789,10 @@ Field types are grouped in 4 categories:
             = SingleRadio
             | SingleCombobox
 
-* `TypeMulti` is for types that allow multiple choices (not to be confused with multiline input text). Subtypes are:
+* `TypeMulti` is for types that allow multiple choices (not to be confused with multiline input text and not with multiple checkboxes). Subtypes are:
 
         type TypeMulti
             = MultiCombobox -- TODO
-
-* `TypeBinary` is for type that allow two choices. Subtypes are:
-
-        type TypeBinary
-            = BinaryCheckbox
-            | BinarySwitch -- TODO
-
 
 ## Key
 
@@ -826,12 +830,12 @@ Both `FormState` and `FormConf` have decoder and encoders so you can edit their 
 
  """ ] ]
     ]
-        ++ [ R10.Button.primary [ width shrink ]
-                { label = text "Reset all forms state"
-                , libu = R10.Libu.Bu <| Just ResetAll
-                , theme = theme
-                }
-           ]
-        ++ [ el [] <| text "Loading forms state from Local Storage..." ]
-        ++ [ column [ paddingXY 40 0, spacing 10 ] <| List.map (\error -> el [] <| text <| reformatError error) (List.reverse model.messagesWhileLoadingLocalStorage) ]
+        -- ++ [ R10.Button.primary [ width shrink ]
+        --         { label = text "Reset all forms state"
+        --         , libu = R10.Libu.Bu <| Just ResetAll
+        --         , theme = theme
+        --         }
+        --    ]
+        -- ++ [ el [] <| text "Loading forms state from Local Storage..." ]
+        -- ++ [ column [ paddingXY 40 0, spacing 10 ] <| List.map (\error -> el [] <| text <| reformatError error) (List.reverse model.messagesWhileLoadingLocalStorage) ]
         ++ (List.concat <| repeatForAllForms <| \index -> viewRow index model theme)

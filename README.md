@@ -49,7 +49,7 @@ npm run build
 You can then find the files in `elm-stuff/elm-starter-files/build`.
 
 
-### Website characteristics
+## Website characteristics
 
 The bootstrapped website showcases has these characteristics:
 

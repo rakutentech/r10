@@ -614,6 +614,7 @@ headerFooterArgs model =
                 , transitionOpacity
                 , mouseOver [ alpha 1 ]
                 , htmlAttribute <| Html.Attributes.style "transition" "1s"
+                , htmlAttribute <| Html.Attributes.attribute "aria-label" "Toggle Light/Dark Mode"
                 , rotate
                     (if R10.Mode.isLight model.theme.mode then
                         pi
@@ -625,11 +626,23 @@ headerFooterArgs model =
                 { label = R10.Svg.IconsExtra.darkLight [] (Color.rgb 1 1 1) 28
                 , type_ = R10.Libu.Bu <| Just ToggleMode
                 }
-            , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
+            , R10.Libu.view
+                [ alpha 0.8
+                , transitionOpacity
+                , mouseOver [ alpha 1 ]
+                , htmlAttribute <| Html.Attributes.style "transition" "1s"
+                , htmlAttribute <| Html.Attributes.attribute "aria-label" "R10 in github.com"
+                ]
                 { label = R10.Svg.LogosExtra.github [] (Color.rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
                 }
-            , R10.Libu.view [ alpha 0.8, transitionOpacity, mouseOver [ alpha 1 ] ]
+            , R10.Libu.view
+                [ alpha 0.8
+                , transitionOpacity
+                , mouseOver [ alpha 1 ]
+                , htmlAttribute <| Html.Attributes.style "transition" "1s"
+                , htmlAttribute <| Html.Attributes.attribute "aria-label" "R10 in package.elm-lang.org"
+                ]
                 { label = R10.Svg.LogosExtra.elm_monochrome [] (Color.rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
                 }
@@ -791,7 +804,9 @@ cssMarkdown theme =
 .markdown p {margin: 20px 0 !important}
 
 .markdown a {
-    color: rgb(17, 123, 180);
+    /* color: rgb(17, 123, 180); */
+    /* Making the color darker for a11y */
+    color: rgb(11, 104, 154);  
 }
 
 .markdown pre  {

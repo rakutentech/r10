@@ -76,7 +76,7 @@ index flags =
                 -- Signature "Made with ❤ and Elm"
                 ++ [ script [] [ textUnescaped Starter.SnippetJavascript.signature ] ]
                 -- Initializing "window.ElmStarter"
-                ++ [ script [] [ textUnescaped <| jsSnippetToUpdateRakutenGlobal flags ] ]
+                ++ [ script [] [ textUnescaped <| jsSnippetToUpdateGlobalInfo flags ] ]
                 -- Starter.SnippetJavascript.metaInfo flags ] ]
                 -- Let's start Elm!
                 ++ [ Html.String.Extra.script []
@@ -86,7 +86,7 @@ index flags =
                             window.ElmApp = Elm.Main.init(
                                 { node: node
                                 , flags:
-                                    { starter : window.Rakuten.FAQ
+                                    { starter : window.R10.PWA
                                     , width: window.innerWidth
                                     , height: window.innerHeight
                                     , languages: window.navigator.userLanguages || window.navigator.languages || []
@@ -111,18 +111,18 @@ index flags =
 
 info : Starter.Flags.Flags -> String
 info flags =
-    "RakutenUi-" ++ flags.version ++ "-" ++ flags.commit
+    "R10-" ++ flags.version ++ "-" ++ flags.commit
 
 
-jsSnippetToUpdateRakutenGlobal : Starter.Flags.Flags -> String
-jsSnippetToUpdateRakutenGlobal flags =
+jsSnippetToUpdateGlobalInfo : Starter.Flags.Flags -> String
+jsSnippetToUpdateGlobalInfo flags =
     """
-window.Rakuten = window.Rakuten || {};
-window.Rakuten.info = window.Rakuten.info || [];
-if (Array.isArray(window.Rakuten.info)) {
-    window.Rakuten.info.push(\"""" ++ info flags ++ """");
+window.R10 = window.R10 || {};
+window.R10.info = window.R10.info || [];
+if (Array.isArray(window.R10.info)) {
+    window.R10.info.push(\"""" ++ info flags ++ """");
 }
-window.Rakuten.FAQ = """ ++ Starter.SnippetJavascript.metaInfoData flags ++ """;"""
+window.R10.PWA = """ ++ Starter.SnippetJavascript.metaInfoData flags ++ """;"""
 
 
 htmlToReinject : a -> List b

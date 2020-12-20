@@ -76,30 +76,26 @@ index flags =
                 -- Signature "Made with ❤ and Elm"
                 ++ [ script [] [ textUnescaped Starter.SnippetJavascript.signature ] ]
                 -- Initializing "window.ElmStarter"
-                ++ [ script [] [ textUnescaped <| jsSnippetToUpdateGlobalInfo flags ] ]
-                -- Starter.SnippetJavascript.metaInfo flags ] ]
+                ++ [ script [] [ textUnescaped <| Starter.SnippetJavascript.metaInfo flags ] ]
                 -- Let's start Elm!
-                ++ [ Html.String.Extra.script []
-                        [ Html.String.textUnescaped
+                ++ [ script []
+                        [ textUnescaped
                             ("""
                             var node = document.getElementById('elm');
                             window.ElmApp = Elm.Main.init(
                                 { node: node
                                 , flags:
-                                    { starter : window.R10.PWA
+                                    { starter : window.ElmStarter
                                     , width: window.innerWidth
                                     , height: window.innerHeight
                                     , languages: window.navigator.userLanguages || window.navigator.languages || []
                                     , locationHref: location.href
-                                    , isInternetExplorer: isInternetExplorer()
-                                    , sessionCookieExists: doesHttpOnlyCookieExist("OAMS")
                                     }
                                 }
                             );"""
                                 ++ Starter.SnippetJavascript.portOnUrlChange
                                 ++ Starter.SnippetJavascript.portPushUrl
                                 ++ Starter.SnippetJavascript.portChangeMeta
-                                ++ monitoringElements
                             )
                         ]
                    ]
@@ -107,22 +103,6 @@ index flags =
                 ++ [ script [] [ textUnescaped (Starter.SnippetJavascript.registerServiceWorker relative) ] ]
             )
         ]
-
-
-info : Starter.Flags.Flags -> String
-info flags =
-    "R10-" ++ flags.version ++ "-" ++ flags.commit
-
-
-jsSnippetToUpdateGlobalInfo : Starter.Flags.Flags -> String
-jsSnippetToUpdateGlobalInfo flags =
-    """
-window.R10 = window.R10 || {};
-window.R10.info = window.R10.info || [];
-if (Array.isArray(window.R10.info)) {
-    window.R10.info.push(\"""" ++ info flags ++ """");
-}
-window.R10.PWA = """ ++ Starter.SnippetJavascript.metaInfoData flags ++ """;"""
 
 
 htmlToReinject : a -> List b
@@ -179,159 +159,4 @@ body
     { margin: 0
     ; background-color: #ffffff
     ; font-family: 'RakutenSansUI', Helvetica, Arial, sans-serif
-    }
-
-.visibleDesktop {
-    display: none !important;
-}
-
-@media only screen and (min-width: 600px) {
-    .visibleDesktop {
-        display: flex !important;
-    }
-    .visibleMobile {
-        display: none !important;
-    }
-}
-
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    .visibleDesktop {
-        display: none !important;
-    }
-    .visibleMobile {
-        display: flex !important;
-    }
-}
-
-/* div:lang(en) 
-    { font-family: 'RakutenSansUI', Helvetica, Arial, sans-serif
-    }
-
-div:lang(ja-JP)
-    { font-family: 'RakutenSansUI', 'Noto Sans JP', Helvetica, Arial, sans-serif
-    ; letter-spacing: 0.02rem
-    }
-
-div:lang(zh-TW) 
-    { font-family: 'RakutenSansUI', 'Noto Sans TC', Helvetica, Arial, sans-serif
-    ; letter-spacing: 0.02rem
-    }
-*/   """
-
-
-monitoringElements : String
-monitoringElements =
-    """
-var elementsToMonitor = [];
-var args = {
-    limitUp: 0,
-    limitDown: 650,
-    limitActive: 20,
-};
-var activeSection = "";
-var isSticky = "";
-var isTop = true;
-
-function sticky() {
-    var element = document.getElementById(elementsToMonitor[elementsToMonitor.length - 1]);
-    if (element) {
-        var boundingFirst = element.getBoundingClientRect();
-        if (boundingFirst.top > args.limitUp) {
-            // Out if the first block, non sticky
-            return "before-sticky";
-        } else {
-            var element = document.getElementById(elementsToMonitor[0]);
-            if (element) {
-                var boundingLast = element.getBoundingClientRect();
-                if (boundingLast.bottom < args.limitDown) {
-                    return "after-sticky";
-                } else {
-                    return "sticky";
-                }
-            }
-        }
-    } else {
-        return "before-sticky";
-    }
-};
-
-function reducer(acc, id) {
-    if (acc !== "none") {
-        return acc;
-    } else {
-        var element = document.getElementById(id);
-        if (element) {
-            var limit = (window.innerHeight / 2) + args.limitActive;
-            var bounding = element.getBoundingClientRect()
-            if (bounding.top < limit) {
-                return id;
-            } else {
-                return acc;
-            }
-        }
-    }
-}
-
-function sendIsTop (isTop) {
-    if (ElmApp && ElmApp.ports && ElmApp.ports.onChangeIsTop && ElmApp.ports.onChangeIsTop.send) {
-        ElmApp.ports.onChangeIsTop.send(isTop);
-    }
-}
-
-function onScroll() {
-
-    if (window.scrollY > 10 && isTop) {
-        isTop = false;
-        sendIsTop(isTop);
-    } else if (window.scrollY <= 10 && ! isTop) {
-        isTop = true;
-        sendIsTop(isTop);
-    }
-    
-    
-    if (elementsToMonitor.length >= 1) {
-        var newIsSticky = sticky();
-        if (isSticky === newIsSticky) {} else {
-            isSticky = newIsSticky;
-            // console.log("isSticky:", isSticky);
-            ElmApp.ports.onChangeIsSticky.send(String(isSticky));
-        }
-
-        var newActiveSession = elementsToMonitor.reduce(reducer, "none");
-        if (activeSection === newActiveSession) {} else {
-            activeSection = newActiveSession;
-            // console.log("JS activeSession:", activeSection);
-            ElmApp.ports.onChangeActiveSection.send(String(activeSection));
-        }
-    }
-}
-document.body.onscroll = onScroll;
-
-if (ElmApp && ElmApp.ports && ElmApp.ports.setSections) {
-    ElmApp.ports.setSections.subscribe(function (sections) {
-        // console.log("JS setting sections: ", sections);    
-        elementsToMonitor = sections;
-        onScroll();
-    });
-}
-
-function isInternetExplorer() {
-    var ua = window.navigator.userAgent;
-    var msie = ua.indexOf('MSIE ');
-    return msie > 0 || !!navigator.userAgent.match(/Trident.*rv\\:11\\./);
-}
-
-// From https://stackoverflow.com/questions/9353630/check-if-httponly-cookie-exists-in-javascript
-function doesHttpOnlyCookieExist(cookiename) {
-    var d = new Date();
-    d.setTime(d.getTime() + (1000));
-    var expires = "expires=" + d.toUTCString();
-
-    document.cookie = cookiename + "=new_value;path=/;" + expires;
-    if (document.cookie.indexOf(cookiename + '=') == -1) {
-        return true;
-    } else {
-        return false;
-    }
-}
- """
+    }"""

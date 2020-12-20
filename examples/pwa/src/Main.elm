@@ -1,4 +1,7 @@
-port module Main exposing (Flags, Model, Msg, Position, Route, conf, main)
+port module Main exposing
+    ( conf
+    , main
+    )
 
 import Browser
 import Browser.Events
@@ -22,7 +25,6 @@ import Pages.Form_FieldType_Text
 import Pages.Form_Introduction
 import Pages.Form_States
 import Pages.Overview
-import Pages.Shared.Utils
 import Pages.TableExample
 import Pages.Top
 import Pages.UIComponents
@@ -44,18 +46,13 @@ import R10.Okaimonopanda
 import R10.Svg.IconsExtra
 import R10.Svg.LogosExtra
 import R10.Theme
+import Routes
 import Starter.ConfMain
 import Starter.Flags
-import Url
-import Url.Parser exposing ((</>))
 
 
 heroColor : R10.Theme.Theme -> Color
 heroColor theme =
-    -- R10.Color.Utils.colorToElementColor <|
-    --     R10.Color.Internal.Primary.toColor { mode = R10.Mode.Light } R10.Color.Primary.Blue
-    -- rgb255 18 147 216
-    -- rgb255 17 123 180
     R10.Color.Utils.colorToElementColor <| R10.Color.Svg.primary theme
 
 
@@ -70,8 +67,6 @@ type alias Flags =
     , height : Int
     , languages : List String
     , locationHref : String
-    , isInternetExplorer : Bool
-    , sessionCookieExists : Bool
     }
 
 
@@ -87,7 +82,7 @@ type alias Position =
 
 
 type alias Model =
-    { route : Route
+    { route : Routes.Route
     , flags : Flags
     , windowSize : Position
     , mouse : Position
@@ -96,23 +91,18 @@ type alias Model =
     , header : R10.Header.Header
 
     -- PAGES
-    --
     , pageOverview : Pages.Overview.Model
+    , pageUIComponents : Pages.UIComponents.Model
+    , pageForm_Introduction : Pages.Form_Introduction.Model
     , pageForm_Entities : Pages.Form_Entities.Model
-    , pageForm_Example_CreditCard : Pages.Form_Example_CreditCard.Model
     , pageForm_Boilerplate : Pages.Form_Boilerplate.Model
     , pageForm_Example_Table : Pages.Form_Example_Table.Model
+    , pageForm_Example_CreditCard : Pages.Form_Example_CreditCard.Model
     , pageForm_Example_PhoneSelector : Pages.Form_Example_PhoneSelector.Model
-    , pageForm_States : Pages.Form_States.Model
-
-    --
     , pageForm_FieldType_Text : Pages.Form_FieldType_Text.Model
     , pageForm_FieldType_Single : Pages.Form_FieldType_Single.Model
     , pageForm_FieldType_Binary : Pages.Form_FieldType_Binary.Model
-
-    --
-    , pageForm_Introduction : Pages.Form_Introduction.Model
-    , pageUIComponents : Pages.UIComponents.Model
+    , pageForm_States : Pages.Form_States.Model
     , pageCounter : Pages.Counter.Model
     , pageTableExample : Pages.TableExample.Model
     }
@@ -120,7 +110,7 @@ type alias Model =
 
 conf : Starter.ConfMain.Conf
 conf =
-    { urls = listForSSR
+    { urls = Routes.pathsForSSR
     , assetsToCache = []
     }
 
@@ -150,9 +140,9 @@ init flags =
             --     |> Maybe.withDefault False
             False
 
-        route : Route
+        route : Routes.Route
         route =
-            fromLocationHref flags.locationHref
+            Routes.routeFromLocationHref flags.locationHref
 
         header : R10.Header.Header
         header =
@@ -170,7 +160,7 @@ init flags =
                 , userMenuOpen = False
                 , backgroundColor = Just <| heroColor initTheme
                 , session = R10.Header.SessionNotRequired
-                , supportedLanguageList = languageSupportedList
+                , supportedLanguageList = Routes.supportedLanguages
             }
       , pageOverview = Pages.Overview.init
       , pageForm_Entities = Pages.Form_Entities.init
@@ -203,22 +193,24 @@ init flags =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        ([ onUrlChange (fromLocationHref >> UrlChanged)
+        ([ onUrlChange (Routes.routeFromLocationHref >> UrlChanged)
          , Browser.Events.onResize WindowResize
          , onChangeIsTop OnChangeIsTop
          ]
             ++ R10.Header.subscriptions model.header Header
-            ++ (-- Pages with Okaimonopanda need to have the mouse muvement
-                -- detected to make the panda to move.
-                case model.route of
-                    Route_NotFound _ ->
+            ++ (case model.route of
+                    Routes.Route_NotFound _ ->
+                        -- Pages with Okaimonopanda need to have the mouse movement
+                        -- detected to make the panda to move.
                         [ Browser.Events.onMouseMove (Json.Decode.map MouseMove positionDecoder) ]
 
-                    Route_Overview _ ->
+                    Routes.Route_Overview _ ->
                         [ Browser.Events.onMouseMove (Json.Decode.map MouseMove positionDecoder) ]
 
-                    Route_Counter _ ->
-                        [ Sub.map Msg_Counter <| Pages.Counter.subscriptions model.pageCounter ]
+                    Routes.Route_Counter _ ->
+                        -- The counter need to subscribe to the onAnimationFrame
+                        -- if the counter is animating
+                        [ Sub.map MsgPage_Counter <| Pages.Counter.subscriptions model.pageCounter ]
 
                     _ ->
                         []
@@ -232,7 +224,7 @@ subscriptions model =
 
 type Msg
     = OnClick String
-    | UrlChanged Route
+    | UrlChanged Routes.Route
     | WindowResize Int Int
     | OnChangeIsTop Bool
     | ChangePrimaryColor R10.Color.Primary
@@ -240,33 +232,31 @@ type Msg
     | ToggleMode
     | Header R10.Header.Msg
       --
-    | Msg_Overview Pages.Overview.Msg
-    | Msg_Form_Entities Pages.Form_Entities.Msg
-    | Msg_Form_Example_CreditCard Pages.Form_Example_CreditCard.Msg
-    | Msg_Form_Boilerplate Pages.Form_Boilerplate.Msg
-    | Msg_Form_Example_Table Pages.Form_Example_Table.Msg
-    | Msg_Form_Example_PhoneSelector Pages.Form_Example_PhoneSelector.Msg
-    | Msg_Form_States Pages.Form_States.Msg
-      --
-    | Msg_Form_FieldType_Text Pages.Form_FieldType_Text.Msg
-    | Msg_Form_FieldType_Single Pages.Form_FieldType_Single.Msg
-    | Msg_Form_FieldType_Binary Pages.Form_FieldType_Binary.Msg
-      --
-    | Msg_Form_Introduction Pages.Form_Introduction.Msg
-    | Msg_UIComponents Pages.UIComponents.Msg
-    | Msg_Counter Pages.Counter.Msg
-    | Msg_PagesTable Pages.TableExample.Msg
+    | MsgPage_Overview Pages.Overview.Msg
+    | MsgPage_UIComponents Pages.UIComponents.Msg
+    | MsgPage_Form_Introduction Pages.Form_Introduction.Msg
+    | MsgPage_Form_Entities Pages.Form_Entities.Msg
+    | MsgPage_Form_Boilerplate Pages.Form_Boilerplate.Msg
+    | MsgPage_Form_Example_Table Pages.Form_Example_Table.Msg
+    | MsgPage_Form_Example_CreditCard Pages.Form_Example_CreditCard.Msg
+    | MsgPage_Form_Example_PhoneSelector Pages.Form_Example_PhoneSelector.Msg
+    | MsgPage_Form_FieldType_Text Pages.Form_FieldType_Text.Msg
+    | MsgPage_Form_FieldType_Single Pages.Form_FieldType_Single.Msg
+    | MsgPage_Form_FieldType_Binary Pages.Form_FieldType_Binary.Msg
+    | MsgPage_Form_States Pages.Form_States.Msg
+    | MsgPage_Counter Pages.Counter.Msg
+    | MsgPage_PagesTable Pages.TableExample.Msg
 
 
 
 -- UPDATE
 
 
-updateHtmlMeta : Starter.Flags.Flags -> Route -> Cmd msg
+updateHtmlMeta : Starter.Flags.Flags -> Routes.Route -> Cmd msg
 updateHtmlMeta flagsStarter route =
     Cmd.batch
         [ changeMeta ( "title", "innerHTML", flagsStarter.nameLong )
-        , changeMeta ( "meta[property='og:image']", "content", flagsStarter.homepage ++ routeToPathWithoutLanguage route ++ "/snapshot.jpg" )
+        , changeMeta ( "meta[property='og:image']", "content", flagsStarter.homepage ++ Routes.routeToPathWithoutLanguage route ++ "/snapshot.jpg" )
         ]
 
 
@@ -297,68 +287,68 @@ update msg model =
             in
             ( { model | theme = newTheme }, Cmd.none )
 
-        Msg_Overview pageMsg ->
+        MsgPage_Overview pageMsg ->
             ( { model | pageOverview = Pages.Overview.update pageMsg model.pageOverview }, Cmd.none )
 
-        Msg_Form_Entities pageMsg ->
+        MsgPage_Form_Entities pageMsg ->
             ( { model | pageForm_Entities = Pages.Form_Entities.update pageMsg model.pageForm_Entities }, Cmd.none )
 
-        Msg_Form_Example_CreditCard pageMsg ->
+        MsgPage_Form_Example_CreditCard pageMsg ->
             ( { model | pageForm_Example_CreditCard = Pages.Form_Example_CreditCard.update pageMsg model.pageForm_Example_CreditCard }, Cmd.none )
 
-        Msg_Form_Boilerplate pageMsg ->
+        MsgPage_Form_Boilerplate pageMsg ->
             ( { model | pageForm_Boilerplate = Pages.Form_Boilerplate.update pageMsg model.pageForm_Boilerplate }, Cmd.none )
 
-        Msg_Form_Example_Table pageMsg ->
+        MsgPage_Form_Example_Table pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.Form_Example_Table.update pageMsg model.pageForm_Example_Table
             in
-            ( { model | pageForm_Example_Table = modelPageExample }, Cmd.map Msg_Form_Example_Table cmdPageExample )
+            ( { model | pageForm_Example_Table = modelPageExample }, Cmd.map MsgPage_Form_Example_Table cmdPageExample )
 
-        Msg_Form_Example_PhoneSelector pageMsg ->
+        MsgPage_Form_Example_PhoneSelector pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.Form_Example_PhoneSelector.update pageMsg model.pageForm_Example_PhoneSelector
             in
-            ( { model | pageForm_Example_PhoneSelector = modelPageExample }, Cmd.map Msg_Form_Example_PhoneSelector cmdPageExample )
+            ( { model | pageForm_Example_PhoneSelector = modelPageExample }, Cmd.map MsgPage_Form_Example_PhoneSelector cmdPageExample )
 
-        Msg_Form_FieldType_Single pageMsg ->
+        MsgPage_Form_FieldType_Single pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.Form_FieldType_Single.update pageMsg model.pageForm_FieldType_Single
             in
-            ( { model | pageForm_FieldType_Single = modelPageExample }, Cmd.map Msg_Form_FieldType_Single cmdPageExample )
+            ( { model | pageForm_FieldType_Single = modelPageExample }, Cmd.map MsgPage_Form_FieldType_Single cmdPageExample )
 
-        Msg_Form_States pageMsg ->
+        MsgPage_Form_States pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.Form_States.update pageMsg model.pageForm_States
             in
-            ( { model | pageForm_States = modelPageExample }, Cmd.map Msg_Form_States cmdPageExample )
+            ( { model | pageForm_States = modelPageExample }, Cmd.map MsgPage_Form_States cmdPageExample )
 
-        Msg_Form_FieldType_Text pageMsg ->
+        MsgPage_Form_FieldType_Text pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.Form_FieldType_Text.update pageMsg model.pageForm_FieldType_Text
             in
-            ( { model | pageForm_FieldType_Text = modelPageExample }, Cmd.map Msg_Form_FieldType_Text cmdPageExample )
+            ( { model | pageForm_FieldType_Text = modelPageExample }, Cmd.map MsgPage_Form_FieldType_Text cmdPageExample )
 
-        Msg_Form_FieldType_Binary pageMsg ->
+        MsgPage_Form_FieldType_Binary pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.Form_FieldType_Binary.update pageMsg model.pageForm_FieldType_Binary
             in
-            ( { model | pageForm_FieldType_Binary = modelPageExample }, Cmd.map Msg_Form_FieldType_Binary cmdPageExample )
+            ( { model | pageForm_FieldType_Binary = modelPageExample }, Cmd.map MsgPage_Form_FieldType_Binary cmdPageExample )
 
-        Msg_Form_Introduction pageMsg ->
+        MsgPage_Form_Introduction pageMsg ->
             let
                 ( modelPageExample, cmdPageExample ) =
                     Pages.Form_Introduction.update pageMsg model.pageForm_Introduction
             in
-            ( { model | pageForm_Introduction = modelPageExample }, Cmd.map Msg_Form_Introduction cmdPageExample )
+            ( { model | pageForm_Introduction = modelPageExample }, Cmd.map MsgPage_Form_Introduction cmdPageExample )
 
-        Msg_UIComponents pageMsg ->
+        MsgPage_UIComponents pageMsg ->
             let
                 modelPageExample : Pages.UIComponents.Model
                 modelPageExample =
@@ -366,7 +356,7 @@ update msg model =
             in
             ( { model | pageUIComponents = modelPageExample }, Cmd.none )
 
-        Msg_Counter pageMsg ->
+        MsgPage_Counter pageMsg ->
             let
                 modelPageExample : Pages.Counter.Model
                 modelPageExample =
@@ -374,7 +364,7 @@ update msg model =
             in
             ( { model | pageCounter = modelPageExample }, Cmd.none )
 
-        Msg_PagesTable pageMsg ->
+        MsgPage_PagesTable pageMsg ->
             let
                 modelPageExample : Pages.TableExample.Model
                 modelPageExample =
@@ -431,7 +421,7 @@ view model =
     let
         language : R10.Language.Language
         language =
-            routeToLanguage model.route
+            Routes.routeToLanguage model.route
     in
     Html.div
         [ Html.Attributes.id "elm" ]
@@ -456,18 +446,18 @@ view model =
             ]
           <|
             case model.route of
-                Route_Top _ ->
+                Routes.Route_Top _ ->
                     column [ width fill ]
                         [ Pages.Top.view
                             model.theme
-                            (routeToLanguage model.route)
+                            (Routes.routeToLanguage model.route)
                             (heroBackgroundColor model.theme)
                             (links model.route language)
                             OnClick
                         , viewFooter model
                         ]
 
-                Route_Overview _ ->
+                Routes.Route_Overview _ ->
                     let
                         mouse : Position
                         mouse =
@@ -479,48 +469,48 @@ view model =
                             -- of the panda in the page
                             { mouse | y = mouse.y - 7000 }
                     in
-                    mainLayout model (List.map (map Msg_Overview) (Pages.Overview.view model.pageOverview model.theme mouseCorrected model.windowSize))
+                    mainLayout model (List.map (map MsgPage_Overview) (Pages.Overview.view model.pageOverview model.theme mouseCorrected model.windowSize))
 
-                Route_Form_Entities _ ->
-                    mainLayout model (List.map (map Msg_Form_Entities) (Pages.Form_Entities.view model.pageForm_Entities model.theme))
+                Routes.Route_Form_Entities _ ->
+                    mainLayout model (List.map (map MsgPage_Form_Entities) (Pages.Form_Entities.view model.pageForm_Entities model.theme))
 
-                Route_Form_Example_CreditCard _ ->
-                    mainLayout model (List.map (map Msg_Form_Example_CreditCard) (Pages.Form_Example_CreditCard.view model.pageForm_Example_CreditCard model.theme))
+                Routes.Route_Form_Example_CreditCard _ ->
+                    mainLayout model (List.map (map MsgPage_Form_Example_CreditCard) (Pages.Form_Example_CreditCard.view model.pageForm_Example_CreditCard model.theme))
 
-                Route_Form_Boilerplate _ ->
-                    mainLayout model (List.map (map Msg_Form_Boilerplate) (Pages.Form_Boilerplate.view model.pageForm_Boilerplate model.theme))
+                Routes.Route_Form_Boilerplate _ ->
+                    mainLayout model (List.map (map MsgPage_Form_Boilerplate) (Pages.Form_Boilerplate.view model.pageForm_Boilerplate model.theme))
 
-                Route_Form_Example_Table _ ->
-                    mainLayout model (List.map (map Msg_Form_Example_Table) (Pages.Form_Example_Table.view model.pageForm_Example_Table model.theme))
+                Routes.Route_Form_Example_Table _ ->
+                    mainLayout model (List.map (map MsgPage_Form_Example_Table) (Pages.Form_Example_Table.view model.pageForm_Example_Table model.theme))
 
-                Route_Form_Example_PhoneSelector _ ->
-                    mainLayout model (List.map (map Msg_Form_Example_PhoneSelector) (Pages.Form_Example_PhoneSelector.view model.pageForm_Example_PhoneSelector model.theme))
+                Routes.Route_Form_Example_PhoneSelector _ ->
+                    mainLayout model (List.map (map MsgPage_Form_Example_PhoneSelector) (Pages.Form_Example_PhoneSelector.view model.pageForm_Example_PhoneSelector model.theme))
 
-                Route_Form_FieldType_Single _ ->
-                    mainLayout model (List.map (map Msg_Form_FieldType_Single) (Pages.Form_FieldType_Single.view model.pageForm_FieldType_Single model.theme))
+                Routes.Route_Form_FieldType_Single _ ->
+                    mainLayout model (List.map (map MsgPage_Form_FieldType_Single) (Pages.Form_FieldType_Single.view model.pageForm_FieldType_Single model.theme))
 
-                Route_Form_States _ ->
-                    mainLayout model (List.map (map Msg_Form_States) (Pages.Form_States.view model.pageForm_States model.theme))
+                Routes.Route_Form_States _ ->
+                    mainLayout model (List.map (map MsgPage_Form_States) (Pages.Form_States.view model.pageForm_States model.theme))
 
-                Route_Form_FieldType_Text _ ->
-                    mainLayout model (List.map (map Msg_Form_FieldType_Text) (Pages.Form_FieldType_Text.view model.pageForm_FieldType_Text model.theme))
+                Routes.Route_Form_FieldType_Text _ ->
+                    mainLayout model (List.map (map MsgPage_Form_FieldType_Text) (Pages.Form_FieldType_Text.view model.pageForm_FieldType_Text model.theme))
 
-                Route_Form_FieldType_Binary _ ->
-                    mainLayout model (List.map (map Msg_Form_FieldType_Binary) (Pages.Form_FieldType_Binary.view model.pageForm_FieldType_Binary model.theme))
+                Routes.Route_Form_FieldType_Binary _ ->
+                    mainLayout model (List.map (map MsgPage_Form_FieldType_Binary) (Pages.Form_FieldType_Binary.view model.pageForm_FieldType_Binary model.theme))
 
-                Route_Form_Introduction _ ->
-                    mainLayout model (List.map (map Msg_Form_Introduction) (Pages.Form_Introduction.view model.pageForm_Introduction model.theme))
+                Routes.Route_Form_Introduction _ ->
+                    mainLayout model (List.map (map MsgPage_Form_Introduction) (Pages.Form_Introduction.view model.pageForm_Introduction model.theme))
 
-                Route_UIComponents _ ->
-                    mainLayout model (List.map (map Msg_UIComponents) (Pages.UIComponents.view model.pageUIComponents model.theme))
+                Routes.Route_UIComponents _ ->
+                    mainLayout model (List.map (map MsgPage_UIComponents) (Pages.UIComponents.view model.pageUIComponents model.theme))
 
-                Route_Counter _ ->
-                    mainLayout model (List.map (map Msg_Counter) (Pages.Counter.view model.pageCounter model.theme))
+                Routes.Route_Counter _ ->
+                    mainLayout model (List.map (map MsgPage_Counter) (Pages.Counter.view model.pageCounter model.theme))
 
-                Route_TableExample _ ->
-                    mainLayout model (List.map (map Msg_PagesTable) (Pages.TableExample.view model.pageTableExample model.theme))
+                Routes.Route_TableExample _ ->
+                    mainLayout model (List.map (map MsgPage_PagesTable) (Pages.TableExample.view model.pageTableExample model.theme))
 
-                Route_NotFound _ ->
+                Routes.Route_NotFound _ ->
                     mainLayout model <|
                         [ row [ centerX, spacing 50 ]
                             [ el [] <|
@@ -603,9 +593,9 @@ colorsMenu theme =
             (R10.Color.listPrimary theme)
 
 
-headerFooterArgs : Model -> R10.Header.ViewArgs Msg Route
+headerFooterArgs : Model -> R10.Header.ViewArgs Msg Routes.Route
 headerFooterArgs model =
-    { extraContent = links model.route (routeToLanguage model.route)
+    { extraContent = links model.route (Routes.routeToLanguage model.route)
     , extraContentRightSide =
         [ row [ spacing 20 ]
             [ colorsMenu model.theme
@@ -650,15 +640,15 @@ headerFooterArgs model =
         ]
     , msgMapper = Header
     , isTop = model.isTop
-    , from = routeToPathWithoutLanguage model.route
+    , from = Routes.routeToPathWithoutLanguage model.route
     , isMobile = False
     , onClick = OnClick
     , urlTop = "/"
     , languageSystem =
         R10.Header.LanguageInRoute
-            { routeToPath = routeToPath
+            { routeToPath = Routes.routeToPath
             , route = model.route
-            , routeToLanguage = routeToLanguage
+            , routeToLanguage = Routes.routeToLanguage
             }
     , logoOnDark = logoOnDark
     , logoOnLight = logoOnLight
@@ -696,11 +686,11 @@ mainLayout model content =
     let
         title : R10.Language.Translations
         title =
-            .title (routeDetails model.route)
+            .title (Routes.routeDetails model.route)
 
         fileName : String
         fileName =
-            .fileName (routeDetails model.route)
+            .fileName (Routes.routeDetails model.route)
     in
     column [ width fill ]
         [ headerPlaceholder
@@ -714,11 +704,11 @@ mainLayout model content =
                 (R10.Card.normal model.theme
                     ++ [ centerX
                        , paddingXY 40 40
-                       , Pages.Shared.Utils.maxWidth
+                       , Pages.Top.maxWidth
                        , spacing 40
                        ]
                 )
-                ([ paragraph [ Font.size 40 ] [ text <| R10.I18n.t (routeToLanguage model.route) title ]
+                ([ paragraph [ Font.size 40 ] [ text <| R10.I18n.t (Routes.routeToLanguage model.route) title ]
                  , codeAvailable model.theme fileName
                  ]
                     ++ content
@@ -727,14 +717,14 @@ mainLayout model content =
         ]
 
 
-links : Route -> R10.Language.Language -> List (Element Msg)
+links : Routes.Route -> R10.Language.Language -> List (Element Msg)
 links currentRoute currentLanguage =
     List.map
         (\route ->
             let
                 label : Element msg
                 label =
-                    text <| R10.I18n.t currentLanguage (.title (routeDetails (route currentLanguage)))
+                    text <| R10.I18n.t currentLanguage (.title (Routes.routeDetails (route currentLanguage)))
             in
             if route currentLanguage == currentRoute then
                 el
@@ -748,10 +738,10 @@ links currentRoute currentLanguage =
             else
                 R10.Libu.view R10.Header.attrsLink
                     { label = label
-                    , type_ = R10.Libu.LiInternal (routeToPathWithoutLanguage (route currentLanguage)) OnClick
+                    , type_ = R10.Libu.LiInternal (Routes.routeToPathWithoutLanguage (route currentLanguage)) OnClick
                     }
         )
-        routesList
+        Routes.routesList
 
 
 
@@ -847,569 +837,4 @@ cssMarkdown theme =
 
 cssCommon : String
 cssCommon =
-    String.join "\n"
-        [ -- This is to fix an issue with IE11
-          "#elm * {-ms-overflow-style: -ms-autohiding-scrollbar;}"
-
-        --
-        -- "flext is a shorthand for the following CSS properties:
-        --
-        --     flex-grow     This property specifies how much of the remaining space in the flex container should be assigned to the item (the flex grow factor).
-        --                   Default to 0
-        --
-        --                   flex-grow: inherit;
-        --                   flex-grow: initial;
-        --                   flex-grow: unset;
-        --
-        --     flex-shrink
-        --     flex-basis
-        --
-        , """
-        @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-
-            .s {
-                flex-basis: auto !important; 
-            }
-
-            .s.r > .s {
-                flex-basis: 0% !important; 
-                /* border: 1px solid red !important; */
-            }
-
-            /* Here we add a div so that we became more specific and we */
-            /* can overwrite settings from elm-ui                       */
-
-            #ie-flex-fix {
-                flex-basis: 0% !important; 
-                /* border: 1px solid green !important; */
-            }
-        }
-        """
-
-        -- This is to remove up and down button in an input field
-        -- of type "number"
-        -- To remove the “clear field” X button when Browser Mode
-        , "#elm input::-ms-clear { display: none; }"
-
-        -- Remove selecting icon inside the DropDown in IE
-        , "#elm select::-ms-expand { display:none; }"
-        ]
-
-
-
--- TRANSLATIONS
-
-
-translationsError : R10.Language.Translations
-translationsError =
-    { key = "error"
-    , en_us = "Error"
-    , ja_jp = "Error"
-    , zh_tw = "Error"
-    , es_es = "Error"
-    , fr_fr = "Error"
-    , de_de = "Error"
-    , it_it = "Error"
-    , nl_nl = "Error"
-    , pt_pt = "Error"
-    , nb_no = "Error"
-    , fi_fl = "Error"
-    , da_dk = "Error"
-    , sv_se = "Error"
-    }
-
-
-translationR10 : R10.Language.Translations
-translationR10 =
-    { key = "r10"
-    , en_us = "R10"
-    , ja_jp = "R10"
-    , zh_tw = "R10"
-    , es_es = "R10"
-    , fr_fr = "R10"
-    , de_de = "R10"
-    , it_it = "R10"
-    , nl_nl = "R10"
-    , pt_pt = "R10"
-    , nb_no = "R10"
-    , fi_fl = "R10"
-    , da_dk = "R10"
-    , sv_se = "R10"
-    }
-
-
-
--- LANGUAGE
-
-
-languageDefault : R10.Language.Language
-languageDefault =
-    R10.Language.EN_US
-
-
-languageSupportedList : List R10.Language.Language
-languageSupportedList =
-    [ R10.Language.EN_US
-    , R10.Language.JA_JP
-    ]
-
-
-
--- ROUTE
-
-
-type Route
-    = Route_Top R10.Language.Language
-    | Route_Overview R10.Language.Language
-    | Route_Form_Entities R10.Language.Language
-    | Route_Form_Boilerplate R10.Language.Language
-    | Route_Form_Example_Table R10.Language.Language
-    | Route_Form_Example_CreditCard R10.Language.Language
-    | Route_Form_Example_PhoneSelector R10.Language.Language
-    | Route_Form_States R10.Language.Language
-    | Route_Form_FieldType_Text R10.Language.Language
-    | Route_Form_FieldType_Single R10.Language.Language
-    | Route_Form_FieldType_Binary R10.Language.Language
-    | Route_Form_Introduction R10.Language.Language
-    | Route_UIComponents R10.Language.Language
-    | Route_Counter R10.Language.Language
-    | Route_TableExample R10.Language.Language
-    | Route_NotFound R10.Language.Language
-
-
-listForSSR : List String
-listForSSR =
-    let
-        routes : List Route
-        routes =
-            List.map (\lang -> Route_Top lang) languageSupportedList
-                ++ List.concat (List.map (\lang -> List.map (\route -> route lang) routesList) languageSupportedList)
-    in
-    List.map routeToPathWithoutLanguage routes
-
-
-routesList : List (R10.Language.Language -> Route)
-routesList =
-    [ Route_Overview
-    , Route_UIComponents
-    , Route_Form_Introduction
-    , Route_Form_Entities
-    , Route_Form_Boilerplate
-    , Route_Form_Example_Table
-    , Route_Form_Example_CreditCard
-    , Route_Form_Example_PhoneSelector
-    , Route_Form_FieldType_Text
-    , Route_Form_FieldType_Single
-    , Route_Form_FieldType_Binary
-    , Route_Form_States
-    , Route_Counter
-    , Route_TableExample
-    ]
-
-
-routeDetails :
-    Route
-    ->
-        { language : R10.Language.Language
-        , routeLabel : String
-        , fileName : String
-        , title : R10.Language.Translations
-        }
-routeDetails route =
-    case route of
-        Route_Top language ->
-            { routeLabel = ""
-            , fileName = "Top.elm"
-            , language = language
-            , title = translationR10
-            }
-
-        Route_Overview language ->
-            { routeLabel = "overview"
-            , fileName = "Overview.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Overview"
-                , ja_jp = "前書き"
-                , zh_tw = "Overview"
-                , es_es = "Overview"
-                , fr_fr = "Overview"
-                , de_de = "Overview"
-                , it_it = "Overview"
-                , nl_nl = "Overview"
-                , pt_pt = "Overview"
-                , nb_no = "Overview"
-                , fi_fl = "Overview"
-                , da_dk = "Overview"
-                , sv_se = "Overview"
-                }
-            }
-
-        Route_Form_Entities language ->
-            { routeLabel = "form_entities"
-            , fileName = "Form_Entities.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Form Entities"
-                , ja_jp = "Form Entities"
-                , zh_tw = "Form Entities"
-                , es_es = "Form Entities"
-                , fr_fr = "Form Entities"
-                , de_de = "Form Entities"
-                , it_it = "Form Entities"
-                , nl_nl = "Form Entities"
-                , pt_pt = "Form Entities"
-                , nb_no = "Form Entities"
-                , fi_fl = "Form Entities"
-                , da_dk = "Form Entities"
-                , sv_se = "Form Entities"
-                }
-            }
-
-        Route_Form_Example_CreditCard language ->
-            { routeLabel = "form_example_credit_card"
-            , fileName = "Form_Example_CreditCard.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Form Example - Credit Card"
-                , ja_jp = "フォームの例-クレジットカード"
-                , zh_tw = "Form Example - Credit Card"
-                , es_es = "Form Example - Credit Card"
-                , fr_fr = "Form Example - Credit Card"
-                , de_de = "Form Example - Credit Card"
-                , it_it = "Form Example - Credit Card"
-                , nl_nl = "Form Example - Credit Card"
-                , pt_pt = "Form Example - Credit Card"
-                , nb_no = "Form Example - Credit Card"
-                , fi_fl = "Form Example - Credit Card"
-                , da_dk = "Form Example - Credit Card"
-                , sv_se = "Form Example - Credit Card"
-                }
-            }
-
-        Route_Form_Example_Table language ->
-            { routeLabel = "form_example_table"
-            , fileName = "Form_Example_Table.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Form Example - Table"
-                , ja_jp = "Form Example - Table"
-                , zh_tw = "Form Example - Table"
-                , es_es = "Form Example - Table"
-                , fr_fr = "Form Example - Table"
-                , de_de = "Form Example - Table"
-                , it_it = "Form Example - Table"
-                , nl_nl = "Form Example - Table"
-                , pt_pt = "Form Example - Table"
-                , nb_no = "Form Example - Table"
-                , fi_fl = "Form Example - Table"
-                , da_dk = "Form Example - Table"
-                , sv_se = "Form Example - Table"
-                }
-            }
-
-        Route_Form_Example_PhoneSelector language ->
-            { routeLabel = "form_example_phone_selector"
-            , fileName = "Form_Example_PhoneSelector.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Form Example - Phone Selector"
-                , ja_jp = "Form Example - Phone Selector"
-                , zh_tw = "Form Example - Phone Selector"
-                , es_es = "Form Example - Phone Selector"
-                , fr_fr = "Form Example - Phone Selector"
-                , de_de = "Form Example - Phone Selector"
-                , it_it = "Form Example - Phone Selector"
-                , nl_nl = "Form Example - Phone Selector"
-                , pt_pt = "Form Example - Phone Selector"
-                , nb_no = "Form Example - Phone Selector"
-                , fi_fl = "Form Example - Phone Selector"
-                , da_dk = "Form Example - Phone Selector"
-                , sv_se = "Form Example - Phone Selector"
-                }
-            }
-
-        Route_Form_Boilerplate language ->
-            { routeLabel = "form_boilerplate"
-            , fileName = "Form_Boilerplate.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Form Boilerplate"
-                , ja_jp = "Form Boilerplate"
-                , zh_tw = "Form Boilerplate"
-                , es_es = "Form Boilerplate"
-                , fr_fr = "Form Boilerplate"
-                , de_de = "Form Boilerplate"
-                , it_it = "Form Boilerplate"
-                , nl_nl = "Form Boilerplate"
-                , pt_pt = "Form Boilerplate"
-                , nb_no = "Form Boilerplate"
-                , fi_fl = "Form Boilerplate"
-                , da_dk = "Form Boilerplate"
-                , sv_se = "Form Boilerplate"
-                }
-            }
-
-        Route_Form_FieldType_Text language ->
-            { routeLabel = "form_field_type_text"
-            , fileName = "Form_FieldType_Text.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Input Field: Text"
-                , ja_jp = "Input Field: Text"
-                , zh_tw = "Input Field: Text"
-                , es_es = "Input Field: Text"
-                , fr_fr = "Input Field: Text"
-                , de_de = "Input Field: Text"
-                , it_it = "Input Field: Text"
-                , nl_nl = "Input Field: Text"
-                , pt_pt = "Input Field: Text"
-                , nb_no = "Input Field: Text"
-                , fi_fl = "Input Field: Text"
-                , da_dk = "Input Field: Text"
-                , sv_se = "Input Field: Text"
-                }
-            }
-
-        Route_Form_FieldType_Single language ->
-            { routeLabel = "form_field_type_single"
-            , fileName = "Form_FieldType_Single.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Input Field: Single"
-                , ja_jp = "Input Field: Single"
-                , zh_tw = "Input Field: Single"
-                , es_es = "Input Field: Single"
-                , fr_fr = "Input Field: Single"
-                , de_de = "Input Field: Single"
-                , it_it = "Input Field: Single"
-                , nl_nl = "Input Field: Single"
-                , pt_pt = "Input Field: Single"
-                , nb_no = "Input Field: Single"
-                , fi_fl = "Input Field: Single"
-                , da_dk = "Input Field: Single"
-                , sv_se = "Input Field: Single"
-                }
-            }
-
-        Route_Form_FieldType_Binary language ->
-            { routeLabel = "form_field_type_binary"
-            , fileName = "Form_FieldType_Binary.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Input Field: Binary"
-                , ja_jp = "Input Field: Binary"
-                , zh_tw = "Input Field: Binary"
-                , es_es = "Input Field: Binary"
-                , fr_fr = "Input Field: Binary"
-                , de_de = "Input Field: Binary"
-                , it_it = "Input Field: Binary"
-                , nl_nl = "Input Field: Binary"
-                , pt_pt = "Input Field: Binary"
-                , nb_no = "Input Field: Binary"
-                , fi_fl = "Input Field: Binary"
-                , da_dk = "Input Field: Binary"
-                , sv_se = "Input Field: Binary"
-                }
-            }
-
-        Route_Form_States language ->
-            { routeLabel = "form_states"
-            , fileName = "Form_States.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Form States"
-                , ja_jp = "Form States"
-                , zh_tw = "Form States"
-                , es_es = "Form States"
-                , fr_fr = "Form States"
-                , de_de = "Form States"
-                , it_it = "Form States"
-                , nl_nl = "Form States"
-                , pt_pt = "Form States"
-                , nb_no = "Form States"
-                , fi_fl = "Form States"
-                , da_dk = "Form States"
-                , sv_se = "Form States"
-                }
-            }
-
-        Route_Form_Introduction language ->
-            { routeLabel = "form"
-            , fileName = "Form_Introduction.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Form"
-                , ja_jp = "Form"
-                , zh_tw = "Form"
-                , es_es = "Form"
-                , fr_fr = "Form"
-                , de_de = "Form"
-                , it_it = "Form"
-                , nl_nl = "Form"
-                , pt_pt = "Form"
-                , nb_no = "Form"
-                , fi_fl = "Form"
-                , da_dk = "Form"
-                , sv_se = "Form"
-                }
-            }
-
-        Route_UIComponents language ->
-            { routeLabel = "ui_components"
-            , fileName = "Form_FieldType_Text.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "UI Components"
-                , ja_jp = "UI Components"
-                , zh_tw = "UI Components"
-                , es_es = "UI Components"
-                , fr_fr = "UI Components"
-                , de_de = "UI Components"
-                , it_it = "UI Components"
-                , nl_nl = "UI Components"
-                , pt_pt = "UI Components"
-                , nb_no = "UI Components"
-                , fi_fl = "UI Components"
-                , da_dk = "UI Components"
-                , sv_se = "UI Components"
-                }
-            }
-
-        Route_Counter language ->
-            { routeLabel = "counter"
-            , fileName = "Counter.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Counter"
-                , ja_jp = "カウンター"
-                , zh_tw = "Counter"
-                , es_es = "Counter"
-                , fr_fr = "Counter"
-                , de_de = "Counter"
-                , it_it = "Counter"
-                , nl_nl = "Counter"
-                , pt_pt = "Counter"
-                , nb_no = "Counter"
-                , fi_fl = "Counter"
-                , da_dk = "Counter"
-                , sv_se = "Counter"
-                }
-            }
-
-        Route_TableExample language ->
-            { routeLabel = "sortable_table"
-            , fileName = "TableExample.elm"
-            , language = language
-            , title =
-                { key = "title"
-                , en_us = "Sortable Table"
-                , ja_jp = "Sortable Table"
-                , zh_tw = "Sortable Table"
-                , es_es = "Sortable Table"
-                , fr_fr = "Sortable Table"
-                , de_de = "Sortable Table"
-                , it_it = "Sortable Table"
-                , nl_nl = "Sortable Table"
-                , pt_pt = "Sortable Table"
-                , nb_no = "Sortable Table"
-                , fi_fl = "Sortable Table"
-                , da_dk = "Sortable Table"
-                , sv_se = "Sortable Table"
-                }
-            }
-
-        Route_NotFound language ->
-            { routeLabel = "not_found"
-            , fileName = ""
-            , language = language
-            , title = translationsError
-            }
-
-
-routeToPathWithoutLanguage : Route -> String
-routeToPathWithoutLanguage route =
-    routeToPath (routeToLanguage route) route
-
-
-routeToPath : R10.Language.Language -> Route -> String
-routeToPath language route =
-    let
-        lang : List String
-        lang =
-            if language == languageDefault then
-                []
-
-            else
-                [ R10.Language.toStringShort language ]
-
-        path : String
-        path =
-            String.join "/" <|
-                case route of
-                    Route_Top _ ->
-                        lang
-
-                    _ ->
-                        lang ++ [ .routeLabel (routeDetails route) ]
-    in
-    if String.isEmpty path then
-        "/"
-
-    else
-        "/" ++ path ++ "/"
-
-
-routeToLanguage : Route -> R10.Language.Language
-routeToLanguage route =
-    .language (routeDetails route)
-
-
-urlToRoute : Url.Url -> Route
-urlToRoute url =
-    Maybe.withDefault (Route_NotFound languageDefault) <| Url.Parser.parse routeParser url
-
-
-fromLocationHref : String -> Route
-fromLocationHref locationHref =
-    locationHref
-        |> Url.fromString
-        |> Maybe.map urlToRoute
-        |> Maybe.withDefault (Route_NotFound languageDefault)
-
-
-routeWithLanguage : (R10.Language.Language -> Route) -> Url.Parser.Parser (Route -> c) c
-routeWithLanguage route =
-    Url.Parser.map route (R10.Language.urlParser </> Url.Parser.s (.routeLabel (routeDetails (route languageDefault))))
-
-
-routeWithDefaultLanguage : (R10.Language.Language -> Route) -> Url.Parser.Parser (Route -> c) c
-routeWithDefaultLanguage route =
-    Url.Parser.map (route languageDefault) (Url.Parser.s (.routeLabel (routeDetails (route languageDefault))))
-
-
-routeParser : Url.Parser.Parser (Route -> b) b
-routeParser =
-    Url.Parser.oneOf
-        -- The RouteTop is special because doesn't have any label
-        ([ Url.Parser.map Route_Top R10.Language.urlParser
-         , Url.Parser.map (Route_Top languageDefault) Url.Parser.top
-         ]
-            -- Routes with language
-            ++ List.map routeWithLanguage routesList
-            -- Routes with default language
-            ++ List.map routeWithDefaultLanguage routesList
-        )
+    ""

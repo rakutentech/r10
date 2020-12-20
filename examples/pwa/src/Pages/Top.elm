@@ -1,11 +1,13 @@
-module Pages.Top exposing (view)
+module Pages.Top exposing
+    ( maxWidth
+    , view
+    )
 
 import Color
 import Element exposing (..)
 import Element.Font as Font
 import Html.Attributes
 import Markdown
-import Pages.Shared.Utils
 import R10.Card
 import R10.I18n
 import R10.Language
@@ -14,6 +16,11 @@ import R10.Svg.IconsExtra
 import R10.Svg.Logos
 import R10.Svg.LogosExtra
 import R10.Theme
+
+
+maxWidth : Attribute msg
+maxWidth =
+    width (fill |> maximum 1000)
 
 
 view : R10.Theme.Theme -> R10.Language.Language -> Attribute msg -> List (Element msg) -> (String -> msg) -> Element msg
@@ -42,7 +49,7 @@ view theme language heroBackgroundColor content _ =
                 (R10.Card.normal theme
                     ++ [ centerX
                        , paddingXY 20 40
-                       , Pages.Shared.Utils.maxWidth
+                       , maxWidth
                        , spacing 40
                        ]
                 )

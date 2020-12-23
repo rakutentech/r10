@@ -115,11 +115,15 @@ toString value =
             "Blue Sky"
 
 
-
--- Cannot add the type signature here, otherwise we create a loop of imports
--- list : R10.Theme.Theme -> List { color : Color.Color, name : String }
-
-
+list :
+    { a | mode : R10.Mode.Mode }
+    ->
+        List
+            { color : Color.Color
+            , description : String
+            , name : String
+            , type_ : Color
+            }
 list theme =
     -- List.map
     --     (\color ->

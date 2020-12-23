@@ -405,7 +405,7 @@ viewTab args fieldState { index, selected, entity, label } =
     let
         valid : Bool
         valid =
-            R10.Form.Internal.Update.isExistingFormFieldsValid [ entity ] args.formState
+            R10.Form.Internal.Update.isExistingFormFieldsValid { conf = [ entity ], state = args.formState }
 
         { opacity, clickOverlay } =
             if fieldState.disabled then

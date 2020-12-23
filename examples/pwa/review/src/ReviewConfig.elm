@@ -49,8 +49,8 @@ config =
             (\rule ->
                 rule
                     |> Review.Rule.ignoreErrorsForDirectories
-                        [ "../../src"
-                        , "src-elm-starter"
+                        [ "src-elm-starter"
+                        , "../../src"
                         ]
                     |> Review.Rule.ignoreErrorsForFiles
                         []

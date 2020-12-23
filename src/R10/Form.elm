@@ -4,20 +4,20 @@ module R10.Form exposing
     , MsgMapper
     , Options
     , Maker, MakerArgs, maker
-    , defaultTranslator, validationCodes, ValidationCode
+    , validate, validation, Validation, ValidationCode, validationCodes, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation
+    , defaultTranslator
     , style
     , State, initState, stateToString, stringToState
     , extraCss
     , EntityId, TextConf, stringToConf, confToString, initConf
-    , FieldConf, validation, initFieldConf
-    , update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
+    , FieldConf, initFieldConf
+    , update, entitiesWithErrors, submittable, isFormSubmittableAndSubmitted
     , Msg, msg
     , keyToString
     , getFieldValueAsBool
-    , commonValidation
-    , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
+    , FieldState, boolToString, getField, isChangingValues, setFieldValue, stringToBool
     , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
-    , Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, entitiesValidationOutcomes, onLoseFocus, fieldConfigConcatMap, onValueChange, isRegexValidation
+    , Key, KeyAsString, PhoneModel, PhoneMsg, viewBinary, button, colorToCssString, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setMultiplicableQuantities, stringToKey, updateSingle, viewButton, viewText, themeToPalette, ArgsText, Translator, onLoseFocus, fieldConfigConcatMap, onValueChange
     )
 
 {-| Useful things to build a form .
@@ -61,6 +61,11 @@ These are the options that you can use with `viewWithOptions`.
 @docs Maker, MakerArgs, maker
 
 
+# Validation
+
+@docs validate, validation, Validation, ValidationCode, validationCodes, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation
+
+
 # Translator
 
 If you want to personalise the translations or you want to translate them in different languages, you can do so defining a function like
@@ -85,7 +90,7 @@ If you want to personalise the translations or you want to translate them in dif
             |> Dict.get validationCode
             |> Maybe.withDefault validationCode
 
-@docs defaultTranslator, validationCodes, ValidationCode
+@docs defaultTranslator
 
 
 # Style
@@ -110,9 +115,9 @@ If you want to personalise the translations or you want to translate them in dif
 
 # Fields related stuff
 
-@docs FieldConf, validation, initFieldConf
+@docs FieldConf, initFieldConf
 
-@docs update, shouldShowTheValidationOverview, allValidationKeysMaker, entitiesWithErrors, runOnlyExistingValidations, submittable, isFormSubmittableAndSubmitted
+@docs update, entitiesWithErrors, submittable, isFormSubmittableAndSubmitted
 
 @docs Msg, msg
 
@@ -120,13 +125,11 @@ If you want to personalise the translations or you want to translate them in dif
 
 @docs getFieldValueAsBool
 
-@docs commonValidation
-
-@docs FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
+@docs FieldState, boolToString, getField, isChangingValues, setFieldValue, stringToBool
 
 @docs label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
 
-@docs Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, entitiesValidationOutcomes, onLoseFocus, fieldConfigConcatMap, onValueChange, isRegexValidation
+@docs Key, KeyAsString, PhoneModel, PhoneMsg, viewBinary, button, colorToCssString, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setMultiplicableQuantities, stringToKey, updateSingle, viewButton, viewText, themeToPalette, ArgsText, Translator, onLoseFocus, fieldConfigConcatMap, onValueChange
 
 -}
 
@@ -180,12 +183,6 @@ type alias MakerArgs =
     , style : Style
     , palette : R10.FormTypes.Palette
     }
-
-
-{-| Just a `String`
--}
-type alias ValidationCode =
-    R10.Form.Internal.FieldConf.ValidationCode
 
 
 {-| -}
@@ -422,66 +419,6 @@ type alias FieldConf =
 
 
 {-| -}
-type alias Validation =
-    R10.Form.Internal.FieldConf.Validation
-
-
-{-| -}
-type alias ValidationMessage =
-    R10.Form.Internal.FieldConf.ValidationMessage
-
-
-{-| -}
-type alias ValidationSpecs =
-    R10.Form.Internal.FieldConf.ValidationSpecs
-
-
-{-| -}
-validation :
-    { allOf : List Validation -> Validation
-    , dependant : KeyAsString -> Validation -> Validation
-    , equal : KeyAsString -> Validation
-    , maxLength : Int -> Validation
-    , minLength : Int -> Validation
-    , noValidation : Validation
-    , oneOf : List Validation -> Validation
-    , regex : String -> Validation
-    , required : Validation
-    , withMsg : ValidationMessage -> Validation -> Validation
-    , empty : Validation
-    , not : Validation -> Validation
-    }
-validation =
-    { noValidation = R10.Form.Internal.FieldConf.NoValidation
-    , withMsg = R10.Form.Internal.FieldConf.WithMsg
-    , dependant = R10.Form.Internal.FieldConf.Dependant
-    , oneOf = R10.Form.Internal.FieldConf.OneOf
-    , allOf = R10.Form.Internal.FieldConf.AllOf
-    , equal = R10.Form.Internal.FieldConf.Equal
-    , required = R10.Form.Internal.FieldConf.Required
-    , minLength = R10.Form.Internal.FieldConf.MinLength
-    , maxLength = R10.Form.Internal.FieldConf.MaxLength
-    , regex = R10.Form.Internal.FieldConf.Regex
-    , empty = R10.Form.Internal.FieldConf.Empty
-    , not = R10.Form.Internal.FieldConf.Not
-    }
-
-
-{-| -}
-isRegexValidation : R10.Form.Internal.FieldConf.Validation -> Bool
-isRegexValidation validation_ =
-    case validation_ of
-        R10.Form.Internal.FieldConf.WithMsg _ validation__ ->
-            isRegexValidation validation__
-
-        R10.Form.Internal.FieldConf.Regex _ ->
-            True
-
-        _ ->
-            False
-
-
-{-| -}
 initFieldConf : R10.Form.Internal.FieldConf.FieldConf
 initFieldConf =
     R10.Form.Internal.FieldConf.init
@@ -537,13 +474,13 @@ initState =
 
 {-| This can be useful to store the state of a form to the Local Storage, for example. Then, using `stringToState` is possible to restore all the values of a form or keep the form sync'ed on different tabs.
 -}
-stateToString : R10.Form.Internal.State.State -> String
+stateToString : State -> String
 stateToString =
     R10.Form.Internal.State.toString
 
 
 {-| -}
-stringToState : String -> Result Json.Decode.Error R10.Form.Internal.State.State
+stringToState : String -> Result Json.Decode.Error State
 stringToState =
     R10.Form.Internal.State.fromString
 
@@ -559,82 +496,10 @@ update =
 
 
 {-| -}
-shouldShowTheValidationOverview : R10.Form.Internal.State.State -> Bool
-shouldShowTheValidationOverview =
-    R10.Form.Internal.Update.shouldShowTheValidationOverview
-
-
-{-| -}
-allValidationKeysMaker : Conf -> State -> List ( Key, Maybe ValidationSpecs )
-allValidationKeysMaker =
-    R10.Form.Internal.Update.allValidationKeysMaker
-
-
-{-| -}
-entitiesWithErrors : Conf -> State -> List ( Key, Maybe ValidationSpecs )
-entitiesWithErrors conf state =
-    let
-        allKeys : List ( Key, Maybe ValidationSpecs )
-        allKeys =
-            R10.Form.Internal.Update.allValidationKeysMaker conf state
-
-        fieldsWithErrors_ : List ( Key, Maybe ValidationSpecs )
-        fieldsWithErrors_ =
-            R10.Form.Internal.Update.entitiesWithErrors allKeys state.fieldsState
-    in
-    fieldsWithErrors_
-
-
-{-| -}
-entitiesValidationOutcomes : Conf -> State -> Maybe Translator -> List ( Key, R10.FormComponents.Internal.Validations.Validation )
-entitiesValidationOutcomes conf state maybeTranslator =
-    let
-        translator =
-            Maybe.withDefault defaultTranslator maybeTranslator
-
-        keys : List ( Key, Maybe ValidationSpecs )
-        keys =
-            R10.Form.Internal.Update.allValidationKeysMaker conf state
-
-        entitiesWithErrors_ : List ( Key, Maybe ValidationSpecs )
-        entitiesWithErrors_ =
-            R10.Form.Internal.Update.entitiesWithErrors keys state.fieldsState
-
-        errorsList : List ( Key, Maybe ValidationSpecs, R10.Form.Internal.FieldState.FieldState )
-        errorsList =
-            entitiesWithErrors_
-                |> List.map (\( key, spec ) -> ( key, spec, R10.Form.Internal.Dict.get key state.fieldsState ))
-                |> List.filterMap
-                    (\( key, spec, maybeFieldState ) ->
-                        case maybeFieldState of
-                            Nothing ->
-                                Nothing
-
-                            Just fieldState ->
-                                Just ( key, spec, fieldState )
-                    )
-
-        errorsMsgList : List ( Key, R10.FormComponents.Internal.Validations.Validation )
-        errorsMsgList =
-            errorsList
-                |> List.map
-                    (\( key, validationSpec, fieldState ) ->
-                        ( key
-                        , R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
-                            validationSpec
-                            fieldState.validation
-                            (translator key)
-                        )
-                    )
-    in
-    errorsMsgList
-
-
-{-| -}
-fieldConfigConcatMap : (R10.Form.Internal.FieldConf.FieldConf -> List R10.Form.Internal.FieldConf.FieldConf) -> R10.Form.Internal.Conf.Conf -> R10.Form.Internal.Conf.Conf
+fieldConfigConcatMap : (R10.Form.Internal.FieldConf.FieldConf -> List R10.Form.Internal.FieldConf.FieldConf) -> Conf -> Conf
 fieldConfigConcatMap func1 =
     let
-        fMap : (R10.Form.Internal.Conf.Conf -> a) -> R10.Form.Internal.Conf.Conf -> List a
+        fMap : (Conf -> a) -> Conf -> List a
         fMap func2 =
             List.map groupBy
                 >> List.concat
@@ -674,19 +539,13 @@ fieldConfigConcatMap func1 =
 
 
 {-| -}
-runOnlyExistingValidations : List ( Key, Maybe ValidationSpecs ) -> State -> Dict.Dict KeyAsString FieldState -> Dict.Dict KeyAsString FieldState
-runOnlyExistingValidations =
-    R10.Form.Internal.Update.runOnlyExistingValidations
-
-
-{-| -}
-submittable : Conf -> State -> Bool
+submittable : Form -> Bool
 submittable =
     R10.Form.Internal.Update.submittable
 
 
 {-| -}
-isFormSubmittableAndSubmitted : Conf -> State -> Msg -> Bool
+isFormSubmittableAndSubmitted : Form -> Msg -> Bool
 isFormSubmittableAndSubmitted =
     R10.Form.Internal.Update.isFormSubmittableAndSubmitted
 
@@ -753,7 +612,7 @@ getFieldValueAsBool =
 
 
 {-| -}
-getFieldValue : R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> Maybe String
+getFieldValue : R10.Form.Internal.Key.KeyAsString -> State -> Maybe String
 getFieldValue =
     R10.Form.Internal.Helpers.getFieldValue
 
@@ -770,25 +629,6 @@ boolToString =
     R10.Form.Internal.Helpers.boolToString
 
 
-
--- EXPOSING STUFF FROM R10.Form.Internal.Validation
-
-
-{-| -}
-commonValidation :
-    { alphaNumericDash : Validation
-    , alphaNumericDashSpace : Validation
-    , email : Validation
-    , hexColor : Validation
-    , numeric : Validation
-    , password : Validation
-    , phoneNumber : Validation
-    , url : Validation
-    }
-commonValidation =
-    R10.Form.Internal.Validation.commonValidation
-
-
 {-| -}
 setFieldValue : KeyAsString -> String -> State -> State
 setFieldValue =
@@ -799,12 +639,6 @@ setFieldValue =
 getField : KeyAsString -> State -> Maybe FieldState
 getField =
     R10.Form.Internal.Helpers.getField
-
-
-{-| -}
-validate : Key -> Maybe ValidationSpecs -> State -> FieldState -> FieldState
-validate =
-    R10.Form.Internal.Validation.validate
 
 
 {-| -}
@@ -835,11 +669,6 @@ type alias SingleMsg =
 {-| -}
 type alias SingleFieldOption =
     R10.FormComponents.Internal.Single.Common.FieldOption
-
-
-{-| -}
-type alias Validation2 =
-    R10.FormComponents.Internal.Validations.Validation
 
 
 {-| -}
@@ -931,7 +760,7 @@ singleMsg =
 
 
 {-| -}
-getMultiActiveKeys : R10.Form.Internal.Key.Key -> R10.Form.Internal.State.State -> List R10.Form.Internal.Key.Key
+getMultiActiveKeys : R10.Form.Internal.Key.Key -> State -> List R10.Form.Internal.Key.Key
 getMultiActiveKeys =
     R10.Form.Internal.Helpers.getMultiActiveKeys
 
@@ -949,16 +778,6 @@ composeKey =
 
 
 {-| -}
-setFieldValidationError :
-    R10.Form.Internal.Key.KeyAsString
-    -> String
-    -> R10.Form.Internal.State.State
-    -> R10.Form.Internal.State.State
-setFieldValidationError =
-    R10.Form.Internal.Helpers.setFieldValidationError
-
-
-{-| -}
 initFieldState : R10.Form.Internal.FieldState.FieldState
 initFieldState =
     R10.Form.Internal.FieldState.init
@@ -971,27 +790,15 @@ updateSingle =
 
 
 {-| -}
-initValidationSpecs : R10.Form.Internal.FieldConf.ValidationSpecs
-initValidationSpecs =
-    R10.Form.Internal.FieldConf.initValidationSpecs
-
-
-{-| -}
 listToKey : List String -> R10.Form.Internal.Key.Key
 listToKey =
     R10.Form.Internal.Key.fromList
 
 
 {-| -}
-setMultiplicableQuantities : R10.Form.Internal.Key.KeyAsString -> Int -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
+setMultiplicableQuantities : R10.Form.Internal.Key.KeyAsString -> Int -> State -> State
 setMultiplicableQuantities =
     R10.Form.Internal.Helpers.setMultiplicableQuantities
-
-
-{-| -}
-clearFieldValidation : R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
-clearFieldValidation =
-    R10.Form.Internal.Helpers.clearFieldValidation
 
 
 {-| -}
@@ -1022,13 +829,13 @@ button =
 
 
 {-| -}
-setFieldDisabled : R10.Form.Internal.Key.KeyAsString -> Bool -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
+setFieldDisabled : R10.Form.Internal.Key.KeyAsString -> Bool -> State -> State
 setFieldDisabled =
     R10.Form.Internal.Helpers.setFieldDisabled
 
 
 {-| -}
-getActiveTab : R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> Maybe String
+getActiveTab : R10.Form.Internal.Key.KeyAsString -> State -> Maybe String
 getActiveTab =
     R10.Form.Internal.Helpers.getActiveTab
 
@@ -1037,24 +844,6 @@ getActiveTab =
 setActiveTab : KeyAsString -> String -> State -> State
 setActiveTab =
     R10.Form.Internal.Helpers.setActiveTab
-
-
-{-| -}
-validateEntireForm : Conf -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
-validateEntireForm =
-    R10.Form.Internal.Update.validateEntireForm
-
-
-{-| -}
-validateDirtyFormFields : Conf -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
-validateDirtyFormFields =
-    R10.Form.Internal.Update.validateDirtyFormFields
-
-
-{-| -}
-isExistingFormFieldsValid : Conf -> R10.Form.Internal.State.State -> Bool
-isExistingFormFieldsValid =
-    R10.Form.Internal.Update.isExistingFormFieldsValid
 
 
 {-| -}
@@ -1067,19 +856,6 @@ colorToCssString =
 elementMarkdown : String -> List (Element msg)
 elementMarkdown =
     R10.SimpleMarkdown.elementMarkdown
-
-
-{-| -}
-componentValidation :
-    { notYetValidated : R10.FormComponents.Internal.Validations.Validation
-    , validated :
-        List R10.FormComponents.Internal.Validations.ValidationMessage
-        -> R10.FormComponents.Internal.Validations.Validation
-    }
-componentValidation =
-    { notYetValidated = R10.FormComponents.Internal.Validations.NotYetValidated
-    , validated = R10.FormComponents.Internal.Validations.Validated
-    }
 
 
 {-| -}
@@ -1119,7 +895,7 @@ entitiesToString =
 {-| -}
 maker :
     R10.Form.Internal.Key.Key
-    -> R10.Form.Internal.State.State
+    -> State
     -> Conf
     -> List R10.Form.Internal.StateForValues.Entity
 maker =
@@ -1132,43 +908,266 @@ emptyKey =
     R10.Form.Internal.Key.empty
 
 
+
+-- ██    ██  █████  ██      ██ ██████   █████  ████████ ██  ██████  ███    ██
+-- ██    ██ ██   ██ ██      ██ ██   ██ ██   ██    ██    ██ ██    ██ ████   ██
+-- ██    ██ ███████ ██      ██ ██   ██ ███████    ██    ██ ██    ██ ██ ██  ██
+--  ██  ██  ██   ██ ██      ██ ██   ██ ██   ██    ██    ██ ██    ██ ██  ██ ██
+--   ████   ██   ██ ███████ ██ ██████  ██   ██    ██    ██  ██████  ██   ████
+
+
 {-| -}
-validationCodes :
-    { allOf : R10.Form.Internal.FieldConf.ValidationCode
-    , emailFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , emailFormatValid : R10.Form.Internal.FieldConf.ValidationCode
-    , empty : R10.Form.Internal.FieldConf.ValidationCode
-    , equalInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , formatInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , formatInvalidCharactersInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , formatNoNumberInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , formatNoSpecialCharactersInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , formatNoUppercaseInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , formatValid : R10.Form.Internal.FieldConf.ValidationCode
-    , hexColorFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , jsonFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , lengthTooLargeInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , lengthTooSmallInvalid : R10.Form.Internal.FieldConf.ValidationCode
-    , oneOf : R10.Form.Internal.FieldConf.ValidationCode
-    , required : R10.Form.Internal.FieldConf.ValidationCode
-    , requiredField : R10.Form.Internal.FieldConf.ValidationCode
-    , somethingWrong : R10.Form.Internal.FieldConf.ValidationCode
-    , valueInvalid : R10.Form.Internal.FieldConf.ValidationCode
+type alias Validation =
+    R10.Form.Internal.FieldConf.Validation
+
+
+{-| -}
+type alias ValidationComponent =
+    R10.FormComponents.Internal.Validations.Validation
+
+
+{-| -}
+type alias ValidationMessage =
+    R10.Form.Internal.FieldConf.ValidationMessage
+
+
+{-| -}
+type alias ValidationSpecs =
+    R10.Form.Internal.FieldConf.ValidationSpecs
+
+
+{-| -}
+validation :
+    { allOf : List Validation -> Validation
+    , dependant : KeyAsString -> Validation -> Validation
+    , equal : KeyAsString -> Validation
+    , maxLength : Int -> Validation
+    , minLength : Int -> Validation
+    , noValidation : Validation
+    , oneOf : List Validation -> Validation
+    , regex : String -> Validation
+    , required : Validation
+    , withMsg : ValidationMessage -> Validation -> Validation
+    , empty : Validation
+    , not : Validation -> Validation
     }
+validation =
+    { noValidation = R10.Form.Internal.FieldConf.NoValidation
+    , withMsg = R10.Form.Internal.FieldConf.WithMsg
+    , dependant = R10.Form.Internal.FieldConf.Dependant
+    , oneOf = R10.Form.Internal.FieldConf.OneOf
+    , allOf = R10.Form.Internal.FieldConf.AllOf
+    , equal = R10.Form.Internal.FieldConf.Equal
+    , required = R10.Form.Internal.FieldConf.Required
+    , minLength = R10.Form.Internal.FieldConf.MinLength
+    , maxLength = R10.Form.Internal.FieldConf.MaxLength
+    , regex = R10.Form.Internal.FieldConf.Regex
+    , empty = R10.Form.Internal.FieldConf.Empty
+    , not = R10.Form.Internal.FieldConf.Not
+    }
+
+
+{-| -}
+isRegexValidation : R10.Form.Internal.FieldConf.Validation -> Bool
+isRegexValidation validation_ =
+    case validation_ of
+        R10.Form.Internal.FieldConf.WithMsg _ validation__ ->
+            isRegexValidation validation__
+
+        R10.Form.Internal.FieldConf.Regex _ ->
+            True
+
+        _ ->
+            False
+
+
+{-| Just a `String`
+-}
+type alias ValidationCode =
+    R10.Form.Internal.FieldConf.ValidationCode
+
+
+{-| -}
+validationCodes : R10.Form.Internal.Translator.ValidationCodes
 validationCodes =
     R10.Form.Internal.Translator.validationCodes
 
 
 {-| -}
-validationToString : R10.FormComponents.Internal.Validations.Validation -> String
+validationToString : ValidationComponent -> String
 validationToString =
     R10.FormComponents.Internal.Validations.validationToString
 
 
+{-| -}
+componentValidation :
+    { notYetValidated : ValidationComponent
+    , validated :
+        List R10.FormComponents.Internal.Validations.ValidationMessage
+        -> ValidationComponent
+    }
+componentValidation =
+    { notYetValidated = R10.FormComponents.Internal.Validations.NotYetValidated
+    , validated = R10.FormComponents.Internal.Validations.Validated
+    }
 
---
---
---
+
+{-| -}
+validationMessage :
+    { error : String -> R10.FormComponents.Internal.Validations.ValidationMessage
+    , ok : String -> R10.FormComponents.Internal.Validations.ValidationMessage
+    }
+validationMessage =
+    { ok = R10.FormComponents.Internal.Validations.MessageOk
+    , error = R10.FormComponents.Internal.Validations.MessageErr
+    }
+
+
+{-| -}
+clearFieldValidation : R10.Form.Internal.Key.KeyAsString -> State -> State
+clearFieldValidation =
+    R10.Form.Internal.Helpers.clearFieldValidation
+
+
+{-| -}
+initValidationSpecs : R10.Form.Internal.FieldConf.ValidationSpecs
+initValidationSpecs =
+    R10.Form.Internal.FieldConf.initValidationSpecs
+
+
+{-| -}
+setFieldValidationError :
+    R10.Form.Internal.Key.KeyAsString
+    -> String
+    -> State
+    -> State
+setFieldValidationError =
+    R10.Form.Internal.Helpers.setFieldValidationError
+
+
+{-| -}
+commonValidation :
+    { alphaNumericDash : Validation
+    , alphaNumericDashSpace : Validation
+    , email : Validation
+    , hexColor : Validation
+    , numeric : Validation
+    , password : Validation
+    , phoneNumber : Validation
+    , url : Validation
+    }
+commonValidation =
+    R10.Form.Internal.Validation.commonValidation
+
+
+{-| -}
+validate : Key -> Maybe ValidationSpecs -> State -> FieldState -> FieldState
+validate =
+    R10.Form.Internal.Validation.validate
+
+
+{-| -}
+runOnlyExistingValidations : List ( Key, Maybe ValidationSpecs ) -> State -> Dict.Dict KeyAsString FieldState -> Dict.Dict KeyAsString FieldState
+runOnlyExistingValidations =
+    R10.Form.Internal.Update.runOnlyExistingValidations
+
+
+{-| -}
+shouldShowTheValidationOverview : State -> Bool
+shouldShowTheValidationOverview =
+    R10.Form.Internal.Update.shouldShowTheValidationOverview
+
+
+{-| -}
+allValidationKeysMaker : Form -> List ( Key, Maybe ValidationSpecs )
+allValidationKeysMaker =
+    R10.Form.Internal.Update.allValidationKeysMaker
+
+
+{-| -}
+validateEntireForm : Form -> State
+validateEntireForm =
+    R10.Form.Internal.Update.validateEntireForm
+
+
+{-| -}
+validateDirtyFormFields : Form -> State
+validateDirtyFormFields =
+    R10.Form.Internal.Update.validateDirtyFormFields
+
+
+{-| -}
+isExistingFormFieldsValid : Form -> Bool
+isExistingFormFieldsValid =
+    R10.Form.Internal.Update.isExistingFormFieldsValid
+
+
+{-| -}
+entitiesWithErrors : Form -> List ( Key, Maybe ValidationSpecs )
+entitiesWithErrors form =
+    let
+        allKeys : List ( Key, Maybe ValidationSpecs )
+        allKeys =
+            R10.Form.Internal.Update.allValidationKeysMaker form
+
+        fieldsWithErrors_ : List ( Key, Maybe ValidationSpecs )
+        fieldsWithErrors_ =
+            R10.Form.Internal.Update.entitiesWithErrors allKeys form.state.fieldsState
+    in
+    fieldsWithErrors_
+
+
+{-| -}
+entitiesValidationOutcomes : Form -> Maybe Translator -> List ( Key, ValidationComponent )
+entitiesValidationOutcomes form maybeTranslator =
+    let
+        translator =
+            Maybe.withDefault defaultTranslator maybeTranslator
+
+        keys : List ( Key, Maybe ValidationSpecs )
+        keys =
+            R10.Form.Internal.Update.allValidationKeysMaker form
+
+        entitiesWithErrors_ : List ( Key, Maybe ValidationSpecs )
+        entitiesWithErrors_ =
+            R10.Form.Internal.Update.entitiesWithErrors keys form.state.fieldsState
+
+        errorsList : List ( Key, Maybe ValidationSpecs, R10.Form.Internal.FieldState.FieldState )
+        errorsList =
+            entitiesWithErrors_
+                |> List.map (\( key, spec ) -> ( key, spec, R10.Form.Internal.Dict.get key form.state.fieldsState ))
+                |> List.filterMap
+                    (\( key, spec, maybeFieldState ) ->
+                        case maybeFieldState of
+                            Nothing ->
+                                Nothing
+
+                            Just fieldState ->
+                                Just ( key, spec, fieldState )
+                    )
+
+        errorsMsgList : List ( Key, ValidationComponent )
+        errorsMsgList =
+            errorsList
+                |> List.map
+                    (\( key, validationSpec, fieldState ) ->
+                        ( key
+                        , R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
+                            validationSpec
+                            fieldState.validation
+                            (translator key)
+                        )
+                    )
+    in
+    errorsMsgList
+
+
+
+--  ██████  ████████ ██   ██ ███████ ██████  ███████
+-- ██    ██    ██    ██   ██ ██      ██   ██ ██
+-- ██    ██    ██    ███████ █████   ██████  ███████
+-- ██    ██    ██    ██   ██ ██      ██   ██      ██
+--  ██████     ██    ██   ██ ███████ ██   ██ ███████
 
 
 {-| -}
@@ -1225,17 +1224,6 @@ viewSingleCustom =
 extraCssComponents : R10.FormTypes.Palette -> String
 extraCssComponents =
     R10.FormComponents.Internal.ExtraCss.extraCss
-
-
-{-| -}
-validationMessage :
-    { error : String -> R10.FormComponents.Internal.Validations.ValidationMessage
-    , ok : String -> R10.FormComponents.Internal.Validations.ValidationMessage
-    }
-validationMessage =
-    { ok = R10.FormComponents.Internal.Validations.MessageOk
-    , error = R10.FormComponents.Internal.Validations.MessageErr
-    }
 
 
 {-| -}

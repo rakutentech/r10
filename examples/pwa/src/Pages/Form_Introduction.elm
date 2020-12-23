@@ -383,7 +383,7 @@ update msg model =
 
                 allKeys : List ( R10.Form.Key, Maybe R10.Form.ValidationSpecs )
                 allKeys =
-                    R10.Form.allValidationKeysMaker newFormConf form.state
+                    R10.Form.allValidationKeysMaker { conf = newFormConf, state = form.state }
 
                 -- Re-running existing validations because if the validations rules
                 -- changed in the configuration would only be picked up after changing

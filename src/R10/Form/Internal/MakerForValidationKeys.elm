@@ -4,6 +4,7 @@ import R10.Form.Internal.Conf
 import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.Key
+import R10.Form.Internal.Shared
 import R10.Form.Internal.State
 import Set
 
@@ -30,14 +31,13 @@ type alias Outcome =
 
 viewEntityMulti :
     R10.Form.Internal.Key.Key
-    -> R10.Form.Internal.State.State
-    -> List R10.Form.Internal.Conf.Entity
+    -> R10.Form.Internal.Shared.Form
     -> List Outcome
-viewEntityMulti key formState entities =
+viewEntityMulti key form =
     let
         quantity : Int
         quantity =
-            Maybe.withDefault 1 <| R10.Form.Internal.Dict.get key formState.multiplicableQuantities
+            Maybe.withDefault 1 <| R10.Form.Internal.Dict.get key form.state.multiplicableQuantities
     in
     List.concat <|
         List.indexedMap
@@ -49,13 +49,13 @@ viewEntityMulti key formState entities =
 
                     removed : Bool
                     removed =
-                        Set.member (R10.Form.Internal.Key.toString newKey) formState.removed
+                        Set.member (R10.Form.Internal.Key.toString newKey) form.state.removed
                 in
                 if removed then
                     []
 
                 else
-                    maker newKey formState entities
+                    maker newKey form
             )
             (List.repeat quantity ())
 
@@ -70,10 +70,9 @@ viewEntityMulti key formState entities =
 
 maker :
     R10.Form.Internal.Key.Key
-    -> R10.Form.Internal.State.State
-    -> R10.Form.Internal.Conf.Conf
+    -> R10.Form.Internal.Shared.Form
     -> List Outcome
-maker key formState formConf =
+maker key form =
     --
     --     This is recursive
     --
@@ -86,19 +85,19 @@ maker key formState formConf =
             (\entity ->
                 case entity of
                     R10.Form.Internal.Conf.EntityWrappable id entities ->
-                        maker (R10.Form.Internal.Key.composeKey key id) formState entities
+                        maker (R10.Form.Internal.Key.composeKey key id) { conf = entities, state = form.state }
 
                     R10.Form.Internal.Conf.EntityWithBorder id entities ->
-                        maker (R10.Form.Internal.Key.composeKey key id) formState entities
+                        maker (R10.Form.Internal.Key.composeKey key id) { conf = entities, state = form.state }
 
                     R10.Form.Internal.Conf.EntityNormal id entities ->
-                        maker (R10.Form.Internal.Key.composeKey key id) formState entities
+                        maker (R10.Form.Internal.Key.composeKey key id) { conf = entities, state = form.state }
 
                     R10.Form.Internal.Conf.EntityWithTabs id titleEntityList ->
-                        maker (R10.Form.Internal.Key.composeKey key id) formState (titleEntityList |> List.map Tuple.second)
+                        maker (R10.Form.Internal.Key.composeKey key id) { conf = titleEntityList |> List.map Tuple.second, state = form.state }
 
                     R10.Form.Internal.Conf.EntityMulti entityId entities ->
-                        viewEntityMulti (R10.Form.Internal.Key.composeKey key entityId) formState entities
+                        viewEntityMulti (R10.Form.Internal.Key.composeKey key entityId) { conf = entities, state = form.state }
 
                     R10.Form.Internal.Conf.EntityField fieldConf ->
                         [ ( R10.Form.Internal.Key.composeKey key fieldConf.id, fieldConf.validationSpecs ) ]
@@ -109,4 +108,4 @@ maker key formState formConf =
                     R10.Form.Internal.Conf.EntitySubTitle entityId textConf ->
                         [ ( R10.Form.Internal.Key.composeKey key entityId, textConf.validationSpecs ) ]
             )
-            formConf
+            form.conf

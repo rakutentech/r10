@@ -25,6 +25,7 @@ import R10.Form.Internal.Key
 import R10.Form.Internal.MakerForValidationKeys
 import R10.Form.Internal.Msg
 import R10.Form.Internal.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
+import R10.Form.Internal.Shared
 import R10.Form.Internal.State
 import R10.Form.Internal.Validation
 import R10.FormComponents.Internal.Single.Common
@@ -47,64 +48,72 @@ stateWithDefault maybeFieldState =
 
 {-| Is there no validation error inside the form
 -}
-isEntireFormValid : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> Bool
-isEntireFormValid conf state =
+isEntireFormValid : R10.Form.Internal.Shared.Form -> Bool
+isEntireFormValid form =
     let
         allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         allKeys =
-            allValidationKeysMaker conf state
+            allValidationKeysMaker form
 
         fieldsWithErrors_ : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         fieldsWithErrors_ =
-            entitiesWithErrors allKeys state.fieldsState
+            entitiesWithErrors allKeys form.state.fieldsState
     in
     List.head fieldsWithErrors_ == Nothing
 
 
 {-| Is there no validation error inside the form
 -}
-isExistingFormFieldsValid : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> Bool
-isExistingFormFieldsValid conf state =
+isExistingFormFieldsValid : R10.Form.Internal.Shared.Form -> Bool
+isExistingFormFieldsValid form =
     let
         allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         allKeys =
-            allValidationKeysMaker conf state
+            allValidationKeysMaker form
 
         fieldsWithErrors_ : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         fieldsWithErrors_ =
-            entitiesWithErrorsForOnlyExistingValidations allKeys state.fieldsState
+            entitiesWithErrorsForOnlyExistingValidations allKeys form.state.fieldsState
     in
     List.head fieldsWithErrors_ == Nothing
 
 
 {-| Validate the entire form
 -}
-validateEntireForm : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
-validateEntireForm conf state =
+validateEntireForm : R10.Form.Internal.Shared.Form -> R10.Form.Internal.State.State
+validateEntireForm form =
     let
         allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         allKeys =
-            allValidationKeysMaker conf state
+            allValidationKeysMaker form
 
         newFieldsState : Dict.Dict String R10.Form.Internal.FieldState.FieldState
         newFieldsState =
-            runAllValidations allKeys state state.fieldsState
+            runAllValidations allKeys form.state form.state.fieldsState
+
+        state : R10.Form.Internal.State.State
+        state =
+            form.state
     in
     { state | fieldsState = newFieldsState }
 
 
 {-| Validate the entire form
 -}
-validateDirtyFormFields : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
-validateDirtyFormFields conf state =
+validateDirtyFormFields : R10.Form.Internal.Shared.Form -> R10.Form.Internal.State.State
+validateDirtyFormFields form =
     let
         allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         allKeys =
-            allValidationKeysMaker conf state
+            allValidationKeysMaker form
 
         newFieldsState : Dict.Dict String R10.Form.Internal.FieldState.FieldState
         newFieldsState =
-            runOnlyExistingValidations allKeys state state.fieldsState
+            runOnlyExistingValidations allKeys form.state form.state.fieldsState
+
+        state : R10.Form.Internal.State.State
+        state =
+            form.state
     in
     { state | fieldsState = newFieldsState }
 
@@ -214,9 +223,9 @@ helperValidateOnChangeValue key maybeValidationSpec qtySubmitAttempted formState
 --
 
 
-allValidationKeysMaker : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> List R10.Form.Internal.MakerForValidationKeys.Outcome
-allValidationKeysMaker conf state =
-    R10.Form.Internal.MakerForValidationKeys.maker R10.Form.Internal.Key.empty state conf
+allValidationKeysMaker : R10.Form.Internal.Shared.Form -> List R10.Form.Internal.MakerForValidationKeys.Outcome
+allValidationKeysMaker form =
+    R10.Form.Internal.MakerForValidationKeys.maker R10.Form.Internal.Key.empty form
 
 
 runAllValidations :
@@ -311,7 +320,7 @@ allErrorsForView conf state =
         let
             allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
             allKeys =
-                allValidationKeysMaker conf state
+                allValidationKeysMaker { conf = conf, state = state }
         in
         entitiesWithErrors allKeys state.fieldsState
 
@@ -324,19 +333,19 @@ shouldShowTheValidationOverview formState =
     QtySubmitAttempted.toInt formState.qtySubmitAttempted > 0 && not formState.changesSinceLastSubmissions
 
 
-submittable : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> Bool
-submittable conf state =
-    if QtySubmitAttempted.toInt state.qtySubmitAttempted == 0 then
+submittable : R10.Form.Internal.Shared.Form -> Bool
+submittable form =
+    if QtySubmitAttempted.toInt form.state.qtySubmitAttempted == 0 then
         -- Always submittable if it has never been submitted
         True
 
     else
-        isEntireFormValid conf state
+        isEntireFormValid form
 
 
-isFormSubmittableAndSubmitted : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State -> R10.Form.Internal.Msg.Msg -> Bool
-isFormSubmittableAndSubmitted conf state formMsg =
-    submittable conf state && R10.Form.Internal.Msg.isSubmitted formMsg
+isFormSubmittableAndSubmitted : R10.Form.Internal.Shared.Form -> R10.Form.Internal.Msg.Msg -> Bool
+isFormSubmittableAndSubmitted form formMsg =
+    submittable form && R10.Form.Internal.Msg.isSubmitted formMsg
 
 
 
@@ -348,18 +357,17 @@ isFormSubmittableAndSubmitted conf state formMsg =
 
 
 submit :
-    R10.Form.Internal.Conf.Conf
+    R10.Form.Internal.Shared.Form
     -> R10.Form.Internal.State.State
-    -> R10.Form.Internal.State.State
-submit conf state =
+submit form =
     let
         newFieldsState : R10.Form.Internal.State.State
         newFieldsState =
-            validateEntireForm conf state
+            validateEntireForm form
 
         newQtySubmitAttempted : QtySubmitAttempted
         newQtySubmitAttempted =
-            QtySubmitAttempted.increment state.qtySubmitAttempted
+            QtySubmitAttempted.increment form.state.qtySubmitAttempted
     in
     { newFieldsState | qtySubmitAttempted = newQtySubmitAttempted }
 
@@ -423,7 +431,7 @@ onChangeValue key fieldConf formConf string formState =
 
         allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         allKeys =
-            allValidationKeysMaker formConf newState
+            allValidationKeysMaker { conf = formConf, state = newState }
     in
     { newState
         | fieldsState =
@@ -458,7 +466,7 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
             ( formState, Cmd.none )
 
         R10.Form.Internal.Msg.Submit formConf ->
-            ( submit formConf formState, Cmd.none )
+            ( submit { conf = formConf, state = formState }, Cmd.none )
 
         R10.Form.Internal.Msg.GetFocus key ->
             ( onGetFocus key formState

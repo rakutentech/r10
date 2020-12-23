@@ -83,25 +83,7 @@ viewIconButton =
 viewSingleCustom :
     List (Element.Attribute msg)
     -> SingleModel
-    ->
-        { disabled : Bool
-        , fieldOptions : List SingleFieldOption
-        , helperText : Maybe String
-        , key : String
-        , label : String
-        , leadingIcon : Maybe (Element.Element msg)
-        , maxDisplayCount : Int
-        , palette : R10.FormTypes.Palette
-        , requiredLabel : Maybe String
-        , searchFn : String -> SingleFieldOption -> Bool
-        , selectOptionHeight : Int
-        , singleType : R10.FormTypes.TypeSingle
-        , style : Style
-        , toMsg : SingleMsg -> msg
-        , toOptionEl : SingleFieldOption -> Element msg
-        , trailingIcon : Maybe (Element.Element msg)
-        , validation : Validation
-        }
+    -> R10.FormComponents.Internal.Single.ArgsCustom msg
     -> Element msg
 viewSingleCustom =
     R10.FormComponents.Internal.Single.viewCustom

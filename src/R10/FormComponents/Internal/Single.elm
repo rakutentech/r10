@@ -203,7 +203,6 @@ type alias ArgsCustom msg =
 
 viewCustom :
     List (Attribute msg)
-    -- Shared.Args msg - without [toOptionEl, searchFn]
     -> Common.Model
     -> ArgsCustom msg
     -> Element msg

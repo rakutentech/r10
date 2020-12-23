@@ -868,8 +868,6 @@ viewEntitySubTitle palette titleConf =
     ]
 
 
-
-
 viewWithValidationMessage : MakerArgs -> R10.Form.Internal.Conf.Entity -> List (Element msg) -> List (Element msg)
 viewWithValidationMessage args entity listEl =
     let

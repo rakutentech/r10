@@ -1,8 +1,8 @@
 module R10.FormComponents.Internal.Phone.Update exposing
     ( dropdownHingeHeight
-    , extractCountry
     , getDropdownHeight
     , getMsgOnFlagClick
+    , getMsgOnSearch
     , update
     )
 
@@ -10,25 +10,7 @@ import Browser.Dom
 import List.Extra
 import R10.Country exposing (Country)
 import R10.FormComponents.Internal.Phone.Common as Common
-import Regex
 import Task
-import Time
-
-
-notLettersRegex : Regex.Regex
-notLettersRegex =
-    Regex.fromString "[^a-zA-Z]"
-        |> Maybe.withDefault Regex.never
-
-
-searchTargetLength : Int
-searchTargetLength =
-    8
-
-
-searchCleanThreshold : Int
-searchCleanThreshold =
-    1600
 
 
 dropdownHingeHeight : number
@@ -65,20 +47,18 @@ onOpenHelper model key float =
     )
 
 
-getOptionByLabel : List Common.FieldOption -> String -> Maybe Common.FieldOption
-getOptionByLabel fieldOptions targetLabel =
-    fieldOptions
-        |> List.Extra.find (\opt -> opt.label == targetLabel)
+focusSearchBoxCmd : String -> ( Common.Model, Cmd Common.Msg ) -> ( Common.Model, Cmd Common.Msg )
+focusSearchBoxCmd key ( model, cmd ) =
+    ( model
+    , Cmd.batch
+        [ cmd
+        , Task.attempt
+            (always Common.NoOp)
+            (Browser.Dom.focus <| Common.dropdownSearchBoxId key)
+        ]
+    )
 
 
-{-| Compose search string:
-Emit button + time.
-If time since last press > 2 sec: create new search string
-If less, append to existing search
-
--- select
-
--}
 extractCountry : String -> Maybe Country
 extractCountry untrimmedString =
     let
@@ -95,42 +75,6 @@ extractCountry untrimmedString =
 
     else
         Nothing
-
-
-{-| helper to breakup search to time and value components
--}
-breakupSearch : String -> ( Maybe Int, String )
-breakupSearch search =
-    let
-        lastUpdateTime =
-            search
-                |> String.left searchTargetLength
-                |> String.toInt
-
-        searchValue =
-            search
-                |> String.dropLeft searchTargetLength
-    in
-    ( lastUpdateTime, searchValue )
-
-
-{-| helper to compose new search from update time and new value
--}
-composeSearch : Int -> String -> String
-composeSearch time search =
-    let
-        newSearchPrefix =
-            time
-                |> String.fromInt
-                |> String.padLeft searchTargetLength '0'
-    in
-    newSearchPrefix ++ search
-
-
-normalizeString : String -> String
-normalizeString =
-    -- use for filtering, search <-> label comparison
-    String.toLower >> String.trim
 
 
 {-| get Y position of option element, relative to dropdown
@@ -210,18 +154,18 @@ getOptionIndex fieldOptions value =
         |> List.Extra.findIndex (\country -> country == value)
 
 
-getMsgOnFlagClick : { a | value : String, scroll : Float } -> { b | selectOptionHeight : Int, maxDisplayCount : Int, key : String } -> List Country -> Common.Msg
-getMsgOnFlagClick model args countryOptions =
+getMsgOnFlagClick : { a | countryValue : Maybe Country, scroll : Float } -> { b | selectOptionHeight : Int, maxDisplayCount : Int, key : String } -> List Country -> Common.Msg
+getMsgOnFlagClick model args filteredCountryOptions =
     let
         activeOptionIndex : Int
         activeOptionIndex =
-            extractCountry model.value
-                |> Maybe.andThen (getOptionIndex countryOptions)
+            model.countryValue
+                |> Maybe.andThen (getOptionIndex filteredCountryOptions)
                 |> Maybe.withDefault -1
 
         activeOptionY : Float
         activeOptionY =
-            getOptionY model.scroll args activeOptionIndex (List.length countryOptions)
+            getOptionY model.scroll args activeOptionIndex (List.length filteredCountryOptions)
     in
     Common.OnFlagClick args.key activeOptionY
 
@@ -235,9 +179,26 @@ inboundIndex maxIdx idx =
         Just idx
 
 
+getMsgOnSearch :
+    { a
+        | key : String
+        , selectOptionHeight : Int
+        , maxDisplayCount : Int
+        , countryOptions : List Country
+    }
+    -> (String -> Common.Msg)
+getMsgOnSearch args newSearch =
+    Common.OnSearch args.key
+        { selectOptionHeight = args.selectOptionHeight
+        , maxDisplayCount = args.maxDisplayCount
+        , filteredCountryOptions = Common.filterBySearch newSearch args.countryOptions
+        }
+        newSearch
+
+
 getNextNewSelectAndY :
     Common.Model
-    -> { b | countryOptions : List Country, selectOptionHeight : Int, maxDisplayCount : Int }
+    -> { b | filteredCountryOptions : List Country, selectOptionHeight : Int, maxDisplayCount : Int }
     -> ( Country, Float )
 getNextNewSelectAndY model args =
     getNewSelectAndY_ 1 0 R10.Country.listHead model args
@@ -245,10 +206,10 @@ getNextNewSelectAndY model args =
 
 getPrevNewSelectAndY :
     Common.Model
-    -> { b | countryOptions : List Country, selectOptionHeight : Int, maxDisplayCount : Int }
+    -> { b | filteredCountryOptions : List Country, selectOptionHeight : Int, maxDisplayCount : Int }
     -> ( Country, Float )
 getPrevNewSelectAndY model args =
-    getNewSelectAndY_ -1 (List.length args.countryOptions - 1) R10.Country.listTail model args
+    getNewSelectAndY_ -1 (List.length args.filteredCountryOptions - 1) R10.Country.listTail model args
 
 
 getNewSelectAndY_ :
@@ -258,7 +219,7 @@ getNewSelectAndY_ :
     -> Common.Model
     ->
         { b
-            | countryOptions : List Country
+            | filteredCountryOptions : List Country
             , selectOptionHeight : Int
             , maxDisplayCount : Int
         }
@@ -268,7 +229,7 @@ getNewSelectAndY_ step defaultIndex defaultCountry model args =
         currentSelect : Maybe Country
         currentSelect =
             if model.select == Nothing then
-                model.value |> extractCountry
+                model.countryValue
 
             else
                 model.select
@@ -276,23 +237,23 @@ getNewSelectAndY_ step defaultIndex defaultCountry model args =
         currentIndex : Maybe Int
         currentIndex =
             currentSelect
-                |> Maybe.andThen (getOptionIndex args.countryOptions)
+                |> Maybe.andThen (getOptionIndex args.filteredCountryOptions)
 
         newIndex : Int
         newIndex =
             currentIndex
                 |> Maybe.map (\index -> index + step)
-                |> Maybe.andThen (inboundIndex <| (List.length args.countryOptions - 1))
+                |> Maybe.andThen (inboundIndex <| (List.length args.filteredCountryOptions - 1))
                 |> Maybe.withDefault defaultIndex
 
         newSelect : Country
         newSelect =
-            List.Extra.getAt newIndex args.countryOptions
+            List.Extra.getAt newIndex args.filteredCountryOptions
                 |> Maybe.withDefault defaultCountry
 
         newY : Float
         newY =
-            getOptionY model.scroll args newIndex (List.length args.countryOptions)
+            getOptionY model.scroll args newIndex (List.length args.filteredCountryOptions)
     in
     ( newSelect, newY )
 
@@ -303,87 +264,82 @@ update msg model =
         Common.NoOp ->
             ( model, Cmd.none )
 
-        Common.OnSearchTime key args newUnfilteredSearchValue time ->
+        Common.OnValue newValue ->
             let
-                newSearchChars =
-                    String.dropLeft (String.length model.value) newUnfilteredSearchValue
-                        |> Regex.replace notLettersRegex (always "")
-            in
-            if String.isEmpty newSearchChars then
-                ( model, Cmd.none )
+                hasCurrentCountryCode : Bool
+                hasCurrentCountryCode =
+                    case model.countryValue of
+                        Just countryValue ->
+                            newValue
+                                |> String.replace " " ""
+                                |> String.startsWith
+                                    (countryValue |> R10.Country.toCountryTelCode)
 
-            else
-                let
-                    newMills =
-                        Time.posixToMillis time
-                            -- shorten int to target length
-                            |> modBy (10 ^ searchTargetLength)
+                        Nothing ->
+                            False
 
-                    ( maybeOldMills, oldSearch ) =
-                        breakupSearch model.search
+                newCountryValue : Maybe Country
+                newCountryValue =
+                    if hasCurrentCountryCode then
+                        model.countryValue
 
-                    newSearch =
-                        case maybeOldMills of
-                            Just oldMills ->
-                                if abs (oldMills - newMills) > searchCleanThreshold then
-                                    newSearchChars
-
-                                else
-                                    oldSearch ++ newSearchChars
-
-                            Nothing ->
-                                newSearchChars
-
-                    newSelect : Maybe Country
-                    newSelect =
-                        if String.isEmpty newSearch then
-                            Nothing
+                    else
+                        let
+                            codeFromVal =
+                                newValue |> extractCountry
+                        in
+                        if codeFromVal /= Nothing then
+                            codeFromVal
 
                         else
-                            case
-                                args.countryOptions
-                                    |> List.map (\country -> ( country, country |> R10.Country.toString |> normalizeString ))
-                                    |> List.Extra.find (Tuple.second >> String.startsWith (normalizeString newSearch))
-                                    |> Maybe.map Tuple.first
-                            of
-                                Just country ->
-                                    Just country
+                            model.countryValue
+            in
+            ( { model | value = newValue, countryValue = newCountryValue }, Cmd.none )
 
-                                Nothing ->
-                                    model.select
+        Common.OnSearch key args newSearch ->
+            let
+                isSelectInsideCountryOptions : Bool
+                isSelectInsideCountryOptions =
+                    model.select
+                        |> Maybe.map (\s -> List.member s args.filteredCountryOptions)
+                        |> Maybe.withDefault False
 
-                    maybeNewIndex : Maybe Int
-                    maybeNewIndex =
-                        newSelect |> Maybe.andThen (getOptionIndex args.countryOptions)
+                newSelect : Maybe Country
+                newSelect =
+                    if isSelectInsideCountryOptions then
+                        model.select
 
-                    newY : Float
-                    newY =
-                        maybeNewIndex
-                            |> Maybe.map (\newIndex -> getOptionY model.scroll args newIndex (List.length args.countryOptions))
-                            |> Maybe.withDefault model.scroll
+                    else
+                        args.filteredCountryOptions |> List.head
 
-                    -- todo : Scroll to the new selection
-                    newModel =
-                        { model
-                            | search = composeSearch newMills newSearch
-                            , select = newSelect
-                        }
-                in
-                onOpenHelper newModel key newY
+                maybeNewIndex : Maybe Int
+                maybeNewIndex =
+                    newSelect |> Maybe.andThen (getOptionIndex args.filteredCountryOptions)
 
-        Common.OnSearch key countryOptions search ->
-            if model.opened then
-                ( model, Task.perform (Common.OnSearchTime key countryOptions search) Time.now )
-
-            else
-                ( { model | value = search }, Cmd.none )
+                newY : Float
+                newY =
+                    maybeNewIndex
+                        |> Maybe.map (\newIndex -> getOptionY model.scroll args newIndex (List.length args.filteredCountryOptions))
+                        |> Maybe.withDefault model.scroll
+            in
+            ( { model
+                | search = newSearch
+                , select = newSelect
+                , scroll = newY
+              }
+            , Cmd.batch
+                [ Task.attempt
+                    (always Common.NoOp)
+                    (Browser.Dom.setViewportOf
+                        (Common.dropdownContentId key)
+                        0
+                        newY
+                    )
+                ]
+            )
 
         Common.OnOptionSelect newCountry ->
             let
-                maybeOldCountry : Maybe Country
-                maybeOldCountry =
-                    extractCountry model.value
-
                 newCode : String
                 newCode =
                     newCountry
@@ -391,7 +347,7 @@ update msg model =
 
                 newValue : String
                 newValue =
-                    case maybeOldCountry of
+                    case model.countryValue of
                         Just oldCountry ->
                             let
                                 oldCode : String
@@ -406,7 +362,15 @@ update msg model =
                         Nothing ->
                             (newCode ++ " ") ++ model.value
             in
-            ( { model | value = newValue, opened = False, select = Nothing, search = "" }, Cmd.none )
+            ( { model
+                | value = newValue
+                , countryValue = Just newCountry
+                , opened = False
+                , select = Nothing
+                , search = ""
+              }
+            , Cmd.none
+            )
 
         Common.OnScroll scroll ->
             ( { model | scroll = scroll }, Cmd.none )
@@ -416,19 +380,8 @@ update msg model =
                 ( { model | scroll = scroll, opened = False }, Cmd.none )
 
             else
-                let
-                    ( newModel, cmd ) =
-                        onOpenHelper model key scroll
-
-                    inputId =
-                        Common.selectId key
-                in
-                ( newModel
-                , Cmd.batch
-                    [ cmd
-                    , Task.attempt (always Common.NoOp) <| Browser.Dom.focus inputId
-                    ]
-                )
+                onOpenHelper model key scroll
+                    |> focusSearchBoxCmd key
 
         Common.OnLoseFocus ->
             ( { model
@@ -452,7 +405,7 @@ update msg model =
                     |> (\( newValue, newY ) -> onArrowHelper model key newValue newY)
 
             else
-                ( model, Cmd.none )
+                onOpenHelper model key model.scroll
 
         Common.OnArrowDown key args ->
             -- skip arrow msg if dropdown is closed
@@ -461,7 +414,7 @@ update msg model =
                     |> (\( newValue, newY ) -> onArrowHelper model key newValue newY)
 
             else
-                ( model, Cmd.none )
+                onOpenHelper model key model.scroll
 
         Common.OnEsc ->
             ( { model | search = "", opened = False }, Cmd.none )

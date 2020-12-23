@@ -1,6 +1,7 @@
 module R10.FormComponents.Internal.Single.Update exposing
     ( dropdownHingeHeight
     , getDropdownHeight
+    , getMsgOnSearch
     , getOptionIndex
     , getOptionY
     , update
@@ -36,20 +37,19 @@ onOpenHelper key model float =
         | opened = True
         , scroll = float
       }
-    , Task.attempt
-        (always Common.NoOp)
-        (Browser.Dom.setViewportOf
-            (Common.dropdownContentId key)
-            0
-            float
-        )
+    , Cmd.batch
+        [ Task.attempt
+            (always Common.NoOp)
+            (Browser.Dom.setViewportOf
+                (Common.dropdownContentId key)
+                0
+                float
+            )
+        , Task.attempt
+            (always Common.NoOp)
+            (Browser.Dom.focus <| Common.singleSearchBoxId key)
+        ]
     )
-
-
-getOptionByLabel : List Common.FieldOption -> String -> Maybe Common.FieldOption
-getOptionByLabel fieldOptions targetLabel =
-    fieldOptions
-        |> List.Extra.find (\opt -> opt.label == targetLabel)
 
 
 getDropdownHeight : { a | maxDisplayCount : Int, selectOptionHeight : Int } -> Int -> Int
@@ -123,10 +123,30 @@ getOptionY scroll args optionIndex optionsCount =
             scroll
 
 
+getMsgOnSearch :
+    { a
+        | key : String
+        , selectOptionHeight : Int
+        , maxDisplayCount : Int
+        , searchFn : String -> Common.FieldOption -> Bool
+        , fieldOptions : List Common.FieldOption
+    }
+    -> String
+    -> Common.Msg
+getMsgOnSearch args newSearch =
+    Common.OnSearch
+        { key = args.key
+        , selectOptionHeight = args.selectOptionHeight
+        , maxDisplayCount = args.maxDisplayCount
+        , filteredFieldOption = Common.filterBySearch newSearch args
+        }
+        newSearch
+
+
 getOptionIndex : List { a | value : String } -> String -> Maybe Int
 getOptionIndex filteredOptions value =
     filteredOptions
-        |> List.Extra.findIndex (\opt -> opt.value == value)
+        |> List.Extra.findIndex (.value >> (==) value)
 
 
 inboundIndex : number -> number -> Maybe number
@@ -138,17 +158,17 @@ inboundIndex maxIdx idx =
         Just idx
 
 
-getNextNewSelectAndY : Common.Model -> { b | fieldOptions : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
+getNextNewSelectAndY : Common.Model -> { b | filteredFieldOption : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
 getNextNewSelectAndY model args =
     getNewSelectAndY_ 1 0 model args
 
 
-getPrevNewSelectAndY : Common.Model -> { b | fieldOptions : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
+getPrevNewSelectAndY : Common.Model -> { b | filteredFieldOption : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
 getPrevNewSelectAndY model args =
-    getNewSelectAndY_ -1 (List.length args.fieldOptions - 1) model args
+    getNewSelectAndY_ -1 (List.length args.filteredFieldOption - 1) model args
 
 
-getNewSelectAndY_ : Int -> Int -> Common.Model -> { b | fieldOptions : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
+getNewSelectAndY_ : Int -> Int -> Common.Model -> { b | filteredFieldOption : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
 getNewSelectAndY_ step default model args =
     let
         select : String
@@ -161,20 +181,20 @@ getNewSelectAndY_ step default model args =
 
         newIndex : Int
         newIndex =
-            getOptionIndex args.fieldOptions select
+            getOptionIndex args.filteredFieldOption select
                 |> Maybe.map (\index -> index + step)
-                |> Maybe.andThen (inboundIndex <| (List.length args.fieldOptions - 1))
+                |> Maybe.andThen (inboundIndex <| (List.length args.filteredFieldOption - 1))
                 |> Maybe.withDefault default
 
         newValue : String
         newValue =
-            List.Extra.getAt newIndex args.fieldOptions
+            List.Extra.getAt newIndex args.filteredFieldOption
                 |> Maybe.map .value
                 |> Maybe.withDefault ""
 
         newY : Float
         newY =
-            getOptionY model.scroll args newIndex (List.length args.fieldOptions)
+            getOptionY model.scroll args newIndex (List.length args.filteredFieldOption)
     in
     ( newValue, newY )
 
@@ -185,31 +205,47 @@ update msg model =
         Common.NoOp ->
             ( model, Cmd.none )
 
-        Common.OnSearch args search ->
+        Common.OnSearch args newSearch ->
             let
+                isSelectInsideCountryOptions : Bool
+                isSelectInsideCountryOptions =
+                    args.filteredFieldOption
+                        |> List.any (.value >> (==) model.select)
+
                 newSelect : String
                 newSelect =
-                    if String.isEmpty search then
-                        ""
+                    if isSelectInsideCountryOptions then
+                        model.select
 
                     else
-                        getOptionByLabel args.fieldOptions search
-                            |> Maybe.map .value
-                            |> Maybe.withDefault ""
+                        args.filteredFieldOption |> List.head |> Maybe.map .value |> Maybe.withDefault ""
 
-                newVal : String
-                newVal =
-                    if String.isEmpty search then
-                        ""
+                maybeNewIndex : Maybe Int
+                maybeNewIndex =
+                    newSelect
+                        |> getOptionIndex args.filteredFieldOption
 
-                    else
-                        model.value
-
-                newModel : Common.Model
-                newModel =
-                    { model | search = search, value = newVal, select = newSelect }
+                newY : Float
+                newY =
+                    maybeNewIndex
+                        |> Maybe.map (\newIndex -> getOptionY model.scroll args newIndex (List.length args.filteredFieldOption))
+                        |> Maybe.withDefault model.scroll
             in
-            onOpenHelper args.key newModel newModel.scroll
+            ( { model
+                | search = newSearch
+                , select = newSelect
+                , scroll = newY
+              }
+            , Cmd.batch
+                [ Task.attempt
+                    (always Common.NoOp)
+                    (Browser.Dom.setViewportOf
+                        (Common.dropdownContentId args.key)
+                        0
+                        newY
+                    )
+                ]
+            )
 
         Common.OnOptionSelect value ->
             ( { model | value = value, opened = False, select = "", search = "" }, Cmd.none )

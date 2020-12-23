@@ -6,6 +6,7 @@ module R10.FormComponents.Internal.UI exposing
     , getBorderColor
     , getTextfieldBorderSizeOffset
     , getTextfieldPaddingEach
+    , iconWidth
     , icons
     , keyCode
     , labelBuilder

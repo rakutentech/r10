@@ -160,12 +160,12 @@ view attrs model conf =
             , palette = conf.palette
             , singleType = conf.singleType
             , fieldOptions = conf.fieldOptions
-            , searchFn = defaultSearchFn
             , toOptionEl =
                 defaultToOptionEl
                     { search = model.search
                     , msgOnSelect = Common.OnOptionSelect >> conf.toMsg
                     }
+            , searchFn = defaultSearchFn
             , selectOptionHeight = 36
             , maxDisplayCount = 5
             , leadingIcon = Nothing
@@ -177,7 +177,7 @@ view attrs model conf =
             R10.FormComponents.Internal.Single.Combobox.view attrs model args
 
         R10.FormTypes.SingleRadio ->
-            R10.FormComponents.Internal.Single.Radio.viewRadio attrs model args
+            R10.FormComponents.Internal.Single.Radio.view attrs model args
 
 
 type alias ArgsCustom msg =
@@ -219,9 +219,9 @@ viewCustom attrs model conf =
             , style = conf.style
             , key = conf.key
             , palette = conf.palette
+            , searchFn = conf.searchFn
             , singleType = conf.singleType
             , fieldOptions = conf.fieldOptions
-            , searchFn = conf.searchFn
             , toOptionEl = conf.toOptionEl
             , selectOptionHeight = conf.selectOptionHeight
             , maxDisplayCount = conf.maxDisplayCount
@@ -234,4 +234,4 @@ viewCustom attrs model conf =
             R10.FormComponents.Internal.Single.Combobox.view attrs model args
 
         R10.FormTypes.SingleRadio ->
-            R10.FormComponents.Internal.Single.Radio.viewRadio attrs model args
+            R10.FormComponents.Internal.Single.Radio.view attrs model args

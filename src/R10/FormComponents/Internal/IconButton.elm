@@ -54,7 +54,9 @@ view args { msgOnClick, icon, palette, size } =
                 Just msgOnClick_ ->
                     [ htmlAttribute <| Html.Attributes.tabindex 0
                     , htmlAttribute <| R10.FormComponents.Internal.UI.onSelectKey msgOnClick_
-                    , htmlAttribute <| Html.Events.preventDefaultOn "mousedown" (Json.Decode.succeed ( msgOnClick_, True ))
+
+                    --, htmlAttribute <| Html.Events.preventDefaultOn "mouseup" (Json.Decode.succeed ( msgOnClick_, True ))
+                    , htmlAttribute <| Html.Events.stopPropagationOn "mouseup" (Json.Decode.succeed ( msgOnClick_, False ))
                     , htmlAttribute <| Html.Attributes.class <| "ripple"
                     , htmlAttribute <| Html.Attributes.style "transition" "all 0.13s; margin-top 0s "
                     , pointer

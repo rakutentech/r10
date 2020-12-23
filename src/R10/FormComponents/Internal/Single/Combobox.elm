@@ -10,7 +10,7 @@ import Html.Attributes
 import Html.Events
 import List.Extra
 import R10.FormComponents.Internal.Single.Common as Common
-import R10.FormComponents.Internal.Single.Update
+import R10.FormComponents.Internal.Single.Update as Update
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI
@@ -20,17 +20,32 @@ import R10.FormComponents.Internal.Utils.FocusOut
 import R10.FormTypes
 
 
-filterBySearch : String -> Common.Args msg -> List Common.FieldOption
-filterBySearch search { searchFn, fieldOptions } =
-    if
-        String.isEmpty search
-            || Common.isAnyOptionLabelMatched { value = search, fieldOptions = fieldOptions }
-    then
-        fieldOptions
-
-    else
-        fieldOptions
-            |> List.filter (searchFn search)
+viewSearchBox : Common.Model -> Common.Args msg -> Element msg
+viewSearchBox model args =
+    R10.FormComponents.Internal.Text.viewInput
+        [ htmlAttribute <| Html.Attributes.id <| Common.singleSearchBoxId args.key
+        , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
+        , Border.rounded 0
+        ]
+        { disabled = args.disabled
+        , focused = model.focused
+        , label = args.label
+        , msgOnChange = args.toMsg << Update.getMsgOnSearch args
+        , msgOnFocus = args.toMsg <| Common.OnFocus model.value
+        , msgOnLoseFocus = Nothing
+        , msgOnEnter = Nothing
+        , msgOnTogglePasswordShow = Nothing
+        , palette = args.palette
+        , style = args.style
+        , showPassword = False
+        , textType = R10.FormTypes.TextPlain
+        , leadingIcon = Nothing
+        , trailingIcon = Nothing
+        , value = model.search
+        , valid = args.valid
+        , helperText = args.helperText
+        , requiredLabel = args.requiredLabel
+        }
 
 
 {-| returns value to be displayed in combobox input component
@@ -38,19 +53,13 @@ also returns flag is displayed value is actual value or just intermediate
 -}
 optionsLabelOrSearchValue :
     String
-    -> String
     -> List Common.FieldOption
-    -> { displayValue : String, isActualValueDisplayed : Bool }
-optionsLabelOrSearchValue search value fieldOptions =
-    if String.isEmpty search then
-        fieldOptions
-            |> List.Extra.find (\opt -> opt.value == value)
-            |> Maybe.map .label
-            |> Maybe.map (\label -> { displayValue = label, isActualValueDisplayed = True })
-            |> Maybe.withDefault { displayValue = search, isActualValueDisplayed = False }
-
-    else
-        { displayValue = search, isActualValueDisplayed = False }
+    -> String
+optionsLabelOrSearchValue value filteredFieldOption =
+    filteredFieldOption
+        |> List.Extra.find (\opt -> opt.value == value)
+        |> Maybe.map .label
+        |> Maybe.withDefault ""
 
 
 getMsgOnInputClick : Common.Model -> Common.Args msg -> List Common.FieldOption -> Common.Msg
@@ -58,12 +67,12 @@ getMsgOnInputClick model args filteredOptions =
     let
         selectedOptionIndex : Int
         selectedOptionIndex =
-            R10.FormComponents.Internal.Single.Update.getOptionIndex filteredOptions model.value
+            Update.getOptionIndex filteredOptions model.value
                 |> Maybe.withDefault -1
 
         selectedY : Float
         selectedY =
-            R10.FormComponents.Internal.Single.Update.getOptionY model.scroll args selectedOptionIndex (List.length filteredOptions)
+            Update.getOptionY model.scroll args selectedOptionIndex (List.length filteredOptions)
     in
     Common.OnInputClick { key = args.key, selectedY = selectedY }
 
@@ -90,7 +99,7 @@ viewComboboxDropdown model args filteredOptions =
 
         visibleMoveDown : Float
         visibleMoveDown =
-            toFloat (R10.FormComponents.Internal.Single.Update.dropdownHingeHeight + max 0 visibleFrom * args.selectOptionHeight)
+            toFloat (Update.dropdownHingeHeight + max 0 visibleFrom * args.selectOptionHeight)
 
         visibleOptions : List ( String, Element msg )
         visibleOptions =
@@ -110,18 +119,11 @@ viewComboboxDropdown model args filteredOptions =
         contentHeight =
             args.selectOptionHeight * max optionsCount 1
     in
-    el
+    column
         [ width fill
-        , height <| px <| R10.FormComponents.Internal.Single.Update.getDropdownHeight args optionsCount
-        , htmlAttribute <| Html.Attributes.style "z-index" "1"
-        , htmlAttribute <| Html.Attributes.tabindex 0
-        , htmlAttribute <| Html.Attributes.style "overscroll-behavior" "contain"
-        , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << Common.OnScroll)
-        , htmlAttribute <| Html.Attributes.id <| Common.dropdownContentId <| args.key
-        , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
+        , moveDown 52
         , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
-        , paddingXY 0 R10.FormComponents.Internal.Single.Update.dropdownHingeHeight
-        , scrollbarX
+        , htmlAttribute <| Html.Attributes.style "z-index" "1"
         , Border.rounded
             (case args.style of
                 R10.FormComponents.Internal.Style.Filled ->
@@ -136,11 +138,28 @@ viewComboboxDropdown model args filteredOptions =
             , blur = 3
             , size = 1
             }
-        , moveDown 52
-        , inFront <| Keyed.column [ width <| fill, moveDown visibleMoveDown ] visibleOptions
         ]
-    <|
-        el [ height <| px contentHeight, width fill ] none
+        [ el
+            [ height <| px 52
+            , width fill
+            ]
+          <|
+            viewSearchBox model args
+        , el
+            [ width fill
+            , height <| px <| Update.getDropdownHeight args optionsCount
+            , htmlAttribute <| Html.Attributes.style "overscroll-behavior" "contain"
+            , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << Common.OnScroll)
+            , htmlAttribute <| Html.Attributes.id <| Common.dropdownContentId <| args.key
+            , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
+            , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
+            , paddingXY 0 Update.dropdownHingeHeight
+            , scrollbarX
+            , inFront <| Keyed.column [ width <| fill, moveDown visibleMoveDown ] visibleOptions
+            ]
+          <|
+            el [ height <| px contentHeight, width fill ] none
+        ]
 
 
 comboboxOptionNoResults : { a | palette : R10.FormTypes.Palette, selectOptionHeight : Int } -> Element msg
@@ -202,14 +221,13 @@ viewComboboxOption value select args opt =
 
 view : List (Attribute msg) -> Common.Model -> Common.Args msg -> Element msg
 view attrs model args =
-    -- todo add selected validation
     let
-        filteredOptions : List Common.FieldOption
-        filteredOptions =
-            filterBySearch model.search args
+        filteredFieldOption : List Common.FieldOption
+        filteredFieldOption =
+            Common.filterBySearch model.search args
 
-        { displayValue, isActualValueDisplayed } =
-            optionsLabelOrSearchValue model.search model.value args.fieldOptions
+        displayValue =
+            optionsLabelOrSearchValue model.value filteredFieldOption
 
         textArgs : R10.FormComponents.Internal.Text.Args msg
         textArgs =
@@ -217,11 +235,11 @@ view attrs model args =
             , valid = args.valid
             , focused = model.focused
             , label = args.label
-            , msgOnChange = args.toMsg << Common.OnSearch { key = args.key, fieldOptions = args.fieldOptions }
+            , msgOnChange = args.toMsg << always Common.NoOp
             , msgOnFocus = args.toMsg <| Common.OnFocus model.value
             , msgOnLoseFocus = Nothing
             , msgOnEnter = Nothing
-            , msgOnTogglePasswordShow = Nothing --todo
+            , msgOnTogglePasswordShow = Nothing
             , palette = args.palette
             , style = args.style
             , showPassword = False
@@ -231,24 +249,20 @@ view attrs model args =
             , value = displayValue
             , helperText = args.helperText
             , requiredLabel = args.requiredLabel
-            , idDom = Just <| Common.selectId args.key
+            , idDom = Nothing
             }
 
         inputAttrs : List (Attribute msg)
         inputAttrs =
-            [ Events.onClick <| args.toMsg <| getMsgOnInputClick model args filteredOptions
+            [ Events.onClick <| args.toMsg <| getMsgOnInputClick model args filteredFieldOption
+            , htmlAttribute <| Html.Attributes.attribute "readonly" "true"
             ]
-                ++ (if isActualValueDisplayed then
-                        []
-
-                    else
-                        [ Font.color <| R10.FormComponents.Internal.UI.Color.fontA 0.6 args.palette ]
-                   )
     in
     R10.FormComponents.Internal.Text.view
-        ([ htmlAttribute <|
+        ([ htmlAttribute <| Html.Attributes.id <| Common.dropdownContainerId <| args.key
+         , htmlAttribute <|
             Html.Events.on "focusout"
-                (R10.FormComponents.Internal.Utils.FocusOut.onFocusOut (Common.dropdownContentId args.key) <|
+                (R10.FormComponents.Internal.Utils.FocusOut.onFocusOut (Common.dropdownContainerId args.key) <|
                     args.toMsg <|
                         Common.OnLoseFocus model.value
                 )
@@ -259,7 +273,7 @@ view attrs model args =
                         { key = args.key
                         , selectOptionHeight = args.selectOptionHeight
                         , maxDisplayCount = args.maxDisplayCount
-                        , fieldOptions = args.fieldOptions
+                        , filteredFieldOption = filteredFieldOption
                         }
                         |> args.toMsg
                   )
@@ -268,7 +282,7 @@ view attrs model args =
                         { key = args.key
                         , selectOptionHeight = args.selectOptionHeight
                         , maxDisplayCount = args.maxDisplayCount
-                        , fieldOptions = args.fieldOptions
+                        , filteredFieldOption = filteredFieldOption
                         }
                         |> args.toMsg
                   )
@@ -280,7 +294,7 @@ view attrs model args =
                             , ( R10.FormComponents.Internal.UI.keyCode.enter
                               , args.toMsg <|
                                     Common.OnOptionSelect <|
-                                        Common.getSelectedOrFirst filteredOptions model.value model.select
+                                        Common.getSelectedOrFirst filteredFieldOption model.value model.select
                               )
                             ]
 
@@ -289,7 +303,7 @@ view attrs model args =
                        )
          ]
             ++ (if model.opened then
-                    [ inFront <| viewComboboxDropdown model args filteredOptions ]
+                    [ inFront <| viewComboboxDropdown model args filteredFieldOption ]
 
                 else
                     []

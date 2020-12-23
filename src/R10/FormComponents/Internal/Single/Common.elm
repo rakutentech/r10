@@ -3,12 +3,12 @@ module R10.FormComponents.Internal.Single.Common exposing
     , FieldOption
     , Model
     , Msg(..)
+    , dropdownContainerId
     , dropdownContentId
+    , filterBySearch
     , getSelectedOrFirst
     , init
-    , isAnyOptionLabelMatched
-    , isAnyOptionValueMatched
-    , selectId
+    , singleSearchBoxId
     )
 
 import Element exposing (..)
@@ -25,10 +25,10 @@ type Msg
     | OnFocus String
     | OnLoseFocus String
     | OnScroll Float
-    | OnSearch { key : String, fieldOptions : List FieldOption } String
+    | OnSearch { selectOptionHeight : Int, maxDisplayCount : Int, key : String, filteredFieldOption : List FieldOption } String
     | OnOptionSelect String --newValue
-    | OnArrowUp { key : String, selectOptionHeight : Int, maxDisplayCount : Int, fieldOptions : List FieldOption } -- newSelect selectionY
-    | OnArrowDown { key : String, selectOptionHeight : Int, maxDisplayCount : Int, fieldOptions : List FieldOption } -- newSelect selectionY
+    | OnArrowUp { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption } -- newSelect selectionY
+    | OnArrowDown { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption } -- newSelect selectionY
     | OnEsc
     | OnInputClick { key : String, selectedY : Float }
 
@@ -110,11 +110,36 @@ getSelectedOrFirst fieldOptions value select =
             |> Maybe.withDefault ""
 
 
+filterBySearch :
+    String
+    ->
+        { a
+            | searchFn : String -> FieldOption -> Bool
+            , fieldOptions : List FieldOption
+        }
+    -> List FieldOption
+filterBySearch search { searchFn, fieldOptions } =
+    if
+        String.isEmpty search
+            || isAnyOptionLabelMatched { value = search, fieldOptions = fieldOptions }
+    then
+        fieldOptions
+
+    else
+        fieldOptions
+            |> List.filter (searchFn search)
+
+
+dropdownContainerId : String -> String
+dropdownContainerId key =
+    "single-dropdown-container-" ++ key
+
+
 dropdownContentId : String -> String
 dropdownContentId key =
-    "dropdown-content-" ++ key
+    "single-dropdown-content-" ++ key
 
 
-selectId : String -> String
-selectId key =
-    "dropdown-" ++ key
+singleSearchBoxId : String -> String
+singleSearchBoxId key =
+    "single-dropdown-search-" ++ key

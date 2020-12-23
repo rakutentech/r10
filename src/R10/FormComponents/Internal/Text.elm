@@ -143,13 +143,13 @@ viewBehindPattern args =
             in
             [ behindContent <|
                 viewInput
+                    [ alpha 0.6
+                    , htmlAttribute <| Html.Attributes.attribute "disabled" "true"
+                    ]
                     { args
                         | value = valueWithTrailingPattern
                         , textType = R10.FormTypes.TextPlain
                     }
-                    [ alpha 0.6
-                    , htmlAttribute <| Html.Attributes.attribute "disabled" "true"
-                    ]
             ]
 
         _ ->
@@ -356,23 +356,23 @@ view attrs extraInputAttrs args =
          -- ++ [ width <| fill ]
          -- ++ [ width <| (fill |> minimum 100) ]
         )
-        [ viewInput newArgs <|
-            [ getBorder styleArgs
-            , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
-            , case newArgs.style of
+        [ viewInput
+            ([ getBorder styleArgs
+             , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
+             , case newArgs.style of
                 R10.FormComponents.Internal.Style.Filled ->
                     Border.rounded 0
 
                 R10.FormComponents.Internal.Style.Outlined ->
                     Border.rounded 5
-            , height <|
+             , height <|
                 px <|
                     if newArgs.textType == R10.FormTypes.TextMultiline then
                         200
 
                     else
                         Constants.inputTextHeight
-            ]
+             ]
                 ++ (case args.idDom of
                         Just id ->
                             [ htmlAttribute <| Html.Attributes.id id ]
@@ -381,6 +381,8 @@ view attrs extraInputAttrs args =
                             []
                    )
                 ++ extraInputAttrs
+            )
+            newArgs
         , R10.FormComponents.Internal.UI.viewHelperText newArgs.palette
             [ spacing 2
             , alpha 0.5
@@ -392,25 +394,26 @@ view attrs extraInputAttrs args =
 
 
 viewInput :
-    { a
-        | disabled : Bool
-        , focused : Bool
-        , label : String
-        , leadingIcon : Maybe (Element msg)
-        , msgOnChange : String -> msg
-        , msgOnEnter : Maybe msg
-        , msgOnFocus : msg
-        , msgOnLoseFocus : Maybe msg
-        , palette : R10.FormTypes.Palette
-        , showPassword : Bool
-        , style : R10.FormComponents.Internal.Style.Style
-        , textType : R10.FormTypes.TypeText
-        , trailingIcon : Maybe (Element msg)
-        , value : String
-    }
-    -> List (Attribute msg)
+    List (Attribute msg)
+    ->
+        { a
+            | disabled : Bool
+            , focused : Bool
+            , label : String
+            , leadingIcon : Maybe (Element msg)
+            , msgOnChange : String -> msg
+            , msgOnEnter : Maybe msg
+            , msgOnFocus : msg
+            , msgOnLoseFocus : Maybe msg
+            , palette : R10.FormTypes.Palette
+            , showPassword : Bool
+            , style : R10.FormComponents.Internal.Style.Style
+            , textType : R10.FormTypes.TypeText
+            , trailingIcon : Maybe (Element msg)
+            , value : String
+        }
     -> Element msg
-viewInput args extraAttr =
+viewInput extraAttr args =
     let
         inputDisabledAttrs : List (Attribute msg)
         inputDisabledAttrs =

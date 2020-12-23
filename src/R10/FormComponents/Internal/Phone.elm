@@ -18,7 +18,10 @@ import R10.FormComponents.Internal.Phone.Views
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
+import R10.FormComponents.Internal.Utils
 import R10.FormTypes
+import R10.SimpleMarkdown
+import String.Extra
 
 
 
@@ -81,6 +84,13 @@ getFlagIcon size maybeCountry =
             )
 
 
+insertBold : List Int -> String -> String
+insertBold indexes string =
+    string
+        |> R10.FormComponents.Internal.Utils.stringInsertAtMulti "**" indexes
+        |> String.Extra.surround "**"
+
+
 viewOptionEl :
     { a
         | search : String
@@ -89,6 +99,23 @@ viewOptionEl :
     -> Country
     -> Element msg
 viewOptionEl { search, msgOnSelect } country =
+    let
+        label =
+            R10.Country.toString country
+
+        insertPositions : List Int
+        insertPositions =
+            String.indexes (search |> Common.normalizeString) (label |> Common.normalizeString)
+                |> List.concatMap (\idx -> [ idx, idx + String.length search ])
+
+        withBold : String
+        withBold =
+            if List.isEmpty insertPositions then
+                label
+
+            else
+                insertBold insertPositions label
+    in
     row
         [ width fill
         , height fill
@@ -103,19 +130,38 @@ viewOptionEl { search, msgOnSelect } country =
         , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
         ]
         [ getFlagIcon 24 <| Just country
-        , text (R10.Country.toString country)
+        , row [] (withBold |> R10.SimpleMarkdown.elementMarkdown)
         , el [ alpha 0.5 ] <| text ("(" ++ R10.Country.toCountryTelCode country ++ ")")
         ]
 
 
-getFlagButton : R10.FormTypes.Palette -> String -> msg -> Element msg
-getFlagButton palette value msg =
+getFlagButton :
+    { palette : R10.FormTypes.Palette
+    , disabled : Bool
+    , toMsg : Common.Msg -> msg
+    , key : String
+    , filteredCountryOptions : List Country
+    , model : Common.Model
+    }
+    -> Element msg
+getFlagButton { palette, disabled, toMsg, key, filteredCountryOptions, model } =
     R10.FormComponents.Internal.IconButton.view []
-        { msgOnClick = Just <| msg
+        { msgOnClick =
+            if disabled then
+                Nothing
+
+            else
+                Just <|
+                    toMsg <|
+                        R10.FormComponents.Internal.Phone.Update.getMsgOnFlagClick model
+                            { key = key
+                            , selectOptionHeight = 36
+                            , maxDisplayCount = 5
+                            }
+                            filteredCountryOptions
         , icon =
             row [ width fill, centerY, centerX, moveLeft 2 ]
-                [ value
-                    |> R10.FormComponents.Internal.Phone.Update.extractCountry
+                [ model.countryValue
                     |> getFlagIcon 20
                     |> el
                         [ width fill
@@ -160,8 +206,15 @@ view :
     -> Element msg
 view attrs model conf =
     let
+        countryOptions_ : List Country
         countryOptions_ =
-            conf.countryOptions |> Maybe.withDefault countryOptions
+            conf.countryOptions
+                |> Maybe.withDefault countryOptions
+
+        filteredCountryOptions : List Country
+        filteredCountryOptions =
+            countryOptions_
+                |> Common.filterBySearch model.search
 
         args : Common.Args msg
         args =
@@ -178,7 +231,6 @@ view attrs model conf =
             , toOptionEl =
                 viewOptionEl
                     { search = model.search
-                    , fieldOptions = countryOptions_
                     , msgOnSelect = Common.OnOptionSelect >> conf.toMsg
                     }
             , selectOptionHeight = 36
@@ -186,16 +238,13 @@ view attrs model conf =
             , leadingIcon =
                 Just <|
                     getFlagButton
-                        conf.palette
-                        model.value
-                        (conf.toMsg <|
-                            R10.FormComponents.Internal.Phone.Update.getMsgOnFlagClick model
-                                { key = conf.key
-                                , selectOptionHeight = 36
-                                , maxDisplayCount = 5
-                                }
-                                countryOptions_
-                        )
+                        { palette = conf.palette
+                        , disabled = conf.disabled
+                        , toMsg = conf.toMsg
+                        , key = conf.key
+                        , filteredCountryOptions = filteredCountryOptions
+                        , model = model
+                        }
             , trailingIcon = Just <| defaultTrailingIcon { opened = model.opened, palette = conf.palette }
             }
     in

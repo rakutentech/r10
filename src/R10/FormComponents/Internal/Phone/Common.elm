@@ -3,8 +3,12 @@ module R10.FormComponents.Internal.Phone.Common exposing
     , FieldOption
     , Model
     , Msg(..)
+    , dropdownContainerId
     , dropdownContentId
+    , dropdownSearchBoxId
+    , filterBySearch
     , init
+    , normalizeString
     , selectId
     )
 
@@ -12,7 +16,6 @@ import Element exposing (..)
 import R10.Country exposing (Country)
 import R10.FormComponents.Internal.Style
 import R10.FormTypes
-import Time
 
 
 
@@ -24,11 +27,11 @@ type Msg
     | OnFocus
     | OnLoseFocus
     | OnScroll Float
-    | OnSearch String { selectOptionHeight : Int, maxDisplayCount : Int, countryOptions : List Country } String -- newSearch, newSelect
-    | OnSearchTime String { selectOptionHeight : Int, maxDisplayCount : Int, countryOptions : List Country } String Time.Posix -- newSearch, newSelect
+    | OnValue String -- newValue, newValue
+    | OnSearch String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List Country } String -- newSearch, newSelect
     | OnOptionSelect Country --newValue
-    | OnArrowUp String { selectOptionHeight : Int, maxDisplayCount : Int, countryOptions : List Country } -- newSelect selectionY
-    | OnArrowDown String { selectOptionHeight : Int, maxDisplayCount : Int, countryOptions : List Country } -- newSelect selectionY
+    | OnArrowUp String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List Country } -- newSelect selectionY
+    | OnArrowDown String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List Country } -- newSelect selectionY
     | OnEsc
     | OnFlagClick String Float -- selectionY
 
@@ -36,6 +39,7 @@ type Msg
 init : Model
 init =
     { value = ""
+    , countryValue = Nothing
     , search = ""
     , select = Nothing
     , focused = False
@@ -46,6 +50,7 @@ init =
 
 type alias Model =
     { value : String
+    , countryValue : Maybe Country
     , search : String
     , select : Maybe Country
     , focused : Bool
@@ -86,9 +91,46 @@ type alias Args msg =
     }
 
 
+normalizeString : String -> String
+normalizeString =
+    -- use for filtering, search <-> label comparison
+    String.toLower >> String.trim
+
+
+searchFn : String -> Country -> Bool
+searchFn search country =
+    String.contains
+        (search |> normalizeString)
+        (country |> R10.Country.toString |> normalizeString)
+
+
+filterBySearch : String -> List Country -> List Country
+filterBySearch search fieldOptions =
+    if
+        String.isEmpty search
+            --|| isAnyOptionLabelMatched { value = search, fieldOptions = fieldOptions }
+            || (fieldOptions |> List.map R10.Country.toString |> List.any ((==) search))
+    then
+        fieldOptions
+
+    else
+        fieldOptions
+            |> List.filter (searchFn search)
+
+
+dropdownContainerId : String -> String
+dropdownContainerId key =
+    "dropdown-container-" ++ key
+
+
 dropdownContentId : String -> String
 dropdownContentId key =
     "dropdown-content-" ++ key
+
+
+dropdownSearchBoxId : String -> String
+dropdownSearchBoxId key =
+    "dropdown-search-" ++ key
 
 
 selectId : String -> String

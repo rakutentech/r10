@@ -1,4 +1,4 @@
-module R10.FormComponents.Internal.Single.Radio exposing (viewRadio)
+module R10.FormComponents.Internal.Single.Radio exposing (view)
 
 import Element exposing (..)
 import Element.Background as Background
@@ -31,12 +31,11 @@ viewRadioOption :
         | disabled : Bool
         , palette : R10.FormTypes.Palette
         , focused : Bool
-        , value : String
         , label : String
     }
     -> Input.OptionState
     -> Element msg
-viewRadioOption { disabled, palette, focused, value, label } optionState =
+viewRadioOption { disabled, palette, focused, label } optionState =
     let
         { innerCircleSize, innerCircleColor, outerCircleColor } =
             case ( isSelected optionState, disabled ) of
@@ -150,8 +149,8 @@ viewRadioLabel palette label helperText =
             ]
 
 
-viewRadio : List (Attribute msg) -> Common.Model -> Common.Args msg -> Element msg
-viewRadio attrs model args =
+view : List (Attribute msg) -> Common.Model -> Common.Args msg -> Element msg
+view attrs model args =
     let
         fixedValue : String
         fixedValue =

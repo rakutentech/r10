@@ -17,7 +17,6 @@ import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormComponents.Internal.Utils.FocusOut
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 
 
@@ -212,29 +211,10 @@ view attrs model args =
         { displayValue, isActualValueDisplayed } =
             optionsLabelOrSearchValue model.search model.value args.fieldOptions
 
-        textArgs :
-            { disabled : Bool
-            , focused : Bool
-            , helperText : Maybe String
-            , idDom : Maybe String
-            , label : String
-            , leadingIcon : Maybe (Element msg)
-            , msgOnChange : String -> msg
-            , msgOnEnter : Maybe msg
-            , msgOnFocus : msg
-            , msgOnLoseFocus : Maybe msg
-            , msgOnTogglePasswordShow : Maybe a
-            , palette : R10.FormTypes.Palette
-            , requiredLabel : Maybe String
-            , showPassword : Bool
-            , style : R10.FormComponents.Internal.Style.Style
-            , textType : R10.FormTypes.TypeText
-            , trailingIcon : Maybe (Element msg)
-            , validation : R10.FormComponents.Internal.Validations.Validation
-            , value : String
-            }
+        textArgs : R10.FormComponents.Internal.Text.Args msg
         textArgs =
             { disabled = args.disabled
+            , valid = args.valid
             , focused = model.focused
             , label = args.label
             , msgOnChange = args.toMsg << Common.OnSearch { key = args.key, fieldOptions = args.fieldOptions }
@@ -249,7 +229,6 @@ view attrs model args =
             , leadingIcon = args.leadingIcon
             , trailingIcon = args.trailingIcon
             , value = displayValue
-            , validation = args.validation
             , helperText = args.helperText
             , requiredLabel = args.requiredLabel
             , idDom = Just <| Common.selectId args.key

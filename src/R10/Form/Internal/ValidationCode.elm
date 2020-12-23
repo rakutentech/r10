@@ -1,20 +1,19 @@
 module R10.Form.Internal.ValidationCode exposing (fromValidationCodeToMessageWithReplacedValues)
 
 import R10.Form.Internal.FieldConf
-import R10.Form.Internal.Translator
 import Regex
 
 
 fromValidationCodeToMessageWithReplacedValues :
     R10.Form.Internal.FieldConf.ValidationCode
     -> R10.Form.Internal.FieldConf.ValidationPayload
-    -> R10.Form.Internal.Translator.Translator
+    -> (R10.Form.Internal.FieldConf.ValidationCode -> String)
     -> String
 fromValidationCodeToMessageWithReplacedValues validationCode bracketsArgs translator_ =
     let
         translated : String
         translated =
-            translator_ validationCode Nothing
+            translator_ validationCode
     in
     if List.isEmpty bracketsArgs then
         translated

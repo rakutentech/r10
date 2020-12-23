@@ -23,7 +23,6 @@ import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 import R10.SimpleMarkdown
 import String.Extra
@@ -135,7 +134,7 @@ type alias Args msg =
     , palette : R10.FormTypes.Palette
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List Common.FieldOption
-    , validation : R10.FormComponents.Internal.Validations.Validation
+    , valid : Maybe Bool
     , toMsg : Common.Msg -> msg
     }
 
@@ -150,7 +149,7 @@ view attrs model conf =
     let
         args : Common.Args msg
         args =
-            { validation = conf.validation
+            { valid = conf.valid
             , toMsg = conf.toMsg
             , label = conf.label
             , helperText = conf.helperText
@@ -191,7 +190,7 @@ type alias ArgsCustom msg =
     , palette : R10.FormTypes.Palette
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List Common.FieldOption
-    , validation : R10.FormComponents.Internal.Validations.Validation
+    , valid : Maybe Bool
     , toMsg : Common.Msg -> msg
     , searchFn : String -> Common.FieldOption -> Bool
     , toOptionEl : Common.FieldOption -> Element msg
@@ -212,7 +211,7 @@ viewCustom attrs model conf =
     let
         args : Common.Args msg
         args =
-            { validation = conf.validation
+            { valid = conf.valid
             , toMsg = conf.toMsg
             , label = conf.label
             , helperText = conf.helperText

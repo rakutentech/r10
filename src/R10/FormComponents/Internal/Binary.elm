@@ -12,7 +12,6 @@ import Html.Attributes
 import R10.Color.Utils
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 
 
@@ -31,7 +30,7 @@ type alias Args msg =
     --
     , value : Bool
     , focused : Bool
-    , validation : R10.FormComponents.Internal.Validations.Validation
+    , valid : Maybe Bool
     , disabled : Bool
 
     -- Messages

@@ -11,7 +11,6 @@ module R10.FormComponents.Internal.Phone.Common exposing
 import Element exposing (..)
 import R10.Country exposing (Country)
 import R10.FormComponents.Internal.Style
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 import Time
 
@@ -63,7 +62,7 @@ type alias FieldOption =
 
 type alias Args msg =
     -- Stuff that change
-    { validation : R10.FormComponents.Internal.Validations.Validation
+    { valid : Maybe Bool
 
     ---- Messages
     , toMsg : Msg -> msg

@@ -13,7 +13,6 @@ module R10.FormComponents.Internal.Single.Common exposing
 
 import Element exposing (..)
 import R10.FormComponents.Internal.Style
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 
 
@@ -62,16 +61,14 @@ type alias FieldOption =
 
 
 type alias Args msg =
-    -- Stuff that change
-    { validation : R10.FormComponents.Internal.Validations.Validation
-
-    ---- Messages
-    , toMsg : Msg -> msg
+    { ---- Messages
+      toMsg : Msg -> msg
 
     -- Stuff that doesn't change
     , label : String
     , helperText : Maybe String
     , disabled : Bool
+    , valid : Maybe Bool
     , requiredLabel : Maybe String
     , style : R10.FormComponents.Internal.Style.Style
     , key : String

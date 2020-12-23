@@ -17,7 +17,8 @@ module R10.Form exposing
     , commonValidation
     , FieldState, Validation, ValidationSpecs, boolToString, getField, isChangingValues, setFieldValue, stringToBool, validate
     , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
-    , Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, entitiesValidationOutcomes, onLoseFocus
+    , Key, KeyAsString, PhoneModel, PhoneMsg, Validation2, ValidationMessage, viewBinary, button, clearFieldValidation, colorToCssString, componentValidation, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, initValidationSpecs, isExistingFormFieldsValid, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setFieldValidationError, setMultiplicableQuantities, stringToKey, updateSingle, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, viewButton, viewText, themeToPalette, ArgsText, Translator, isRegexValidation, entitiesValidationOutcomes, onLoseFocus
+    , fieldConfigConcatMap, onValueChange
     )
 
 {-| Useful things to build a form .
@@ -467,6 +468,19 @@ validation =
     }
 
 
+isRegexValidation : R10.Form.Internal.FieldConf.Validation -> Bool
+isRegexValidation validation_ =
+    case validation_ of
+        R10.Form.Internal.FieldConf.WithMsg _ validation__ ->
+            isRegexValidation validation__
+
+        R10.Form.Internal.FieldConf.Regex _ ->
+            True
+
+        _ ->
+            False
+
+
 {-| -}
 initFieldConf : R10.Form.Internal.FieldConf.FieldConf
 initFieldConf =
@@ -609,11 +623,53 @@ entitiesValidationOutcomes conf state maybeTranslator =
                         , R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
                             validationSpec
                             fieldState.validation
-                            translator
+                            (translator key)
                         )
                     )
     in
     errorsMsgList
+
+
+fieldConfigConcatMap : (R10.Form.Internal.FieldConf.FieldConf -> List R10.Form.Internal.FieldConf.FieldConf) -> R10.Form.Internal.Conf.Conf -> R10.Form.Internal.Conf.Conf
+fieldConfigConcatMap func1 =
+    let
+        fMap : (R10.Form.Internal.Conf.Conf -> a) -> R10.Form.Internal.Conf.Conf -> List a
+        fMap func2 =
+            List.map groupBy
+                >> List.concat
+                >> (\entities -> entities |> List.head |> Maybe.map (always [ func2 entities ]) |> Maybe.withDefault [])
+
+        groupBy : R10.Form.Internal.Conf.Entity -> List R10.Form.Internal.Conf.Entity
+        groupBy entity_ =
+            case entity_ of
+                R10.Form.Internal.Conf.EntityNormal entityId entities ->
+                    fMap (R10.Form.Internal.Conf.EntityNormal entityId) entities
+
+                R10.Form.Internal.Conf.EntityWrappable entityId entities ->
+                    fMap (R10.Form.Internal.Conf.EntityWrappable entityId) entities
+
+                R10.Form.Internal.Conf.EntityWithBorder entityId entities ->
+                    fMap (R10.Form.Internal.Conf.EntityNormal entityId) entities
+
+                R10.Form.Internal.Conf.EntityWithTabs entityId entities ->
+                    entities
+                        |> List.map (\( str, ent ) -> groupBy ent |> List.map (Tuple.pair str))
+                        |> List.concat
+                        |> (\entities_ -> entities_ |> List.head |> Maybe.map (always [ R10.Form.Internal.Conf.EntityWithTabs entityId entities_ ]) |> Maybe.withDefault [])
+
+                R10.Form.Internal.Conf.EntityMulti entityId entities ->
+                    fMap (R10.Form.Internal.Conf.EntityNormal entityId) entities
+
+                R10.Form.Internal.Conf.EntityField config ->
+                    config |> func1 |> List.map R10.Form.Internal.Conf.EntityField
+
+                R10.Form.Internal.Conf.EntityTitle _ _ ->
+                    [ entity_ ]
+
+                R10.Form.Internal.Conf.EntitySubTitle _ _ ->
+                    [ entity_ ]
+    in
+    List.concatMap groupBy
 
 
 {-| -}
@@ -1043,6 +1099,17 @@ onLoseFocus func msg_ =
 
 
 {-| -}
+onValueChange : (Key -> FieldConf -> Conf -> String -> any) -> Msg -> Maybe any
+onValueChange func msg_ =
+    case msg_ of
+        R10.Form.Internal.Msg.ChangeValue key fieldConf formConf value ->
+            Just (func key fieldConf formConf value)
+
+        _ ->
+            Nothing
+
+
+{-| -}
 entitiesToString : List R10.Form.Internal.StateForValues.Entity -> String
 entitiesToString =
     R10.Form.Internal.StateForValues.toString
@@ -1194,7 +1261,7 @@ phoneView :
         , requiredLabel : Maybe String
         , style : R10.FormComponents.Internal.Style.Style
         , toMsg : R10.FormComponents.Internal.Phone.Common.Msg -> msg
-        , validation : R10.FormComponents.Internal.Validations.Validation
+        , valid : Maybe Bool
         }
     -> Element msg
 phoneView =

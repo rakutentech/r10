@@ -16,7 +16,6 @@ import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormComponents.Internal.Utils.FocusOut
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 
 
@@ -180,7 +179,7 @@ view attrs model args =
             , style : R10.FormComponents.Internal.Style.Style
             , textType : R10.FormTypes.TypeText
             , trailingIcon : Maybe (Element msg)
-            , validation : R10.FormComponents.Internal.Validations.Validation
+            , valid : Maybe Bool
             , value : String
             }
         textArgs =
@@ -205,7 +204,7 @@ view attrs model args =
             , leadingIcon = args.leadingIcon
             , trailingIcon = Nothing
             , value = model.value
-            , validation = args.validation
+            , valid = args.valid
             , helperText = args.helperText
             , requiredLabel = args.requiredLabel
             , idDom = Just <| Common.selectId args.key

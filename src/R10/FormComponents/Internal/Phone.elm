@@ -18,7 +18,6 @@ import R10.FormComponents.Internal.Phone.Views
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 
 
@@ -147,7 +146,7 @@ view :
     List (Attribute msg)
     -> Common.Model
     ->
-        { validation : R10.FormComponents.Internal.Validations.Validation
+        { valid : Maybe Bool
         , toMsg : Common.Msg -> msg
         , label : String
         , helperText : Maybe String
@@ -166,7 +165,7 @@ view attrs model conf =
 
         args : Common.Args msg
         args =
-            { validation = conf.validation
+            { valid = conf.valid
             , toMsg = conf.toMsg
             , label = conf.label
             , helperText = conf.helperText

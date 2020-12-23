@@ -2,6 +2,7 @@ module R10.Form.Internal.Translator exposing (Translator, translator, validation
 
 import Dict
 import R10.Form.Internal.FieldConf
+import R10.Form.Internal.Key
 
 
 validationCodes :
@@ -51,11 +52,11 @@ validationCodes =
 
 
 type alias Translator =
-    R10.Form.Internal.FieldConf.ValidationCode -> Maybe R10.Form.Internal.FieldConf.FieldId -> String
+    R10.Form.Internal.Key.Key -> R10.Form.Internal.FieldConf.ValidationCode -> String
 
 
 translator : Translator
-translator validationCode maybeFieldId =
+translator key validationCode =
     -- translator : R10.Form.Internal.FieldConf.ValidationCode -> String
     -- translator validationCode =
     Dict.fromList

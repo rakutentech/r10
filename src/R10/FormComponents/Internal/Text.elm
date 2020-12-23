@@ -18,7 +18,6 @@ import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.UI.Const as Constants
-import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 import R10.Svg.Icons
 import Regex
@@ -54,7 +53,7 @@ type alias Args msg =
       --
       value : String
     , focused : Bool
-    , validation : R10.FormComponents.Internal.Validations.Validation
+    , valid : Maybe Bool
     , disabled : Bool
     , showPassword : Bool
     , leadingIcon : Maybe (Element msg)
@@ -284,35 +283,11 @@ view :
     -> Element msg
 view attrs extraInputAttrs args =
     let
-        valid : Maybe Bool
-        valid =
-            R10.FormComponents.Internal.Validations.isValid args.validation
-
         displayValidation : Bool
         displayValidation =
-            valid /= Nothing
+            args.valid /= Nothing
 
-        newArgs :
-            { disabled : Bool
-            , focused : Bool
-            , helperText : Maybe String
-            , idDom : Maybe String
-            , label : String
-            , leadingIcon : Maybe (Element msg)
-            , msgOnChange : String -> msg
-            , msgOnEnter : Maybe msg
-            , msgOnFocus : msg
-            , msgOnLoseFocus : Maybe msg
-            , msgOnTogglePasswordShow : Maybe msg
-            , palette : R10.FormTypes.Palette
-            , requiredLabel : Maybe String
-            , showPassword : Bool
-            , style : R10.FormComponents.Internal.Style.Style
-            , textType : R10.FormTypes.TypeText
-            , trailingIcon : Maybe (Element msg)
-            , validation : R10.FormComponents.Internal.Validations.Validation
-            , value : String
-            }
+        newArgs : Args msg
         newArgs =
             { args
                 | trailingIcon =
@@ -325,7 +300,7 @@ view attrs extraInputAttrs args =
                     else
                         Just <|
                             R10.FormComponents.Internal.UI.showValidationIcon_
-                                { maybeValid = valid
+                                { maybeValid = args.valid
                                 , displayValidation = displayValidation
                                 , palette = args.palette
                                 }
@@ -355,7 +330,7 @@ view attrs extraInputAttrs args =
             , palette = newArgs.palette
             , leadingIcon = newArgs.leadingIcon
             , trailingIcon = newArgs.trailingIcon
-            , valid = valid
+            , valid = args.valid
             , displayValidation = displayValidation
             , isMouseOver = False
             }

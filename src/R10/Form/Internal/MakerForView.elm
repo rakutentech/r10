@@ -61,7 +61,7 @@ type alias ArgsForFields =
     , focused : Bool
     , active : Bool
     , key : R10.Form.Internal.Key.Key
-    , translator : R10.Form.Internal.Translator.Translator
+    , translator : R10.Form.Internal.FieldConf.ValidationCode -> String
     , style : R10.FormComponents.Internal.Style.Style
     , palette : R10.FormTypes.Palette
     }
@@ -150,6 +150,19 @@ getFieldConfig entity =
             R10.Form.Internal.FieldConf.init
 
 
+isFieldStateValidationValid : R10.Form.Internal.FieldState.Validation2 -> Maybe Bool
+isFieldStateValidationValid validation =
+    case validation of
+        R10.Form.Internal.FieldState.NotYetValidated2 ->
+            Nothing
+
+        R10.Form.Internal.FieldState.Valid ->
+            Just True
+
+        R10.Form.Internal.FieldState.NotValid ->
+            Just False
+
+
 
 -- ██ ███    ██ ██████  ██    ██ ████████     ████████ ███████ ██   ██ ████████
 -- ██ ████   ██ ██   ██ ██    ██    ██           ██    ██       ██ ██     ██
@@ -175,11 +188,7 @@ viewText args textType formConf =
         -- Stuff that change
         { value = args.fieldState.value
         , focused = args.focused
-        , validation =
-            R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
-                args.fieldConf.validationSpecs
-                args.fieldState.validation
-                args.translator
+        , valid = isFieldStateValidationValid <| R10.Form.Internal.FieldState.isValid args.fieldState.validation
         , showPassword = args.fieldState.showPassword
         , leadingIcon = Nothing
         , trailingIcon = Nothing
@@ -238,11 +247,7 @@ viewBinary args typeBinary formConf =
         -- Stuff that change
         { value = value
         , focused = args.focused
-        , validation =
-            R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
-                args.fieldConf.validationSpecs
-                args.fieldState.validation
-                args.translator
+        , valid = isFieldStateValidationValid <| R10.Form.Internal.FieldState.isValid args.fieldState.validation
 
         -- Messages
         , msgOnChange = \_ -> msgOnClick
@@ -291,11 +296,7 @@ viewSingleSelection args singleType fieldOptions formConf =
         , focused = args.focused
         , opened = args.active
         }
-        { validation =
-            R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
-                args.fieldConf.validationSpecs
-                args.fieldState.validation
-                args.translator
+        { valid = isFieldStateValidationValid <| R10.Form.Internal.FieldState.isValid args.fieldState.validation
 
         -- Message mapper
         , toMsg = R10.Form.Internal.Msg.OnSingleMsg args.key args.fieldConf formConf
@@ -813,7 +814,7 @@ viewEntityField args fieldConf formConf =
             , active = active
             , fieldState = fieldState
             , fieldConf = fieldConf
-            , translator = args.translator
+            , translator = args.translator newKey
             , style = args.style
             , palette = args.palette
             }
@@ -867,14 +868,6 @@ viewEntitySubTitle palette titleConf =
     ]
 
 
-fromEntityToMaybeFieldId : R10.Form.Internal.Conf.Entity -> Maybe R10.Form.Internal.FieldConf.FieldId
-fromEntityToMaybeFieldId entity =
-    case entity of
-        R10.Form.Internal.Conf.EntityField field ->
-            Just field.id
-
-        _ ->
-            Nothing
 
 
 viewWithValidationMessage : MakerArgs -> R10.Form.Internal.Conf.Entity -> List (Element msg) -> List (Element msg)
@@ -895,7 +888,7 @@ viewWithValidationMessage args entity listEl =
                         (R10.Form.Internal.Dict.get (getEntityKey args entity) args.formState.fieldsState
                             |> Maybe.withDefault R10.Form.Internal.FieldState.init
                         ).validation
-                        args.translator
+                        (args.translator args.key)
                ]
     ]
 
@@ -911,7 +904,7 @@ viewWithValidationMessage args entity listEl =
 type alias MakerArgs =
     { key : R10.Form.Internal.Key.Key
     , formState : R10.Form.Internal.State.State
-    , translator : R10.Form.Internal.FieldConf.ValidationCode -> Maybe R10.Form.Internal.FieldConf.FieldId -> String
+    , translator : R10.Form.Internal.Translator.Translator
     , style : R10.FormComponents.Internal.Style.Style
     , palette : R10.FormTypes.Palette
     }

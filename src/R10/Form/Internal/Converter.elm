@@ -2,7 +2,6 @@ module R10.Form.Internal.Converter exposing (fromFieldStateValidationToComponent
 
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
-import R10.Form.Internal.Translator
 import R10.Form.Internal.ValidationCode
 import R10.FormComponents.Internal.Validations
 
@@ -25,7 +24,7 @@ import R10.FormComponents.Internal.Validations
 fromFieldStateValidationToComponentValidation :
     Maybe R10.Form.Internal.FieldConf.ValidationSpecs
     -> R10.Form.Internal.FieldState.Validation
-    -> R10.Form.Internal.Translator.Translator
+    -> (R10.Form.Internal.FieldConf.ValidationCode -> String)
     -> R10.FormComponents.Internal.Validations.Validation
 fromFieldStateValidationToComponentValidation maybeValidationSpecs validation translator =
     case validation of
@@ -77,7 +76,7 @@ fromFieldStateValidationToComponentValidation maybeValidationSpecs validation tr
 
 fromValidationOutcomeToValidationMessage :
     R10.Form.Internal.FieldState.ValidationOutcome
-    -> R10.Form.Internal.Translator.Translator
+    -> (R10.Form.Internal.FieldConf.ValidationCode -> String)
     -> R10.FormComponents.Internal.Validations.ValidationMessage
 fromValidationOutcomeToValidationMessage validationOutcome translator =
     case validationOutcome of

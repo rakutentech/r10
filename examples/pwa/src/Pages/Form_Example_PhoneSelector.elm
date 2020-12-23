@@ -17,7 +17,7 @@ type alias Model =
     , phone2 : R10.Form.PhoneModel
     , disabled : Bool
     , messages : List String
-    , validation : R10.Form.Validation2
+    , valid : Maybe Bool
     }
 
 
@@ -27,7 +27,7 @@ init =
     , phone2 = R10.Form.phoneInit
     , disabled = False
     , messages = []
-    , validation = R10.Form.componentValidation.notYetValidated
+    , valid = Nothing
     }
 
 
@@ -66,7 +66,7 @@ view model theme =
         [ R10.Form.phoneView
             []
             model.phone1
-            { validation = model.validation
+            { valid = model.valid
             , toMsg = OnPhoneMsg1
             , label = "Phone number"
             , helperText = Nothing
@@ -80,7 +80,7 @@ view model theme =
         , R10.Form.phoneView
             []
             model.phone2
-            { validation = model.validation
+            { valid = model.valid
             , toMsg = OnPhoneMsg2
             , label = "Phone number"
             , helperText = Nothing

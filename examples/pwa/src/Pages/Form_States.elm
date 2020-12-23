@@ -33,30 +33,18 @@ init =
     {}
 
 
-validationToStr : R10.Form.Validation2 -> String
-validationToStr validation =
-    -- case validation of
-    --     R10.Form.componentValidation.notYetValidated ->
-    --         "Nothing"
-    --
-    --     R10.Form.componentValidation.validated msgList ->
-    --         if
-    --             List.all
-    --                 (\msg ->
-    --                     case msg of
-    --                         R10.Form.validationMessage.ok _ ->
-    --                             True
-    --
-    --                         R10.Form.validationMessage.error _ ->
-    --                             False
-    --                 )
-    --                 msgList
-    --         then
-    --             "Valid"
-    --
-    --         else
-    --             "Invalid"
-    R10.Form.validationToString validation
+maybeBoolToString : Maybe Bool -> String
+maybeBoolToString valid =
+    case valid of
+        Just bool ->
+            if bool then
+                "Just True"
+
+            else
+                "Just False"
+
+        Nothing ->
+            "Nothing"
 
 
 viewChecboxTable : R10.Theme.Theme -> List (Element Msg)
@@ -131,17 +119,11 @@ viewChecboxTable theme =
                     value =
                         [ True, False ]
 
-                    validation : List R10.Form.Validation2
+                    validation : List (Maybe Bool)
                     validation =
-                        [ R10.Form.componentValidation.notYetValidated
-                        , R10.Form.componentValidation.validated
-                            [ R10.Form.validationMessage.ok "Succeeded 1"
-                            , R10.Form.validationMessage.ok "Succeeded 2"
-                            ]
-                        , R10.Form.componentValidation.validated
-                            [ R10.Form.validationMessage.error "Failed"
-                            , R10.Form.validationMessage.ok "Succeded"
-                            ]
+                        [ Nothing
+                        , Just True
+                        , Just False
                         ]
 
                     result : List (List (List (List (Element Msg))))
@@ -151,7 +133,7 @@ viewChecboxTable theme =
                                 List.map
                                     (\value_ ->
                                         List.map
-                                            (\validation_ ->
+                                            (\valid_ ->
                                                 List.map
                                                     (\disabled_ ->
                                                         row []
@@ -161,7 +143,7 @@ viewChecboxTable theme =
                                                                         { label = "Label"
                                                                         , value = value_
                                                                         , focused = focused_
-                                                                        , validation = validation_
+                                                                        , valid = valid_
                                                                         , disabled = disabled_
 
                                                                         --
@@ -276,17 +258,11 @@ viewJoinedTable theme =
                     value =
                         [ True, False ]
 
-                    validation : List R10.Form.Validation2
+                    validation : List (Maybe Bool)
                     validation =
-                        [ R10.Form.componentValidation.notYetValidated
-                        , R10.Form.componentValidation.validated
-                            [ R10.Form.validationMessage.ok "Succeeded 1"
-                            , R10.Form.validationMessage.ok "Succeeded 2"
-                            ]
-                        , R10.Form.componentValidation.validated
-                            [ R10.Form.validationMessage.error "Failed"
-                            , R10.Form.validationMessage.ok "Succeed"
-                            ]
+                        [ Nothing
+                        , Just True
+                        , Just False
                         ]
 
                     result : List (List (List (List (Element Msg))))
@@ -296,7 +272,7 @@ viewJoinedTable theme =
                                 List.map
                                     (\value_ ->
                                         List.map
-                                            (\validation_ ->
+                                            (\valid_ ->
                                                 List.map
                                                     (\disabled_ ->
                                                         row attrsRow
@@ -310,7 +286,7 @@ viewJoinedTable theme =
                                                                         else
                                                                             ""
                                                                     , focused = focused_
-                                                                    , validation = validation_
+                                                                    , valid = valid_
                                                                     , showPassword = False
                                                                     , leadingIcon = Nothing
                                                                     , trailingIcon = Nothing
@@ -342,7 +318,7 @@ viewJoinedTable theme =
                                                                         else
                                                                             ""
                                                                     , focused = focused_
-                                                                    , validation = validation_
+                                                                    , valid = valid_
                                                                     , showPassword = False
                                                                     , leadingIcon = Nothing
                                                                     , trailingIcon = Nothing
@@ -369,7 +345,7 @@ viewJoinedTable theme =
                                                                     { label = "Label"
                                                                     , value = value_
                                                                     , focused = focused_
-                                                                    , validation = validation_
+                                                                    , valid = valid_
                                                                     , disabled = disabled_
 
                                                                     --
@@ -388,7 +364,7 @@ viewJoinedTable theme =
                                                                     { label = "Label"
                                                                     , value = value_
                                                                     , focused = focused_
-                                                                    , validation = validation_
+                                                                    , valid = valid_
                                                                     , disabled = disabled_
 
                                                                     --
@@ -404,7 +380,7 @@ viewJoinedTable theme =
                                                                     }
                                                             , el attrsPropCell <| text <| R10.Form.boolToString focused_
                                                             , el attrsPropCell <| text <| R10.Form.boolToString value_
-                                                            , el attrsPropCell <| text <| validationToStr validation_
+                                                            , el attrsPropCell <| text <| maybeBoolToString valid_
                                                             , el attrsPropCell <| text <| R10.Form.boolToString disabled_
                                                             ]
                                                     )
@@ -492,17 +468,11 @@ viewTextTable theme =
                     focused =
                         [ True, False ]
 
-                    validation : List R10.Form.Validation2
+                    validation : List (Maybe Bool)
                     validation =
-                        [ R10.Form.componentValidation.notYetValidated
-                        , R10.Form.componentValidation.validated
-                            [ R10.Form.validationMessage.ok "Succeeded 1"
-                            , R10.Form.validationMessage.ok "Succeeded 2"
-                            ]
-                        , R10.Form.componentValidation.validated
-                            [ R10.Form.validationMessage.error "Failed"
-                            , R10.Form.validationMessage.ok "Succeeded"
-                            ]
+                        [ Nothing
+                        , Just True
+                        , Just False
                         ]
 
                     displayValidation : List Bool
@@ -518,7 +488,7 @@ viewTextTable theme =
                         List.map
                             (\focused_ ->
                                 List.map
-                                    (\validation_ ->
+                                    (\valid_ ->
                                         List.map
                                             (\displayValidation_ ->
                                                 List.map
@@ -529,7 +499,7 @@ viewTextTable theme =
                                                                     []
                                                                     { value = "Value"
                                                                     , focused = focused_
-                                                                    , validation = validation_
+                                                                    , valid = valid_
                                                                     , showPassword = False
                                                                     , leadingIcon = Nothing
                                                                     , trailingIcon = Nothing
@@ -556,7 +526,7 @@ viewTextTable theme =
                                                                     []
                                                                     { value = "Value"
                                                                     , focused = focused_
-                                                                    , validation = validation_
+                                                                    , valid = valid_
                                                                     , showPassword = False
                                                                     , leadingIcon = Nothing
                                                                     , trailingIcon = Nothing
@@ -579,7 +549,7 @@ viewTextTable theme =
                                                                     , palette = R10.Form.themeToPalette theme
                                                                     }
                                                             , el attrsCell <| text <| R10.Form.boolToString focused_
-                                                            , el attrsCell <| text <| validationToStr validation_
+                                                            , el attrsCell <| text <| maybeBoolToString valid_
                                                             , el attrsCell <| text <| R10.Form.boolToString displayValidation_
                                                             , el attrsCell <| text <| R10.Form.boolToString disabled_
                                                             ]

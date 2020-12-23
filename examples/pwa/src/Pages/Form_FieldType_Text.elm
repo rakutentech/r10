@@ -31,7 +31,7 @@ type alias Model =
     , showPassword : Bool
     , leadingIcon : Maybe Icon
     , trailingIcon : Maybe Icon
-    , validation : R10.Form.Validation2
+    , valid : Maybe Bool
     , helperText : String
     , helperShow : Bool
     , requiredText : String
@@ -51,7 +51,7 @@ init =
     , showPassword = False
     , leadingIcon = Nothing
     , trailingIcon = Nothing
-    , validation = R10.Form.componentValidation.notYetValidated
+    , valid = Nothing
     , helperText = """Helper text ([Markdown](https://en.wikipedia.org/wiki/Markdown))"""
     , helperShow = True
     , requiredText = "(Required)"
@@ -135,17 +135,15 @@ type Msg
     | PlayPauseClick Icon
 
 
-validations :
-    { n1 : R10.Form.Validation2
-    , n2 : R10.Form.Validation2
-    , n3 : R10.Form.Validation2
-    , n4 : R10.Form.Validation2
+valids :
+    { n1 : Maybe Bool
+    , n2 : Maybe Bool
+    , n3 : Maybe Bool
     }
-validations =
-    { n1 = R10.Form.componentValidation.notYetValidated
-    , n2 = R10.Form.componentValidation.validated []
-    , n3 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!" ]
-    , n4 = R10.Form.componentValidation.validated [ R10.Form.validationMessage.ok "Yeah!", R10.Form.validationMessage.error "Nope" ]
+valids =
+    { n1 = Nothing
+    , n2 = Just True
+    , n3 = Just False
     }
 
 
@@ -193,18 +191,15 @@ update msg model =
 
         RotateValidation ->
             ( { model
-                | validation =
-                    if model.validation == validations.n1 then
-                        validations.n2
+                | valid =
+                    if model.valid == valids.n1 then
+                        valids.n2
 
-                    else if model.validation == validations.n2 then
-                        validations.n3
-
-                    else if model.validation == validations.n3 then
-                        validations.n4
+                    else if model.valid == valids.n2 then
+                        valids.n3
 
                     else
-                        validations.n1
+                        valids.n1
               }
             , Cmd.none
             )
@@ -368,7 +363,7 @@ view model theme =
             --
             , value = model.value
             , focused = model.focused
-            , validation = model.validation
+            , valid = model.valid
             , disabled = model.disabled
             , showPassword = model.showPassword
             , leadingIcon = Maybe.map (toIconEl theme palette) model.leadingIcon
@@ -589,13 +584,27 @@ rowFocused model =
         ]
 
 
-rowValidation : { a | validation : R10.Form.Validation2 } -> Element Msg
+maybeBoolToString : Maybe Bool -> String
+maybeBoolToString valid =
+    case valid of
+        Just bool ->
+            if bool then
+                "Just True"
+
+            else
+                "Just False"
+
+        Nothing ->
+            "Nothing"
+
+
+rowValidation : { a | valid : Maybe Bool } -> Element Msg
 rowValidation model =
     row []
-        [ text "    , validation = "
+        [ text "    , valid = "
         , Input.button [ attrYellowBackground ]
             { onPress = Just RotateValidation
-            , label = text <| R10.Form.validationToString model.validation
+            , label = text <| maybeBoolToString model.valid
             }
         ]
 

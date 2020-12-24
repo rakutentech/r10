@@ -17,7 +17,7 @@ module R10.Form exposing
     , getFieldValueAsBool
     , FieldState, boolToString, getField, isChangingValues, setFieldValue, stringToBool
     , label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
-    , Key, KeyAsString, PhoneModel, PhoneMsg, viewBinary, button, colorToCssString, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setMultiplicableQuantities, stringToKey, updateSingle, viewButton, viewText, themeToPalette, ArgsText, Translator, onLoseFocus, fieldConfigConcatMap, onValueChange
+    , Key, KeyAsString, PhoneModel, PhoneMsg, viewBinary, button, colorToCssString, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setMultiplicableQuantities, stringToKey, updateSingle, viewButton, viewText, themeToPalette, ArgsText, Translator, onLoseFocus, fieldConfigConcatMap, onValueChange, viewSingle
     )
 
 {-| Useful things to build a form .
@@ -129,7 +129,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 @docs label, onClickWithStopPropagation, viewIconButton, viewSingleCustom, defaultSearchFn, SingleModel, SingleMsg, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, SingleFieldOption, singleMsg, Style
 
-@docs Key, KeyAsString, PhoneModel, PhoneMsg, viewBinary, button, colorToCssString, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setMultiplicableQuantities, stringToKey, updateSingle, viewButton, viewText, themeToPalette, ArgsText, Translator, onLoseFocus, fieldConfigConcatMap, onValueChange
+@docs Key, KeyAsString, PhoneModel, PhoneMsg, viewBinary, button, colorToCssString, composeKey, elementMarkdown, emptyKey, entitiesToString, extraCssComponents, getActiveTab, getFieldValue, getMultiActiveKeys, headId, initFieldState, listToKey, onFocusOut, phoneInit, phoneUpdate, phoneView, setActiveTab, setFieldDisabled, setMultiplicableQuantities, stringToKey, updateSingle, viewButton, viewText, themeToPalette, ArgsText, Translator, onLoseFocus, fieldConfigConcatMap, onValueChange, viewSingle
 
 -}
 

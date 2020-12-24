@@ -82,7 +82,8 @@ defaultViewOptionEl { search, msgOnSelect } { label, value } =
 
 defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> Element msg
 defaultTrailingIcon { opened, palette } =
-    R10.FormComponents.Internal.IconButton.view []
+    R10.FormComponents.Internal.IconButton.view
+        [ pointer ]
         { msgOnClick = Nothing
         , icon =
             R10.FormComponents.Internal.UI.icons.combobox_arrow

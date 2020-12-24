@@ -9,7 +9,6 @@ module R10.FormComponents.Internal.Phone.Common exposing
     , filterBySearch
     , init
     , normalizeString
-    , selectId
     )
 
 import Element exposing (..)
@@ -131,8 +130,3 @@ dropdownContentId key =
 dropdownSearchBoxId : String -> String
 dropdownSearchBoxId key =
     "dropdown-search-" ++ key
-
-
-selectId : String -> String
-selectId key =
-    "dropdown-" ++ key

@@ -2,8 +2,8 @@ module R10.FormComponents.Internal.Single exposing
     ( Args
     , ArgsCustom
     , defaultSearchFn
-    , defaultToOptionEl
     , defaultTrailingIcon
+    , defaultViewOptionEl
     , extraCss
     , insertBold
     , normalizeString
@@ -12,6 +12,7 @@ module R10.FormComponents.Internal.Single exposing
     )
 
 import Element exposing (..)
+import Element.Events as Events
 import Html.Attributes
 import R10.Color.Utils
 import R10.FormComponents.Internal.IconButton
@@ -48,8 +49,8 @@ defaultSearchFn search opt =
         (opt.label |> normalizeString)
 
 
-defaultToOptionEl : { a | search : String, msgOnSelect : String -> msg } -> Common.FieldOption -> Element msg
-defaultToOptionEl { search, msgOnSelect } { label, value } =
+defaultViewOptionEl : { a | search : String, msgOnSelect : String -> msg } -> Common.FieldOption -> Element msg
+defaultViewOptionEl { search, msgOnSelect } { label, value } =
     let
         insertPositions : List Int
         insertPositions =
@@ -67,8 +68,8 @@ defaultToOptionEl { search, msgOnSelect } { label, value } =
     row
         [ width fill
         , height fill
-        , R10.FormComponents.Internal.UI.onClickWithStopPropagation <| msgOnSelect value
         , htmlAttribute <| Html.Attributes.style "z-index" "0"
+        , Events.onClick <| msgOnSelect value
         , pointer
         , paddingXY 12 0
 
@@ -160,8 +161,8 @@ view attrs model conf =
             , palette = conf.palette
             , singleType = conf.singleType
             , fieldOptions = conf.fieldOptions
-            , toOptionEl =
-                defaultToOptionEl
+            , viewOptionEl =
+                defaultViewOptionEl
                     { search = model.search
                     , msgOnSelect = Common.OnOptionSelect >> conf.toMsg
                     }
@@ -193,7 +194,7 @@ type alias ArgsCustom msg =
     , valid : Maybe Bool
     , toMsg : Common.Msg -> msg
     , searchFn : String -> Common.FieldOption -> Bool
-    , toOptionEl : Common.FieldOption -> Element msg
+    , viewOptionEl : Common.FieldOption -> Element msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
     , leadingIcon : Maybe (Element msg)
@@ -222,7 +223,7 @@ viewCustom attrs model conf =
             , searchFn = conf.searchFn
             , singleType = conf.singleType
             , fieldOptions = conf.fieldOptions
-            , toOptionEl = conf.toOptionEl
+            , viewOptionEl = conf.viewOptionEl
             , selectOptionHeight = conf.selectOptionHeight
             , maxDisplayCount = conf.maxDisplayCount
             , leadingIcon = conf.leadingIcon

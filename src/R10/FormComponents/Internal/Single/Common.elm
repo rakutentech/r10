@@ -77,7 +77,7 @@ type alias Args msg =
     -- Specific
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List FieldOption
-    , toOptionEl : FieldOption -> Element msg
+    , viewOptionEl : FieldOption -> Element msg
     , searchFn : String -> FieldOption -> Bool
     , selectOptionHeight : Int
     , maxDisplayCount : Int

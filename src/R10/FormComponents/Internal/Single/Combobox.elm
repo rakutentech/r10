@@ -36,7 +36,7 @@ viewSearchBox model args =
         , msgOnEnter = Nothing
         , msgOnTogglePasswordShow = Nothing
         , palette = args.palette
-        , style = args.style
+        , style = R10.FormComponents.Internal.Style.Outlined
         , showPassword = False
         , textType = R10.FormTypes.TextPlain
         , leadingIcon = Nothing
@@ -77,8 +77,8 @@ getMsgOnInputClick model args filteredOptions =
     Common.OnInputClick { key = args.key, selectedY = selectedY }
 
 
-viewComboboxDropdown : Common.Model -> Common.Args msg -> List Common.FieldOption -> Element msg
-viewComboboxDropdown model args filteredOptions =
+viewComboboxDropdown : Common.Model -> Common.Args msg -> Bool -> List Common.FieldOption -> Element msg
+viewComboboxDropdown model args opened filteredOptions =
     let
         elementsScrolledFromTop : Int
         elementsScrolledFromTop =
@@ -119,47 +119,52 @@ viewComboboxDropdown model args filteredOptions =
         contentHeight =
             args.selectOptionHeight * max optionsCount 1
     in
-    column
-        [ width fill
-        , moveDown 52
-        , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
-        , htmlAttribute <| Html.Attributes.style "z-index" "1"
-        , Border.rounded
-            (case args.style of
-                R10.FormComponents.Internal.Style.Filled ->
-                    0
+    if not opened then
+        none
 
-                R10.FormComponents.Internal.Style.Outlined ->
-                    8
-            )
-        , Border.shadow
-            { color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.1 args.palette
-            , offset = ( 0, 0 )
-            , blur = 3
-            , size = 1
-            }
-        ]
-        [ el
-            [ height <| px 52
-            , width fill
-            ]
-          <|
-            viewSearchBox model args
-        , el
+    else
+        column
             [ width fill
-            , height <| px <| Update.getDropdownHeight args optionsCount
-            , htmlAttribute <| Html.Attributes.style "overscroll-behavior" "contain"
-            , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << Common.OnScroll)
-            , htmlAttribute <| Html.Attributes.id <| Common.dropdownContentId <| args.key
-            , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
+            , moveDown 52
+            , htmlAttribute <| Html.Attributes.tabindex -1
             , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
-            , paddingXY 0 Update.dropdownHingeHeight
-            , scrollbarX
-            , inFront <| Keyed.column [ width <| fill, moveDown visibleMoveDown ] visibleOptions
+            , htmlAttribute <| Html.Attributes.style "z-index" "1"
+            , Border.rounded
+                (case args.style of
+                    R10.FormComponents.Internal.Style.Filled ->
+                        0
+
+                    R10.FormComponents.Internal.Style.Outlined ->
+                        8
+                )
+            , Border.shadow
+                { color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.1 args.palette
+                , offset = ( 0, 0 )
+                , blur = 3
+                , size = 1
+                }
             ]
-          <|
-            el [ height <| px contentHeight, width fill ] none
-        ]
+            [ el
+                [ height <| px 52
+                , width fill
+                ]
+              <|
+                viewSearchBox model args
+            , el
+                [ width fill
+                , height <| px <| Update.getDropdownHeight args optionsCount
+                , htmlAttribute <| Html.Attributes.style "overscroll-behavior" "contain"
+                , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << Common.OnScroll)
+                , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
+                , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
+                , paddingXY 0 Update.dropdownHingeHeight
+                , htmlAttribute <| Html.Attributes.id <| Common.dropdownContentId <| args.key
+                , scrollbarX
+                , inFront <| Keyed.column [ width <| fill, moveDown visibleMoveDown ] visibleOptions
+                ]
+              <|
+                el [ height <| px contentHeight, width fill ] none
+            ]
 
 
 comboboxOptionNoResults : { a | palette : R10.FormTypes.Palette, selectOptionHeight : Int } -> Element msg
@@ -216,7 +221,7 @@ viewComboboxOption value select args opt =
             [ Border.innerShadow { offset = ( 0, 0 ), size = 40, blur = 0, color = getShadowColor } ]
         ]
     <|
-        args.toOptionEl opt
+        args.viewOptionEl opt
 
 
 view : List (Attribute msg) -> Common.Model -> Common.Args msg -> Element msg
@@ -259,14 +264,15 @@ view attrs model args =
             ]
     in
     R10.FormComponents.Internal.Text.view
-        ([ htmlAttribute <| Html.Attributes.id <| Common.dropdownContainerId <| args.key
-         , htmlAttribute <|
+        [ htmlAttribute <| Html.Attributes.id <| Common.dropdownContainerId <| args.key
+        , htmlAttribute <| Html.Attributes.tabindex -1
+        , htmlAttribute <|
             Html.Events.on "focusout"
                 (R10.FormComponents.Internal.Utils.FocusOut.onFocusOut (Common.dropdownContainerId args.key) <|
                     args.toMsg <|
                         Common.OnLoseFocus model.value
                 )
-         , htmlAttribute <|
+        , htmlAttribute <|
             R10.FormComponents.Internal.UI.onKeyPressBatch <|
                 [ ( R10.FormComponents.Internal.UI.keyCode.down
                   , Common.OnArrowDown
@@ -301,13 +307,7 @@ view attrs model args =
                         else
                             []
                        )
-         ]
-            ++ (if model.opened then
-                    [ inFront <| viewComboboxDropdown model args filteredFieldOption ]
-
-                else
-                    []
-               )
-        )
+        , inFront <| viewComboboxDropdown model args model.opened filteredFieldOption
+        ]
         (inputAttrs ++ attrs)
         textArgs

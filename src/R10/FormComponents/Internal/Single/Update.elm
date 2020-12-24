@@ -222,8 +222,7 @@ update msg model =
 
                 maybeNewIndex : Maybe Int
                 maybeNewIndex =
-                    newSelect
-                        |> getOptionIndex args.filteredFieldOption
+                    newSelect |> getOptionIndex args.filteredFieldOption
 
                 newY : Float
                 newY =
@@ -267,6 +266,7 @@ update msg model =
             ( { model | focused = True, value = value }, Cmd.none )
 
         Common.OnArrowUp args ->
+            -- skip arrow msg if dropdown is closed
             if model.opened then
                 getPrevNewSelectAndY model args
                     |> (\( newValue, newY ) -> onArrowHelper args.key model newValue newY)
@@ -275,6 +275,7 @@ update msg model =
                 onOpenHelper args.key model model.scroll
 
         Common.OnArrowDown args ->
+            -- skip arrow msg if dropdown is closed
             if model.opened then
                 getNextNewSelectAndY model args
                     |> (\( newValue, newY ) -> onArrowHelper args.key model newValue newY)

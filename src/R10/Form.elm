@@ -738,7 +738,7 @@ defaultToOptionEl :
     -> SingleFieldOption
     -> Element msg
 defaultToOptionEl =
-    R10.FormComponents.Internal.Single.defaultToOptionEl
+    R10.FormComponents.Internal.Single.defaultViewOptionEl
 
 
 {-| -}

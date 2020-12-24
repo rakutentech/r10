@@ -97,6 +97,7 @@ viewComboboxDropdown model args opened filteredCountryOptions =
         column
             [ width fill
             , moveDown 52
+            , htmlAttribute <| Html.Attributes.tabindex -1
             , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
             , htmlAttribute <| Html.Attributes.style "z-index" "1"
             , Border.rounded
@@ -123,12 +124,11 @@ viewComboboxDropdown model args opened filteredCountryOptions =
             , el
                 [ width fill
                 , height <| px <| Update.getDropdownHeight args optionsCount
-                , htmlAttribute <| Html.Attributes.tabindex 0
                 , htmlAttribute <| Html.Attributes.style "overscroll-behavior" "contain"
-                , htmlAttribute <| Html.Attributes.id <| Common.dropdownContentId <| args.key
                 , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << Common.OnScroll)
                 , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
                 , paddingXY 0 Update.dropdownHingeHeight
+                , htmlAttribute <| Html.Attributes.id <| Common.dropdownContentId <| args.key
                 , scrollbarX
                 , inFront <| Keyed.column [ width <| fill, moveDown visibleMoveDown ] visibleOptions
                 ]
@@ -241,7 +241,7 @@ view attrs model args =
             , valid = args.valid
             , helperText = args.helperText
             , requiredLabel = args.requiredLabel
-            , idDom = Just <| Common.selectId args.key
+            , idDom = Nothing
             }
 
         inputAttrs : List (Attribute msg)
@@ -250,6 +250,7 @@ view attrs model args =
     in
     R10.FormComponents.Internal.Text.view
         [ htmlAttribute <| Html.Attributes.id <| Common.dropdownContainerId <| args.key
+        , htmlAttribute <| Html.Attributes.tabindex -1
         , htmlAttribute <|
             Html.Events.on "focusout"
                 (R10.FormComponents.Internal.Utils.FocusOut.onFocusOut (Common.dropdownContainerId args.key) <|

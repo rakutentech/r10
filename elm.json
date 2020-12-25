@@ -14,7 +14,7 @@
         "R10.FontSize",
         "R10.Footer",
         "R10.Form",
-        "R10.FormIntrospection",
+        "R10.FormDebug",
         "R10.FormTypes",
         "R10.Header",
         "R10.I18n",

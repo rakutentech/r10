@@ -1,5 +1,6 @@
 module R10.FormComponents.Internal.Utils exposing
     ( entitiesValidationOutcomes
+    , entitiesWithErrors
     , errorsList
     , listSlice
     , stringInsertAtMulti
@@ -59,8 +60,8 @@ errorsList :
     R10.Form.Internal.Shared.Form
     -> List ( R10.Form.Internal.Key.Key, spec )
     -> List ( R10.Form.Internal.Key.Key, spec, R10.Form.Internal.FieldState.FieldState )
-errorsList form entitiesWithErrors =
-    entitiesWithErrors
+errorsList form entitiesWithErrors_ =
+    entitiesWithErrors_
         |> List.map (\( key, spec ) -> ( key, spec, R10.Form.Internal.Dict.get key form.state.fieldsState ))
         |> List.filterMap
             (\( key, spec, maybeFieldState ) ->
@@ -71,6 +72,22 @@ errorsList form entitiesWithErrors =
                     Just fieldState ->
                         Just ( key, spec, fieldState )
             )
+
+
+entitiesWithErrors :
+    R10.Form.Internal.Shared.Form
+    -> List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+entitiesWithErrors form =
+    let
+        allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+        allKeys =
+            R10.Form.Internal.Update.allValidationKeysMaker form
+
+        fieldsWithErrors_ : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+        fieldsWithErrors_ =
+            R10.Form.Internal.Update.entitiesWithErrors allKeys form.state.fieldsState
+    in
+    fieldsWithErrors_
 
 
 entitiesValidationOutcomes :

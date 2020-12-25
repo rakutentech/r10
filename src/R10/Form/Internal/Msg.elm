@@ -1,23 +1,16 @@
-module R10.Form.Internal.Msg exposing (Msg(..), handleChangesSinceLastSubmissions, isChangingValues, isSubmitted)
-
-{-|
-
-@docs Msg, handleChangesSinceLastSubmissions, isChangingValues, isSubmitted
-
--}
+module R10.Form.Internal.Msg exposing
+    ( Msg(..)
+    , handleChangesSinceLastSubmissions
+    , isChangingValues
+    , isSubmitted
+    , onLoseFocus
+    , onValueChange
+    )
 
 import R10.Form.Internal.Conf
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.Key
 import R10.FormComponents.Internal.Single.Common
-
-
-
--- ███    ███ ███████  ██████
--- ████  ████ ██      ██
--- ██ ████ ██ ███████ ██   ███
--- ██  ██  ██      ██ ██    ██
--- ██      ██ ███████  ██████
 
 
 {-| -}
@@ -77,3 +70,37 @@ isChangingValues msg =
 
         _ ->
             False
+
+
+onLoseFocus :
+    (R10.Form.Internal.Key.Key
+     -> R10.Form.Internal.FieldConf.FieldConf
+     -> any
+    )
+    -> Msg
+    -> Maybe any
+onLoseFocus func msg_ =
+    case msg_ of
+        LoseFocus key conf ->
+            Just (func key conf)
+
+        _ ->
+            Nothing
+
+
+onValueChange :
+    (R10.Form.Internal.Key.Key
+     -> R10.Form.Internal.FieldConf.FieldConf
+     -> R10.Form.Internal.Conf.Conf
+     -> String
+     -> any
+    )
+    -> Msg
+    -> Maybe any
+onValueChange func msg_ =
+    case msg_ of
+        ChangeValue key fieldConf formConf value ->
+            Just (func key fieldConf formConf value)
+
+        _ ->
+            Nothing

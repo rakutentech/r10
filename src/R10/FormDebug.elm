@@ -1,4 +1,4 @@
-module R10.FormIntrospection exposing (textTypeMetaData, binaryTypeMetaData, singleTypeMetaData)
+module R10.FormDebug exposing (textTypeMetaData, binaryTypeMetaData, singleTypeMetaData)
 
 {-| Only used for form debuggin
 

@@ -8,6 +8,7 @@ import R10.Form.Internal.Conf
 import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldState
 import R10.Form.Internal.Key
+import R10.Form.Internal.Shared
 import R10.Form.Internal.State
 import R10.Form.Internal.StateForValues
 import Set
@@ -60,7 +61,7 @@ viewEntityMulti key formState entities =
                     []
 
                 else
-                    [ R10.Form.Internal.StateForValues.EntityIndex index <| maker newKey formState entities ]
+                    [ R10.Form.Internal.StateForValues.EntityIndex index <| maker { state = formState, conf = entities } newKey ]
             )
             (List.repeat quantity ())
 
@@ -74,11 +75,10 @@ viewEntityMulti key formState entities =
 
 
 maker :
-    R10.Form.Internal.Key.Key
-    -> R10.Form.Internal.State.State
-    -> R10.Form.Internal.Conf.Conf
+    R10.Form.Internal.Shared.Form
+    -> R10.Form.Internal.Key.Key
     -> List Outcome
-maker key formState formConf =
+maker form key =
     --
     --     This is recursive
     --
@@ -91,19 +91,19 @@ maker key formState formConf =
             (\entity ->
                 case entity of
                     R10.Form.Internal.Conf.EntityWrappable _ entities ->
-                        maker key formState entities
+                        maker { form | conf = entities } key
 
                     R10.Form.Internal.Conf.EntityWithBorder _ entities ->
-                        maker key formState entities
+                        maker { form | conf = entities } key
 
                     R10.Form.Internal.Conf.EntityNormal _ entities ->
-                        maker key formState entities
+                        maker { form | conf = entities } key
 
                     R10.Form.Internal.Conf.EntityWithTabs _ titleEntityList ->
-                        maker key formState (titleEntityList |> List.map Tuple.second)
+                        maker { form | conf = titleEntityList |> List.map Tuple.second } key
 
                     R10.Form.Internal.Conf.EntityMulti key_ entities ->
-                        [ R10.Form.Internal.StateForValues.EntityMulti key_ <| viewEntityMulti key formState entities ]
+                        [ R10.Form.Internal.StateForValues.EntityMulti key_ <| viewEntityMulti key form.state entities ]
 
                     R10.Form.Internal.Conf.EntityField fieldConf ->
                         let
@@ -113,7 +113,7 @@ maker key formState formConf =
 
                             fieldState : R10.Form.Internal.FieldState.FieldState
                             fieldState =
-                                Maybe.withDefault R10.Form.Internal.FieldState.init <| R10.Form.Internal.Dict.get newKey formState.fieldsState
+                                Maybe.withDefault R10.Form.Internal.FieldState.init <| R10.Form.Internal.Dict.get newKey form.state.fieldsState
                         in
                         [ R10.Form.Internal.StateForValues.EntityField fieldConf.id fieldState.value ]
 
@@ -123,4 +123,4 @@ maker key formState formConf =
                     R10.Form.Internal.Conf.EntitySubTitle _ _ ->
                         []
             )
-            formConf
+            form.conf

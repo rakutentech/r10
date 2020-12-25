@@ -921,7 +921,7 @@ maker_ :
     -> R10.Form.Internal.Conf.Conf
     -> R10.Form.Internal.Conf.Conf
     -> List Outcome
-maker_ args branchConfig rootFormConf =
+maker_ args branchConf rootFormConf =
     --
     --     This is recursive
     --
@@ -958,5 +958,5 @@ maker_ args branchConfig rootFormConf =
             )
                 |> viewWithValidationMessage args entity
         )
-        branchConfig
+        branchConf
         |> List.concat

@@ -10,9 +10,9 @@ import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes
 import R10.Color.Utils
-import R10.Country exposing (Country)
+import R10.Country
 import R10.FormComponents.Internal.IconButton
-import R10.FormComponents.Internal.Phone.Common as Common
+import R10.FormComponents.Internal.Phone.Common
 import R10.FormComponents.Internal.Phone.Update
 import R10.FormComponents.Internal.Phone.Views
 import R10.FormComponents.Internal.Style
@@ -64,12 +64,12 @@ defaultTrailingIcon { opened, palette } =
 --helpers Public
 
 
-update : Common.Msg -> Common.Model -> ( Common.Model, Cmd Common.Msg )
+update : R10.FormComponents.Internal.Phone.Common.Msg -> R10.FormComponents.Internal.Phone.Common.Model -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
 update =
     R10.FormComponents.Internal.Phone.Update.update
 
 
-getFlagIcon : Int -> Maybe Country -> Element msg
+getFlagIcon : Int -> Maybe R10.Country.Country -> Element msg
 getFlagIcon size maybeCountry =
     el
         [ Font.size size ]
@@ -94,9 +94,9 @@ insertBold indexes string =
 viewOptionEl :
     { a
         | search : String
-        , msgOnSelect : Country -> msg
+        , msgOnSelect : R10.Country.Country -> msg
     }
-    -> Country
+    -> R10.Country.Country
     -> Element msg
 viewOptionEl { search, msgOnSelect } country =
     let
@@ -105,7 +105,7 @@ viewOptionEl { search, msgOnSelect } country =
 
         insertPositions : List Int
         insertPositions =
-            String.indexes (search |> Common.normalizeString) (label |> Common.normalizeString)
+            String.indexes (search |> R10.FormComponents.Internal.Phone.Common.normalizeString) (label |> R10.FormComponents.Internal.Phone.Common.normalizeString)
                 |> List.concatMap (\idx -> [ idx, idx + String.length search ])
 
         withBold : String
@@ -138,10 +138,10 @@ viewOptionEl { search, msgOnSelect } country =
 getFlagButton :
     { palette : R10.FormTypes.Palette
     , disabled : Bool
-    , toMsg : Common.Msg -> msg
+    , toMsg : R10.FormComponents.Internal.Phone.Common.Msg -> msg
     , key : String
-    , filteredCountryOptions : List Country
-    , model : Common.Model
+    , filteredCountryOptions : List R10.Country.Country
+    , model : R10.FormComponents.Internal.Phone.Common.Model
     }
     -> Element msg
 getFlagButton { palette, disabled, toMsg, key, filteredCountryOptions, model } =
@@ -183,17 +183,17 @@ getFlagButton { palette, disabled, toMsg, key, filteredCountryOptions, model } =
         }
 
 
-countryOptions : List Country
+countryOptions : List R10.Country.Country
 countryOptions =
     R10.Country.list
 
 
 view :
     List (Attribute msg)
-    -> Common.Model
+    -> R10.FormComponents.Internal.Phone.Common.Model
     ->
         { valid : Maybe Bool
-        , toMsg : Common.Msg -> msg
+        , toMsg : R10.FormComponents.Internal.Phone.Common.Msg -> msg
         , label : String
         , helperText : Maybe String
         , disabled : Bool
@@ -201,22 +201,22 @@ view :
         , style : R10.FormComponents.Internal.Style.Style
         , key : String
         , palette : R10.FormTypes.Palette
-        , countryOptions : Maybe (List Country)
+        , countryOptions : Maybe (List R10.Country.Country)
         }
     -> Element msg
 view attrs model conf =
     let
-        countryOptions_ : List Country
+        countryOptions_ : List R10.Country.Country
         countryOptions_ =
             conf.countryOptions
                 |> Maybe.withDefault countryOptions
 
-        filteredCountryOptions : List Country
+        filteredCountryOptions : List R10.Country.Country
         filteredCountryOptions =
             countryOptions_
-                |> Common.filterBySearch model.search
+                |> R10.FormComponents.Internal.Phone.Common.filterBySearch model.search
 
-        args : Common.Args msg
+        args : R10.FormComponents.Internal.Phone.Common.Args msg
         args =
             { valid = conf.valid
             , toMsg = conf.toMsg
@@ -231,7 +231,7 @@ view attrs model conf =
             , toOptionEl =
                 viewOptionEl
                     { search = model.search
-                    , msgOnSelect = Common.OnOptionSelect >> conf.toMsg
+                    , msgOnSelect = R10.FormComponents.Internal.Phone.Common.OnOptionSelect >> conf.toMsg
                     }
             , selectOptionHeight = 36
             , maxDisplayCount = 5

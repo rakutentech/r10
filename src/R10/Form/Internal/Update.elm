@@ -24,7 +24,7 @@ import R10.Form.Internal.FieldState
 import R10.Form.Internal.Key
 import R10.Form.Internal.MakerForValidationKeys
 import R10.Form.Internal.Msg
-import R10.Form.Internal.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted)
+import R10.Form.Internal.QtySubmitAttempted
 import R10.Form.Internal.Shared
 import R10.Form.Internal.State
 import R10.Form.Internal.Validation
@@ -203,14 +203,14 @@ helperValidateWithoutCreatingFieldsState maybeValidationSpec formState key maybe
     Maybe.map (R10.Form.Internal.Validation.validate key maybeValidationSpec formState) maybeFieldState
 
 
-helperValidateOnChangeValue : R10.Form.Internal.Key.Key -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> QtySubmitAttempted -> R10.Form.Internal.State.State -> Maybe R10.Form.Internal.FieldState.FieldState -> Maybe R10.Form.Internal.FieldState.FieldState
+helperValidateOnChangeValue : R10.Form.Internal.Key.Key -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted -> R10.Form.Internal.State.State -> Maybe R10.Form.Internal.FieldState.FieldState -> Maybe R10.Form.Internal.FieldState.FieldState
 helperValidateOnChangeValue key maybeValidationSpec qtySubmitAttempted formState maybeFieldState =
     let
         fieldState : R10.Form.Internal.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
-    if fieldState.lostFocusOneOrMoreTime || QtySubmitAttempted.toInt qtySubmitAttempted > 0 then
+    if fieldState.lostFocusOneOrMoreTime || R10.Form.Internal.QtySubmitAttempted.toInt qtySubmitAttempted > 0 then
         helperValidateCreatingFieldsState key maybeValidationSpec formState maybeFieldState
 
     else
@@ -330,12 +330,12 @@ allErrorsForView conf state =
 
 shouldShowTheValidationOverview : R10.Form.Internal.State.State -> Bool
 shouldShowTheValidationOverview formState =
-    QtySubmitAttempted.toInt formState.qtySubmitAttempted > 0 && not formState.changesSinceLastSubmissions
+    R10.Form.Internal.QtySubmitAttempted.toInt formState.qtySubmitAttempted > 0 && not formState.changesSinceLastSubmissions
 
 
 submittable : R10.Form.Internal.Shared.Form -> Bool
 submittable form =
-    if QtySubmitAttempted.toInt form.state.qtySubmitAttempted == 0 then
+    if R10.Form.Internal.QtySubmitAttempted.toInt form.state.qtySubmitAttempted == 0 then
         -- Always submittable if it has never been submitted
         True
 
@@ -365,9 +365,9 @@ submit form =
         newFieldsState =
             validateEntireForm form
 
-        newQtySubmitAttempted : QtySubmitAttempted
+        newQtySubmitAttempted : R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted
         newQtySubmitAttempted =
-            QtySubmitAttempted.increment form.state.qtySubmitAttempted
+            R10.Form.Internal.QtySubmitAttempted.increment form.state.qtySubmitAttempted
     in
     { newFieldsState | qtySubmitAttempted = newQtySubmitAttempted }
 

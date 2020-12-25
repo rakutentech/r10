@@ -17,7 +17,7 @@ import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
-import R10.FormComponents.Internal.UI.Const as Constants
+import R10.FormComponents.Internal.UI.Const
 import R10.FormTypes
 import R10.Svg.Icons
 import Regex
@@ -371,7 +371,7 @@ view attrs extraInputAttrs args =
                         200
 
                     else
-                        Constants.inputTextHeight
+                        R10.FormComponents.Internal.UI.Const.inputTextHeight
              ]
                 ++ (case args.idDom of
                         Just id ->
@@ -448,7 +448,7 @@ viewInput extraAttr args =
             , htmlAttribute <| Html.Attributes.attribute "autocapitalize" "off"
             , htmlAttribute <| Html.Attributes.style "transition" "all 0.15s"
             , width fill
-            , Font.size Constants.inputTextFontSize
+            , Font.size R10.FormComponents.Internal.UI.Const.inputTextFontSize
             , Border.width 0
             , Background.color <| R10.FormComponents.Internal.UI.Color.transparent
             , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette

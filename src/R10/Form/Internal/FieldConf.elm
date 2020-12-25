@@ -16,7 +16,7 @@ module R10.Form.Internal.FieldConf exposing
 
 import Json.Decode as D
 import Json.Encode as E
-import Json.Encode.Extra as E
+import Json.Encode.Extra
 import R10.Form.Internal.Key
 import R10.FormTypes
 
@@ -137,12 +137,12 @@ encoderFieldConf : FieldConf -> E.Value
 encoderFieldConf fieldConf =
     E.object
         [ ( "id", E.string fieldConf.id )
-        , ( "idDom", E.maybe E.string fieldConf.idDom )
+        , ( "idDom", Json.Encode.Extra.maybe E.string fieldConf.idDom )
         , ( "type", encoderFieldType fieldConf.type_ )
         , ( "Label", E.string fieldConf.label )
-        , ( "helperText", E.maybe E.string fieldConf.helperText )
-        , ( "requiredLabel", E.maybe E.string fieldConf.requiredLabel )
-        , ( "validationSpecs", E.maybe encodeValidationSpecs fieldConf.validationSpecs )
+        , ( "helperText", Json.Encode.Extra.maybe E.string fieldConf.helperText )
+        , ( "requiredLabel", Json.Encode.Extra.maybe E.string fieldConf.requiredLabel )
+        , ( "validationSpecs", Json.Encode.Extra.maybe encodeValidationSpecs fieldConf.validationSpecs )
         ]
 
 

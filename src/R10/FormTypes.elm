@@ -21,6 +21,7 @@ module R10.FormTypes exposing
 -}
 
 import Color
+import R10.FormComponents.Internal.Style
 
 
 {-| Possible types of **Text** input fields

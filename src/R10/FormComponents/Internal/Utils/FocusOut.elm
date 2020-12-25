@@ -1,46 +1,46 @@
 module R10.FormComponents.Internal.Utils.FocusOut exposing (onFocusOut)
 
-import Json.Decode as Decode
+import Json.Decode as D
 
 
-outsideTarget : String -> String -> msg -> Decode.Decoder msg
+outsideTarget : String -> String -> msg -> D.Decoder msg
 outsideTarget targetName dropdownId closeMsg =
-    Decode.field targetName (isOutsideDropdown dropdownId)
-        |> Decode.andThen
+    D.field targetName (isOutsideDropdown dropdownId)
+        |> D.andThen
             (\isOutside ->
                 if isOutside then
-                    Decode.succeed closeMsg
+                    D.succeed closeMsg
 
                 else
-                    Decode.fail "inside dropdown"
+                    D.fail "inside dropdown"
             )
 
 
-isOutsideDropdown : String -> Decode.Decoder Bool
+isOutsideDropdown : String -> D.Decoder Bool
 isOutsideDropdown dropdownId =
-    Decode.oneOf
-        [ Decode.field "id" Decode.string
-            |> Decode.andThen
+    D.oneOf
+        [ D.field "id" D.string
+            |> D.andThen
                 (\id ->
                     if dropdownId == id then
                         -- found match by id
-                        Decode.succeed False
+                        D.succeed False
 
                     else
                         -- try next decoder
-                        Decode.fail "check parent node"
+                        D.fail "check parent node"
                 )
-        , Decode.lazy
+        , D.lazy
             (\_ ->
-                isOutsideDropdown dropdownId |> Decode.field "parentNode"
+                isOutsideDropdown dropdownId |> D.field "parentNode"
             )
 
         -- fallback if all previous decoders failed
-        , Decode.succeed True
+        , D.succeed True
         ]
 
 
-onFocusOut : String -> msg -> Decode.Decoder msg
+onFocusOut : String -> msg -> D.Decoder msg
 onFocusOut containerId closeMsg =
     -- Every target that should be allowed (element contained in `containerId`),
     -- should be focusable. Otherwise relatedTarget would be null and it would be

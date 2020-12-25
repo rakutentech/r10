@@ -1,6 +1,5 @@
 module R10.Form.Internal.Translator exposing
     ( Translator
-    , ValidationCodes
     , translator
     , validationCodes
     )
@@ -10,7 +9,7 @@ import R10.Form.Internal.FieldConf
 import R10.Form.Internal.Key
 
 
-type alias ValidationCodes =
+validationCodes :
     { emailFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
     , emailFormatValid : R10.Form.Internal.FieldConf.ValidationCode
     , equalInvalid : R10.Form.Internal.FieldConf.ValidationCode
@@ -32,9 +31,6 @@ type alias ValidationCodes =
     , allOf : R10.Form.Internal.FieldConf.ValidationCode
     , oneOf : R10.Form.Internal.FieldConf.ValidationCode
     }
-
-
-validationCodes : ValidationCodes
 validationCodes =
     { emailFormatInvalid = "INVALID_EMAIL_FORMAT"
     , emailFormatValid = "VALID_EMAIL_FORMAT"
@@ -65,8 +61,6 @@ type alias Translator =
 
 translator : Translator
 translator key validationCode =
-    -- translator : R10.Form.Internal.FieldConf.ValidationCode -> String
-    -- translator validationCode =
     Dict.fromList
         [ ( validationCodes.emailFormatInvalid
           , "Invalid email format"

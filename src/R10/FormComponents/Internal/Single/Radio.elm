@@ -7,7 +7,7 @@ import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes
-import R10.FormComponents.Internal.Single.Common as Common
+import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
@@ -113,7 +113,7 @@ viewRadioOption { disabled, palette, focused, label } optionState =
         ]
 
 
-viewRadioOptions : Common.Args msg -> Bool -> Common.FieldOption -> Input.Option String msg
+viewRadioOptions : R10.FormComponents.Internal.Single.Common.Args msg -> Bool -> R10.FormComponents.Internal.Single.Common.FieldOption -> Input.Option String msg
 viewRadioOptions args focused fieldOption =
     Input.optionWith
         fieldOption.value
@@ -149,7 +149,7 @@ viewRadioLabel palette label helperText =
             ]
 
 
-view : List (Attribute msg) -> Common.Model -> Common.Args msg -> Element msg
+view : List (Attribute msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Element msg
 view attrs model args =
     let
         fixedValue : String
@@ -178,8 +178,8 @@ view attrs model args =
         Input.radio
             ([ spacing 5
              , alignTop
-             , Events.onFocus <| args.toMsg <| Common.OnFocus (Common.getSelectedOrFirst args.fieldOptions model.value model.select)
-             , Events.onLoseFocus <| args.toMsg <| Common.OnLoseFocus model.value
+             , Events.onFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus (R10.FormComponents.Internal.Single.Common.getSelectedOrFirst args.fieldOptions model.value model.select)
+             , Events.onLoseFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnLoseFocus model.value
              , width fill
              ]
                 ++ (if args.disabled then
@@ -191,10 +191,10 @@ view attrs model args =
             )
             { onChange =
                 if args.disabled then
-                    always <| args.toMsg <| Common.OnOptionSelect model.value
+                    always <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnOptionSelect model.value
 
                 else
-                    args.toMsg << Common.OnOptionSelect
+                    args.toMsg << R10.FormComponents.Internal.Single.Common.OnOptionSelect
             , options = List.map (viewRadioOptions args model.focused) args.fieldOptions
             , selected = Just fixedValue
             , label = Input.labelAbove [] <| viewRadioLabel args.palette args.label args.helperText

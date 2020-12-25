@@ -16,7 +16,7 @@ import R10.Form.Internal.Conf
 import R10.Form.Internal.Converter
 import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldConf
-import R10.Form.Internal.FieldState exposing (ValidationOutcome(..))
+import R10.Form.Internal.FieldState
 import R10.Form.Internal.Helpers
 import R10.Form.Internal.Key
 import R10.Form.Internal.Msg

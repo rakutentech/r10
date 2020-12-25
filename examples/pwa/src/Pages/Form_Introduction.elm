@@ -554,7 +554,7 @@ viewRow index model theme =
                                 allErrors : List ( R10.Form.Key, Maybe R10.Form.ValidationSpecs )
                                 allErrors =
                                     -- R10.Form.entitiesWithErrors allKeys_ form.state.fieldsState
-                                    R10.Form.entitiesWithErrors form.conf form.state
+                                    R10.Form.entitiesWithErrors form
                             in
                             if List.length allErrors > 0 then
                                 column [ spacing 10 ] <|

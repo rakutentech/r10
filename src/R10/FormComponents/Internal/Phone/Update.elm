@@ -8,8 +8,8 @@ module R10.FormComponents.Internal.Phone.Update exposing
 
 import Browser.Dom
 import List.Extra
-import R10.Country exposing (Country)
-import R10.FormComponents.Internal.Phone.Common as Common
+import R10.Country
+import R10.FormComponents.Internal.Phone.Common
 import Task
 
 
@@ -18,48 +18,48 @@ dropdownHingeHeight =
     10
 
 
-onArrowHelper : Common.Model -> String -> Country -> Float -> ( Common.Model, Cmd Common.Msg )
+onArrowHelper : R10.FormComponents.Internal.Phone.Common.Model -> String -> R10.Country.Country -> Float -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
 onArrowHelper model key value float =
     ( { model | scroll = float, select = Just value }
     , Task.attempt
-        (always Common.NoOp)
+        (always R10.FormComponents.Internal.Phone.Common.NoOp)
         (Browser.Dom.setViewportOf
-            (Common.dropdownContentId key)
+            (R10.FormComponents.Internal.Phone.Common.dropdownContentId key)
             0
             float
         )
     )
 
 
-onOpenHelper : Common.Model -> String -> Float -> ( Common.Model, Cmd Common.Msg )
+onOpenHelper : R10.FormComponents.Internal.Phone.Common.Model -> String -> Float -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
 onOpenHelper model key float =
     ( { model
         | opened = True
         , scroll = float
       }
     , Task.attempt
-        (always Common.NoOp)
+        (always R10.FormComponents.Internal.Phone.Common.NoOp)
         (Browser.Dom.setViewportOf
-            (Common.dropdownContentId key)
+            (R10.FormComponents.Internal.Phone.Common.dropdownContentId key)
             0
             float
         )
     )
 
 
-focusSearchBoxCmd : String -> ( Common.Model, Cmd Common.Msg ) -> ( Common.Model, Cmd Common.Msg )
+focusSearchBoxCmd : String -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg ) -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
 focusSearchBoxCmd key ( model, cmd ) =
     ( model
     , Cmd.batch
         [ cmd
         , Task.attempt
-            (always Common.NoOp)
-            (Browser.Dom.focus <| Common.dropdownSearchBoxId key)
+            (always R10.FormComponents.Internal.Phone.Common.NoOp)
+            (Browser.Dom.focus <| R10.FormComponents.Internal.Phone.Common.dropdownSearchBoxId key)
         ]
     )
 
 
-extractCountry : String -> Maybe Country
+extractCountry : String -> Maybe R10.Country.Country
 extractCountry untrimmedString =
     let
         str =
@@ -148,13 +148,13 @@ getDropdownHeight args optionsCount =
     dropdownHeight
 
 
-getOptionIndex : List Country -> Country -> Maybe Int
+getOptionIndex : List R10.Country.Country -> R10.Country.Country -> Maybe Int
 getOptionIndex fieldOptions value =
     fieldOptions
         |> List.Extra.findIndex (\country -> country == value)
 
 
-getMsgOnFlagClick : { a | countryValue : Maybe Country, scroll : Float } -> { b | selectOptionHeight : Int, maxDisplayCount : Int, key : String } -> List Country -> Common.Msg
+getMsgOnFlagClick : { a | countryValue : Maybe R10.Country.Country, scroll : Float } -> { b | selectOptionHeight : Int, maxDisplayCount : Int, key : String } -> List R10.Country.Country -> R10.FormComponents.Internal.Phone.Common.Msg
 getMsgOnFlagClick model args filteredCountryOptions =
     let
         activeOptionIndex : Int
@@ -167,7 +167,7 @@ getMsgOnFlagClick model args filteredCountryOptions =
         activeOptionY =
             getOptionY model.scroll args activeOptionIndex (List.length filteredCountryOptions)
     in
-    Common.OnFlagClick args.key activeOptionY
+    R10.FormComponents.Internal.Phone.Common.OnFlagClick args.key activeOptionY
 
 
 inboundIndex : number -> number -> Maybe number
@@ -184,30 +184,30 @@ getMsgOnSearch :
         | key : String
         , selectOptionHeight : Int
         , maxDisplayCount : Int
-        , countryOptions : List Country
+        , countryOptions : List R10.Country.Country
     }
-    -> (String -> Common.Msg)
+    -> (String -> R10.FormComponents.Internal.Phone.Common.Msg)
 getMsgOnSearch args newSearch =
-    Common.OnSearch args.key
+    R10.FormComponents.Internal.Phone.Common.OnSearch args.key
         { selectOptionHeight = args.selectOptionHeight
         , maxDisplayCount = args.maxDisplayCount
-        , filteredCountryOptions = Common.filterBySearch newSearch args.countryOptions
+        , filteredCountryOptions = R10.FormComponents.Internal.Phone.Common.filterBySearch newSearch args.countryOptions
         }
         newSearch
 
 
 getNextNewSelectAndY :
-    Common.Model
-    -> { b | filteredCountryOptions : List Country, selectOptionHeight : Int, maxDisplayCount : Int }
-    -> ( Country, Float )
+    R10.FormComponents.Internal.Phone.Common.Model
+    -> { b | filteredCountryOptions : List R10.Country.Country, selectOptionHeight : Int, maxDisplayCount : Int }
+    -> ( R10.Country.Country, Float )
 getNextNewSelectAndY model args =
     getNewSelectAndY_ 1 0 R10.Country.listHead model args
 
 
 getPrevNewSelectAndY :
-    Common.Model
-    -> { b | filteredCountryOptions : List Country, selectOptionHeight : Int, maxDisplayCount : Int }
-    -> ( Country, Float )
+    R10.FormComponents.Internal.Phone.Common.Model
+    -> { b | filteredCountryOptions : List R10.Country.Country, selectOptionHeight : Int, maxDisplayCount : Int }
+    -> ( R10.Country.Country, Float )
 getPrevNewSelectAndY model args =
     getNewSelectAndY_ -1 (List.length args.filteredCountryOptions - 1) R10.Country.listTail model args
 
@@ -215,18 +215,18 @@ getPrevNewSelectAndY model args =
 getNewSelectAndY_ :
     Int
     -> Int
-    -> Country
-    -> Common.Model
+    -> R10.Country.Country
+    -> R10.FormComponents.Internal.Phone.Common.Model
     ->
         { b
-            | filteredCountryOptions : List Country
+            | filteredCountryOptions : List R10.Country.Country
             , selectOptionHeight : Int
             , maxDisplayCount : Int
         }
-    -> ( Country, Float )
+    -> ( R10.Country.Country, Float )
 getNewSelectAndY_ step defaultIndex defaultCountry model args =
     let
-        currentSelect : Maybe Country
+        currentSelect : Maybe R10.Country.Country
         currentSelect =
             if model.select == Nothing then
                 model.countryValue
@@ -246,7 +246,7 @@ getNewSelectAndY_ step defaultIndex defaultCountry model args =
                 |> Maybe.andThen (inboundIndex <| (List.length args.filteredCountryOptions - 1))
                 |> Maybe.withDefault defaultIndex
 
-        newSelect : Country
+        newSelect : R10.Country.Country
         newSelect =
             List.Extra.getAt newIndex args.filteredCountryOptions
                 |> Maybe.withDefault defaultCountry
@@ -258,13 +258,13 @@ getNewSelectAndY_ step defaultIndex defaultCountry model args =
     ( newSelect, newY )
 
 
-update : Common.Msg -> Common.Model -> ( Common.Model, Cmd Common.Msg )
+update : R10.FormComponents.Internal.Phone.Common.Msg -> R10.FormComponents.Internal.Phone.Common.Model -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
 update msg model =
     case msg of
-        Common.NoOp ->
+        R10.FormComponents.Internal.Phone.Common.NoOp ->
             ( model, Cmd.none )
 
-        Common.OnValue newValue ->
+        R10.FormComponents.Internal.Phone.Common.OnValue newValue ->
             let
                 hasCurrentCountryCode : Bool
                 hasCurrentCountryCode =
@@ -278,7 +278,7 @@ update msg model =
                         Nothing ->
                             False
 
-                newCountryValue : Maybe Country
+                newCountryValue : Maybe R10.Country.Country
                 newCountryValue =
                     if hasCurrentCountryCode then
                         model.countryValue
@@ -296,7 +296,7 @@ update msg model =
             in
             ( { model | value = newValue, countryValue = newCountryValue }, Cmd.none )
 
-        Common.OnSearch key args newSearch ->
+        R10.FormComponents.Internal.Phone.Common.OnSearch key args newSearch ->
             let
                 isSelectInsideCountryOptions : Bool
                 isSelectInsideCountryOptions =
@@ -304,7 +304,7 @@ update msg model =
                         |> Maybe.map (\s -> List.member s args.filteredCountryOptions)
                         |> Maybe.withDefault False
 
-                newSelect : Maybe Country
+                newSelect : Maybe R10.Country.Country
                 newSelect =
                     if isSelectInsideCountryOptions then
                         model.select
@@ -329,16 +329,16 @@ update msg model =
               }
             , Cmd.batch
                 [ Task.attempt
-                    (always Common.NoOp)
+                    (always R10.FormComponents.Internal.Phone.Common.NoOp)
                     (Browser.Dom.setViewportOf
-                        (Common.dropdownContentId key)
+                        (R10.FormComponents.Internal.Phone.Common.dropdownContentId key)
                         0
                         newY
                     )
                 ]
             )
 
-        Common.OnOptionSelect newCountry ->
+        R10.FormComponents.Internal.Phone.Common.OnOptionSelect newCountry ->
             let
                 newCode : String
                 newCode =
@@ -372,10 +372,10 @@ update msg model =
             , Cmd.none
             )
 
-        Common.OnScroll scroll ->
+        R10.FormComponents.Internal.Phone.Common.OnScroll scroll ->
             ( { model | scroll = scroll }, Cmd.none )
 
-        Common.OnFlagClick key scroll ->
+        R10.FormComponents.Internal.Phone.Common.OnFlagClick key scroll ->
             if model.opened then
                 ( { model | scroll = scroll, opened = False }, Cmd.none )
 
@@ -383,7 +383,7 @@ update msg model =
                 onOpenHelper model key scroll
                     |> focusSearchBoxCmd key
 
-        Common.OnLoseFocus ->
+        R10.FormComponents.Internal.Phone.Common.OnLoseFocus ->
             ( { model
                 | focused = False
                 , opened = False
@@ -391,14 +391,14 @@ update msg model =
             , Cmd.none
             )
 
-        Common.OnFocus ->
+        R10.FormComponents.Internal.Phone.Common.OnFocus ->
             ( { model
                 | focused = True
               }
             , Cmd.none
             )
 
-        Common.OnArrowUp key args ->
+        R10.FormComponents.Internal.Phone.Common.OnArrowUp key args ->
             -- skip arrow msg if dropdown is closed
             if model.opened then
                 getPrevNewSelectAndY model args
@@ -407,7 +407,7 @@ update msg model =
             else
                 onOpenHelper model key model.scroll
 
-        Common.OnArrowDown key args ->
+        R10.FormComponents.Internal.Phone.Common.OnArrowDown key args ->
             -- skip arrow msg if dropdown is closed
             if model.opened then
                 getNextNewSelectAndY model args
@@ -416,5 +416,5 @@ update msg model =
             else
                 onOpenHelper model key model.scroll
 
-        Common.OnEsc ->
+        R10.FormComponents.Internal.Phone.Common.OnEsc ->
             ( { model | search = "", opened = False }, Cmd.none )

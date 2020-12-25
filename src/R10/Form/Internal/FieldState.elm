@@ -13,7 +13,7 @@ module R10.Form.Internal.FieldState exposing
 
 import Dict
 import Json.Decode as D
-import Json.Decode.Pipeline exposing (required)
+import Json.Decode.Pipeline
 import Json.Encode as E
 import R10.Form.Internal.FieldConf
 
@@ -152,15 +152,15 @@ decoderFieldState : D.Decoder DictFieldState
 decoderFieldState =
     D.dict
         (D.succeed FieldState
-            |> required "lostFocusOneOrMoreTime" D.bool
-            |> required "value" D.string
-            |> required "search" D.string
-            |> required "select" D.string
-            |> required "scroll" D.float
-            |> required "dirty" D.bool
-            |> required "disabled" D.bool
-            |> required "validation" decoderValidation
-            |> required "showPassword" D.bool
+            |> Json.Decode.Pipeline.required "lostFocusOneOrMoreTime" D.bool
+            |> Json.Decode.Pipeline.required "value" D.string
+            |> Json.Decode.Pipeline.required "search" D.string
+            |> Json.Decode.Pipeline.required "select" D.string
+            |> Json.Decode.Pipeline.required "scroll" D.float
+            |> Json.Decode.Pipeline.required "dirty" D.bool
+            |> Json.Decode.Pipeline.required "disabled" D.bool
+            |> Json.Decode.Pipeline.required "validation" decoderValidation
+            |> Json.Decode.Pipeline.required "showPassword" D.bool
         )
 
 

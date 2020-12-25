@@ -1,11 +1,22 @@
 module R10.FormComponents.Internal.Utils exposing
-    ( listSlice
+    ( entitiesValidationOutcomes
+    , errorsList
+    , listSlice
     , stringInsertAtMulti
     )
 
 {-| same as String.Extra.insertAt but allows to input at several positions at once
 -}
 
+import R10.Form.Internal.Converter
+import R10.Form.Internal.Dict
+import R10.Form.Internal.FieldConf
+import R10.Form.Internal.FieldState
+import R10.Form.Internal.Key
+import R10.Form.Internal.Shared
+import R10.Form.Internal.Translator
+import R10.Form.Internal.Update
+import R10.FormComponents.Internal.Validations
 import String.Extra
 
 
@@ -42,3 +53,49 @@ listSlice from to list =
                         Nothing
                 )
             |> List.filterMap identity
+
+
+errorsList :
+    R10.Form.Internal.Shared.Form
+    -> List ( R10.Form.Internal.Key.Key, spec )
+    -> List ( R10.Form.Internal.Key.Key, spec, R10.Form.Internal.FieldState.FieldState )
+errorsList form entitiesWithErrors =
+    entitiesWithErrors
+        |> List.map (\( key, spec ) -> ( key, spec, R10.Form.Internal.Dict.get key form.state.fieldsState ))
+        |> List.filterMap
+            (\( key, spec, maybeFieldState ) ->
+                case maybeFieldState of
+                    Nothing ->
+                        Nothing
+
+                    Just fieldState ->
+                        Just ( key, spec, fieldState )
+            )
+
+
+entitiesValidationOutcomes :
+    R10.Form.Internal.Shared.Form
+    -> Maybe R10.Form.Internal.Translator.Translator
+    -> List ( R10.Form.Internal.Key.Key, R10.FormComponents.Internal.Validations.Validation )
+entitiesValidationOutcomes form maybeTranslator =
+    let
+        translator : R10.Form.Internal.Translator.Translator
+        translator =
+            Maybe.withDefault R10.Form.Internal.Translator.translator maybeTranslator
+
+        keys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+        keys =
+            R10.Form.Internal.Update.allValidationKeysMaker form
+    in
+    form.state.fieldsState
+        |> R10.Form.Internal.Update.entitiesWithErrors keys
+        |> errorsList form
+        |> List.map
+            (\( key, validationSpec, fieldState ) ->
+                ( key
+                , R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
+                    validationSpec
+                    fieldState.validation
+                    (translator key)
+                )
+            )

@@ -7,9 +7,9 @@ import Element.Font as Font
 import Element.Keyed as Keyed
 import Html.Attributes
 import Html.Events
-import R10.Country exposing (Country)
-import R10.FormComponents.Internal.Phone.Common as Common
-import R10.FormComponents.Internal.Phone.Update as Update
+import R10.Country
+import R10.FormComponents.Internal.Phone.Common
+import R10.FormComponents.Internal.Phone.Update
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI
@@ -19,18 +19,18 @@ import R10.FormComponents.Internal.Utils.FocusOut
 import R10.FormTypes
 
 
-viewSearchBox : Common.Model -> Common.Args msg -> Element msg
+viewSearchBox : R10.FormComponents.Internal.Phone.Common.Model -> R10.FormComponents.Internal.Phone.Common.Args msg -> Element msg
 viewSearchBox model args =
     R10.FormComponents.Internal.Text.viewInput
-        [ htmlAttribute <| Html.Attributes.id <| Common.dropdownSearchBoxId args.key
+        [ htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Phone.Common.dropdownSearchBoxId args.key
         , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
         , Border.rounded 0
         ]
         { disabled = args.disabled
         , focused = model.focused
         , label = args.label
-        , msgOnChange = args.toMsg << Update.getMsgOnSearch args
-        , msgOnFocus = args.toMsg <| Common.OnFocus
+        , msgOnChange = args.toMsg << R10.FormComponents.Internal.Phone.Update.getMsgOnSearch args
+        , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnFocus
         , msgOnLoseFocus = Nothing
         , msgOnEnter = Nothing
         , palette = args.palette
@@ -43,7 +43,7 @@ viewSearchBox model args =
         }
 
 
-viewComboboxDropdown : Common.Model -> Common.Args msg -> Bool -> List Country -> Element msg
+viewComboboxDropdown : R10.FormComponents.Internal.Phone.Common.Model -> R10.FormComponents.Internal.Phone.Common.Args msg -> Bool -> List R10.Country.Country -> Element msg
 viewComboboxDropdown model args opened filteredCountryOptions =
     let
         elementsScrolledFromTop : Int
@@ -65,7 +65,7 @@ viewComboboxDropdown model args opened filteredCountryOptions =
 
         visibleMoveDown : Float
         visibleMoveDown =
-            toFloat (Update.dropdownHingeHeight + max 0 visibleFrom * args.selectOptionHeight)
+            toFloat (R10.FormComponents.Internal.Phone.Update.dropdownHingeHeight + max 0 visibleFrom * args.selectOptionHeight)
 
         optionsCount : Int
         optionsCount =
@@ -123,12 +123,12 @@ viewComboboxDropdown model args opened filteredCountryOptions =
                 viewSearchBox model args
             , el
                 [ width fill
-                , height <| px <| Update.getDropdownHeight args optionsCount
+                , height <| px <| R10.FormComponents.Internal.Phone.Update.getDropdownHeight args optionsCount
                 , htmlAttribute <| Html.Attributes.style "overscroll-behavior" "contain"
-                , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << Common.OnScroll)
+                , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << R10.FormComponents.Internal.Phone.Common.OnScroll)
                 , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
-                , paddingXY 0 Update.dropdownHingeHeight
-                , htmlAttribute <| Html.Attributes.id <| Common.dropdownContentId <| args.key
+                , paddingXY 0 R10.FormComponents.Internal.Phone.Update.dropdownHingeHeight
+                , htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Phone.Common.dropdownContentId <| args.key
                 , scrollbarX
                 , inFront <| Keyed.column [ width <| fill, moveDown visibleMoveDown ] visibleOptions
                 ]
@@ -150,7 +150,7 @@ comboboxOptionNoResults { palette, selectOptionHeight } =
             text "No results"
 
 
-viewComboboxOption : Maybe Country -> Maybe Country -> Common.Args msg -> Country -> Element msg
+viewComboboxOption : Maybe R10.Country.Country -> Maybe R10.Country.Country -> R10.FormComponents.Internal.Phone.Common.Args msg -> R10.Country.Country -> Element msg
 viewComboboxOption countryValue select args country =
     let
         isActiveValue : Bool
@@ -194,12 +194,12 @@ viewComboboxOption countryValue select args country =
         args.toOptionEl country
 
 
-view : List (Attribute msg) -> Common.Model -> Common.Args msg -> Element msg
+view : List (Attribute msg) -> R10.FormComponents.Internal.Phone.Common.Model -> R10.FormComponents.Internal.Phone.Common.Args msg -> Element msg
 view attrs model args =
     -- todo add selected validation
     let
         filteredCountryOptions =
-            Common.filterBySearch model.search args.countryOptions
+            R10.FormComponents.Internal.Phone.Common.filterBySearch model.search args.countryOptions
 
         textArgs :
             { disabled : Bool
@@ -226,8 +226,8 @@ view attrs model args =
             { disabled = args.disabled
             , focused = model.focused
             , label = args.label
-            , msgOnChange = args.toMsg << Common.OnValue
-            , msgOnFocus = args.toMsg <| Common.OnFocus
+            , msgOnChange = args.toMsg << R10.FormComponents.Internal.Phone.Common.OnValue
+            , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnFocus
             , msgOnLoseFocus = Nothing
             , msgOnEnter = Nothing
             , msgOnTogglePasswordShow = Nothing --todo
@@ -249,18 +249,18 @@ view attrs model args =
             [ htmlAttribute <| Html.Attributes.type_ "tel" ]
     in
     R10.FormComponents.Internal.Text.view
-        [ htmlAttribute <| Html.Attributes.id <| Common.dropdownContainerId <| args.key
+        [ htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Phone.Common.dropdownContainerId <| args.key
         , htmlAttribute <| Html.Attributes.tabindex -1
         , htmlAttribute <|
             Html.Events.on "focusout"
-                (R10.FormComponents.Internal.Utils.FocusOut.onFocusOut (Common.dropdownContainerId args.key) <|
+                (R10.FormComponents.Internal.Utils.FocusOut.onFocusOut (R10.FormComponents.Internal.Phone.Common.dropdownContainerId args.key) <|
                     args.toMsg <|
-                        Common.OnLoseFocus
+                        R10.FormComponents.Internal.Phone.Common.OnLoseFocus
                 )
         , htmlAttribute <|
             R10.FormComponents.Internal.UI.onKeyPressBatch <|
                 [ ( R10.FormComponents.Internal.UI.keyCode.down
-                  , Common.OnArrowDown args.key
+                  , R10.FormComponents.Internal.Phone.Common.OnArrowDown args.key
                         { selectOptionHeight = args.selectOptionHeight
                         , maxDisplayCount = args.maxDisplayCount
                         , filteredCountryOptions = filteredCountryOptions
@@ -268,7 +268,7 @@ view attrs model args =
                         |> args.toMsg
                   )
                 , ( R10.FormComponents.Internal.UI.keyCode.up
-                  , Common.OnArrowUp args.key
+                  , R10.FormComponents.Internal.Phone.Common.OnArrowUp args.key
                         { selectOptionHeight = args.selectOptionHeight
                         , maxDisplayCount = args.maxDisplayCount
                         , filteredCountryOptions = filteredCountryOptions
@@ -278,13 +278,13 @@ view attrs model args =
                 ]
                     ++ (if model.opened then
                             [ ( R10.FormComponents.Internal.UI.keyCode.esc
-                              , args.toMsg Common.OnEsc
+                              , args.toMsg R10.FormComponents.Internal.Phone.Common.OnEsc
                               )
                             ]
                                 ++ (case model.select of
                                         Just select_ ->
                                             [ ( R10.FormComponents.Internal.UI.keyCode.enter
-                                              , args.toMsg <| Common.OnOptionSelect select_
+                                              , args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnOptionSelect select_
                                               )
                                             ]
 

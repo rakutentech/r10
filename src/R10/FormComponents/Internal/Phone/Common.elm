@@ -12,7 +12,7 @@ module R10.FormComponents.Internal.Phone.Common exposing
     )
 
 import Element exposing (..)
-import R10.Country exposing (Country)
+import R10.Country
 import R10.FormComponents.Internal.Style
 import R10.FormTypes
 
@@ -27,10 +27,10 @@ type Msg
     | OnLoseFocus
     | OnScroll Float
     | OnValue String -- newValue, newValue
-    | OnSearch String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List Country } String -- newSearch, newSelect
-    | OnOptionSelect Country --newValue
-    | OnArrowUp String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List Country } -- newSelect selectionY
-    | OnArrowDown String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List Country } -- newSelect selectionY
+    | OnSearch String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } String -- newSearch, newSelect
+    | OnOptionSelect R10.Country.Country --newValue
+    | OnArrowUp String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } -- newSelect selectionY
+    | OnArrowDown String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } -- newSelect selectionY
     | OnEsc
     | OnFlagClick String Float -- selectionY
 
@@ -49,9 +49,9 @@ init =
 
 type alias Model =
     { value : String
-    , countryValue : Maybe Country
+    , countryValue : Maybe R10.Country.Country
     , search : String
-    , select : Maybe Country
+    , select : Maybe R10.Country.Country
     , focused : Bool
     , scroll : Float
     , opened : Bool
@@ -81,8 +81,8 @@ type alias Args msg =
     , palette : R10.FormTypes.Palette
 
     -- Specific
-    , countryOptions : List Country
-    , toOptionEl : Country -> Element msg
+    , countryOptions : List R10.Country.Country
+    , toOptionEl : R10.Country.Country -> Element msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
     , leadingIcon : Maybe (Element msg)
@@ -96,14 +96,14 @@ normalizeString =
     String.toLower >> String.trim
 
 
-searchFn : String -> Country -> Bool
+searchFn : String -> R10.Country.Country -> Bool
 searchFn search country =
     String.contains
         (search |> normalizeString)
         (country |> R10.Country.toString |> normalizeString)
 
 
-filterBySearch : String -> List Country -> List Country
+filterBySearch : String -> List R10.Country.Country -> List R10.Country.Country
 filterBySearch search fieldOptions =
     if
         String.isEmpty search

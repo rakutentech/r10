@@ -7,13 +7,13 @@ module R10.Form.Internal.State exposing
 
 import Dict
 import Json.Decode as D
-import Json.Decode.Extra as D
-import Json.Decode.Pipeline as D exposing (required)
+import Json.Decode.Extra
+import Json.Decode.Pipeline
 import Json.Encode as E
-import Json.Encode.Extra as E
-import R10.Form.Internal.FieldState exposing (Validation(..))
+import Json.Encode.Extra
+import R10.Form.Internal.FieldState
 import R10.Form.Internal.Key
-import R10.Form.Internal.QtySubmitAttempted as QtySubmitAttempted exposing (QtySubmitAttempted(..))
+import R10.Form.Internal.QtySubmitAttempted
 import Set
 
 
@@ -33,7 +33,7 @@ type alias State =
     , focused : Maybe R10.Form.Internal.Key.KeyAsString
     , active : Maybe R10.Form.Internal.Key.KeyAsString
     , removed : Set.Set R10.Form.Internal.Key.KeyAsString
-    , qtySubmitAttempted : QtySubmitAttempted
+    , qtySubmitAttempted : R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted
     , changesSinceLastSubmissions : Bool
     }
 
@@ -54,7 +54,7 @@ init =
     , focused = Nothing
     , active = Nothing
     , removed = Set.empty
-    , qtySubmitAttempted = QtySubmitAttempted.fromInt 0
+    , qtySubmitAttempted = R10.Form.Internal.QtySubmitAttempted.fromInt 0
     , changesSinceLastSubmissions = False
     }
 
@@ -80,12 +80,12 @@ encoder v =
         [ ( "fieldsState", R10.Form.Internal.FieldState.encoderFieldState v.fieldsState )
         , ( "multiplicableQuantities", E.dict identity E.int v.multiplicableQuantities )
         , ( "activeTabs", E.dict identity E.string v.activeTabs )
-        , ( "focused", E.maybe E.string v.focused )
+        , ( "focused", Json.Encode.Extra.maybe E.string v.focused )
 
         -- We don't want to save active state since it can cause incorrect render on load
-        , ( "active", E.maybe E.string Nothing )
+        , ( "active", Json.Encode.Extra.maybe E.string Nothing )
         , ( "removed", E.list E.string (Set.toList v.removed) )
-        , ( "qtySubmitAttempted", E.int (QtySubmitAttempted.toInt v.qtySubmitAttempted) )
+        , ( "qtySubmitAttempted", E.int (R10.Form.Internal.QtySubmitAttempted.toInt v.qtySubmitAttempted) )
         , ( "changesSinceLastSubmissions", E.bool v.changesSinceLastSubmissions )
         ]
 
@@ -93,14 +93,14 @@ encoder v =
 decoder : D.Decoder State
 decoder =
     D.succeed State
-        |> D.required "fieldsState" R10.Form.Internal.FieldState.decoderFieldState
-        |> D.required "multiplicableQuantities" (D.dict D.int)
-        |> D.required "activeTabs" (D.dict D.string)
-        |> D.required "focused" (D.nullable D.string)
-        |> D.required "active" (D.nullable D.string)
-        |> D.required "removed" (D.set D.string)
-        |> D.required "qtySubmitAttempted" (D.map QtySubmitAttempted.fromInt D.int)
-        |> D.required "changesSinceLastSubmissions" D.bool
+        |> Json.Decode.Pipeline.required "fieldsState" R10.Form.Internal.FieldState.decoderFieldState
+        |> Json.Decode.Pipeline.required "multiplicableQuantities" (D.dict D.int)
+        |> Json.Decode.Pipeline.required "activeTabs" (D.dict D.string)
+        |> Json.Decode.Pipeline.required "focused" (D.nullable D.string)
+        |> Json.Decode.Pipeline.required "active" (D.nullable D.string)
+        |> Json.Decode.Pipeline.required "removed" (Json.Decode.Extra.set D.string)
+        |> Json.Decode.Pipeline.required "qtySubmitAttempted" (D.map R10.Form.Internal.QtySubmitAttempted.fromInt D.int)
+        |> Json.Decode.Pipeline.required "changesSinceLastSubmissions" D.bool
 
 
 toString : State -> String

@@ -3,6 +3,7 @@ module R10.Form.Internal.Conf exposing
     , Entity(..)
     , EntityId
     , TextConf
+    , fieldConfigConcatMap
     , filter
     , fromString
     , getId
@@ -12,7 +13,7 @@ module R10.Form.Internal.Conf exposing
 
 import Json.Decode as D
 import Json.Encode as E
-import Json.Encode.Extra as E
+import Json.Encode.Extra
 import R10.Form.Internal.FieldConf
 
 
@@ -140,8 +141,8 @@ encoderGenericTitle titleConf string =
         [ ( string
           , E.object
                 [ ( "Title", E.string titleConf.title )
-                , ( "HelperText", E.maybe E.string titleConf.helperText )
-                , ( "ValidationSpecs", E.maybe R10.Form.Internal.FieldConf.encodeValidationSpecs titleConf.validationSpecs )
+                , ( "HelperText", Json.Encode.Extra.maybe E.string titleConf.helperText )
+                , ( "ValidationSpecs", Json.Encode.Extra.maybe R10.Form.Internal.FieldConf.encodeValidationSpecs titleConf.validationSpecs )
                 ]
           )
         ]
@@ -211,3 +212,45 @@ toString v =
 fromString : String -> Result D.Error Conf
 fromString string =
     D.decodeString (D.list decoderEntity) string
+
+
+fieldConfigConcatMap : (R10.Form.Internal.FieldConf.FieldConf -> List R10.Form.Internal.FieldConf.FieldConf) -> Conf -> Conf
+fieldConfigConcatMap func1 =
+    let
+        fMap : (Conf -> a) -> Conf -> List a
+        fMap func2 =
+            List.map groupBy
+                >> List.concat
+                >> (\entities -> entities |> List.head |> Maybe.map (always [ func2 entities ]) |> Maybe.withDefault [])
+
+        groupBy : Entity -> List Entity
+        groupBy entity_ =
+            case entity_ of
+                EntityNormal entityId entities ->
+                    fMap (EntityNormal entityId) entities
+
+                EntityWrappable entityId entities ->
+                    fMap (EntityWrappable entityId) entities
+
+                EntityWithBorder entityId entities ->
+                    fMap (EntityNormal entityId) entities
+
+                EntityWithTabs entityId entities ->
+                    entities
+                        |> List.map (\( str, ent ) -> groupBy ent |> List.map (Tuple.pair str))
+                        |> List.concat
+                        |> (\entities_ -> entities_ |> List.head |> Maybe.map (always [ EntityWithTabs entityId entities_ ]) |> Maybe.withDefault [])
+
+                EntityMulti entityId entities ->
+                    fMap (EntityNormal entityId) entities
+
+                EntityField config ->
+                    config |> func1 |> List.map EntityField
+
+                EntityTitle _ _ ->
+                    [ entity_ ]
+
+                EntitySubTitle _ _ ->
+                    [ entity_ ]
+    in
+    List.concatMap groupBy

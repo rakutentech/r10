@@ -9,7 +9,7 @@ module R10.FormComponents.Internal.Single.Update exposing
 
 import Browser.Dom
 import List.Extra
-import R10.FormComponents.Internal.Single.Common as Common
+import R10.FormComponents.Internal.Single.Common
 import Task
 
 
@@ -18,20 +18,20 @@ dropdownHingeHeight =
     10
 
 
-onArrowHelper : String -> Common.Model -> String -> Float -> ( Common.Model, Cmd Common.Msg )
+onArrowHelper : String -> R10.FormComponents.Internal.Single.Common.Model -> String -> Float -> ( R10.FormComponents.Internal.Single.Common.Model, Cmd R10.FormComponents.Internal.Single.Common.Msg )
 onArrowHelper key model value float =
     ( { model | scroll = float, select = value }
     , Task.attempt
-        (always Common.NoOp)
+        (always R10.FormComponents.Internal.Single.Common.NoOp)
         (Browser.Dom.setViewportOf
-            (Common.dropdownContentId key)
+            (R10.FormComponents.Internal.Single.Common.dropdownContentId key)
             0
             float
         )
     )
 
 
-onOpenHelper : String -> Common.Model -> Float -> ( Common.Model, Cmd Common.Msg )
+onOpenHelper : String -> R10.FormComponents.Internal.Single.Common.Model -> Float -> ( R10.FormComponents.Internal.Single.Common.Model, Cmd R10.FormComponents.Internal.Single.Common.Msg )
 onOpenHelper key model float =
     ( { model
         | opened = True
@@ -39,15 +39,15 @@ onOpenHelper key model float =
       }
     , Cmd.batch
         [ Task.attempt
-            (always Common.NoOp)
+            (always R10.FormComponents.Internal.Single.Common.NoOp)
             (Browser.Dom.setViewportOf
-                (Common.dropdownContentId key)
+                (R10.FormComponents.Internal.Single.Common.dropdownContentId key)
                 0
                 float
             )
         , Task.attempt
-            (always Common.NoOp)
-            (Browser.Dom.focus <| Common.singleSearchBoxId key)
+            (always R10.FormComponents.Internal.Single.Common.NoOp)
+            (Browser.Dom.focus <| R10.FormComponents.Internal.Single.Common.singleSearchBoxId key)
         ]
     )
 
@@ -128,17 +128,17 @@ getMsgOnSearch :
         | key : String
         , selectOptionHeight : Int
         , maxDisplayCount : Int
-        , searchFn : String -> Common.FieldOption -> Bool
-        , fieldOptions : List Common.FieldOption
+        , searchFn : String -> R10.FormComponents.Internal.Single.Common.FieldOption -> Bool
+        , fieldOptions : List R10.FormComponents.Internal.Single.Common.FieldOption
     }
     -> String
-    -> Common.Msg
+    -> R10.FormComponents.Internal.Single.Common.Msg
 getMsgOnSearch args newSearch =
-    Common.OnSearch
+    R10.FormComponents.Internal.Single.Common.OnSearch
         { key = args.key
         , selectOptionHeight = args.selectOptionHeight
         , maxDisplayCount = args.maxDisplayCount
-        , filteredFieldOption = Common.filterBySearch newSearch args
+        , filteredFieldOption = R10.FormComponents.Internal.Single.Common.filterBySearch newSearch args
         }
         newSearch
 
@@ -158,17 +158,17 @@ inboundIndex maxIdx idx =
         Just idx
 
 
-getNextNewSelectAndY : Common.Model -> { b | filteredFieldOption : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
+getNextNewSelectAndY : R10.FormComponents.Internal.Single.Common.Model -> { b | filteredFieldOption : List R10.FormComponents.Internal.Single.Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
 getNextNewSelectAndY model args =
     getNewSelectAndY_ 1 0 model args
 
 
-getPrevNewSelectAndY : Common.Model -> { b | filteredFieldOption : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
+getPrevNewSelectAndY : R10.FormComponents.Internal.Single.Common.Model -> { b | filteredFieldOption : List R10.FormComponents.Internal.Single.Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
 getPrevNewSelectAndY model args =
     getNewSelectAndY_ -1 (List.length args.filteredFieldOption - 1) model args
 
 
-getNewSelectAndY_ : Int -> Int -> Common.Model -> { b | filteredFieldOption : List Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
+getNewSelectAndY_ : Int -> Int -> R10.FormComponents.Internal.Single.Common.Model -> { b | filteredFieldOption : List R10.FormComponents.Internal.Single.Common.FieldOption, selectOptionHeight : Int, maxDisplayCount : Int } -> ( String, Float )
 getNewSelectAndY_ step default model args =
     let
         select : String
@@ -199,13 +199,13 @@ getNewSelectAndY_ step default model args =
     ( newValue, newY )
 
 
-update : Common.Msg -> Common.Model -> ( Common.Model, Cmd Common.Msg )
+update : R10.FormComponents.Internal.Single.Common.Msg -> R10.FormComponents.Internal.Single.Common.Model -> ( R10.FormComponents.Internal.Single.Common.Model, Cmd R10.FormComponents.Internal.Single.Common.Msg )
 update msg model =
     case msg of
-        Common.NoOp ->
+        R10.FormComponents.Internal.Single.Common.NoOp ->
             ( model, Cmd.none )
 
-        Common.OnSearch args newSearch ->
+        R10.FormComponents.Internal.Single.Common.OnSearch args newSearch ->
             let
                 isSelectInsideCountryOptions : Bool
                 isSelectInsideCountryOptions =
@@ -237,35 +237,35 @@ update msg model =
               }
             , Cmd.batch
                 [ Task.attempt
-                    (always Common.NoOp)
+                    (always R10.FormComponents.Internal.Single.Common.NoOp)
                     (Browser.Dom.setViewportOf
-                        (Common.dropdownContentId args.key)
+                        (R10.FormComponents.Internal.Single.Common.dropdownContentId args.key)
                         0
                         newY
                     )
                 ]
             )
 
-        Common.OnOptionSelect value ->
+        R10.FormComponents.Internal.Single.Common.OnOptionSelect value ->
             ( { model | value = value, opened = False, select = "", search = "" }, Cmd.none )
 
-        Common.OnScroll scroll ->
+        R10.FormComponents.Internal.Single.Common.OnScroll scroll ->
             ( { model | scroll = scroll }, Cmd.none )
 
-        Common.OnInputClick args ->
+        R10.FormComponents.Internal.Single.Common.OnInputClick args ->
             if model.opened then
                 ( { model | scroll = args.selectedY, opened = False }, Cmd.none )
 
             else
                 onOpenHelper args.key model args.selectedY
 
-        Common.OnLoseFocus value ->
+        R10.FormComponents.Internal.Single.Common.OnLoseFocus value ->
             ( { model | focused = False, opened = False, value = value, select = "", search = "" }, Cmd.none )
 
-        Common.OnFocus value ->
+        R10.FormComponents.Internal.Single.Common.OnFocus value ->
             ( { model | focused = True, value = value }, Cmd.none )
 
-        Common.OnArrowUp args ->
+        R10.FormComponents.Internal.Single.Common.OnArrowUp args ->
             -- skip arrow msg if dropdown is closed
             if model.opened then
                 getPrevNewSelectAndY model args
@@ -274,7 +274,7 @@ update msg model =
             else
                 onOpenHelper args.key model model.scroll
 
-        Common.OnArrowDown args ->
+        R10.FormComponents.Internal.Single.Common.OnArrowDown args ->
             -- skip arrow msg if dropdown is closed
             if model.opened then
                 getNextNewSelectAndY model args
@@ -283,5 +283,5 @@ update msg model =
             else
                 onOpenHelper args.key model model.scroll
 
-        Common.OnEsc ->
+        R10.FormComponents.Internal.Single.Common.OnEsc ->
             ( { model | search = "", opened = False }, Cmd.none )

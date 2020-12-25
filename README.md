@@ -349,3 +349,28 @@ view model =
             ]
         )
 ```
+
+## Best practices
+
+Imports should be plain, without aliases and without exposing particular functions. This make the code more clear as it immediately understanding if a resource is defined in the present module or somewhere else. It also makes code block more portable.
+
+These are the exceptions to this rule: 
+
+    import Element exposing (..)
+    import Element.Background as Background
+    import Element.Border as Border
+    import Element.Events as Events
+    import Element.Font as Font
+    import Element.Input as Input
+    import Element.Keyed as Keyed
+    import Json.Decode as D
+    import Json.Encode as E
+    import Svg.Attributes as SA
+    import Html exposing (..)
+    import Html.Attributes exposing (..)
+
+`Html` and `Html.Attributes` can be esposed only if `Element` is not used, otherwise there are conflicts.
+
+----
+
+Modules that are not exposed should have `Internal` somewhere in their path.

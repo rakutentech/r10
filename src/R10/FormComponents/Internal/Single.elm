@@ -17,7 +17,7 @@ import Html.Attributes
 import R10.Color.Utils
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Single.Combobox
-import R10.FormComponents.Internal.Single.Common as Common
+import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Single.Radio
 import R10.FormComponents.Internal.Single.Update
 import R10.FormComponents.Internal.Style
@@ -42,14 +42,14 @@ extraCss =
     ""
 
 
-defaultSearchFn : String -> Common.FieldOption -> Bool
+defaultSearchFn : String -> R10.FormComponents.Internal.Single.Common.FieldOption -> Bool
 defaultSearchFn search opt =
     String.contains
         (search |> normalizeString)
         (opt.label |> normalizeString)
 
 
-defaultViewOptionEl : { a | search : String, msgOnSelect : String -> msg } -> Common.FieldOption -> Element msg
+defaultViewOptionEl : { a | search : String, msgOnSelect : String -> msg } -> R10.FormComponents.Internal.Single.Common.FieldOption -> Element msg
 defaultViewOptionEl { search, msgOnSelect } { label, value } =
     let
         insertPositions : List Int
@@ -121,7 +121,7 @@ insertBold indexes string =
         |> String.Extra.surround "**"
 
 
-update : Common.Msg -> Common.Model -> ( Common.Model, Cmd Common.Msg )
+update : R10.FormComponents.Internal.Single.Common.Msg -> R10.FormComponents.Internal.Single.Common.Model -> ( R10.FormComponents.Internal.Single.Common.Model, Cmd R10.FormComponents.Internal.Single.Common.Msg )
 update =
     R10.FormComponents.Internal.Single.Update.update
 
@@ -135,21 +135,21 @@ type alias Args msg =
     , style : R10.FormComponents.Internal.Style.Style
     , palette : R10.FormTypes.Palette
     , singleType : R10.FormTypes.TypeSingle
-    , fieldOptions : List Common.FieldOption
+    , fieldOptions : List R10.FormComponents.Internal.Single.Common.FieldOption
     , valid : Maybe Bool
-    , toMsg : Common.Msg -> msg
+    , toMsg : R10.FormComponents.Internal.Single.Common.Msg -> msg
     }
 
 
 view :
     List (Attribute msg)
     -- Shared.Args msg - without [toOptionEl, searchFn]
-    -> Common.Model
+    -> R10.FormComponents.Internal.Single.Common.Model
     -> Args msg
     -> Element msg
 view attrs model conf =
     let
-        args : Common.Args msg
+        args : R10.FormComponents.Internal.Single.Common.Args msg
         args =
             { valid = conf.valid
             , toMsg = conf.toMsg
@@ -165,7 +165,7 @@ view attrs model conf =
             , viewOptionEl =
                 defaultViewOptionEl
                     { search = model.search
-                    , msgOnSelect = Common.OnOptionSelect >> conf.toMsg
+                    , msgOnSelect = R10.FormComponents.Internal.Single.Common.OnOptionSelect >> conf.toMsg
                     }
             , searchFn = defaultSearchFn
             , selectOptionHeight = 36
@@ -191,11 +191,11 @@ type alias ArgsCustom msg =
     , style : R10.FormComponents.Internal.Style.Style
     , palette : R10.FormTypes.Palette
     , singleType : R10.FormTypes.TypeSingle
-    , fieldOptions : List Common.FieldOption
+    , fieldOptions : List R10.FormComponents.Internal.Single.Common.FieldOption
     , valid : Maybe Bool
-    , toMsg : Common.Msg -> msg
-    , searchFn : String -> Common.FieldOption -> Bool
-    , viewOptionEl : Common.FieldOption -> Element msg
+    , toMsg : R10.FormComponents.Internal.Single.Common.Msg -> msg
+    , searchFn : String -> R10.FormComponents.Internal.Single.Common.FieldOption -> Bool
+    , viewOptionEl : R10.FormComponents.Internal.Single.Common.FieldOption -> Element msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
     , leadingIcon : Maybe (Element msg)
@@ -205,12 +205,12 @@ type alias ArgsCustom msg =
 
 viewCustom :
     List (Attribute msg)
-    -> Common.Model
+    -> R10.FormComponents.Internal.Single.Common.Model
     -> ArgsCustom msg
     -> Element msg
 viewCustom attrs model conf =
     let
-        args : Common.Args msg
+        args : R10.FormComponents.Internal.Single.Common.Args msg
         args =
             { valid = conf.valid
             , toMsg = conf.toMsg

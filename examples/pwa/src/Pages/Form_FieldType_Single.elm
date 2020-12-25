@@ -367,7 +367,7 @@ view model theme =
             , valid = model.valid
             , toMsg = OnSingleMsg
             , searchFn = R10.Form.defaultSearchFn
-            , toOptionEl =
+            , viewOptionEl =
                 R10.Form.defaultToOptionEl
                     { search = model.singleModel.search
                     , msgOnSelect = R10.Form.singleMsg.onOptionSelect >> OnSingleMsg

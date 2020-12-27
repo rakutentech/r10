@@ -1,6 +1,6 @@
 module R10.FormDebug exposing (textTypeMetaData, binaryTypeMetaData, singleTypeMetaData)
 
-{-| Only used for form debuggin
+{-| Only used for form debugging
 
 @docs textTypeMetaData, binaryTypeMetaData, singleTypeMetaData
 

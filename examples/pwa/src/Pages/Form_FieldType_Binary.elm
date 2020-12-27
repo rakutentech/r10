@@ -14,7 +14,7 @@ import Element.Input as Input
 import R10.Card
 import R10.Color.AttrsBackground
 import R10.Form
-import R10.FormIntrospection
+import R10.FormDebug
 import R10.FormTypes
 import R10.Paragraph
 import R10.Theme
@@ -57,7 +57,7 @@ init =
 
 binaryTypeToString : R10.FormTypes.TypeBinary -> String
 binaryTypeToString textType =
-    .string (R10.FormIntrospection.binaryTypeMetaData textType)
+    .string (R10.FormDebug.binaryTypeMetaData textType)
 
 
 type Msg
@@ -131,7 +131,7 @@ update msg model =
         RotateTextType ->
             ( { model
                 | binaryType =
-                    .next (R10.FormIntrospection.binaryTypeMetaData model.binaryType)
+                    .next (R10.FormDebug.binaryTypeMetaData model.binaryType)
               }
             , Cmd.none
             )

@@ -16,7 +16,7 @@ import R10.Card
 import R10.Color.AttrsBackground
 import R10.Color.Svg
 import R10.Form
-import R10.FormIntrospection
+import R10.FormDebug
 import R10.FormTypes
 import R10.Paragraph
 import R10.Svg.IconsExtra
@@ -85,7 +85,7 @@ generateFieldOptions count =
 
 singleTypeToString : R10.FormTypes.TypeSingle -> String
 singleTypeToString singleType =
-    .string (R10.FormIntrospection.singleTypeMetaData singleType)
+    .string (R10.FormDebug.singleTypeMetaData singleType)
 
 
 styleToString : R10.Form.Style -> String
@@ -273,7 +273,7 @@ update msg model =
         RotateSingleType ->
             ( { model
                 | singleType =
-                    .next (R10.FormIntrospection.singleTypeMetaData model.singleType)
+                    .next (R10.FormDebug.singleTypeMetaData model.singleType)
               }
             , Cmd.none
             )

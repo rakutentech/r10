@@ -1,14 +1,17 @@
 module R10.Form exposing
     ( Form
-    , view, viewWithTheme, viewWithPalette, viewWithOptions, Options, MsgMapper
+    , view, viewWithTheme, viewWithPalette, viewWithOptions, Options
+    , Msg, MsgMapper
+    , isChangingValues, isFormSubmittableAndSubmitted, msg
+    , State, initState, stateToString, stringToState
+    , update
     , Conf, initConf, confToString, stringToConf
     , Entity, entity, EntityId, TextConf
-    , State, initState, stateToString, stringToState
     , FieldConf, initFieldConf, FieldState, initFieldState
-    , update, submittable, isFormSubmittableAndSubmitted
-    , Msg, msg, isChangingValues
     , Key, KeyAsString, keyToString, stringToKey, composeKey, listToKey, headId, emptyKey
-    , getFieldValueAsBool, getFieldValue, stringToBool, boolToString, setFieldValue, getField, getMultiActiveKeys, setMultiplicableQuantities, setFieldDisabled, getActiveTab, setActiveTab
+    , getField, getFieldValue, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
+    , setFieldValue, setActiveTab, setMultiplicableQuantities, setFieldDisabled
+    , submittable, stringToBool, boolToString
     , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, ArgsText, viewBinary, ArgsBinary
     , Style, style
     , Button, button
@@ -16,7 +19,8 @@ module R10.Form exposing
     , onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange
     , elementMarkdown
     , Translator, defaultTranslator, validationCodes
-    , SingleModel, SingleMsg, SingleFieldOption, defaultSearchFn, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, singleMsg, updateSingle, viewSingle, viewSingleCustom
+    , SingleModel, SingleMsg, SingleFieldOption, defaultSearchFn, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, singleMsg, updateSingle
+    , viewSingle, ArgsSingle, viewSingleCustom, ArgsSingleCustom
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , PhoneModel, PhoneMsg, phoneView, phoneUpdate, phoneInit
     , fieldConfigConcatMap
@@ -41,7 +45,39 @@ A form is defined by the **configuration** (`R10.Form.Conf`) that contain data a
 
 There are four functions to render a `Form`, each with a different degree of customization. They are order from the simplest (less customizable) to the most complex (more customizable).
 
-@docs view, viewWithTheme, viewWithPalette, viewWithOptions, Options, MsgMapper
+@docs view, viewWithTheme, viewWithPalette, viewWithOptions, Options
+
+
+# Messages
+
+@docs Msg, MsgMapper
+
+
+## Messages helpers
+
+@docs isChangingValues, isFormSubmittableAndSubmitted, msg
+
+
+# State
+
+`State` is the equivalent of the `Model` in a TEA structure.
+
+It contains the values and the other things that ususally change while the user is interacting with the form.
+
+@docs State, initState, stateToString, stringToState
+
+
+# Update
+
+This is the `update` function to wire the form in your existing `TEA` structure.
+
+It consider the `State` of the form as the `Model` in a standard `TEA` structure, as usually is the `State` that change while the user interact with the form.
+
+But, differently from the standard `TEA`, the view function of this form library also require the configuration of the form.
+
+This means that if you want to go crazy and also change the configuration, you can do it. For example you could change the validations on the flight while user is changing a value. Or you can add new input fields, etc. See [`fieldConfigConcatMap`](#fieldConfigConcatMap) for this type of usage.
+
+@docs update
 
 
 # Configuration and Entities
@@ -57,26 +93,11 @@ There are four functions to render a `Form`, each with a different degree of cus
 @docs Entity, entity, EntityId, TextConf
 
 
-# State
-
-@docs State, initState, stateToString, stringToState
-
-
 # Fields Configuration and State
 
 Singular fields, similarly to forms, have their own Configuration and State.
 
 @docs FieldConf, initFieldConf, FieldState, initFieldState
-
-
-# Update
-
-@docs update, submittable, isFormSubmittableAndSubmitted
-
-
-# Messages
-
-@docs Msg, msg, isChangingValues
 
 
 # Key
@@ -86,7 +107,17 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 # Helpers
 
-@docs getFieldValueAsBool, getFieldValue, stringToBool, boolToString, setFieldValue, getField, getMultiActiveKeys, setMultiplicableQuantities, setFieldDisabled, getActiveTab, setActiveTab
+**Get**
+
+@docs getField, getFieldValue, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
+
+**Set**
+
+@docs setFieldValue, setActiveTab, setMultiplicableQuantities, setFieldDisabled
+
+**Others**
+
+@docs submittable, stringToBool, boolToString
 
 
 # Form Components
@@ -145,7 +176,12 @@ If you want to personalise the translations or you want to translate them in dif
 
 # Single Field
 
-@docs SingleModel, SingleMsg, SingleFieldOption, defaultSearchFn, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, singleMsg, updateSingle, viewSingle, viewSingleCustom
+@docs SingleModel, SingleMsg, SingleFieldOption, defaultSearchFn, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, singleMsg, updateSingle
+
+
+### Views
+
+@docs viewSingle, ArgsSingle, viewSingleCustom, ArgsSingleCustom
 
 
 # Validation
@@ -357,6 +393,19 @@ type alias Options =
     }
 
 
+
+-- ███    ███ ███████ ███████ ███████  █████   ██████  ███████ ███████
+-- ████  ████ ██      ██      ██      ██   ██ ██       ██      ██
+-- ██ ████ ██ █████   ███████ ███████ ███████ ██   ███ █████   ███████
+-- ██  ██  ██ ██           ██      ██ ██   ██ ██    ██ ██           ██
+-- ██      ██ ███████ ███████ ███████ ██   ██  ██████  ███████ ███████
+
+
+{-| -}
+type alias Msg =
+    R10.Form.Internal.Msg.Msg
+
+
 {-| This function required by all views is used to convert specific form messages (`Msg`) into generic messages (`msg`). Tipically you would define this function like this in your application:
 
     type Msg
@@ -369,6 +418,102 @@ For a code example have a look at this [simple form](https://github.com/rakutent
 -}
 type alias MsgMapper msg =
     Msg -> msg
+
+
+
+-- MESSAGES HELPERS
+
+
+{-| -}
+isChangingValues : Msg -> Bool
+isChangingValues =
+    R10.Form.Internal.Msg.isChangingValues
+
+
+{-| This function can be used to do some processing before the form get submitted.
+
+It returns `True` when the form is submittable and the message is `Submit`. To be used in the `update` function.
+
+-}
+isFormSubmittableAndSubmitted : Form -> Msg -> Bool
+isFormSubmittableAndSubmitted =
+    R10.Form.Internal.Update.isFormSubmittableAndSubmitted
+
+
+{-| -}
+msg : { submit : Conf -> Msg }
+msg =
+    { submit = R10.Form.Internal.Msg.Submit }
+
+
+
+-- ███████ ████████  █████  ████████ ███████
+-- ██         ██    ██   ██    ██    ██
+-- ███████    ██    ███████    ██    █████
+--      ██    ██    ██   ██    ██    ██
+-- ███████    ██    ██   ██    ██    ███████
+
+
+{-| The state is defined as
+
+    type alias State =
+        { fieldsState : Dict KeyAsString FieldState
+        , multiplicableQuantities : Dict KeyAsString Int
+        , activeTabs : Dict KeyAsString String
+        , focused : Maybe KeyAsString
+        , active : Maybe KeyAsString
+        , removed : Set KeyAsString
+        , qtySubmitAttempted : QtySubmitAttempted
+        , changesSinceLastSubmissions : Bool
+        }
+
+Where:
+
+  - `fieldState` is a dictionary containing the states of all fields.
+  - `multiplicableQuantities` is a dictionary containin the quantity of a _multiplicable_ field. A _multiplicable_ field is a field that the user can clone to add extra information.
+  - `activeTabs` describe which tab is active in case tabs are used to group objects of the form.
+  - `focused` is the focused element of the form at the present moment.
+  - `active`... what is `active`?
+  - `removed` contains _multiplicable_ input fields that have been removed by the user.
+  - `qtySubmitAttempted` is the number of times that the user tried to submit the form.
+  - `changesSinceLastSubmissions` is `True` if the user changed something after the last for submission.
+
+-}
+type alias State =
+    R10.Form.Internal.State.State
+
+
+{-| -}
+initState : State
+initState =
+    R10.Form.Internal.State.init
+
+
+{-| This can be useful to store the state of a form to the Local Storage, for example. Then, using `stringToState` is possible to restore all the values of a form or keep the form sync'ed on different tabs.
+-}
+stateToString : State -> String
+stateToString =
+    R10.Form.Internal.State.toString
+
+
+{-| -}
+stringToState : String -> Result Json.Decode.Error State
+stringToState =
+    R10.Form.Internal.State.fromString
+
+
+
+-- ██    ██ ██████  ██████   █████  ████████ ███████
+-- ██    ██ ██   ██ ██   ██ ██   ██    ██    ██
+-- ██    ██ ██████  ██   ██ ███████    ██    █████
+-- ██    ██ ██      ██   ██ ██   ██    ██    ██
+--  ██████  ██      ██████  ██   ██    ██    ███████
+
+
+{-| -}
+update : Msg -> State -> ( State, Cmd Msg )
+update =
+    R10.Form.Internal.Update.update
 
 
 
@@ -464,62 +609,6 @@ type alias TextConf =
 
 
 
--- ███████ ████████  █████  ████████ ███████
--- ██         ██    ██   ██    ██    ██
--- ███████    ██    ███████    ██    █████
---      ██    ██    ██   ██    ██    ██
--- ███████    ██    ██   ██    ██    ███████
-
-
-{-| The state is defined as
-
-    type alias State =
-        { fieldsState : Dict KeyAsString FieldState
-        , multiplicableQuantities : Dict KeyAsString Int
-        , activeTabs : Dict KeyAsString String
-        , focused : Maybe KeyAsString
-        , active : Maybe KeyAsString
-        , removed : Set KeyAsString
-        , qtySubmitAttempted : QtySubmitAttempted
-        , changesSinceLastSubmissions : Bool
-        }
-
-Where:
-
-  - `fieldState` is a dictionary containing the states of all fields.
-  - `multiplicableQuantities` is a dictionary containin the quantity of a _multiplicable_ field. A _multiplicable_ field is a field that the user can clone to add extra information.
-  - `activeTabs` describe which tab is active in case tabs are used to group objects of the form.
-  - `focused` is the focused element of the form at the present moment.
-  - `active`... what is `active`?
-  - `removed` contains _multiplicable_ input fields that have been removed by the user.
-  - `qtySubmitAttempted` is the number of times that the user tried to submit the form.
-  - `changesSinceLastSubmissions` is `True` if the user changed something after the last for submission.
-
--}
-type alias State =
-    R10.Form.Internal.State.State
-
-
-{-| -}
-initState : State
-initState =
-    R10.Form.Internal.State.init
-
-
-{-| This can be useful to store the state of a form to the Local Storage, for example. Then, using `stringToState` is possible to restore all the values of a form or keep the form sync'ed on different tabs.
--}
-stateToString : State -> String
-stateToString =
-    R10.Form.Internal.State.toString
-
-
-{-| -}
-stringToState : String -> Result Json.Decode.Error State
-stringToState =
-    R10.Form.Internal.State.fromString
-
-
-
 -- ███████ ██ ███████ ██      ██████       ██████  ██████  ███    ██ ███████     ███████ ████████  █████  ████████ ███████
 -- ██      ██ ██      ██      ██   ██     ██      ██    ██ ████   ██ ██          ██         ██    ██   ██    ██    ██
 -- █████   ██ █████   ██      ██   ██     ██      ██    ██ ██ ██  ██ █████       ███████    ██    ███████    ██    █████
@@ -576,57 +665,6 @@ initFieldState =
 
 
 
--- ██    ██ ██████  ██████   █████  ████████ ███████
--- ██    ██ ██   ██ ██   ██ ██   ██    ██    ██
--- ██    ██ ██████  ██   ██ ███████    ██    █████
--- ██    ██ ██      ██   ██ ██   ██    ██    ██
---  ██████  ██      ██████  ██   ██    ██    ███████
-
-
-{-| -}
-update : Msg -> State -> ( State, Cmd Msg )
-update =
-    R10.Form.Internal.Update.update
-
-
-{-| -}
-submittable : Form -> Bool
-submittable =
-    R10.Form.Internal.Update.submittable
-
-
-{-| -}
-isFormSubmittableAndSubmitted : Form -> Msg -> Bool
-isFormSubmittableAndSubmitted =
-    R10.Form.Internal.Update.isFormSubmittableAndSubmitted
-
-
-
--- ███    ███ ███████  ██████
--- ████  ████ ██      ██
--- ██ ████ ██ ███████ ██   ███
--- ██  ██  ██      ██ ██    ██
--- ██      ██ ███████  ██████
-
-
-{-| -}
-type alias Msg =
-    R10.Form.Internal.Msg.Msg
-
-
-{-| -}
-msg : { submit : Conf -> Msg }
-msg =
-    { submit = R10.Form.Internal.Msg.Submit }
-
-
-{-| -}
-isChangingValues : Msg -> Bool
-isChangingValues =
-    R10.Form.Internal.Msg.isChangingValues
-
-
-
 -- ██   ██ ███████ ██    ██
 -- ██  ██  ██       ██  ██
 -- █████   █████     ████
@@ -634,7 +672,11 @@ isChangingValues =
 -- ██   ██ ███████    ██
 
 
-{-| -}
+{-| `Key` is internally defined as a list of strings.
+
+The form is rapresented internally as a tree and the `Key` is the path to reach a node.
+
+-}
 type alias Key =
     R10.Form.Internal.Key.Key
 
@@ -686,36 +728,8 @@ emptyKey =
 -- ███████ █████   ██      ██████  █████   ██████  ███████
 -- ██   ██ ██      ██      ██      ██      ██   ██      ██
 -- ██   ██ ███████ ███████ ██      ███████ ██   ██ ███████
-
-
-{-| -}
-getFieldValueAsBool : KeyAsString -> State -> Maybe Bool
-getFieldValueAsBool =
-    R10.Form.Internal.Helpers.getFieldValueAsBool
-
-
-{-| -}
-getFieldValue : KeyAsString -> State -> Maybe String
-getFieldValue =
-    R10.Form.Internal.Helpers.getFieldValue
-
-
-{-| -}
-stringToBool : String -> Bool
-stringToBool =
-    R10.Form.Internal.Helpers.stringToBool
-
-
-{-| -}
-boolToString : Bool -> String
-boolToString =
-    R10.Form.Internal.Helpers.boolToString
-
-
-{-| -}
-setFieldValue : KeyAsString -> String -> State -> State
-setFieldValue =
-    R10.Form.Internal.Helpers.setFieldValue
+--
+-- GET
 
 
 {-| -}
@@ -725,9 +739,43 @@ getField =
 
 
 {-| -}
+getFieldValue : KeyAsString -> State -> Maybe String
+getFieldValue =
+    R10.Form.Internal.Helpers.getFieldValue
+
+
+{-| -}
+getFieldValueAsBool : KeyAsString -> State -> Maybe Bool
+getFieldValueAsBool =
+    R10.Form.Internal.Helpers.getFieldValueAsBool
+
+
+{-| -}
+getActiveTab : KeyAsString -> State -> Maybe String
+getActiveTab =
+    R10.Form.Internal.Helpers.getActiveTab
+
+
+{-| -}
 getMultiActiveKeys : Key -> State -> List Key
 getMultiActiveKeys =
     R10.Form.Internal.Helpers.getMultiActiveKeys
+
+
+
+-- SET
+
+
+{-| -}
+setFieldValue : KeyAsString -> String -> State -> State
+setFieldValue =
+    R10.Form.Internal.Helpers.setFieldValue
+
+
+{-| -}
+setActiveTab : KeyAsString -> String -> State -> State
+setActiveTab =
+    R10.Form.Internal.Helpers.setActiveTab
 
 
 {-| -}
@@ -742,28 +790,33 @@ setFieldDisabled =
     R10.Form.Internal.Helpers.setFieldDisabled
 
 
-{-| -}
-getActiveTab : KeyAsString -> State -> Maybe String
-getActiveTab =
-    R10.Form.Internal.Helpers.getActiveTab
+
+-- OTHERS
+
+
+{-| This function return `True` in one of these two cases
+
+  - The form has never been submitted. This because we want to show an active "Submit" button to the user the first time they load the form.
+  - The has been an attempt to submit the form that failed because some data didn't pass the validation. Then the data was fixed so the form can now be submitted.
+
+This function is normally used to disble or not the submit button.
+
+-}
+submittable : Form -> Bool
+submittable =
+    R10.Form.Internal.Update.submittable
 
 
 {-| -}
-setActiveTab : KeyAsString -> String -> State -> State
-setActiveTab =
-    R10.Form.Internal.Helpers.setActiveTab
+stringToBool : String -> Bool
+stringToBool =
+    R10.Form.Internal.Helpers.stringToBool
 
 
 {-| -}
-clearFieldValidation : KeyAsString -> State -> State
-clearFieldValidation =
-    R10.Form.Internal.Helpers.clearFieldValidation
-
-
-{-| -}
-setFieldValidationError : KeyAsString -> String -> State -> State
-setFieldValidationError =
-    R10.Form.Internal.Helpers.setFieldValidationError
+boolToString : Bool -> String
+boolToString =
+    R10.Form.Internal.Helpers.boolToString
 
 
 
@@ -932,13 +985,13 @@ onFocusOut =
 
 
 {-| -}
-onLoseFocus : (Key -> FieldConf -> any) -> Msg -> Maybe any
+onLoseFocus : (Key -> FieldConf -> a) -> Msg -> Maybe a
 onLoseFocus =
     R10.Form.Internal.Msg.onLoseFocus
 
 
 {-| -}
-onValueChange : (Key -> FieldConf -> Conf -> String -> any) -> Msg -> Maybe any
+onValueChange : (Key -> FieldConf -> Conf -> String -> a) -> Msg -> Maybe a
 onValueChange =
     R10.Form.Internal.Msg.onValueChange
 
@@ -1079,9 +1132,8 @@ updateSingle =
     R10.FormComponents.Internal.Single.Update.update
 
 
-{-| -}
-type alias ArgsSingle msg =
-    R10.FormComponents.Internal.Single.Args msg
+
+-- VIEWS
 
 
 {-| -}
@@ -1091,14 +1143,19 @@ viewSingle =
 
 
 {-| -}
-type alias ArgsSingleCustom msg =
-    R10.FormComponents.Internal.Single.ArgsCustom msg
+type alias ArgsSingle msg =
+    R10.FormComponents.Internal.Single.Args msg
 
 
 {-| -}
 viewSingleCustom : List (Element.Attribute msg) -> SingleModel -> ArgsSingleCustom msg -> Element msg
 viewSingleCustom =
     R10.FormComponents.Internal.Single.viewCustom
+
+
+{-| -}
+type alias ArgsSingleCustom msg =
+    R10.FormComponents.Internal.Single.ArgsCustom msg
 
 
 
@@ -1229,6 +1286,18 @@ commonValidation :
     }
 commonValidation =
     R10.Form.Internal.Validation.commonValidation
+
+
+{-| -}
+clearFieldValidation : KeyAsString -> State -> State
+clearFieldValidation =
+    R10.Form.Internal.Helpers.clearFieldValidation
+
+
+{-| -}
+setFieldValidationError : KeyAsString -> String -> State -> State
+setFieldValidationError =
+    R10.Form.Internal.Helpers.setFieldValidationError
 
 
 {-| -}

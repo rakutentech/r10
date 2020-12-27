@@ -16,7 +16,7 @@ import R10.Card
 import R10.Color.AttrsBackground
 import R10.Color.Svg
 import R10.Form
-import R10.FormIntrospection
+import R10.FormDebug
 import R10.FormTypes
 import R10.Paragraph
 import R10.Svg.IconsExtra
@@ -64,7 +64,7 @@ init =
 
 textTypeToString : R10.FormTypes.TypeText -> String
 textTypeToString textType =
-    .string (R10.FormIntrospection.textTypeMetaData textType)
+    .string (R10.FormDebug.textTypeMetaData textType)
 
 
 styleToString : R10.Form.Style -> String
@@ -272,7 +272,7 @@ update msg model =
         RotateTextType ->
             ( { model
                 | textType =
-                    .next (R10.FormIntrospection.textTypeMetaData model.textType)
+                    .next (R10.FormDebug.textTypeMetaData model.textType)
               }
             , Cmd.none
             )

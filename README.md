@@ -4,6 +4,8 @@
 
 **R10** is a library of interactive building blocks written in [Elm](https://elm-lang.org/) and [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) that we use at [Rakuten](https://global.rakuten.com/) for creating user interfaces.
 
+**Disclaimer**: This library is actively used in our live projects and the code and the documentation can be rough in most places because, you know, deadlines! It is also tailored for our use so it is probably useful as source of information rather than as a real dependency to add in your projects.
+
 ### Links
 
 * [R10 demo with documentation and examples](https://r10.netlify.app/)

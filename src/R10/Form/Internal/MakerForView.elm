@@ -107,39 +107,6 @@ isActive key active =
             False
 
 
-getEntityKey : MakerArgs -> R10.Form.Internal.Conf.Entity -> R10.Form.Internal.Key.Key
-getEntityKey args entity =
-    let
-        id : String
-        id =
-            case entity of
-                R10.Form.Internal.Conf.EntityWrappable entityId _ ->
-                    entityId
-
-                R10.Form.Internal.Conf.EntityWithBorder entityId _ ->
-                    entityId
-
-                R10.Form.Internal.Conf.EntityNormal entityId _ ->
-                    entityId
-
-                R10.Form.Internal.Conf.EntityWithTabs entityId _ ->
-                    entityId
-
-                R10.Form.Internal.Conf.EntityMulti entityId _ ->
-                    entityId
-
-                R10.Form.Internal.Conf.EntityField fieldConf ->
-                    fieldConf.id
-
-                R10.Form.Internal.Conf.EntityTitle entityId _ ->
-                    entityId
-
-                R10.Form.Internal.Conf.EntitySubTitle entityId _ ->
-                    entityId
-    in
-    R10.Form.Internal.Key.composeKey args.key id
-
-
 getFieldConfig : R10.Form.Internal.Conf.Entity -> R10.Form.Internal.FieldConf.FieldConf
 getFieldConfig entity =
     case entity of
@@ -779,22 +746,18 @@ viewEntityField :
     -> List Outcome
 viewEntityField args fieldConf formConf =
     let
-        newKey : R10.Form.Internal.Key.Key
-        newKey =
-            R10.Form.Internal.Key.composeKey args.key fieldConf.id
-
         fieldState : R10.Form.Internal.FieldState.FieldState
         fieldState =
             Maybe.withDefault R10.Form.Internal.FieldState.init <|
-                R10.Form.Internal.Dict.get newKey args.formState.fieldsState
+                R10.Form.Internal.Dict.get args.key args.formState.fieldsState
 
         focused : Bool
         focused =
-            isFocused newKey args.formState.focused
+            isFocused args.key args.formState.focused
 
         active : Bool
         active =
-            isActive newKey args.formState.active
+            isActive args.key args.formState.active
     in
     --
     -- This is the function that render the "leaf" of the tree, some of
@@ -809,12 +772,12 @@ viewEntityField args fieldConf formConf =
     let
         args2 : ArgsForFields
         args2 =
-            { key = newKey
+            { key = args.key
             , focused = focused
             , active = active
             , fieldState = fieldState
             , fieldConf = fieldConf
-            , translator = args.translator newKey
+            , translator = args.translator args.key
             , style = args.style
             , palette = args.palette
             }
@@ -883,7 +846,7 @@ viewWithValidationMessage args entity listEl =
             ++ [ R10.FormComponents.Internal.Validations.viewValidation args.palette validationIcon <|
                     R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
                         (getFieldConfig entity |> .validationSpecs)
-                        (R10.Form.Internal.Dict.get (getEntityKey args entity) args.formState.fieldsState
+                        (R10.Form.Internal.Dict.get args.key args.formState.fieldsState
                             |> Maybe.withDefault R10.Form.Internal.FieldState.init
                         ).validation
                         (args.translator args.key)
@@ -932,23 +895,23 @@ maker_ args branchConf rootFormConf =
     List.map
         (\entity ->
             (case entity of
-                R10.Form.Internal.Conf.EntityWrappable entityId entities ->
-                    viewEntityWrappable { args | key = R10.Form.Internal.Key.composeKey args.key entityId } entities rootFormConf
+                R10.Form.Internal.Conf.EntityWrappable _ entities ->
+                    viewEntityWrappable (normalizeKey args entity) entities rootFormConf
 
-                R10.Form.Internal.Conf.EntityWithBorder entityId entities ->
-                    viewEntityWithBorder { args | key = R10.Form.Internal.Key.composeKey args.key entityId } entities rootFormConf
+                R10.Form.Internal.Conf.EntityWithBorder _ entities ->
+                    viewEntityWithBorder (normalizeKey args entity) entities rootFormConf
 
-                R10.Form.Internal.Conf.EntityNormal entityId entities ->
-                    viewEntityNormal { args | key = R10.Form.Internal.Key.composeKey args.key entityId } entities rootFormConf
+                R10.Form.Internal.Conf.EntityNormal _ entities ->
+                    viewEntityNormal (normalizeKey args entity) entities rootFormConf
 
-                R10.Form.Internal.Conf.EntityWithTabs entityId titleEntityList ->
-                    viewEntityWithTabs { args | key = R10.Form.Internal.Key.composeKey args.key entityId } titleEntityList rootFormConf
+                R10.Form.Internal.Conf.EntityWithTabs _ titleEntityList ->
+                    viewEntityWithTabs (normalizeKey args entity) titleEntityList rootFormConf
 
-                R10.Form.Internal.Conf.EntityMulti entityId entities ->
-                    viewEntityMulti { args | key = R10.Form.Internal.Key.composeKey args.key entityId } entities rootFormConf
+                R10.Form.Internal.Conf.EntityMulti _ entities ->
+                    viewEntityMulti (normalizeKey args entity) entities rootFormConf
 
                 R10.Form.Internal.Conf.EntityField fieldConf ->
-                    viewEntityField args fieldConf rootFormConf
+                    viewEntityField (normalizeKey args entity) fieldConf rootFormConf
 
                 R10.Form.Internal.Conf.EntityTitle _ titleConf ->
                     viewEntityTitle args.palette titleConf
@@ -956,7 +919,35 @@ maker_ args branchConf rootFormConf =
                 R10.Form.Internal.Conf.EntitySubTitle _ titleConf ->
                     viewEntitySubTitle args.palette titleConf
             )
-                |> viewWithValidationMessage args entity
+                |> viewWithValidationMessage (normalizeKey args entity) entity
         )
         branchConf
         |> List.concat
+
+
+normalizeKey : MakerArgs -> R10.Form.Internal.Conf.Entity -> MakerArgs
+normalizeKey args entity =
+    case entity of
+        R10.Form.Internal.Conf.EntityWrappable entityId _ ->
+            { args | key = R10.Form.Internal.Key.composeKey args.key entityId }
+
+        R10.Form.Internal.Conf.EntityWithBorder entityId _ ->
+            { args | key = R10.Form.Internal.Key.composeKey args.key entityId }
+
+        R10.Form.Internal.Conf.EntityNormal entityId _ ->
+            { args | key = R10.Form.Internal.Key.composeKey args.key entityId }
+
+        R10.Form.Internal.Conf.EntityWithTabs entityId _ ->
+            { args | key = R10.Form.Internal.Key.composeKey args.key entityId }
+
+        R10.Form.Internal.Conf.EntityMulti entityId _ ->
+            { args | key = R10.Form.Internal.Key.composeKey args.key entityId }
+
+        R10.Form.Internal.Conf.EntityField fieldConf ->
+            { args | key = R10.Form.Internal.Key.composeKey args.key fieldConf.id }
+
+        R10.Form.Internal.Conf.EntityTitle _ _ ->
+            args
+
+        R10.Form.Internal.Conf.EntitySubTitle _ _ ->
+            args

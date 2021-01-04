@@ -73,6 +73,7 @@ type alias Args msg =
     , style : R10.FormComponents.Internal.Style.Style
     , key : String
     , palette : R10.FormTypes.Palette
+    , searchable : Bool
 
     -- Specific
     , singleType : R10.FormTypes.TypeSingle

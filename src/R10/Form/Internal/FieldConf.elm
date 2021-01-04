@@ -200,6 +200,9 @@ encoderFieldType fieldType =
                 R10.FormTypes.SingleCombobox ->
                     E.string "TypeSingleCombobox"
 
+                R10.FormTypes.SingleSelect ->
+                    E.string "TypeSingleSelect"
+
         R10.FormTypes.TypeMulti typeMulti _ ->
             case typeMulti of
                 R10.FormTypes.MultiCombobox ->
@@ -238,6 +241,9 @@ decoderFieldType =
 
                     [ "TypeSingleCombobox" ] ->
                         D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleCombobox [])
+
+                    [ "TypeSingleSelect" ] ->
+                        D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleSelect [])
 
                     [ "TypeBinaryCheckbox" ] ->
                         D.succeed (R10.FormTypes.TypeBinary R10.FormTypes.BinaryCheckbox)

@@ -81,5 +81,10 @@ singleTypeMetaData singleType =
 
         R10.FormTypes.SingleCombobox ->
             { string = "R10.FormTypes.SingleCombobox"
+            , next = R10.FormTypes.SingleSelect
+            }
+
+        R10.FormTypes.SingleSelect ->
+            { string = "R10.FormTypes.SingleSelect"
             , next = R10.FormTypes.SingleRadio
             }

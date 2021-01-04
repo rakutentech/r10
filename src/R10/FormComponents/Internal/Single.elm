@@ -160,6 +160,7 @@ view attrs model conf =
             , style = conf.style
             , key = conf.key
             , palette = conf.palette
+            , searchable = False
             , singleType = conf.singleType
             , fieldOptions = conf.fieldOptions
             , viewOptionEl =
@@ -176,7 +177,10 @@ view attrs model conf =
     in
     case args.singleType of
         R10.FormTypes.SingleCombobox ->
-            R10.FormComponents.Internal.Single.Combobox.view attrs model args
+            R10.FormComponents.Internal.Single.Combobox.view attrs model { args | searchable = True }
+
+        R10.FormTypes.SingleSelect ->
+            R10.FormComponents.Internal.Single.Combobox.view attrs model { args | searchable = False }
 
         R10.FormTypes.SingleRadio ->
             R10.FormComponents.Internal.Single.Radio.view attrs model args
@@ -221,6 +225,7 @@ viewCustom attrs model conf =
             , style = conf.style
             , key = conf.key
             , palette = conf.palette
+            , searchable = False
             , searchFn = conf.searchFn
             , singleType = conf.singleType
             , fieldOptions = conf.fieldOptions
@@ -233,7 +238,10 @@ viewCustom attrs model conf =
     in
     case args.singleType of
         R10.FormTypes.SingleCombobox ->
-            R10.FormComponents.Internal.Single.Combobox.view attrs model args
+            R10.FormComponents.Internal.Single.Combobox.view attrs model { args | searchable = True }
+
+        R10.FormTypes.SingleSelect ->
+            R10.FormComponents.Internal.Single.Combobox.view attrs model { args | searchable = False }
 
         R10.FormTypes.SingleRadio ->
             R10.FormComponents.Internal.Single.Radio.view attrs model args

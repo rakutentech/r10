@@ -22,30 +22,39 @@ import R10.FormTypes
 
 viewSearchBox : R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Element msg
 viewSearchBox model args =
-    R10.FormComponents.Internal.Text.viewInput
-        [ htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Single.Common.singleSearchBoxId args.key
-        , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
-        , Border.rounded 0
-        ]
-        { disabled = args.disabled
-        , focused = model.focused
-        , label = args.label
-        , msgOnChange = args.toMsg << R10.FormComponents.Internal.Single.Update.getMsgOnSearch args
-        , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus model.value
-        , msgOnLoseFocus = Nothing
-        , msgOnEnter = Nothing
-        , msgOnTogglePasswordShow = Nothing
-        , palette = args.palette
-        , style = R10.FormComponents.Internal.Style.Outlined
-        , showPassword = False
-        , textType = R10.FormTypes.TextPlain
-        , leadingIcon = Nothing
-        , trailingIcon = Nothing
-        , value = model.search
-        , valid = args.valid
-        , helperText = args.helperText
-        , requiredLabel = args.requiredLabel
-        }
+    if args.searchable then
+        el
+            [ height <| px 52
+            , width fill
+            ]
+        <|
+            R10.FormComponents.Internal.Text.viewInput
+                [ htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Single.Common.singleSearchBoxId args.key
+                , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
+                , Border.rounded 0
+                ]
+                { disabled = args.disabled
+                , focused = model.focused
+                , label = args.label
+                , msgOnChange = args.toMsg << R10.FormComponents.Internal.Single.Update.getMsgOnSearch args
+                , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus model.value
+                , msgOnLoseFocus = Nothing
+                , msgOnEnter = Nothing
+                , msgOnTogglePasswordShow = Nothing
+                , palette = args.palette
+                , style = R10.FormComponents.Internal.Style.Outlined
+                , showPassword = False
+                , textType = R10.FormTypes.TextPlain
+                , leadingIcon = Nothing
+                , trailingIcon = Nothing
+                , value = model.search
+                , valid = args.valid
+                , helperText = args.helperText
+                , requiredLabel = args.requiredLabel
+                }
+
+    else
+        none
 
 
 {-| returns value to be displayed in combobox input component
@@ -55,8 +64,8 @@ optionsLabelOrSearchValue :
     String
     -> List R10.FormComponents.Internal.Single.Common.FieldOption
     -> String
-optionsLabelOrSearchValue value filteredFieldOption =
-    filteredFieldOption
+optionsLabelOrSearchValue value allFieldOptions =
+    allFieldOptions
         |> List.Extra.find (\opt -> opt.value == value)
         |> Maybe.map .label
         |> Maybe.withDefault ""
@@ -125,6 +134,7 @@ viewComboboxDropdown model args opened filteredOptions =
     else
         column
             [ width fill
+            , clip
             , moveDown 52
             , htmlAttribute <| Html.Attributes.tabindex -1
             , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
@@ -144,12 +154,7 @@ viewComboboxDropdown model args opened filteredOptions =
                 , size = 1
                 }
             ]
-            [ el
-                [ height <| px 52
-                , width fill
-                ]
-              <|
-                viewSearchBox model args
+            [ viewSearchBox model args
             , el
                 [ width fill
                 , height <| px <| R10.FormComponents.Internal.Single.Update.getDropdownHeight args optionsCount
@@ -231,8 +236,9 @@ view attrs model args =
         filteredFieldOption =
             R10.FormComponents.Internal.Single.Common.filterBySearch model.search args
 
+        displayValue : String
         displayValue =
-            optionsLabelOrSearchValue model.value filteredFieldOption
+            optionsLabelOrSearchValue model.value args.fieldOptions
 
         textArgs : R10.FormComponents.Internal.Text.Args msg
         textArgs =

@@ -41,6 +41,7 @@ type TypeText
 type TypeSingle
     = SingleRadio
     | SingleCombobox
+    | SingleSelect
 
 
 {-| Possible types of **Binarye** input fields

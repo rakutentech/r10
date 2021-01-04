@@ -96,6 +96,7 @@ viewComboboxDropdown model args opened filteredCountryOptions =
     else
         column
             [ width fill
+            , clip
             , moveDown 52
             , htmlAttribute <| Html.Attributes.tabindex -1
             , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette

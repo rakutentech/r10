@@ -451,6 +451,7 @@ view model =
                         [ Pages.Top.view
                             model.theme
                             (Routes.routeToLanguage model.route)
+                            model.windowSize
                             (heroBackgroundColor model.theme)
                             (links model.route language)
                             OnClick
@@ -593,12 +594,21 @@ colorsMenu theme =
             (R10.Color.listPrimary theme)
 
 
+responsive : number -> a -> a -> a
+responsive x mobile desktop =
+    if x < 600 then
+        mobile
+
+    else
+        desktop
+
+
 headerFooterArgs : Model -> R10.Header.ViewArgs Msg Routes.Route
 headerFooterArgs model =
     { extraContent = links model.route (Routes.routeToLanguage model.route)
     , extraContentRightSide =
         [ row [ spacing 20 ]
-            [ colorsMenu model.theme
+            [ responsive model.windowSize.x none (colorsMenu model.theme)
             , R10.Libu.view
                 [ alpha 0.8
                 , transitionOpacity
@@ -813,7 +823,6 @@ cssMarkdown theme =
     border-radius: 10px;
     padding: 20px;
     box-sizing: border-box;
-    width: 100%;
     border: 1px solid """ ++ codeBorder ++ """;
 }
 

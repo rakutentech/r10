@@ -23,8 +23,17 @@ maxWidth =
     width (fill |> maximum 1000)
 
 
-view : R10.Theme.Theme -> R10.Language.Language -> Attribute msg -> List (Element msg) -> (String -> msg) -> Element msg
-view theme language heroBackgroundColor content _ =
+responsive : number -> a -> a -> a
+responsive x mobile desktop =
+    if x < 600 then
+        mobile
+
+    else
+        desktop
+
+
+view : R10.Theme.Theme -> R10.Language.Language -> { x : Int, y : Int } -> Attribute msg -> List (Element msg) -> (String -> msg) -> Element msg
+view theme language windowSize heroBackgroundColor content _ =
     column [ width fill ] <|
         [ column
             [ width fill
@@ -33,10 +42,13 @@ view theme language heroBackgroundColor content _ =
             , heroBackgroundColor
             , htmlAttribute <| Html.Attributes.style "transition" "background-color 1.2s"
             ]
-            [ row [ spacing 40, centerX, centerY, moveDown 40 ]
-                [ R10.Svg.LogosExtra.elm_monochrome [] (Color.rgb 1 1 1) 155
-                , R10.Svg.Icons.x [ moveRight 15 ] (Color.rgb 1 1 1) 100
-                , R10.Svg.Logos.r [ moveDown 19 ] (Color.rgb 1 1 1) 200
+            [ row
+                [ spacing <| responsive windowSize.x 20 40, centerX, centerY, moveDown 40 ]
+                [ R10.Svg.LogosExtra.elm_monochrome []
+                    (Color.rgb 1 1 1)
+                    (responsive windowSize.x (155 // 2) 155)
+                , R10.Svg.Icons.x [ moveRight (responsive windowSize.x 10 15) ] (Color.rgb 1 1 1) (responsive windowSize.x (100 // 2) 100)
+                , R10.Svg.Logos.r [ moveDown (responsive windowSize.x 9 19) ] (Color.rgb 1 1 1) (responsive windowSize.x (200 // 2) 200)
                 ]
             , viewMessage language
             ]
@@ -54,8 +66,9 @@ view theme language heroBackgroundColor content _ =
                        ]
                 )
                 [ paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] readme ]
-                , paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] "# Content" ]
-                , paragraph [ paddingEach { top = 0, right = 20, bottom = 40, left = 50 } ] content
+
+                -- , paragraph [] [ html <| Markdown.toHtml [ Html.Attributes.class "markdown" ] "# Content" ]
+                -- , paragraph [ paddingEach { top = 0, right = 20, bottom = 40, left = 50 } ] content
                 ]
         ]
 

@@ -264,7 +264,7 @@ update msg model =
         R10.FormComponents.Internal.Phone.Common.NoOp ->
             ( model, Cmd.none )
 
-        R10.FormComponents.Internal.Phone.Common.OnValue newValue ->
+        R10.FormComponents.Internal.Phone.Common.OnValueChange key args newValue ->
             let
                 hasCurrentCountryCode : Bool
                 hasCurrentCountryCode =
@@ -293,8 +293,31 @@ update msg model =
 
                         else
                             model.countryValue
+
+                newY : Float
+                newY =
+                    if newCountryValue == model.countryValue then
+                        model.scroll
+
+                    else
+                        newCountryValue
+                            |> Maybe.andThen (getOptionIndex args.filteredCountryOptions)
+                            |> Maybe.map (\newIndex -> getOptionY model.scroll args newIndex (List.length args.filteredCountryOptions))
+                            |> Maybe.withDefault model.scroll
             in
-            ( { model | value = newValue, countryValue = newCountryValue }, Cmd.none )
+            ( { model
+                | value = newValue
+                , countryValue = newCountryValue
+                , scroll = newY
+              }
+            , Task.attempt
+                (always R10.FormComponents.Internal.Phone.Common.NoOp)
+                (Browser.Dom.setViewportOf
+                    (R10.FormComponents.Internal.Phone.Common.dropdownContentId key)
+                    0
+                    newY
+                )
+            )
 
         R10.FormComponents.Internal.Phone.Common.OnSearch key args newSearch ->
             let

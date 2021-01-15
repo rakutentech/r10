@@ -25,13 +25,6 @@ type alias Translations =
     , es_es : String
     , fr_fr : String
     , de_de : String
-    , it_it : String
-    , nl_nl : String
-    , pt_pt : String
-    , nb_no : String
-    , fi_fl : String
-    , da_dk : String
-    , sv_se : String
     }
 
 
@@ -83,20 +76,6 @@ type
     | FR_FR
       -- German
     | DE_DE
-      -- Italian
-    | IT_IT
-      -- Dutch
-    | NL_NL
-      -- Protuguese(Portugal)
-    | PT_PT
-      -- Norwegian
-    | NB_NO
-      -- Finish
-    | FI_FL
-      -- Danish
-    | DA_DK
-      -- Swedish
-    | SV_SE
 
 
 {-| -}
@@ -108,14 +87,7 @@ list =
     , JA_JP
     , FR_FR
     , DE_DE
-    , IT_IT
     , ES_ES
-    , NL_NL
-    , PT_PT
-    , NB_NO
-    , FI_FL
-    , DA_DK
-    , SV_SE
     ]
 
 
@@ -194,27 +166,6 @@ decoderFourLettersLangauge string =
         "frfr" ->
             Ok FR_FR
 
-        "itit" ->
-            Ok IT_IT
-
-        "nlnl" ->
-            Ok NL_NL
-
-        "ptpt" ->
-            Ok PT_PT
-
-        "nbno" ->
-            Ok NB_NO
-
-        "fifl" ->
-            Ok FI_FL
-
-        "dadk" ->
-            Ok DA_DK
-
-        "svse" ->
-            Ok SV_SE
-
         _ ->
             Err <| string ++ " is not a valid language"
 
@@ -240,27 +191,6 @@ decoderTwoLettersLangauge string =
 
         "fr" ->
             Ok FR_FR
-
-        "it" ->
-            Ok IT_IT
-
-        "nl" ->
-            Ok NL_NL
-
-        "pt" ->
-            Ok PT_PT
-
-        "nb" ->
-            Ok NB_NO
-
-        "fi" ->
-            Ok FI_FL
-
-        "da" ->
-            Ok DA_DK
-
-        "sv" ->
-            Ok SV_SE
 
         _ ->
             Err <| string ++ " is not a valid language"
@@ -383,27 +313,6 @@ toString language =
         DE_DE ->
             "de-DE"
 
-        IT_IT ->
-            "it-IT"
-
-        NL_NL ->
-            "nl-NL"
-
-        PT_PT ->
-            "pt-PT"
-
-        NB_NO ->
-            "nb-NO"
-
-        FI_FL ->
-            "fi-FL"
-
-        DA_DK ->
-            "da-DK"
-
-        SV_SE ->
-            "sv-SE"
-
 
 {-| -}
 type LanguageType
@@ -465,48 +374,6 @@ toLongString languageType language =
         ( Localization, DE_DE ) ->
             "Deutsch"
 
-        ( International, IT_IT ) ->
-            "Italian"
-
-        ( Localization, IT_IT ) ->
-            "Italiano"
-
-        ( International, NL_NL ) ->
-            "Dutch"
-
-        ( Localization, NL_NL ) ->
-            "Nederlands"
-
-        ( International, PT_PT ) ->
-            "Portuguese"
-
-        ( Localization, PT_PT ) ->
-            "Português"
-
-        ( International, NB_NO ) ->
-            "Norwegian"
-
-        ( Localization, NB_NO ) ->
-            "Norsk"
-
-        ( International, FI_FL ) ->
-            "Finish"
-
-        ( Localization, FI_FL ) ->
-            "Suomi"
-
-        ( International, DA_DK ) ->
-            "Danish"
-
-        ( Localization, DA_DK ) ->
-            "Dansk"
-
-        ( International, SV_SE ) ->
-            "Swedish"
-
-        ( Localization, SV_SE ) ->
-            "Svenska"
-
 
 {-| -}
 select : Language -> Translations -> String
@@ -535,24 +402,3 @@ select language translation =
 
         DE_DE ->
             .de_de translation
-
-        IT_IT ->
-            .it_it translation
-
-        NL_NL ->
-            .nl_nl translation
-
-        PT_PT ->
-            .pt_pt translation
-
-        NB_NO ->
-            .nb_no translation
-
-        FI_FL ->
-            .fi_fl translation
-
-        DA_DK ->
-            .da_dk translation
-
-        SV_SE ->
-            .sv_se translation

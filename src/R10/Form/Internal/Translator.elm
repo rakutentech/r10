@@ -120,7 +120,7 @@ translator key validationCode =
           , "One of the validations have failed"
           )
         , ( validationCodes.oneOf
-          , "All the validations have failed"
+          , "All of the validations have failed"
           )
         ]
         |> Dict.get validationCode

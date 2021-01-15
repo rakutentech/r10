@@ -227,7 +227,7 @@ view attrs model args =
             { disabled = args.disabled
             , focused = model.focused
             , label = args.label
-            , msgOnChange = args.toMsg << R10.FormComponents.Internal.Phone.Common.OnValue
+            , msgOnChange = args.toMsg << R10.FormComponents.Internal.Phone.Common.OnValueChange args.key { selectOptionHeight = args.selectOptionHeight, maxDisplayCount = args.maxDisplayCount, filteredCountryOptions = filteredCountryOptions }
             , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnFocus
             , msgOnLoseFocus = Nothing
             , msgOnEnter = Nothing

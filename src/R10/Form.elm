@@ -23,7 +23,7 @@ module R10.Form exposing
     , viewSingle, ArgsSingle, viewSingleCustom, ArgsSingleCustom
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , PhoneModel, PhoneMsg, phoneView, phoneUpdate, phoneInit
-    , fieldConfigConcatMap
+    , fieldConfigConcatMap, fieldConfigMap
     )
 
 {-| Useful things to build a form .
@@ -165,7 +165,7 @@ If you want to personalise the translations or you want to translate them in dif
               )
             ...
             , ( validationCodes.oneOf
-              , "All the validations have failed"
+              , "All of the validations have failed"
               )
             ]
             |> Dict.get validationCode
@@ -196,7 +196,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 # Advanced usage
 
-@docs fieldConfigConcatMap
+@docs fieldConfigConcatMap, fieldConfigMap
 
 -}
 
@@ -205,18 +205,14 @@ import Element exposing (..)
 import Json.Decode
 import R10.Country
 import R10.Form.Internal.Conf
-import R10.Form.Internal.Converter
-import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
 import R10.Form.Internal.Helpers
 import R10.Form.Internal.Key
-import R10.Form.Internal.MakerForValues
 import R10.Form.Internal.MakerForView
 import R10.Form.Internal.Msg
 import R10.Form.Internal.Shared
 import R10.Form.Internal.State
-import R10.Form.Internal.StateForValues
 import R10.Form.Internal.Translator
 import R10.Form.Internal.Update
 import R10.Form.Internal.Validation
@@ -1415,6 +1411,13 @@ phoneInit =
 -- ███████ ██   ██ ██    ██ ███████ ██ ██  ██ ██      █████   ██   ██     ██    ██ ███████ ███████ ██   ███ █████
 -- ██   ██ ██   ██  ██  ██  ██   ██ ██  ██ ██ ██      ██      ██   ██     ██    ██      ██ ██   ██ ██    ██ ██
 -- ██   ██ ██████    ████   ██   ██ ██   ████  ██████ ███████ ██████       ██████  ███████ ██   ██  ██████  ███████
+
+
+{-| Utility that can be used to iterate through the entire form configuration and returns a list of results
+-}
+fieldConfigMap : (FieldConf -> a) -> Conf -> List a
+fieldConfigMap =
+    R10.Form.Internal.Conf.fieldConfigMap
 
 
 {-| Utility that can be used to change the configuration of a form on the fly. It can be useful if certain state value of the form can influence some of the validation of the form itself.

@@ -240,6 +240,10 @@ view attrs model args =
         displayValue =
             optionsLabelOrSearchValue model.value args.fieldOptions
 
+        focusOnSearchBox : Bool
+        focusOnSearchBox =
+            model.opened && args.searchable
+
         textArgs : R10.FormComponents.Internal.Text.Args msg
         textArgs =
             { disabled = args.disabled
@@ -299,6 +303,22 @@ view attrs model args =
                         |> args.toMsg
                   )
                 ]
+                    ++ (if not focusOnSearchBox then
+                            -- we need to avoid Del and Backspace listening when user focused on search box
+                            -- since otherwise it would default behavior of removing char from input
+                            [ ( R10.FormComponents.Internal.UI.keyCode.del
+                              , R10.FormComponents.Internal.Single.Common.OnDelBackspace
+                                    |> args.toMsg
+                              )
+                            , ( R10.FormComponents.Internal.UI.keyCode.backspace
+                              , R10.FormComponents.Internal.Single.Common.OnDelBackspace
+                                    |> args.toMsg
+                              )
+                            ]
+
+                        else
+                            []
+                       )
                     ++ (if model.opened then
                             [ ( R10.FormComponents.Internal.UI.keyCode.esc
                               , args.toMsg R10.FormComponents.Internal.Single.Common.OnEsc

@@ -21,7 +21,6 @@ module R10.FormTypes exposing
 -}
 
 import Color
-import R10.FormComponents.Internal.Style
 
 
 {-| Possible types of **Text** input fields
@@ -98,6 +97,7 @@ inputField :
     , binarySwitch : FieldType
     , multiCombobox : List FieldOption -> FieldType
     , singleCombobox : List FieldOption -> FieldType
+    , singleSelect : List FieldOption -> FieldType
     , singleRadio : List FieldOption -> FieldType
     , textEmail : FieldType
     , textMultiline : FieldType
@@ -118,7 +118,8 @@ inputField =
 
     --
     , singleRadio = TypeSingle SingleRadio
-    , singleCombobox = TypeSingle SingleCombobox
+    , singleCombobox = TypeSingle SingleCombobox -- searchable select
+    , singleSelect = TypeSingle SingleSelect
 
     --
     , binaryCheckbox = TypeBinary BinaryCheckbox

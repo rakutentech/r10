@@ -283,5 +283,8 @@ update msg model =
             else
                 onOpenHelper args.key model model.scroll
 
+        R10.FormComponents.Internal.Single.Common.OnDelBackspace ->
+            ( { model | value = "" }, Cmd.none )
+
         R10.FormComponents.Internal.Single.Common.OnEsc ->
             ( { model | search = "", opened = False }, Cmd.none )

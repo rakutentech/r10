@@ -26,7 +26,7 @@ type Msg
     | OnFocus
     | OnLoseFocus
     | OnScroll Float
-    | OnValue String -- newValue, newValue
+    | OnValueChange String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } String -- newValue, newValue
     | OnSearch String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } String -- newSearch, newSelect
     | OnOptionSelect R10.Country.Country --newValue
     | OnArrowUp String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } -- newSelect selectionY

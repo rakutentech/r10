@@ -29,6 +29,7 @@ type Msg
     | OnOptionSelect String --newValue
     | OnArrowUp { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption } -- newSelect selectionY
     | OnArrowDown { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption } -- newSelect selectionY
+    | OnDelBackspace
     | OnEsc
     | OnInputClick { key : String, selectedY : Float }
 

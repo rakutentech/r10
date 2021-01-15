@@ -4,6 +4,7 @@ module R10.Form.Internal.Conf exposing
     , EntityId
     , TextConf
     , fieldConfigConcatMap
+    , fieldConfigMap
     , filter
     , fromString
     , getId
@@ -212,6 +213,40 @@ toString v =
 fromString : String -> Result D.Error Conf
 fromString string =
     D.decodeString (D.list decoderEntity) string
+
+
+fieldConfigMap : (R10.Form.Internal.FieldConf.FieldConf -> a) -> Conf -> List a
+fieldConfigMap func1 =
+    let
+        func2 : Entity -> List a
+        func2 entity_ =
+            case entity_ of
+                EntityNormal _ entities ->
+                    List.concatMap func2 entities
+
+                EntityWrappable _ entities ->
+                    List.concatMap func2 entities
+
+                EntityWithBorder _ entities ->
+                    List.concatMap func2 entities
+
+                EntityWithTabs _ entities ->
+                    entities
+                        |> List.concatMap (\( _, ent ) -> func2 ent)
+
+                EntityMulti _ entities ->
+                    List.concatMap func2 entities
+
+                EntityField config ->
+                    [ func1 config ]
+
+                EntityTitle _ _ ->
+                    []
+
+                EntitySubTitle _ _ ->
+                    []
+    in
+    List.concatMap func2
 
 
 fieldConfigConcatMap : (R10.Form.Internal.FieldConf.FieldConf -> List R10.Form.Internal.FieldConf.FieldConf) -> Conf -> Conf

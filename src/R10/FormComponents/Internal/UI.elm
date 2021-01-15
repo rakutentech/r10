@@ -308,13 +308,15 @@ onScroll msg =
         )
 
 
-keyCode : { esc : number, up : number, down : number, enter : number, space : number }
+keyCode : { esc : number, up : number, down : number, enter : number, space : number, backspace : number, del : number }
 keyCode =
     { esc = 27
     , up = 38
     , down = 40
     , enter = 13
     , space = 32
+    , backspace = 8
+    , del = 46
     }
 
 

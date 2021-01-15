@@ -86,13 +86,6 @@ routeDetails route =
                 , es_es = "Overview"
                 , fr_fr = "Overview"
                 , de_de = "Overview"
-                , it_it = "Overview"
-                , nl_nl = "Overview"
-                , pt_pt = "Overview"
-                , nb_no = "Overview"
-                , fi_fl = "Overview"
-                , da_dk = "Overview"
-                , sv_se = "Overview"
                 }
             }
 
@@ -108,13 +101,6 @@ routeDetails route =
                 , es_es = "Form Entities"
                 , fr_fr = "Form Entities"
                 , de_de = "Form Entities"
-                , it_it = "Form Entities"
-                , nl_nl = "Form Entities"
-                , pt_pt = "Form Entities"
-                , nb_no = "Form Entities"
-                , fi_fl = "Form Entities"
-                , da_dk = "Form Entities"
-                , sv_se = "Form Entities"
                 }
             }
 
@@ -130,13 +116,6 @@ routeDetails route =
                 , es_es = "Form Example - Credit Card"
                 , fr_fr = "Form Example - Credit Card"
                 , de_de = "Form Example - Credit Card"
-                , it_it = "Form Example - Credit Card"
-                , nl_nl = "Form Example - Credit Card"
-                , pt_pt = "Form Example - Credit Card"
-                , nb_no = "Form Example - Credit Card"
-                , fi_fl = "Form Example - Credit Card"
-                , da_dk = "Form Example - Credit Card"
-                , sv_se = "Form Example - Credit Card"
                 }
             }
 
@@ -152,13 +131,6 @@ routeDetails route =
                 , es_es = "Form Example - Table"
                 , fr_fr = "Form Example - Table"
                 , de_de = "Form Example - Table"
-                , it_it = "Form Example - Table"
-                , nl_nl = "Form Example - Table"
-                , pt_pt = "Form Example - Table"
-                , nb_no = "Form Example - Table"
-                , fi_fl = "Form Example - Table"
-                , da_dk = "Form Example - Table"
-                , sv_se = "Form Example - Table"
                 }
             }
 
@@ -174,13 +146,6 @@ routeDetails route =
                 , es_es = "Form Example - Phone Selector"
                 , fr_fr = "Form Example - Phone Selector"
                 , de_de = "Form Example - Phone Selector"
-                , it_it = "Form Example - Phone Selector"
-                , nl_nl = "Form Example - Phone Selector"
-                , pt_pt = "Form Example - Phone Selector"
-                , nb_no = "Form Example - Phone Selector"
-                , fi_fl = "Form Example - Phone Selector"
-                , da_dk = "Form Example - Phone Selector"
-                , sv_se = "Form Example - Phone Selector"
                 }
             }
 
@@ -196,13 +161,6 @@ routeDetails route =
                 , es_es = "Form Boilerplate"
                 , fr_fr = "Form Boilerplate"
                 , de_de = "Form Boilerplate"
-                , it_it = "Form Boilerplate"
-                , nl_nl = "Form Boilerplate"
-                , pt_pt = "Form Boilerplate"
-                , nb_no = "Form Boilerplate"
-                , fi_fl = "Form Boilerplate"
-                , da_dk = "Form Boilerplate"
-                , sv_se = "Form Boilerplate"
                 }
             }
 
@@ -218,13 +176,6 @@ routeDetails route =
                 , es_es = "Input Field: Text"
                 , fr_fr = "Input Field: Text"
                 , de_de = "Input Field: Text"
-                , it_it = "Input Field: Text"
-                , nl_nl = "Input Field: Text"
-                , pt_pt = "Input Field: Text"
-                , nb_no = "Input Field: Text"
-                , fi_fl = "Input Field: Text"
-                , da_dk = "Input Field: Text"
-                , sv_se = "Input Field: Text"
                 }
             }
 
@@ -240,13 +191,6 @@ routeDetails route =
                 , es_es = "Input Field: Single"
                 , fr_fr = "Input Field: Single"
                 , de_de = "Input Field: Single"
-                , it_it = "Input Field: Single"
-                , nl_nl = "Input Field: Single"
-                , pt_pt = "Input Field: Single"
-                , nb_no = "Input Field: Single"
-                , fi_fl = "Input Field: Single"
-                , da_dk = "Input Field: Single"
-                , sv_se = "Input Field: Single"
                 }
             }
 
@@ -262,13 +206,6 @@ routeDetails route =
                 , es_es = "Input Field: Binary"
                 , fr_fr = "Input Field: Binary"
                 , de_de = "Input Field: Binary"
-                , it_it = "Input Field: Binary"
-                , nl_nl = "Input Field: Binary"
-                , pt_pt = "Input Field: Binary"
-                , nb_no = "Input Field: Binary"
-                , fi_fl = "Input Field: Binary"
-                , da_dk = "Input Field: Binary"
-                , sv_se = "Input Field: Binary"
                 }
             }
 
@@ -284,13 +221,6 @@ routeDetails route =
                 , es_es = "Form States"
                 , fr_fr = "Form States"
                 , de_de = "Form States"
-                , it_it = "Form States"
-                , nl_nl = "Form States"
-                , pt_pt = "Form States"
-                , nb_no = "Form States"
-                , fi_fl = "Form States"
-                , da_dk = "Form States"
-                , sv_se = "Form States"
                 }
             }
 
@@ -306,13 +236,6 @@ routeDetails route =
                 , es_es = "Form"
                 , fr_fr = "Form"
                 , de_de = "Form"
-                , it_it = "Form"
-                , nl_nl = "Form"
-                , pt_pt = "Form"
-                , nb_no = "Form"
-                , fi_fl = "Form"
-                , da_dk = "Form"
-                , sv_se = "Form"
                 }
             }
 
@@ -328,13 +251,6 @@ routeDetails route =
                 , es_es = "UI Components"
                 , fr_fr = "UI Components"
                 , de_de = "UI Components"
-                , it_it = "UI Components"
-                , nl_nl = "UI Components"
-                , pt_pt = "UI Components"
-                , nb_no = "UI Components"
-                , fi_fl = "UI Components"
-                , da_dk = "UI Components"
-                , sv_se = "UI Components"
                 }
             }
 
@@ -350,13 +266,6 @@ routeDetails route =
                 , es_es = "Counter"
                 , fr_fr = "Counter"
                 , de_de = "Counter"
-                , it_it = "Counter"
-                , nl_nl = "Counter"
-                , pt_pt = "Counter"
-                , nb_no = "Counter"
-                , fi_fl = "Counter"
-                , da_dk = "Counter"
-                , sv_se = "Counter"
                 }
             }
 
@@ -372,13 +281,6 @@ routeDetails route =
                 , es_es = "Sortable Table"
                 , fr_fr = "Sortable Table"
                 , de_de = "Sortable Table"
-                , it_it = "Sortable Table"
-                , nl_nl = "Sortable Table"
-                , pt_pt = "Sortable Table"
-                , nb_no = "Sortable Table"
-                , fi_fl = "Sortable Table"
-                , da_dk = "Sortable Table"
-                , sv_se = "Sortable Table"
                 }
             }
 
@@ -488,13 +390,6 @@ translationsError =
     , es_es = "Error"
     , fr_fr = "Error"
     , de_de = "Error"
-    , it_it = "Error"
-    , nl_nl = "Error"
-    , pt_pt = "Error"
-    , nb_no = "Error"
-    , fi_fl = "Error"
-    , da_dk = "Error"
-    , sv_se = "Error"
     }
 
 
@@ -507,13 +402,6 @@ translationR10 =
     , es_es = "R10"
     , fr_fr = "R10"
     , de_de = "R10"
-    , it_it = "R10"
-    , nl_nl = "R10"
-    , pt_pt = "R10"
-    , nb_no = "R10"
-    , fi_fl = "R10"
-    , da_dk = "R10"
-    , sv_se = "R10"
     }
 
 

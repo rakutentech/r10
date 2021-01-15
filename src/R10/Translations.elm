@@ -12,14 +12,6 @@ This is an examples of translation:
         , zh_tw = "登錄您的Rakuten帳戶"
         , de_de = "Loggen Sie sich in Ihr Rakuten-Konto ein"
         , fr_fr = "Connectez-vous à votre compte Rakuten"
-        , it_it = "Accedi al tuo account Rakuten"
-        , es_es = "Inicie sesión en su cuenta de Rakuten"
-        , nl_nl = "Log in op uw Rakuten-account"
-        , pt_pt = "Faça login em sua conta Rakuten"
-        , nb_no = "Logg på Rakuten-kontoen din"
-        , fi_fl = "Kirjaudu Rakuten-tilillesi"
-        , da_dk = "Log ind på din Rakuten-konto"
-        , sv_se = "Logga in på ditt Rakuten-konto"
         }
 
 @docs language, signIn, signInHeader, signOut
@@ -38,14 +30,7 @@ signInHeader =
     , zh_tw = "登錄您的Rakuten帳戶"
     , de_de = "Loggen Sie sich in Ihr Rakuten-Konto ein[[R]]"
     , fr_fr = "Connectez-vous à votre compte Rakuten"
-    , it_it = "Accedi al tuo account Rakuten"
     , es_es = "Inicie sesión en su cuenta de Rakuten"
-    , nl_nl = "Log in op uw Rakuten-account"
-    , pt_pt = "Faça login em sua conta Rakuten"
-    , nb_no = "Logg på Rakuten-kontoen din"
-    , fi_fl = "Kirjaudu Rakuten-tilillesi"
-    , da_dk = "Log ind på din Rakuten-konto"
-    , sv_se = "Logga in på ditt Rakuten-konto"
     }
 
 
@@ -58,14 +43,7 @@ language =
     , zh_tw = "語言"
     , de_de = "Sprache"
     , fr_fr = "Langue"
-    , it_it = "Lingua"
     , es_es = "Idioma"
-    , nl_nl = "Taal"
-    , pt_pt = "Língua"
-    , nb_no = "Språk"
-    , fi_fl = "Kieli"
-    , da_dk = "Sprog"
-    , sv_se = "Språk"
     }
 
 
@@ -78,14 +56,7 @@ signOut =
     , zh_tw = "登出"
     , de_de = "Ausloggen"
     , fr_fr = "Déconnexion"
-    , it_it = "Disconnessione"
     , es_es = "Desconectar"
-    , nl_nl = "Afmelden"
-    , pt_pt = "Sair"
-    , nb_no = "Logg ut"
-    , fi_fl = "Kirjaudu ulos"
-    , da_dk = "Log ud"
-    , sv_se = "Logga ut"
     }
 
 
@@ -98,12 +69,5 @@ signIn =
     , zh_tw = "登入"
     , de_de = "Anmelden"
     , fr_fr = "Se connecter"
-    , it_it = "Registrati"
     , es_es = "Registrarse"
-    , nl_nl = "Inloggen"
-    , pt_pt = "Assinar em"
-    , nb_no = "Logg inn"
-    , fi_fl = "Kirjaudu sisään"
-    , da_dk = "Log ind"
-    , sv_se = "Logga in"
     }

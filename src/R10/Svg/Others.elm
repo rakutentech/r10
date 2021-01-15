@@ -1,8 +1,8 @@
-module R10.Svg.Others exposing (mobileWithPerson, mountain, spinnerRotation)
+module R10.Svg.Others exposing (mobileWithPerson, mountain, spinnerRotation, greenCheck)
 
 {-|
 
-@docs mobileWithPerson, mountain, spinnerRotation
+@docs mobileWithPerson, mountain, spinnerRotation, greenCheck
 
 -}
 
@@ -151,4 +151,16 @@ mountain attrs size =
                 , Svg.path [ SA.fill "#FCF9E8", SA.fillRule "evenodd", SA.d "M89 42.4s.6-5 7.7-5.3c1.4-9.3 12.9-3.8 14-.4 4-1 6.2 1.4 6.6 3.9 2-.5 3.3 1.7 3.3 1.7h-26l-5.6.1zm46.1 16.8s.7-5 7.8-5.3c1.3-9.3 12.8-3.8 14-.4 4-.9 6.1 1.5 6.5 4 2-.6 3.4 1.6 3.4 1.6h-26.1l-5.6.1z", SA.clipRule "evenodd" ] []
                 ]
             ]
+        ]
+
+
+{-| -}
+greenCheck : List (Attribute msg) -> Int -> Element msg
+greenCheck attrs size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 131 130"
+        size
+        [ Svg.circle [ SA.fill "#ECFBEC", SA.cx "65.5", SA.cy "65", SA.r "65" ] []
+        , Svg.circle [ SA.fill "#ECFBEC", SA.cx "66", SA.cy "64.5", SA.r "40.5", SA.stroke "#00A400", SA.strokeWidth "4" ] []
+        , Svg.path [ SA.fill "#ECFBEC", SA.stroke "#00A400", SA.strokeLinecap "round", SA.strokeLinejoin "round", SA.strokeWidth "4", SA.d "M44.4 65.5L59.9 81l30.6-31" ] []
         ]

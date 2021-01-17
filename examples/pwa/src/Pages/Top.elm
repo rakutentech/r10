@@ -110,13 +110,16 @@ readme =
     --
     -- This is copied and pasted from /README.md
     --
-    """
+    """**Disclaimer**: This library is actively used in our live projects and the code and the documentation can be rough in most places because, you know, deadlines! It is also tailored for our use so it is probably useful as source of information rather than as a real dependency to add in your projects.
+
 ### Links
 
 * [R10 demo with documentation and examples](https://r10.netlify.app/)
 * [R10 in the Elm's package website](https://package.elm-lang.org/packages/rakutentech/r10/latest/)
 * [R10 in Github](https://github.com/rakutentech/r10)
-* [Simple usage sample in Ellie](https://ellie-app.com/btv2tGK7tk8a1)
+* [Ellie: R10 Credit Card](https://ellie-app.com/c5SH5HxBXPHa1)
+* [Ellie: R10 Simple Form](https://ellie-app.com/c5SKjKvwnNRa1)
+* [Ellie: R10 Simple View](https://ellie-app.com/c5SL2qqLZP2a1)
 
 # How to use the R10 library
 
@@ -174,7 +177,7 @@ To know more, read the [`elm-starter` documentation](https://github.com/lucamug/
     
 Note: If you copied the file in a new folder you need to modify the `elm.json` file:
 
-1. Remove `"../../src"` from the list of `"source-directories"`
+1. Remove `../../src` from the list of `source-directories`
 2. Run `elm install rakutentech/r10` that will add this library as dependency
 
 
@@ -331,7 +334,7 @@ init =
             [ R10.Form.entity.field
                 { id = "email"
                 , idDom = Nothing
-                , type_ = R10.FormTypes.inputField.textEmail
+                , type_ = R10.Form.fieldType.text R10.Form.text.email
                 , label = "Email"
                 , helperText = Just "Helper text for Email"
                 , requiredLabel = Just "(required)"
@@ -339,7 +342,7 @@ init =
                     Just
                         { showPassedValidationMessages = False
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.FormTypes.NoIcon
+                        , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
                             [ R10.Form.commonValidation.email
                             , R10.Form.validation.minLength 5
@@ -351,7 +354,7 @@ init =
             , R10.Form.entity.field
                 { id = "password"
                 , idDom = Nothing
-                , type_ = R10.FormTypes.inputField.textPasswordNew
+                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
                 , label = "Password"
                 , helperText = Just "Helper text for Password"
                 , requiredLabel = Just "(required)"
@@ -359,7 +362,7 @@ init =
                     Just
                         { showPassedValidationMessages = True
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.FormTypes.NoIcon
+                        , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
                             [ R10.Form.commonValidation.password
                             , R10.Form.validation.minLength 8
@@ -370,7 +373,7 @@ init =
             , R10.Form.entity.field
                 { id = "password_repeat"
                 , idDom = Nothing
-                , type_ = R10.FormTypes.inputField.textPasswordNew
+                , type_ = R10.Form.fieldType.text R10.Form.text.passwordNew
                 , label = "Repeat Password"
                 , helperText = Just "Helper text for Repeat  Password"
                 , requiredLabel = Just "(required)"
@@ -378,7 +381,7 @@ init =
                     Just
                         { showPassedValidationMessages = True
                         , hidePassedValidationStyle = False
-                        , validationIcon = R10.FormTypes.NoIcon
+                        , validationIcon = R10.Form.validationIcon.noIcon
                         , validation =
                             [ R10.Form.validation.withMsg
                                 { ok = "Passwords are the same"
@@ -454,4 +457,30 @@ view model =
                     , theme = theme
                     }
             ]
-        )```"""
+        )
+```
+
+## Best practices
+
+Imports should be plain, without aliases and without exposing particular functions. This make the code more clear as it immediately understanding if a resource is defined in the present module or somewhere else. It also makes code block more portable.
+
+These are the exceptions to this rule: 
+
+    import Element exposing (..)
+    import Element.Background as Background
+    import Element.Border as Border
+    import Element.Events as Events
+    import Element.Font as Font
+    import Element.Input as Input
+    import Element.Keyed as Keyed
+    import Json.Decode as D
+    import Json.Encode as E
+    import Svg.Attributes as SA
+    import Html exposing (..)
+    import Html.Attributes exposing (..)
+
+`Html` and `Html.Attributes` can be esposed only if `Element` is not used, otherwise there are conflicts.
+
+----
+
+Modules that are not exposed should have `Internal` somewhere in their path."""

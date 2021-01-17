@@ -3,7 +3,7 @@
     "name": "rakutentech/r10",
     "summary": "Bootstrapper and UI Componets we use at Rakuten",
     "license": "BSD-3-Clause",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "exposed-modules": [
         "R10.Button",
         "R10.Card",
@@ -58,7 +58,7 @@
         "elm-community/json-extra": "4.3.0 <= v < 5.0.0",
         "elm-community/list-extra": "8.2.4 <= v < 9.0.0",
         "elm-community/string-extra": "4.0.1 <= v < 5.0.0",
-        "mdgriffith/elm-ui": "1.1.8 <= v < 2.0.0",
+        "mdgriffith/elm-ui": "1.1.7 <= v < 2.0.0",
         "noahzgordon/elm-color-extra": "1.0.2 <= v < 2.0.0",
         "zwilias/json-decode-exploration": "6.0.0 <= v < 7.0.0"
     },

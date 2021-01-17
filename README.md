@@ -11,7 +11,9 @@
 * [R10 demo with documentation and examples](https://r10.netlify.app/)
 * [R10 in the Elm's package website](https://package.elm-lang.org/packages/rakutentech/r10/latest/)
 * [R10 in Github](https://github.com/rakutentech/r10)
-* [Simple usage sample in Ellie](https://ellie-app.com/btv2tGK7tk8a1)
+* [Ellie: R10 Simple View](https://ellie-app.com/c5SL2qqLZP2a1)
+* [Ellie: R10 Simple Form](https://ellie-app.com/c5SKjKvwnNRa1)
+* [Ellie: R10 Credit Card](https://ellie-app.com/c5SH5HxBXPHa1)
 
 # How to use the R10 library
 

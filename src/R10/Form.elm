@@ -26,7 +26,7 @@ module R10.Form exposing
     , fieldConfigConcatMap, fieldConfigMap
     )
 
-{-| Useful things to build a form .
+{-| Useful things to build a form.
 
 
 # Form

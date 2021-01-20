@@ -1,8 +1,8 @@
-module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monochrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome, r10, visa, visa_monochrome, americanExpress_monochrome, americanExpress, cardVisa, cardMasterCard, cardDiscover, cardJCB, cardAmericanExpress)
+module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monochrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome, r10, visa, visa_monochrome, americanExpress_monochrome, americanExpress, cardVisa, cardMasterCard, cardDiscover, cardJCB, cardAmericanExpress, cardDiners)
 
 {-|
 
-@docs apple, apple_monochrome, elm, elm_monochrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome, r10, visa, visa_monochrome, americanExpress_monochrome, americanExpress, cardVisa, cardMasterCard, cardDiscover, cardJCB, cardAmericanExpress
+@docs apple, apple_monochrome, elm, elm_monochrome, facebook, facebook_monochrome, github, google, google_monochrome, microsoft, microsoft_monochrome, pcHome24hours, pcHome24hours_monochrome, r10, visa, visa_monochrome, americanExpress_monochrome, americanExpress, cardVisa, cardMasterCard, cardDiscover, cardJCB, cardAmericanExpress, cardDiners
 
 -}
 
@@ -442,4 +442,18 @@ cardAmericanExpress attrs size =
         size
         [ Svg.path [ SA.fill "#2557D6", SA.d "M40 0h700c22 0 40 18 40 40v420c0 22-18 40-40 40H40c-22 0-40-18-40-40V40C0 18 18 0 40 0z" ] []
         , Svg.path [ SA.fill "#fff", SA.d "M0 236h38l8-20h19l8 20h74v-15l7 15h38l7-15v15h183v-32h3c3 0 3 0 3 4v28h95v-8c8 4 19 8 35 8h40l8-20h19l9 20h76v-19l12 19h62V113h-61v15l-9-15h-62v15l-8-15h-84c-15 0-27 2-37 7v-7h-58v7c-7-5-15-7-25-7H187l-14 32-15-32H91v15l-7-15H27L0 171v65zm237-18h-23v-69l-32 69h-19l-32-69v69H87l-9-20H33l-9 20H0l39-88h33l37 83v-83h36l29 60 26-60h37v88zM71 180l-15-35-15 35h30zm255 38h-73v-88h73v18h-51v16h50v18h-50v18h51v18zm103-64c0 14-10 21-15 23 5 2 9 5 11 8 3 4 3 8 3 16v17h-22v-11c0-5 1-13-3-17-4-3-9-4-16-4h-24v32h-22v-88h51c11 0 19 0 26 4s11 10 11 20zm-28 13c-3 2-6 2-10 2h-27v-20h27c4 0 8 0 10 2 3 1 5 4 5 8 0 3-2 6-5 8zm63 51h-22v-88h22v88zm260 0h-31l-42-66v66h-44l-9-20h-45l-9 20h-25c-11 0-24-2-32-10-8-7-12-17-12-33 0-13 3-25 12-35 7-7 18-10 33-10h22v19h-21c-8 0-13 1-17 5s-6 11-6 20c0 10 2 16 6 21 3 3 9 4 15 4h10l31-69h32l38 83v-83h33l38 61v-61h23v88zm-133-38l-16-35-15 35h31zm189 178c-6 8-16 12-30 12h-42v-19h42l9-2 2-6-2-6-8-2c-21-1-46 1-46-27 0-13 8-26 31-26h44v-18h-41c-12 0-21 3-27 7v-7h-60c-10 0-21 2-26 7v-7H518v7c-8-6-22-7-29-7h-71v7c-7-6-22-7-31-7h-79l-18 19-17-19H155v123h116l19-19 17 19h72v-29h7c9 0 20 0 30-4v33h59v-32h3c4 0 4 0 4 3v29h179c11 0 23-3 30-8v8h57c11 0 23-2 32-6v-23zm-355-47c0 25-19 30-38 30h-28v29h-42l-27-29-28 29h-87v-88h88l27 29 28-29h70c17 0 37 5 37 29zm-174 41h-54v-18h48v-18h-48v-16h55l24 26-25 26zm86 10l-33-36 33-35v71zm50-39h-28v-23h28c8 0 14 3 14 11s-5 12-14 12zm148-41h74v18h-52v16h50v18h-50v18h52v18h-74v-88zm-28 47c5 2 9 5 11 8 3 4 4 8 4 16v17h-22v-11c0-5 0-13-4-17-3-3-8-4-16-4h-23v32h-22v-88h50c11 0 19 1 27 4 7 4 11 10 11 20 0 14-10 21-16 23zm-12-11c-3 2-7 2-11 2h-26v-20h27c3 0 7 0 10 2 3 1 4 4 4 8 0 3-1 6-4 8zm198 6c4 4 6 9 6 18 0 19-12 28-34 28h-43v-19h43c4 0 7 0 9-2a8 8 0 000-12l-8-1c-21-1-46 0-46-28 0-12 8-26 31-26h44v19h-40l-9 1c-2 2-3 4-3 7s2 5 4 6l9 1 12 1c12 0 20 2 25 7zm87-24h-40c-4 0-7 0-9 2-2 1-3 3-3 6s2 6 5 7l8 1h12c12 0 20 2 25 7l2 2v-25z" ] []
+        ]
+
+
+{-| -}
+cardDiners : List (Attribute msg) -> Int -> Element.Element msg
+cardDiners attrs size =
+    -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 780 500"
+        size
+        [ Svg.path [ SA.fill "#0079BE", SA.d "M40 0h700c22 0 40 18 40 40v420c0 22-18 40-40 40H40c-22 0-40-18-40-40V40C0 18 18 0 40 0z" ] []
+        , Svg.path [ SA.fill "#fff", SA.d "M600 251.4c0-99.4-83-168-174-168h-78.2c-92 0-167.7 68.7-167.7 168 0 91 75.7 165.7 167.7 165.2H426c91 .5 174-74.2 174-165.2z" ] []
+        , Svg.path [ SA.fill "#0079BE", SA.d "M348.3 97.4c-84 0-152.2 68.3-152.2 152.6s68.1 152.5 152.2 152.6c84 0 152.2-68.3 152.2-152.6S432.4 97.5 348.3 97.4z" ] []
+        , Svg.path [ SA.fill "#fff", SA.d "M252 249.6a96.9 96.9 0 0162-90.3v180.5a96.8 96.8 0 01-62-90.2zm131 90.3V159.3a96.8 96.8 0 010 180.6z" ] []
         ]

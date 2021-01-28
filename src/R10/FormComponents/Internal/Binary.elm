@@ -151,18 +151,18 @@ viewBinaryCheckbox attrs args =
                )
             ++ attrs
         )
-        [ checkboxIcon args args.value
-        , paragraph
-            [ width fill
-            , alignTop
-            , moveUp 2
-            , Font.alignLeft
-            , Font.size 14
-            , Font.color (R10.FormComponents.Internal.UI.Color.label args.palette)
-            , htmlAttribute <| Html.Attributes.id "ie-flex-fix"
+        [ row [ width fill ]
+            [ checkboxIcon args args.value
+            , paragraph
+                [ width fill
+                , paddingEach { top = 0, left = 12, bottom = 0, right = 0 }
+                , Font.size 14
+                , Font.color (R10.FormComponents.Internal.UI.Color.label args.palette)
+                , htmlAttribute <| Html.Attributes.id "ie-flex-fix"
+                ]
+              <|
+                [ text <| args.label ]
             ]
-          <|
-            [ text <| args.label ]
         ]
 
 
@@ -215,7 +215,10 @@ checkboxIcon args value =
                 )
                 checkMark
     in
-    el [ width <| px 18, moveLeft 8 ] <| R10.FormComponents.Internal.UI.viewSelectShadow args boxBorderAndFill
+    el [ moveLeft 4, alignTop ] <|
+        R10.FormComponents.Internal.UI.viewSelectShadowCustomSize
+            { palette = args.palette, focused = args.focused, disabled = args.disabled, size = { x = 32, y = 32 } }
+            boxBorderAndFill
 
 
 view : List (Attribute msg) -> Args msg -> Element msg

@@ -18,6 +18,7 @@ module R10.FormComponents.Internal.UI exposing
     , showValidationIcon_
     , viewHelperText
     , viewSelectShadow
+    , viewSelectShadowCustomSize
     )
 
 import Color
@@ -274,11 +275,11 @@ getSelectShadowColor palette focused mouseOver =
     R10.FormComponents.Internal.UI.Color.primaryA alpha palette
 
 
-viewSelectShadow : { a | palette : R10.FormTypes.Palette, focused : Bool, disabled : Bool } -> Element msg -> Element msg
-viewSelectShadow { palette, focused, disabled } element =
+viewSelectShadowCustomSize : { a | palette : R10.FormTypes.Palette, focused : Bool, disabled : Bool, size : { x : Int, y : Int } } -> Element msg -> Element msg
+viewSelectShadowCustomSize { palette, focused, disabled, size } element =
     el
-        ([ width <| px 40
-         , height <| px 40
+        ([ width <| px size.x
+         , height <| px size.y
          , Border.rounded 20
          , htmlAttribute <| Html.Attributes.style "transition" "all 0.15s"
          ]
@@ -293,6 +294,11 @@ viewSelectShadow { palette, focused, disabled } element =
                )
         )
         element
+
+
+viewSelectShadow : { a | palette : R10.FormTypes.Palette, focused : Bool, disabled : Bool } -> Element msg -> Element msg
+viewSelectShadow { palette, focused, disabled } =
+    viewSelectShadowCustomSize { palette = palette, focused = focused, disabled = disabled, size = { x = 40, y = 40 } }
 
 
 onClickWithStopPropagation : msg -> Attribute msg

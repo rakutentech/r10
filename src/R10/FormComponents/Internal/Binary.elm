@@ -135,7 +135,7 @@ viewBinaryCheckbox : List (Attribute msg) -> Args msg -> Element msg
 viewBinaryCheckbox attrs args =
     row
         ([ height <| px 20
-         , spacing 15
+         , spacing 26
          ]
             ++ (if args.disabled then
                     [ alpha 0.38 ]
@@ -154,8 +154,8 @@ viewBinaryCheckbox attrs args =
         [ checkboxIcon args args.value
         , paragraph
             [ width fill
-            , moveRight 5
-            , moveDown 5
+            , alignTop
+            , moveUp 2
             , Font.alignLeft
             , Font.size 14
             , Font.color (R10.FormComponents.Internal.UI.Color.label args.palette)
@@ -215,7 +215,7 @@ checkboxIcon args value =
                 )
                 checkMark
     in
-    el [ width <| px 18, moveLeft 10 ] <| R10.FormComponents.Internal.UI.viewSelectShadow args boxBorderAndFill
+    el [ width <| px 18, moveLeft 8 ] <| R10.FormComponents.Internal.UI.viewSelectShadow args boxBorderAndFill
 
 
 view : List (Attribute msg) -> Args msg -> Element msg

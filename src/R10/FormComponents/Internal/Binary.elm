@@ -154,7 +154,11 @@ viewBinaryCheckbox attrs args =
         [ checkboxIcon args args.value
         , paragraph
             [ width fill
+            , moveRight 5
+            , moveDown 5
             , Font.alignLeft
+            , Font.size 14
+            , Font.color (R10.FormComponents.Internal.UI.Color.label args.palette)
             , htmlAttribute <| Html.Attributes.id "ie-flex-fix"
             ]
           <|
@@ -182,8 +186,8 @@ checkboxIcon args value =
         boxBorderAndFill =
             el
                 ([ htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
-                 , width <| px 18
-                 , height <| px 18
+                 , width <| px 24
+                 , height <| px 24
                  , Border.rounded 3
                  , centerY
                  , centerX
@@ -194,7 +198,7 @@ checkboxIcon args value =
                                 { offset = ( 0, 0 )
                                 , size = 0
                                 , blur = 0
-                                , color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.54 args.palette
+                                , color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.25 args.palette
                                 }
                             ]
 
@@ -202,16 +206,16 @@ checkboxIcon args value =
                             [ Background.color <| R10.FormComponents.Internal.UI.Color.transparent
                             , Border.innerShadow
                                 { offset = ( 0, 0 )
-                                , size = 2
+                                , size = 1
                                 , blur = 0
-                                , color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.54 args.palette
+                                , color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.25 args.palette
                                 }
                             ]
                        )
                 )
                 checkMark
     in
-    el [ width <| px 18, moveLeft 11 ] <| R10.FormComponents.Internal.UI.viewSelectShadow args boxBorderAndFill
+    el [ width <| px 18, moveLeft 10 ] <| R10.FormComponents.Internal.UI.viewSelectShadow args boxBorderAndFill
 
 
 view : List (Attribute msg) -> Args msg -> Element msg
@@ -224,6 +228,9 @@ view attrs args =
             R10.FormTypes.BinaryCheckbox ->
                 viewBinaryCheckbox attrs args
         , R10.FormComponents.Internal.UI.viewHelperText args.palette
-            [ Font.size 14, alpha 0.5, paddingEach { top = R10.FormComponents.Internal.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ]
+            [ Font.size 14
+            , alpha 0.5
+            , paddingEach { top = R10.FormComponents.Internal.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
+            ]
             args.helperText
         ]

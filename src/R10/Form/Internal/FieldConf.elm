@@ -346,10 +346,12 @@ decoderValidation =
         , D.lazy (\_ -> decoderOneOf)
         , D.lazy (\_ -> decoderWithMsg)
         , D.lazy (\_ -> decoderDependant)
+        , D.lazy (\_ -> decoderNot)
         , decoderMinLength
         , decoderMaxLength
         , decoderRegex
-        , decodeSimpleValidation
+        , decoderEqual
+        , decoderSimpleValidation
         ]
 
 
@@ -516,8 +518,8 @@ encodeEqual key =
     E.object [ ( "equal", E.string key ) ]
 
 
-decodeEqual : D.Decoder Validation
-decodeEqual =
+decoderEqual : D.Decoder Validation
+decoderEqual =
     D.map Equal
         (D.field "equal" D.string)
 
@@ -531,18 +533,18 @@ encodeNot validation =
     E.object [ ( "not", encodeValidation validation ) ]
 
 
-decodeNot : D.Decoder Validation
-decodeNot =
+decoderNot : D.Decoder Validation
+decoderNot =
     D.map Not
-        (D.field "validation" decoderValidation)
+        (D.field "not" decoderValidation)
 
 
 
 --SimpleValidation
 
 
-decodeSimpleValidation : D.Decoder Validation
-decodeSimpleValidation =
+decoderSimpleValidation : D.Decoder Validation
+decoderSimpleValidation =
     D.string
         |> D.andThen
             (\str ->

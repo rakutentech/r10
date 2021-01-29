@@ -197,6 +197,9 @@ encoderFieldType fieldType =
                 R10.FormTypes.SingleRadio ->
                     E.string "TypeSingleRadio"
 
+                R10.FormTypes.SingleRadioRow ->
+                    E.string "TypeSingleRadioRow"
+
                 R10.FormTypes.SingleCombobox ->
                     E.string "TypeSingleCombobox"
 
@@ -238,6 +241,9 @@ decoderFieldType =
 
                     [ "TypeSingleRadio" ] ->
                         D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleRadio [])
+
+                    [ "TypeSingleRadioRow" ] ->
+                        D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleRadioRow [])
 
                     [ "TypeSingleCombobox" ] ->
                         D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleCombobox [])

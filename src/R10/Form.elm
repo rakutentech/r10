@@ -23,7 +23,8 @@ module R10.Form exposing
     , viewSingle, ArgsSingle, viewSingleCustom, ArgsSingleCustom
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , PhoneModel, PhoneMsg, phoneView, phoneUpdate, phoneInit
-    , fieldConfigConcatMap, fieldConfigMap
+    , fieldConfigConcatMap
+    , TextArgs, fieldConfigMap, textView
     )
 
 {-| Useful things to build a form.
@@ -1403,6 +1404,29 @@ phoneUpdate =
 phoneInit : PhoneModel
 phoneInit =
     R10.FormComponents.Internal.Phone.Common.init
+
+
+
+--████████ ███████ ██   ██ ████████
+--   ██    ██       ██ ██     ██
+--   ██    █████     ███      ██
+--   ██    ██       ██ ██     ██
+--   ██    ███████ ██   ██    ██
+
+
+{-| -}
+type alias TextArgs msg =
+    R10.FormComponents.Internal.Text.Args msg
+
+
+{-| -}
+textView :
+    List (Attribute msg)
+    -> List (Attribute msg)
+    -> R10.FormComponents.Internal.Text.Args msg
+    -> Element msg
+textView =
+    R10.FormComponents.Internal.Text.view
 
 
 

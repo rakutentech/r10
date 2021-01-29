@@ -239,6 +239,12 @@ decoderFieldType =
                     [ "TextWithPattern", pattern ] ->
                         D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextWithPattern pattern)
 
+                    [ "TypeBinaryCheckbox" ] ->
+                        D.succeed (R10.FormTypes.TypeBinary R10.FormTypes.BinaryCheckbox)
+
+                    [ "TypeBinarySwitch" ] ->
+                        D.succeed (R10.FormTypes.TypeBinary R10.FormTypes.BinarySwitch)
+
                     [ "TypeSingleRadio" ] ->
                         D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleRadio [])
 
@@ -251,8 +257,8 @@ decoderFieldType =
                     [ "TypeSingleSelect" ] ->
                         D.succeed (R10.FormTypes.TypeSingle R10.FormTypes.SingleSelect [])
 
-                    [ "TypeBinaryCheckbox" ] ->
-                        D.succeed (R10.FormTypes.TypeBinary R10.FormTypes.BinaryCheckbox)
+                    [ "TypeMultiCombobox" ] ->
+                        D.succeed (R10.FormTypes.TypeMulti R10.FormTypes.MultiCombobox [])
 
                     somethingElse ->
                         D.fail <| "Unknown FieldType: " ++ List.foldl (++) "" somethingElse ++ ". It should be something like TypeTextPlain, TypeTextEmail, TypeTextUsername, TypeTextPasswordNew, TypeTextPasswordCurrent, TypeCheckbox, TypeRadio, TypeDate, TypePhoneNumber, TypeBirthday or TypeCombobox."

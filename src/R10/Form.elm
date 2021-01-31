@@ -12,7 +12,7 @@ module R10.Form exposing
     , getField, getFieldValue, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
     , setFieldValue, setActiveTab, setMultiplicableQuantities, setFieldDisabled
     , submittable, stringToBool, boolToString
-    , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, ArgsText, viewBinary, ArgsBinary
+    , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, TextArgs, ArgsText, viewBinary, ArgsBinary
     , Style, style
     , Button, button
     , themeToPalette, label, extraCssComponents, extraCss, colorToCssString
@@ -23,8 +23,7 @@ module R10.Form exposing
     , viewSingle, ArgsSingle, viewSingleCustom, ArgsSingleCustom
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , PhoneModel, PhoneMsg, phoneView, phoneUpdate, phoneInit
-    , fieldConfigConcatMap
-    , TextArgs, fieldConfigMap, textView
+    , fieldConfigConcatMap, fieldConfigMap
     )
 
 {-| Useful things to build a form.
@@ -123,7 +122,7 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 # Form Components
 
-@docs viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, ArgsText, viewBinary, ArgsBinary
+@docs viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, TextArgs, ArgsText, viewBinary, ArgsBinary
 
 
 # Style

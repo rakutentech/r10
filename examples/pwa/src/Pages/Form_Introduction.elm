@@ -272,10 +272,10 @@ formsInit =
           , conf =
                 [ R10.Form.entity.withBorder ""
                     [ R10.Form.entity.subTitle "" { title = "Social Providers", helperText = Just "Select all social networks that you would like to activate", validationSpecs = Nothing }
-                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileMicrosoft", label = "Microsoft (Internal)", type_ = R10.FormTypes.inputField.binaryCheckbox }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileMicrosoft", label = "xxx Microsoft (Internal)", type_ = R10.FormTypes.inputField.binaryCheckbox }
                     , R10.Form.entity.field { fieldConfInit | id = "socialProfileFacebook", label = "Facebook", type_ = R10.FormTypes.inputField.binarySwitch }
-                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileGoogle", label = "Google", type_ = R10.FormTypes.inputField.binaryCheckbox }
-                    , R10.Form.entity.field { fieldConfInit | id = "socialProfilePChome", label = "PChome", type_ = R10.FormTypes.inputField.binaryCheckbox }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfileGoogle", label = "Google fjskldsjl fjds fdslfa fsdklf dklf jsla fsklf sdlf slf s fdsl fdkslf jdksf djsklfjdslfjdskl fds fdsfd ss lfdfds fd fdf dsfds fdsfdsfd", type_ = R10.FormTypes.inputField.binaryCheckbox }
+                    , R10.Form.entity.field { fieldConfInit | id = "socialProfilePChome", label = "PChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdkslPChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdkslPChome fdsfdjlkfdsPChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdkslPChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdkslPChome fdsfdjlkfdsPChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdkslPChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdkslPChome fdsfdjlkfdsPChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdkslPChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdkslPChome fdsfdjlkfds f dslfdslf dskf dslf dsklff jdskl fjdsklfjdksl fjdsklf jdskl fdslf dslf fjkds fdslf jdsklf jdkl fjdlsk fdkslf dslf dsklf djskl fdjksl fdls", type_ = R10.FormTypes.inputField.binaryCheckbox }
                     ]
                 ]
           , code = """[ R10.Form.entity.withBorder ""

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+surge docs bz41.surge.sh

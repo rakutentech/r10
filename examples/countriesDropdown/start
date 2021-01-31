@@ -1,0 +1,2 @@
+#!/bin/bash
+elm-live --dir=docs  src/Main.elm -- --output=docs/elm.js

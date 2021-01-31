@@ -118,7 +118,6 @@ insertBold : List Int -> String -> String
 insertBold indexes string =
     string
         |> R10.FormComponents.Internal.Utils.stringInsertAtMulti "**" indexes
-        |> String.Extra.surround "**"
 
 
 update : R10.FormComponents.Internal.Single.Common.Msg -> R10.FormComponents.Internal.Single.Common.Model -> ( R10.FormComponents.Internal.Single.Common.Model, Cmd R10.FormComponents.Internal.Single.Common.Msg )
@@ -169,8 +168,8 @@ view attrs model conf =
                     , msgOnSelect = R10.FormComponents.Internal.Single.Common.OnOptionSelect >> conf.toMsg
                     }
             , searchFn = defaultSearchFn
-            , selectOptionHeight = 36
-            , maxDisplayCount = 5
+            , selectOptionHeight = 32
+            , maxDisplayCount = 3
             , leadingIcon = Nothing
             , trailingIcon = Just <| defaultTrailingIcon { opened = model.opened, palette = conf.palette }
             }

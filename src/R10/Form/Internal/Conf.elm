@@ -136,10 +136,11 @@ decoderEntityWithTabs typeConstructor string =
         (D.field string <| D.list <| D.lazy <| \_ -> D.map2 Tuple.pair (D.index 0 D.string) (D.index 1 decoderEntity))
 
 
-encoderGenericTitle : TextConf -> String -> E.Value
-encoderGenericTitle titleConf string =
+encoderGenericTitle : String -> TextConf -> String -> E.Value
+encoderGenericTitle entityId titleConf string =
     E.object
-        [ ( string
+        [ ( "EntityId", E.string entityId )
+        , ( string
           , E.object
                 [ ( "Title", E.string titleConf.title )
                 , ( "HelperText", Json.Encode.Extra.maybe E.string titleConf.helperText )
@@ -181,11 +182,11 @@ encoderEntity entity2 =
         EntityMulti entityId listEntity ->
             encoderGenericEntity entityId listEntity "EntityMulti"
 
-        EntityTitle _ titleConf ->
-            encoderGenericTitle titleConf "EntityTitle"
+        EntityTitle entityId titleConf ->
+            encoderGenericTitle entityId titleConf "EntityTitle"
 
-        EntitySubTitle _ titleConf ->
-            encoderGenericTitle titleConf "EntitySubTitle"
+        EntitySubTitle entityId titleConf ->
+            encoderGenericTitle entityId titleConf "EntitySubTitle"
 
         EntityField fieldConf ->
             R10.Form.Internal.FieldConf.encoderFieldConf fieldConf

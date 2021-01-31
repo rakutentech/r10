@@ -513,7 +513,7 @@ viewEntityWithTabs args titleEntityList formConf =
 
         emptyTab : Element msg
         emptyTab =
-            el [ width fill, height fill, moveLeft paddingPx, Background.color <| rgb 1 1 1 ] none
+            el [ width fill, height fill, moveLeft paddingPx, Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette ] none
     in
     case maybeSelectedEntity of
         Just ( _, selectedEntity ) ->

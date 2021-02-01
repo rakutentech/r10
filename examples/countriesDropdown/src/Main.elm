@@ -7,6 +7,7 @@ import Dict
 import Element exposing (..)
 import Element.Font as Font
 import Html
+import Html.Attributes
 import R10.Color
 import R10.DropDown
 import R10.Form
@@ -39,7 +40,8 @@ type alias Model =
     , disabled : Bool
     , messages : List String
     , valid : Maybe Bool
-    , dropdown : String
+    , dropdown1 : String
+    , dropdown2 : String
     , language : R10.Language.Language
     }
 
@@ -82,7 +84,8 @@ init flags =
       , disabled = False
       , messages = []
       , valid = Nothing
-      , dropdown = "JP"
+      , dropdown1 = "JP"
+      , dropdown2 = "JP"
       , language = language
       }
     , Cmd.none
@@ -92,7 +95,8 @@ init flags =
 type Msg
     = MsgMapperPhone R10.Form.PhoneMsg
     | MsgMapperForm R10.Form.Msg
-    | Change String
+    | Change1 String
+    | Change2 String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -108,8 +112,11 @@ update msg model =
             in
             ( { model | modelForm = { modelForm | state = newState } }, Cmd.map MsgMapperForm cmd )
 
-        Change string ->
-            ( { model | dropdown = string }, Cmd.none )
+        Change1 string ->
+            ( { model | dropdown1 = string }, Cmd.none )
+
+        Change2 string ->
+            ( { model | dropdown2 = string }, Cmd.none )
 
         MsgMapperPhone singleMsg ->
             let
@@ -185,61 +192,35 @@ view theme model =
             --                     )
             --                ]
             --     }
+            , R10.DropDown.viewBorderLess [ width fill ]
+                { colorBackground = Color.rgba 0 0 0 0.03
+                , colorFont = Color.rgb 0 0 0
+                , currentValue = model.dropdown1
+                , inputHandler = Change1
+                , optionList =
+                    List.map
+                        (\country ->
+                            { text = country.flag ++ " " ++ country.name
+                            , value = country.code
+                            }
+                        )
+                        (fixCountries model.language Countries.all)
+                }
+            , R10.DropDown.viewBorderLess [ width fill ]
+                { colorBackground = Color.rgba 0 0 0 0.03
+                , colorFont = Color.rgb 0 0 0
+                , currentValue = model.dropdown2
+                , inputHandler = Change2
+                , optionList =
+                    List.map
+                        (\country ->
+                            { text = country.name ++ " " ++ country.flag
+                            , value = country.code
+                            }
+                        )
+                        (List.sortBy .name Countries.all)
+                }
             ]
-
-
-simplifyCountryName_ : String -> String
-simplifyCountryName_ string =
-    if string == "United Kingdom of Great Britain and Northern Ireland" then
-        "United Kingdom"
-
-    else if string == "United States of America" then
-        "United States"
-
-    else if string == "Korea (Democratic People's Republic of)" then
-        "North Korea"
-
-    else if string == "Korea, Republic of" then
-        "South Korea"
-
-    else if string == "Bonaire, Sint Eustatius and Saba" then
-        "Caribbean Netherlands"
-
-    else if string == "Moldova, Republic of" then
-        "Moldova"
-
-    else if string == "Congo, Democratic Republic of the" then
-        "Congo"
-
-    else if string == "Iran (Islamic Republic of)" then
-        "Iran"
-
-    else if string == "Taiwan, Province of China" then
-        "Taiwan"
-
-    else if string == "Bolivia (Plurinational State of)" then
-        "Bolivia"
-
-    else if string == "Brunei Darussalam" then
-        "Brunei"
-
-    else if string == "Lao People's Democratic Republic" then
-        "Lao"
-
-    else if string == "Micronesia (Federated States of)" then
-        "Micronesia"
-
-    else if string == "Tanzania, United Republic of" then
-        "Tanzania"
-
-    else if string == "Venezuela (Bolivarian Republic of)" then
-        "Venezuela"
-
-    else if string == "Japan" then
-        "日本 (Japan)"
-
-    else
-        string
 
 
 simplifyCountryName : String -> String

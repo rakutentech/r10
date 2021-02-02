@@ -16,7 +16,7 @@ module R10.Form exposing
     , Style, style
     , Button, button
     , themeToPalette, label, extraCssComponents, extraCss, colorToCssString
-    , onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange
+    , onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange, onOptionSelect
     , elementMarkdown
     , Translator, defaultTranslator, validationCodes
     , SingleModel, SingleMsg, SingleFieldOption, defaultSearchFn, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, singleMsg, updateSingle
@@ -24,7 +24,6 @@ module R10.Form exposing
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , PhoneModel, PhoneMsg, phoneView, phoneUpdate, phoneInit
     , fieldConfigConcatMap, fieldConfigMap
-    , onOptionSelect
     )
 
 {-| Useful things to build a form.
@@ -143,7 +142,7 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 # Events
 
-@docs onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange
+@docs onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange, onOptionSelect
 
 
 # Markdown
@@ -993,6 +992,7 @@ onValueChange =
     R10.Form.Internal.Msg.onValueChange
 
 
+{-| -}
 onOptionSelect : (Key -> FieldConf -> Conf -> String -> a) -> Msg -> Maybe a
 onOptionSelect =
     R10.Form.Internal.Msg.onOptionSelect

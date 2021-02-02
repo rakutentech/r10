@@ -16,7 +16,7 @@ module R10.Form exposing
     , Style, style
     , Button, button
     , themeToPalette, label, extraCssComponents, extraCss, colorToCssString
-    , onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange
+    , onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange, onOptionSelect
     , elementMarkdown
     , Translator, defaultTranslator, validationCodes
     , SingleModel, SingleMsg, SingleFieldOption, defaultSearchFn, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, singleMsg, updateSingle
@@ -142,7 +142,7 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 # Events
 
-@docs onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange
+@docs onClickWithStopPropagation, onFocusOut, onLoseFocus, onValueChange, onOptionSelect
 
 
 # Markdown
@@ -990,6 +990,12 @@ onLoseFocus =
 onValueChange : (Key -> FieldConf -> Conf -> String -> a) -> Msg -> Maybe a
 onValueChange =
     R10.Form.Internal.Msg.onValueChange
+
+
+{-| -}
+onOptionSelect : (Key -> FieldConf -> Conf -> String -> a) -> Msg -> Maybe a
+onOptionSelect =
+    R10.Form.Internal.Msg.onOptionSelect
 
 
 

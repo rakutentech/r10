@@ -24,6 +24,7 @@ module R10.Form exposing
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , PhoneModel, PhoneMsg, phoneView, phoneUpdate, phoneInit
     , fieldConfigConcatMap, fieldConfigMap
+    , onOptionSelect
     )
 
 {-| Useful things to build a form.
@@ -990,6 +991,11 @@ onLoseFocus =
 onValueChange : (Key -> FieldConf -> Conf -> String -> a) -> Msg -> Maybe a
 onValueChange =
     R10.Form.Internal.Msg.onValueChange
+
+
+onOptionSelect : (Key -> FieldConf -> Conf -> String -> a) -> Msg -> Maybe a
+onOptionSelect =
+    R10.Form.Internal.Msg.onOptionSelect
 
 
 

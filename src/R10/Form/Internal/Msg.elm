@@ -4,6 +4,7 @@ module R10.Form.Internal.Msg exposing
     , isChangingValues
     , isSubmitted
     , onLoseFocus
+    , onOptionSelect
     , onValueChange
     )
 
@@ -101,6 +102,29 @@ onValueChange func msg_ =
     case msg_ of
         ChangeValue key fieldConf formConf value ->
             Just (func key fieldConf formConf value)
+
+        _ ->
+            Nothing
+
+
+onOptionSelect :
+    (R10.Form.Internal.Key.Key
+     -> R10.Form.Internal.FieldConf.FieldConf
+     -> R10.Form.Internal.Conf.Conf
+     -> String
+     -> any
+    )
+    -> Msg
+    -> Maybe any
+onOptionSelect func msg_ =
+    case msg_ of
+        OnSingleMsg key fieldConf formConf singleMsg ->
+            case singleMsg of
+                R10.FormComponents.Internal.Single.Common.OnOptionSelect option ->
+                    Just (func key fieldConf formConf option)
+
+                _ ->
+                    Nothing
 
         _ ->
             Nothing

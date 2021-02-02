@@ -190,12 +190,14 @@ fontA alpha =
 
 label : R10.FormTypes.Palette -> Element.Color
 label =
-    onSurfaceA 0.6
+    -- TODO(This is a temporary fix for OMNI (The label color is too light))
+    onSurfaceA 1
 
 
 labelA : Float -> R10.FormTypes.Palette -> Element.Color
 labelA alpha =
-    onSurfaceA <| 0.6 * alpha
+    -- TODO(This is a temporary fix for OMNI)
+    onSurfaceA <| 1 * alpha
 
 
 mouseOverSurface : R10.FormTypes.Palette -> Element.Color

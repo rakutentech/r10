@@ -70,8 +70,8 @@ viewHelperText palette attrs maybeHelperText =
         Just helperText ->
             -- styles inspired by from https://material.io/components/text-fields/#specs
             paragraph
-                ([ Font.color (R10.FormComponents.Internal.UI.Color.label palette) ]
-                    ++ attrs
+                (Font.color (R10.FormComponents.Internal.UI.Color.label palette)
+                    :: attrs
                 )
             <|
                 R10.SimpleMarkdown.elementMarkdownAdvanced
@@ -237,7 +237,8 @@ textfieldLabelColor { focused, style, valid, displayValidation, palette } =
                 --( True, Just True, True ) ->
                 --    R10.FormComponents.Internal.UI.Color.success palette
                 ( True, Just False, True ) ->
-                    R10.FormComponents.Internal.UI.Color.error palette
+                    -- TODO(This is a temporary fix for OMNI (Originally was R10.FormComponents.Internal.UI.Color.error))
+                    R10.FormComponents.Internal.UI.Color.label palette
 
                 ( _, _, _ ) ->
                     R10.FormComponents.Internal.UI.Color.label palette

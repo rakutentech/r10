@@ -72,6 +72,8 @@ listLogos size cl =
 listIconsExtra : Int -> Color.Color -> List ( Element msg, String )
 listIconsExtra size cl =
     [ ( R10.Svg.IconsExtra.add [] cl size, "add" )
+    , ( R10.Svg.IconsExtra.check_thick [] cl size, "checkThick" )
+    , ( R10.Svg.IconsExtra.copy [] cl size, "copy" )
     , ( R10.Svg.IconsExtra.bug [] cl size, "bug" )
     , ( R10.Svg.IconsExtra.arrowBack [] cl size, "arrowBack" )
     , ( R10.Svg.IconsExtra.arrowForward [] cl size, "arrowForward" )

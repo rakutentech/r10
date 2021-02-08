@@ -429,8 +429,7 @@ viewInput extraAttr args =
 
                     R10.FormComponents.Internal.Style.Outlined ->
                         0
-            , centerY
-            , paddingXY 8 0
+            , paddingXY 8 13
             ]
 
         paddingValues : { top : Int, right : Int, bottom : Int, left : Int }

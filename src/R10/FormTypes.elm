@@ -39,6 +39,7 @@ type TypeText
 -}
 type TypeSingle
     = SingleRadio
+    | SingleRadioRow
     | SingleCombobox
     | SingleSelect
 
@@ -99,6 +100,7 @@ inputField :
     , singleCombobox : List FieldOption -> FieldType
     , singleSelect : List FieldOption -> FieldType
     , singleRadio : List FieldOption -> FieldType
+    , singleRadioRow : List FieldOption -> FieldType
     , textEmail : FieldType
     , textMultiline : FieldType
     , textPasswordCurrent : FieldType
@@ -118,6 +120,7 @@ inputField =
 
     --
     , singleRadio = TypeSingle SingleRadio
+    , singleRadioRow = TypeSingle SingleRadioRow
     , singleCombobox = TypeSingle SingleCombobox -- searchable select
     , singleSelect = TypeSingle SingleSelect
 

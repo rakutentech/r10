@@ -70,8 +70,9 @@ viewHelperText palette attrs maybeHelperText =
         Just helperText ->
             -- styles inspired by from https://material.io/components/text-fields/#specs
             paragraph
-                (Font.color (R10.FormComponents.Internal.UI.Color.label palette)
-                    :: attrs
+                -- Ugly IE fix for Omni
+                ([ htmlAttribute <| Html.Attributes.id "ie-flex-fix-320", Font.color (R10.FormComponents.Internal.UI.Color.label palette) ]
+                    ++ attrs
                 )
             <|
                 R10.SimpleMarkdown.elementMarkdownAdvanced

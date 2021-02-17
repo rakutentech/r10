@@ -3,7 +3,7 @@
     "name": "rakutentech/r10",
     "summary": "Bootstrapper and UI Componets we use at Rakuten",
     "license": "BSD-3-Clause",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "exposed-modules": [
         "R10.Button",
         "R10.Card",

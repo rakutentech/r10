@@ -269,10 +269,18 @@ cssButtonStyle theme =
             theme
                 |> R10.Color.Svg.primary
                 |> R10.Color.Utils.toHex
+
+        fontOnprimaryColorHex : String
+        fontOnprimaryColorHex =
+            theme
+                |> R10.Color.Svg.fontButtonPrimary
+                |> R10.Color.Utils.toHex
     in
+    -- Adding -webkit-appearance: none;
+    -- because https://stackoverflow.com/questions/5449412/styling-input-buttons-for-ipad-and-iphone
     """
 .form.btn {
-    color: white !important;
+    color: """ ++ fontOnprimaryColorHex ++ """ !important;
     border: none;
     width: 240px;
     height: 44px;
@@ -283,6 +291,9 @@ cssButtonStyle theme =
     outline: 0;
     transition: .2s;
     cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;    
 }
 /* .btn:hover {
     background-color: #FF1212;

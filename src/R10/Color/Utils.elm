@@ -1,8 +1,15 @@
-module R10.Color.Utils exposing (colorToElementColor, elementColorToColor, fromHex, toHex, fromLightToDark, setAlpha)
+module R10.Color.Utils exposing (fromColorColor, toColorColor, fromHex, fromLightToDark, setAlpha, toCssRgba, fromHexToColorColor)
 
 {-| Utilities for colors.
 
-@docs colorToElementColor, elementColorToColor, fromHex, toHex, fromLightToDark, setAlpha
+There are two competing color types in this library:
+
+  - `Color.Color` (from `avh4/elm-color`)
+  - `Element.Color` (from `mdgriffith/elm-ui`)
+
+The default color type is `Element.Color`.
+
+@docs fromColorColor, toColorColor, fromHex, fromLightToDark, setAlpha, toCssRgba, fromHexToColorColor
 
 -}
 
@@ -12,22 +19,10 @@ import Color.Manipulate
 import Element
 
 
-{-| Change the alpha channel in a color.
+{-| Transform a `Color.Color` into an `Element.Color`.
 -}
-setAlpha : Float -> Color.Color -> Color.Color
-setAlpha newAlpha color =
-    let
-        c : { alpha : Float, blue : Float, green : Float, red : Float }
-        c =
-            Color.toRgba color
-    in
-    Color.fromRgba { red = c.red, green = c.green, blue = c.blue, alpha = newAlpha }
-
-
-{-| Transform a color, as defined in `avh4/elm-color`, to an Element color, as defined in `mdgriffith/elm-ui`.
--}
-colorToElementColor : Color.Color -> Element.Color
-colorToElementColor color =
+fromColorColor : Color.Color -> Element.Color
+fromColorColor color =
     let
         { red, green, blue, alpha } =
             Color.toRgba color
@@ -35,10 +30,10 @@ colorToElementColor color =
     Element.rgba red green blue alpha
 
 
-{-| Transform a color, as defined in `mdgriffith/elm-ui`, to an Element color, as defined in `avh4/elm-color`.
+{-| Transform an `Element.Color` into a `Color.Color`.
 -}
-elementColorToColor : Element.Color -> Color.Color
-elementColorToColor elementColor =
+toColorColor : Element.Color -> Color.Color
+toColorColor elementColor =
     let
         { red, green, blue, alpha } =
             Element.toRgb elementColor
@@ -46,10 +41,10 @@ elementColorToColor elementColor =
     Color.fromRgba { red = red, green = green, blue = blue, alpha = alpha }
 
 
-{-| Convert a string containing an hexadecimal number to a Color.
+{-| Convert a string containing an hexadecimal number into a `Color.Color`.
 -}
-fromHex : String -> Color.Color
-fromHex hex =
+fromHexToColorColor : String -> Color.Color
+fromHexToColorColor hex =
     let
         resultColor : Result String Color.Color
         resultColor =
@@ -62,13 +57,25 @@ fromHex hex =
     color
 
 
-{-| -}
-toHex : Color.Color -> String
-toHex =
-    Color.Convert.colorToCssRgba
+{-| Convert a string containing an hexadecimal number into an `Element.Color`.
+-}
+fromHex : String -> Element.Color
+fromHex hex =
+    hex
+        |> fromHexToColorColor
+        |> fromColorColor
 
 
-{-| Convert a color from Light Mode to Dark Mode.
+{-| Convert an `Element.Color` to a RGBA string, for example: rgba(100, 200, 0, 1)
+-}
+toCssRgba : Element.Color -> String
+toCssRgba elementColor =
+    elementColor
+        |> toColorColor
+        |> Color.Convert.colorToCssRgba
+
+
+{-| Convert a color from Light Mode to Dark Mode. This function works for `Color.Color` type.
 -}
 fromLightToDark : Color.Color -> Color.Color
 fromLightToDark color =
@@ -78,3 +85,15 @@ fromLightToDark color =
             , lightnessScale = -0.04
             , alphaScale = 0
             }
+
+
+{-| Change the alpha channel in a color. This function works for `Color.Color` type.
+-}
+setAlpha : Float -> Color.Color -> Color.Color
+setAlpha newAlpha color =
+    let
+        c : { alpha : Float, blue : Float, green : Float, red : Float }
+        c =
+            Color.toRgba color
+    in
+    Color.fromRgba { red = c.red, green = c.green, blue = c.blue, alpha = newAlpha }

@@ -164,7 +164,7 @@ encodeTableRecord tableRecord =
 
 encodeColor : Element.Color -> Json.Encode.Value
 encodeColor color =
-    Json.Encode.string <| R10.Color.Utils.toHex <| R10.Color.Utils.elementColorToColor color
+    Json.Encode.string <| R10.Color.Utils.toCssRgba color
 
 
 

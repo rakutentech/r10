@@ -6,7 +6,6 @@ module R10.DropDown exposing (Option, extraCss, view, viewBorderLess)
 
 -}
 
-import Color
 import Element exposing (..)
 import Html
 import Html.Attributes
@@ -31,7 +30,7 @@ getBorderAttr width colorHex =
     String.join " " [ String.fromInt width ++ "px", "solid", colorHex ]
 
 
-triangle : Color.Color -> Element msg
+triangle : Color -> Element msg
 triangle colorFont =
     el
         (List.map htmlAttribute <|
@@ -39,7 +38,7 @@ triangle colorFont =
             , Html.Attributes.style "height" "0"
             , Html.Attributes.style "border-left" <| getBorderAttr 4 "transparent"
             , Html.Attributes.style "border-right" <| getBorderAttr 4 "transparent"
-            , Html.Attributes.style "border-top" <| getBorderAttr 6 (R10.Color.Utils.toHex colorFont)
+            , Html.Attributes.style "border-top" <| getBorderAttr 6 (R10.Color.Utils.toCssRgba colorFont)
             , Html.Attributes.style "position" "absolute"
             , Html.Attributes.style "right" "12px"
             ]
@@ -52,13 +51,13 @@ renderHtmlOption { value, text } =
     Html.option [ Html.Attributes.value value ] [ Html.text text ]
 
 
-commonStyle : Color.Color -> Color.Color -> List (Html.Attribute msg)
+commonStyle : Color -> Color -> List (Html.Attribute msg)
 commonStyle colorFont colorBackground =
     [ Html.Attributes.style "font-size" "12px"
     , Html.Attributes.style "padding" "8px 12px"
     , Html.Attributes.style "padding-right" "2.5em"
-    , Html.Attributes.style "color" (R10.Color.Utils.toHex colorFont)
-    , Html.Attributes.style "background-color" (R10.Color.Utils.toHex colorBackground)
+    , Html.Attributes.style "color" (R10.Color.Utils.toCssRgba colorFont)
+    , Html.Attributes.style "background-color" (R10.Color.Utils.toCssRgba colorBackground)
     , Html.Attributes.style "-webkit-appearance" "none"
     , Html.Attributes.style "-moz-appearance" "none"
     , Html.Attributes.style "border-radius" "5px"
@@ -69,7 +68,7 @@ commonStyle colorFont colorBackground =
     ]
 
 
-getDropDownStyle : Color.Color -> Color.Color -> Type -> List (Html.Attribute msg)
+getDropDownStyle : Color -> Color -> Type -> List (Html.Attribute msg)
 getDropDownStyle colorFont colorBackground dropDownType =
     case dropDownType of
         BorderLess ->
@@ -86,8 +85,8 @@ view :
     List (Attribute msg)
     ->
         { a
-            | colorBackground : Color.Color
-            , colorFont : Color.Color
+            | colorBackground : Color
+            , colorFont : Color
             , currentValue : String
             , inputHandler : String -> msg
             , optionList : List Option
@@ -120,8 +119,8 @@ viewBorderLess :
     List (Attribute msg)
     ->
         { a
-            | colorBackground : Color.Color
-            , colorFont : Color.Color
+            | colorBackground : Color
+            , colorFont : Color
             , currentValue : String
             , inputHandler : String -> msg
             , optionList : List Option
@@ -133,10 +132,10 @@ viewBorderLess attrs args =
 
 {-| This is some extra CSS that you need to add to the page if you use this module. The String argument is the `colorHover`
 -}
-extraCss : Color.Color -> String
+extraCss : Color -> String
 extraCss colorHover =
     """
 .drop-down:hover, .drop-down:focus {
-    background-color: """ ++ R10.Color.Utils.toHex colorHover ++ """ !important;
+    background-color: """ ++ R10.Color.Utils.toCssRgba colorHover ++ """ !important;
 }
 """

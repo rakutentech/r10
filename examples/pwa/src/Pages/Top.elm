@@ -45,10 +45,10 @@ view theme language windowSize heroBackgroundColor content _ =
             [ row
                 [ spacing <| responsive windowSize.x 20 40, centerX, centerY, moveDown 40 ]
                 [ R10.Svg.LogosExtra.elm_monochrome []
-                    (Color.rgb 1 1 1)
+                    (rgb 1 1 1)
                     (responsive windowSize.x (155 // 2) 155)
-                , R10.Svg.Icons.x [ moveRight (responsive windowSize.x 10 15) ] (Color.rgb 1 1 1) (responsive windowSize.x (100 // 2) 100)
-                , R10.Svg.Logos.r [ moveDown (responsive windowSize.x 9 19) ] (Color.rgb 1 1 1) (responsive windowSize.x (200 // 2) 200)
+                , R10.Svg.Icons.x [ moveRight (responsive windowSize.x 10 15) ] (rgb 1 1 1) (responsive windowSize.x (100 // 2) 100)
+                , R10.Svg.Logos.r [ moveDown (responsive windowSize.x 9 19) ] (rgb 1 1 1) (responsive windowSize.x (200 // 2) 200)
                 ]
             , viewMessage language
             ]
@@ -89,7 +89,7 @@ viewMessage language =
             , spacing 10
             ]
             [ html <| Markdown.toHtml [ Html.Attributes.class "markdown whiteLinks" ] (R10.I18n.t language intro) ]
-        , R10.Svg.IconsExtra.keyboardArrowDown [ centerX, moveDown 30, alpha 0.2 ] (Color.rgb 1 1 1) 100
+        , R10.Svg.IconsExtra.keyboardArrowDown [ centerX, moveDown 30, alpha 0.2 ] (rgb 1 1 1) 100
         ]
 
 

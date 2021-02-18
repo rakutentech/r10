@@ -106,7 +106,7 @@ paletteView theme list =
                 let
                     elementColor : Element.Color
                     elementColor =
-                        R10.Color.Utils.colorToElementColor color
+                        R10.Color.Utils.fromColorColor color
 
                     color : Color.Color
                     color =
@@ -145,7 +145,7 @@ paletteView theme list =
 
 fontColorMaxContrast : Color.Color -> Color
 fontColorMaxContrast color =
-    R10.Color.Utils.colorToElementColor <| Maybe.withDefault (Color.rgb 0 0 0) <| R10.Color.maximumContrast color [ Color.rgb 1 1 1, Color.rgb 0 0 0 ]
+    R10.Color.Utils.fromColorColor <| Maybe.withDefault (Color.rgb 0 0 0) <| R10.Color.maximumContrast color [ Color.rgb 1 1 1, Color.rgb 0 0 0 ]
 
 
 myTooltip : String -> Element msg
@@ -638,7 +638,7 @@ UI.Theme.Theme`contains two values:
     ]
 
 
-viewIcons : R10.Theme.Theme -> (Int -> Color.Color -> List ( Element msg, String )) -> Int -> Element msg
+viewIcons : R10.Theme.Theme -> (Int -> Color -> List ( Element msg, String )) -> Int -> Element msg
 viewIcons theme list size =
     Element.wrappedRow
         [ spacing 10 ]
@@ -650,4 +650,4 @@ viewIcons theme list size =
                     , el [ width <| px 300, alpha 0.3 ] <| text name
                     ]
             )
-            (list size (R10.Color.Svg.fontNormal theme))
+            (list size (R10.Color.Svg.fontHighEmphasis theme))

@@ -6,6 +6,7 @@ port module Main exposing
 import Browser
 import Browser.Events
 import Color
+import Color.Convert
 import Dict
 import Element exposing (..)
 import Element.Background as Background
@@ -53,7 +54,7 @@ import Starter.Flags
 
 heroColor : R10.Theme.Theme -> Color
 heroColor theme =
-    R10.Color.Utils.colorToElementColor <| R10.Color.Svg.primary theme
+    R10.Color.Svg.primary theme
 
 
 heroBackgroundColor : R10.Theme.Theme -> Attr decorative msg
@@ -554,12 +555,12 @@ viewHeader model =
 
 logoOnDark : Element msg
 logoOnDark =
-    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 1 1 1) 24
+    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (rgb 1 1 1) 24
 
 
 logoOnLight : Element msg
 logoOnLight =
-    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (Color.rgb 0 0 0) 24
+    R10.Svg.LogosExtra.r10 [ moveUp 4 ] (rgb 0 0 0) 24
 
 
 colorsMenu : R10.Theme.Theme -> Element Msg
@@ -571,7 +572,7 @@ colorsMenu theme =
                     [ width shrink
                     , padding 0
                     , htmlAttribute <| Html.Attributes.style "transition" "0.4s"
-                    , Font.color <| R10.Color.Utils.colorToElementColor <| R10.Color.Svg.primary { theme | primaryColor = type_ }
+                    , Font.color <| R10.Color.Svg.primary { theme | primaryColor = type_ }
                     , centerY
                     , moveUp <|
                         if theme.primaryColor == type_ then
@@ -623,7 +624,7 @@ headerFooterArgs model =
                         0
                     )
                 ]
-                { label = R10.Svg.IconsExtra.darkLight [] (Color.rgb 1 1 1) 28
+                { label = R10.Svg.IconsExtra.darkLight [] (rgb 1 1 1) 28
                 , type_ = R10.Libu.Bu <| Just ToggleMode
                 }
             , R10.Libu.view
@@ -633,7 +634,7 @@ headerFooterArgs model =
                 , htmlAttribute <| Html.Attributes.style "transition" "1s"
                 , htmlAttribute <| Html.Attributes.attribute "aria-label" "R10 in github.com"
                 ]
-                { label = R10.Svg.LogosExtra.github [] (Color.rgb 1 1 1) 24
+                { label = R10.Svg.LogosExtra.github [] (rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://github.com/rakutentech/r10/"
                 }
             , R10.Libu.view
@@ -643,7 +644,7 @@ headerFooterArgs model =
                 , htmlAttribute <| Html.Attributes.style "transition" "1s"
                 , htmlAttribute <| Html.Attributes.attribute "aria-label" "R10 in package.elm-lang.org"
                 ]
-                { label = R10.Svg.LogosExtra.elm_monochrome [] (Color.rgb 1 1 1) 24
+                { label = R10.Svg.LogosExtra.elm_monochrome [] (rgb 1 1 1) 24
                 , type_ = R10.Libu.LiNewTab "https://package.elm-lang.org/packages/rakutentech/r10/latest/"
                 }
             ]
@@ -810,7 +811,7 @@ cssMarkdown theme =
 }
 
 .markdown pre  {
-    background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.surface2dp theme) ++ """; 
+    background-color: """ ++ R10.Color.Utils.toCssRgba (R10.Color.Svg.surface2dp theme) ++ """; 
     margin: 0;
     line-height: 20px;
     overflow: scroll;
@@ -827,7 +828,7 @@ cssMarkdown theme =
 }
 
 .markdown p code {
-    background-color: """ ++ R10.Color.Utils.toHex (R10.Color.Svg.surface2dp theme) ++ """; 
+    background-color: """ ++ R10.Color.Utils.toCssRgba (R10.Color.Svg.surface2dp theme) ++ """; 
     border: 1px solid """ ++ codeBorder ++ """;
     display: inline-block;
     padding: 0 8px;

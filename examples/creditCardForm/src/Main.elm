@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Color.Convert
 import Color.Manipulate
 import Element exposing (..)
 import Element.Border as Border
@@ -141,21 +142,23 @@ viewCreditCard theme formState =
             Html.Attributes.style "background"
                 ("radial-gradient(at 70% 30%, "
                     ++ (R10.Color.Svg.primary theme
+                            |> R10.Color.Utils.toColorColor
                             |> Color.Manipulate.scaleHsl
                                 { saturationScale = -0.2
                                 , lightnessScale = 0.4
                                 , alphaScale = 0
                                 }
-                            |> R10.Color.Utils.toHex
+                            |> Color.Convert.colorToCssRgba
                        )
                     ++ ", "
                     ++ (R10.Color.Svg.primary theme
+                            |> R10.Color.Utils.toColorColor
                             |> Color.Manipulate.scaleHsl
                                 { saturationScale = -0.3
                                 , lightnessScale = 0
                                 , alphaScale = 0
                                 }
-                            |> R10.Color.Utils.toHex
+                            |> Color.Convert.colorToCssRgba
                        )
                     ++ ")"
                 )

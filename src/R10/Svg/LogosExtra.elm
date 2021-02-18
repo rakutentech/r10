@@ -6,7 +6,6 @@ module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monochrome
 
 -}
 
-import Color
 import Element exposing (..)
 import Html.Attributes
 import R10.Color.Utils
@@ -16,67 +15,67 @@ import Svg.Attributes as SA
 
 
 {-| -}
-r10_2 : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r10_2 : List (Attribute msg) -> Color -> Int -> Element.Element msg
 r10_2 attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 637 234"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M351.6 114.5L464 2l113.2 112.4H351.6z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M270.3 161.7V231l70.4 1.1v-70.4h-70.4z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M340 86.4l.5 69.8-69.8-.5 69.2-69.3z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M271 146.4l69.8-69.8v-66L271 80.4v66z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M264.7 2.6V108l-106-.6 106-105z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M270.7 71.5V2.2l69.8-.5-69.8 69.8z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M351.6 232L464 119.6 577.2 232H351.6z", SA.transform "rotate(180 464.4 175.8)" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M351.6 114.5L464 2l113.2 112.4H351.6z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M270.3 161.7V231l70.4 1.1v-70.4h-70.4z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M340 86.4l.5 69.8-69.8-.5 69.2-69.3z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M271 146.4l69.8-69.8v-66L271 80.4v66z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M264.7 2.6V108l-106-.6 106-105z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M270.7 71.5V2.2l69.8-.5-69.8 69.8z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M351.6 232L464 119.6 577.2 232H351.6z", SA.transform "rotate(180 464.4 175.8)" ] []
         ]
 
 
 {-| -}
-r10_monochrome_1 : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r10_monochrome_1 : List (Attribute msg) -> Color -> Int -> Element.Element msg
 r10_monochrome_1 attrs cl size =
     r10_ attrs cl cl cl cl size
 
 
 {-| -}
-r10 : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r10 : List (Attribute msg) -> Color -> Int -> Element.Element msg
 r10 attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 2370 672"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M1207 129l-150 72-1 62c0 60 0 62 2 62a3071 3071 0 00113-55l3-1v209h-118v100h303V317l-1-261-151 72zM205 211v129h-3l-50 9-51 9h-2v110l53-9 53-9v128h185V419l62-11 61-9 101 89 101 90h256l-4-3-121-108c-93-82-118-105-116-105l208-36h4V82H205v129zm552 3l-1 32a80339 80339 0 00-365 61l-1-62v-63h367v32zM1501 330v248h730V82h-730v248zm466-147l-277 214-4 3V182h141c122 0 141 0 140 1zm79 186v109h-142c-124 0-141 0-140-2a37829 37829 0 00281-216l1 109z" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M1207 129l-150 72-1 62c0 60 0 62 2 62a3071 3071 0 00113-55l3-1v209h-118v100h303V317l-1-261-151 72zM205 211v129h-3l-50 9-51 9h-2v110l53-9 53-9v128h185V419l62-11 61-9 101 89 101 90h256l-4-3-121-108c-93-82-118-105-116-105l208-36h4V82H205v129zm552 3l-1 32a80339 80339 0 00-365 61l-1-62v-63h367v32zM1501 330v248h730V82h-730v248zm466-147l-277 214-4 3V182h141c122 0 141 0 140 1zm79 186v109h-142c-124 0-141 0-140-2a37829 37829 0 00281-216l1 109z" ] []
         ]
 
 
 {-| -}
-r10_ : List (Attribute msg) -> Color.Color -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+r10_ : List (Attribute msg) -> Color -> Color -> Color -> Color -> Int -> Element.Element msg
 r10_ attrs cl1 cl2 cl3 cl4 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 658 234"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M429.9 114.5L542.3 2l113.2 112.4H429.9v.1zM338 3.2v69.3l70.5 1.1V3.2H338z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M406.5 230.2l-69.8.5.5-69.8 69.3 69.2v.1z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M263.3 139.4L333 69.6v-66l-69.8 69.8v66z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl4, SA.d "M407.7 224.4L337.4 154l71.1-70.3-.6 140.7-.2-.1z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M338 147.2V78l69.8-.5-69.8 69.8z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M655.5 119.6L543 232 429.9 119.6h225.6z" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl1, SA.d "M429.9 114.5L542.3 2l113.2 112.4H429.9v.1zM338 3.2v69.3l70.5 1.1V3.2H338z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl2, SA.d "M406.5 230.2l-69.8.5.5-69.8 69.3 69.2v.1z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M263.3 139.4L333 69.6v-66l-69.8 69.8v66z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl4, SA.d "M407.7 224.4L337.4 154l71.1-70.3-.6 140.7-.2-.1z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl1, SA.d "M338 147.2V78l69.8-.5-69.8 69.8z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl2, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M655.5 119.6L543 232 429.9 119.6h225.6z" ] []
         ]
 
 
 {-| -}
-r10_3 : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+r10_3 : List (Attribute msg) -> Color -> Int -> Element.Element msg
 r10_3 attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 637 234"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M407.9 114.5L520.3 2l113.2 112.4H407.9v.1zM318.6 161.7V231l70.4 1.1v-70.4h-70.4z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M388.3 86.4l.5 69.8-69.8-.5 69.2-69.3z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M319.3 146.4L389 76.6v-66l-69.8 69.8v66z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M313 2.6V108l-106-.6 106-105v.2z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M319 71.5V2.2l69.8-.5L319 71.5z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M633.5 119.6L521 232 407.9 119.6h225.6z" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M407.9 114.5L520.3 2l113.2 112.4H407.9v.1zM318.6 161.7V231l70.4 1.1v-70.4h-70.4z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M388.3 86.4l.5 69.8-69.8-.5 69.2-69.3z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M319.3 146.4L389 76.6v-66l-69.8 69.8v66z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M313 2.6V108l-106-.6 106-105v.2z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M319 71.5V2.2l69.8-.5L319 71.5z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M46.6 230.5V160h30.7l52.3 70.5h55.6l-64-85.4A78.8 78.8 0 0074.9 2.4H2.6v228.1h44zm0-185h28.2a35.7 35.7 0 110 71.4H46.6V45.5z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M633.5 119.6L521 232 407.9 119.6h225.6z" ] []
         ]
 
 
@@ -87,7 +86,7 @@ elm attrs size =
 
 
 {-| -}
-elm_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+elm_monochrome : List (Attribute msg) -> Color -> Int -> Element.Element msg
 elm_monochrome attrs cl size =
     let
         data =
@@ -105,13 +104,13 @@ elm_monochrome attrs cl size =
         size
         [ Svg.g
             [ SA.transform "scale(1 -1)" ]
-            [ poly (R10.Color.Utils.toHex cl) "-280,-90 0,190 280,-90" data.p1
-            , poly (R10.Color.Utils.toHex cl) "-280,-90 0,190 280,-90" data.p2
-            , poly (R10.Color.Utils.toHex cl) "-198,-66 0,132 198,-66" data.p3
-            , poly (R10.Color.Utils.toHex cl) "-130,0 0,-130 130,0 0,130" data.p4
-            , poly (R10.Color.Utils.toHex cl) "-191,61 69,61 191,-61 -69,-61" data.p5
-            , poly (R10.Color.Utils.toHex cl) "-130,-44 0,86  130,-44" data.p6
-            , poly (R10.Color.Utils.toHex cl) "-130,-44 0,86  130,-44" data.p7
+            [ poly (R10.Color.Utils.toCssRgba cl) "-280,-90 0,190 280,-90" data.p1
+            , poly (R10.Color.Utils.toCssRgba cl) "-280,-90 0,190 280,-90" data.p2
+            , poly (R10.Color.Utils.toCssRgba cl) "-198,-66 0,132 198,-66" data.p3
+            , poly (R10.Color.Utils.toCssRgba cl) "-130,0 0,-130 130,0 0,130" data.p4
+            , poly (R10.Color.Utils.toCssRgba cl) "-191,61 69,61 191,-61 -69,-61" data.p5
+            , poly (R10.Color.Utils.toCssRgba cl) "-130,-44 0,86  130,-44" data.p6
+            , poly (R10.Color.Utils.toCssRgba cl) "-130,-44 0,86  130,-44" data.p7
             ]
         ]
 
@@ -137,15 +136,15 @@ poly color points ( translateX, translateY, rotation ) =
 
 
 {-| -}
-microsoft_ : List (Attribute msg) -> Color.Color -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+microsoft_ : List (Attribute msg) -> Color -> Color -> Color -> Color -> Int -> Element.Element msg
 microsoft_ attrs cl1 cl2 cl3 cl4 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 21 21"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M1 1h9v9H1z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M1 11h9v9H1z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M11 1h9v9h-9z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl4, SA.d "M11 11h9v9h-9z" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl1, SA.d "M1 1h9v9H1z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl2, SA.d "M1 11h9v9H1z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M11 1h9v9h-9z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl4, SA.d "M11 11h9v9h-9z" ] []
         ]
 
 
@@ -161,7 +160,7 @@ microsoft attrs size =
 
 
 {-| -}
-microsoft_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+microsoft_monochrome : List (Attribute msg) -> Color -> Int -> Element.Element msg
 microsoft_monochrome attrs cl size =
     microsoft_ attrs
         cl
@@ -172,15 +171,15 @@ microsoft_monochrome attrs cl size =
 
 
 {-| -}
-google_ : List (Attribute msg) -> Color.Color -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+google_ : List (Attribute msg) -> Color -> Color -> Color -> Color -> Int -> Element.Element msg
 google_ attrs cl1 cl2 cl3 cl4 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "4 4 17 17"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M20.66 12.693c0-.603-.054-1.182-.155-1.738H12.5v3.287h4.575a3.91 3.91 0 0 1-1.697 2.566v2.133h2.747c1.608-1.48 2.535-3.65 2.535-6.24z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M12.5 21c2.295 0 4.22-.76 5.625-2.06l-2.747-2.132c-.76.51-1.734.81-2.878.81-2.214 0-4.088-1.494-4.756-3.503h-2.84v2.202A8.498 8.498 0 0 0 12.5 21z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M7.744 14.115c-.17-.51-.267-1.055-.267-1.615s.097-1.105.267-1.615V8.683h-2.84A8.488 8.488 0 0 0 4 12.5c0 1.372.328 2.67.904 3.817l2.84-2.202z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl4, SA.d "M12.5 7.38c1.248 0 2.368.43 3.25 1.272l2.437-2.438C16.715 4.842 14.79 4 12.5 4a8.497 8.497 0 0 0-7.596 4.683l2.84 2.202c.668-2.01 2.542-3.504 4.756-3.504z" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl1, SA.d "M20.66 12.693c0-.603-.054-1.182-.155-1.738H12.5v3.287h4.575a3.91 3.91 0 0 1-1.697 2.566v2.133h2.747c1.608-1.48 2.535-3.65 2.535-6.24z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl2, SA.d "M12.5 21c2.295 0 4.22-.76 5.625-2.06l-2.747-2.132c-.76.51-1.734.81-2.878.81-2.214 0-4.088-1.494-4.756-3.503h-2.84v2.202A8.498 8.498 0 0 0 12.5 21z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M7.744 14.115c-.17-.51-.267-1.055-.267-1.615s.097-1.105.267-1.615V8.683h-2.84A8.488 8.488 0 0 0 4 12.5c0 1.372.328 2.67.904 3.817l2.84-2.202z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl4, SA.d "M12.5 7.38c1.248 0 2.368.43 3.25 1.272l2.437-2.438C16.715 4.842 14.79 4 12.5 4a8.497 8.497 0 0 0-7.596 4.683l2.84 2.202c.668-2.01 2.542-3.504 4.756-3.504z" ] []
         ]
 
 
@@ -196,7 +195,7 @@ google attrs size =
 
 
 {-| -}
-google_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+google_monochrome : List (Attribute msg) -> Color -> Int -> Element.Element msg
 google_monochrome attrs cl size =
     google_ attrs
         cl
@@ -213,12 +212,12 @@ facebook attrs size =
 
 
 {-| -}
-facebook_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+facebook_monochrome : List (Attribute msg) -> Color -> Int -> Element.Element msg
 facebook_monochrome attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "4 4 17 17"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.fillRule "evenodd", SA.d "M20.292 4H4.709A.709.709 0 0 0 4 4.708v15.584c0 .391.317.708.709.708h8.323v-6.375h-2.125v-2.656h2.125V9.844c0-2.196 1.39-3.276 3.348-3.276.938 0 1.745.07 1.98.1v2.295h-1.358c-1.066 0-1.314.507-1.314 1.25v1.756h2.656l-.531 2.656h-2.125L15.73 21h4.562a.708.708 0 0 0 .708-.708V4.708A.708.708 0 0 0 20.292 4" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.fillRule "evenodd", SA.d "M20.292 4H4.709A.709.709 0 0 0 4 4.708v15.584c0 .391.317.708.709.708h8.323v-6.375h-2.125v-2.656h2.125V9.844c0-2.196 1.39-3.276 3.348-3.276.938 0 1.745.07 1.98.1v2.295h-1.358c-1.066 0-1.314.507-1.314 1.25v1.756h2.656l-.531 2.656h-2.125L15.73 21h4.562a.708.708 0 0 0 .708-.708V4.708A.708.708 0 0 0 20.292 4" ] []
         ]
 
 
@@ -229,12 +228,12 @@ apple attrs size =
 
 
 {-| -}
-apple_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+apple_monochrome : List (Attribute msg) -> Color -> Int -> Element.Element msg
 apple_monochrome attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "-80 0 1187.2 1187.2"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M979 925c-18 42-39 80-64 115-33 48-61 81-82 99-33 31-68 46-106 47-27 0-59-8-97-23-38-16-73-24-105-24-34 0-70 8-108 24-39 15-70 23-94 24-36 2-72-14-108-48A712 712 0 010 640c0-79 17-148 52-205a303 303 0 01254-151c29 0 66 9 113 27 47 17 77 26 90 26 9 0 43-10 99-31 53-19 98-27 135-24 100 8 175 47 225 118a250 250 0 00-133 227c1 76 29 139 83 189 24 23 52 41 82 54l-21 55zM750 24c0 59-22 115-65 166-52 61-115 96-184 91l-1-23c0-57 25-118 69-168 22-25 50-46 84-63 34-16 66-25 96-27l1 24z" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M979 925c-18 42-39 80-64 115-33 48-61 81-82 99-33 31-68 46-106 47-27 0-59-8-97-23-38-16-73-24-105-24-34 0-70 8-108 24-39 15-70 23-94 24-36 2-72-14-108-48A712 712 0 010 640c0-79 17-148 52-205a303 303 0 01254-151c29 0 66 9 113 27 47 17 77 26 90 26 9 0 43-10 99-31 53-19 98-27 135-24 100 8 175 47 225 118a250 250 0 00-133 227c1 76 29 139 83 189 24 23 52 41 82 54l-21 55zM750 24c0 59-22 115-65 166-52 61-115 96-184 91l-1-23c0-57 25-118 69-168 22-25 50-46 84-63 34-16 66-25 96-27l1 24z" ] []
         ]
 
 
@@ -250,7 +249,7 @@ pcHome24hours attrs size =
 
 
 {-| -}
-pcHome24hours_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+pcHome24hours_monochrome : List (Attribute msg) -> Color -> Int -> Element.Element msg
 pcHome24hours_monochrome attrs cl size =
     pcHome24hours_ attrs
         True
@@ -261,7 +260,7 @@ pcHome24hours_monochrome attrs cl size =
 
 
 {-| -}
-pcHome24hours_ : List (Attribute msg) -> Bool -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+pcHome24hours_ : List (Attribute msg) -> Bool -> Color -> Color -> Color -> Int -> Element.Element msg
 pcHome24hours_ attrs isMonochrome cl1 cl2 cl3 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 430.9 430.9"
@@ -272,28 +271,28 @@ pcHome24hours_ attrs isMonochrome cl1 cl2 cl3 size =
 
                 else
                     [ Svg.linearGradient [ SA.id "SVGID_1_", SA.x1 "59.3", SA.x2 "390.8", SA.y1 "46", SA.y "407.2", SA.gradientUnits "userSpaceOnUse" ]
-                        [ Svg.stop [ SA.offset ".3", SA.stopColor <| R10.Color.Utils.toHex cl1 ] []
-                        , Svg.stop [ SA.offset ".9", SA.stopColor <| R10.Color.Utils.toHex cl2 ] []
+                        [ Svg.stop [ SA.offset ".3", SA.stopColor <| R10.Color.Utils.toCssRgba cl1 ] []
+                        , Svg.stop [ SA.offset ".9", SA.stopColor <| R10.Color.Utils.toCssRgba cl2 ] []
                         ]
                     , Svg.path [ SA.fill "url(#SVGID_1_)", SA.d "M430.2 364.7a66.1 66.1 0 0 1-66.1 66.1H66.4A66.1 66.1 0 0 1 .3 364.7V67.1A66.1 66.1 0 0 1 66.4 1H364a66.1 66.1 0 0 1 66.1 66.1v297.6z" ] []
                     ]
                )
-            ++ [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M81.1 319.7L40.8 394l118.4 1.8 50-94.4zM349.4 319.7l40.3 74.3-118.5 1.8-49.9-94.4z" ] []
-               , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M265.2 402l-50-97.5-49.9 97.5H83.1v24.7H347.4V402z" ] []
-               , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M405.6 222H276l1.9-7.2h129.6zM401.6 236.5H272l2-7.3h129.6zM397.8 250.9H268.2l1.9-7.2h129.6zM126.2 151.5c.7-2.5.5-4.3-.4-5.4-.9-1.1-2.6-1.7-5.2-1.7-2.7 0-4.8.5-6.2 1.5-1.4 1-2.4 2.9-3.2 5.5l-4.5 18.5H62.9l1.9-8.9a44.9 44.9 0 0 1 19.7-28.6c9.5-5.6 23.6-8.4 42.2-8.4 17.4 0 29.7 2.7 36.9 8.2 7.1 5.5 9.2 13.8 6.3 24.9-3.5 13-18.7 29.9-45.6 50.9l-11.9 9.4c-9.7 7.7-19 15.9-22.6 20.7-3 4.1-4.3 7.1-4.3 7.1h61.1l-6.8 25.3H35.1l6.3-23.6a46.6 46.6 0 0 1 9.5-17.5c4.8-5.8 13.4-13.6 25.9-23.5l12.1-9.3c21.2-16.4 32.6-27.8 34.3-34.1l3-11z" ] []
-               , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M197.3 270.7l9.2-34.3h-63.6l5.8-21.6 63.4-87.6h60.3l-21.6 80.3-36.2.1 19.9-57.4h-4.3l-42.4 64.6h82.4l-5.8 21.6h-21.3l-9.2 34.3zM279.8 207.5l21.5-80.3h39.1l-10.3 38.5h.6c4-4 8.5-7 13.6-8.9 5-1.9 10.7-2.9 17.1-2.9 8.5 0 14.5 1.6 17.9 4.9 3.4 3.3 4.2 8.2 2.5 14.7l-9.1 34h-39.4l6.9-25.6c.7-2.6.7-4.4-.2-5.4-.8-.9-2.5-1.4-5.2-1.4-2.4 0-4.4.5-5.8 1.6a8.7 8.7 0 0 0-3.1 5.1l-6.9 25.6h-39.2z" ] []
+            ++ [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M81.1 319.7L40.8 394l118.4 1.8 50-94.4zM349.4 319.7l40.3 74.3-118.5 1.8-49.9-94.4z" ] []
+               , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M265.2 402l-50-97.5-49.9 97.5H83.1v24.7H347.4V402z" ] []
+               , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M405.6 222H276l1.9-7.2h129.6zM401.6 236.5H272l2-7.3h129.6zM397.8 250.9H268.2l1.9-7.2h129.6zM126.2 151.5c.7-2.5.5-4.3-.4-5.4-.9-1.1-2.6-1.7-5.2-1.7-2.7 0-4.8.5-6.2 1.5-1.4 1-2.4 2.9-3.2 5.5l-4.5 18.5H62.9l1.9-8.9a44.9 44.9 0 0 1 19.7-28.6c9.5-5.6 23.6-8.4 42.2-8.4 17.4 0 29.7 2.7 36.9 8.2 7.1 5.5 9.2 13.8 6.3 24.9-3.5 13-18.7 29.9-45.6 50.9l-11.9 9.4c-9.7 7.7-19 15.9-22.6 20.7-3 4.1-4.3 7.1-4.3 7.1h61.1l-6.8 25.3H35.1l6.3-23.6a46.6 46.6 0 0 1 9.5-17.5c4.8-5.8 13.4-13.6 25.9-23.5l12.1-9.3c21.2-16.4 32.6-27.8 34.3-34.1l3-11z" ] []
+               , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M197.3 270.7l9.2-34.3h-63.6l5.8-21.6 63.4-87.6h60.3l-21.6 80.3-36.2.1 19.9-57.4h-4.3l-42.4 64.6h82.4l-5.8 21.6h-21.3l-9.2 34.3zM279.8 207.5l21.5-80.3h39.1l-10.3 38.5h.6c4-4 8.5-7 13.6-8.9 5-1.9 10.7-2.9 17.1-2.9 8.5 0 14.5 1.6 17.9 4.9 3.4 3.3 4.2 8.2 2.5 14.7l-9.1 34h-39.4l6.9-25.6c.7-2.6.7-4.4-.2-5.4-.8-.9-2.5-1.4-5.2-1.4-2.4 0-4.4.5-5.8 1.6a8.7 8.7 0 0 0-3.1 5.1l-6.9 25.6h-39.2z" ] []
                ]
         )
 
 
 {-| -}
-github : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+github : List (Attribute msg) -> Color -> Int -> Element.Element msg
 github attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "4.5 4.5 44 44"
         size
         [ Svg.path [ SA.fill "none", SA.d "M-.2.1h53.8v53.4H-.2z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M15.9 7.7a21.3 21.3 0 0121.6 0 21.3 21.3 0 016.6 31.2 20.5 20.5 0 01-10.6 7.7c-.5.1-.9 0-1.1-.2-.2-.2-.4-.5-.4-.8v-2.1-3.8c0-1.8-.5-3.1-1.5-4l2.9-.5c.8-.2 1.7-.6 2.6-1.1.9-.5 1.7-1.1 2.3-1.9.6-.7 1.1-1.7 1.5-2.9s.6-2.6.6-4.2a8 8 0 00-2.2-5.7c.7-1.7.6-3.6-.2-5.7-.5-.2-1.3-.1-2.3.3l-2.6 1.2-1.1.7a20 20 0 00-10.8 0l-1.2-.8a17 17 0 00-2.3-1.1c-1.1-.4-1.9-.5-2.4-.4-.8 2.1-.9 4-.2 5.7a8.8 8.8 0 00-2.1 5.8c0 1.6.2 3 .6 4.2a8.2 8.2 0 003.7 4.8c.9.5 1.8.9 2.6 1.1l2.9.5a5 5 0 00-1.4 2.9 5 5 0 01-1.3.4l-1.6.1c-.6 0-1.2-.2-1.8-.6a5 5 0 01-1.5-1.7 5 5 0 00-1.4-1.5c-.5-.4-1-.6-1.4-.7l-.6-.1-.8.1c-.1.1-.2.2-.1.3l.3.4.4.3.2.1c.4.2.8.5 1.2 1.1l.9 1.4.3.6c.2.7.7 1.3 1.2 1.7.6.4 1.2.7 1.9.8l1.9.2 1.5-.1.6-.1v4c0 .3-.1.6-.4.8-.2.2-.6.3-1.1.2A21.4 21.4 0 018 15.2c2-3 4.6-5.6 7.9-7.5zm-2.6 27.9c.1-.1 0-.2-.2-.3-.2-.1-.3 0-.4.1-.1.1 0 .2.2.3.2.1.4.1.4-.1zm.9 1c.1-.1.1-.2-.1-.4s-.3-.2-.4-.1c-.1.1-.1.2.1.4.1.2.3.2.4.1zm.8 1.2c.2-.1.2-.3 0-.5-.1-.2-.3-.3-.5-.2-.2.1-.2.3 0 .5s.4.3.5.2zm1.2 1.2c.1-.1.1-.3-.1-.5s-.4-.3-.6-.1c-.2.1-.1.3.1.5.3.2.5.2.6.1zm1.6.7c.1-.2-.1-.4-.4-.4-.3-.1-.5 0-.5.2-.1.2 0 .3.4.4.2.1.4 0 .5-.2zm1.8.1c0-.2-.2-.3-.5-.3s-.4.1-.4.3c0 .2.2.3.5.3.2 0 .4-.1.4-.3zm1.6-.3c0-.2-.2-.3-.5-.3-.3.1-.4.2-.4.4s.2.3.5.2c.3.1.4-.1.4-.3z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.d "M15.9 7.7a21.3 21.3 0 0121.6 0 21.3 21.3 0 016.6 31.2 20.5 20.5 0 01-10.6 7.7c-.5.1-.9 0-1.1-.2-.2-.2-.4-.5-.4-.8v-2.1-3.8c0-1.8-.5-3.1-1.5-4l2.9-.5c.8-.2 1.7-.6 2.6-1.1.9-.5 1.7-1.1 2.3-1.9.6-.7 1.1-1.7 1.5-2.9s.6-2.6.6-4.2a8 8 0 00-2.2-5.7c.7-1.7.6-3.6-.2-5.7-.5-.2-1.3-.1-2.3.3l-2.6 1.2-1.1.7a20 20 0 00-10.8 0l-1.2-.8a17 17 0 00-2.3-1.1c-1.1-.4-1.9-.5-2.4-.4-.8 2.1-.9 4-.2 5.7a8.8 8.8 0 00-2.1 5.8c0 1.6.2 3 .6 4.2a8.2 8.2 0 003.7 4.8c.9.5 1.8.9 2.6 1.1l2.9.5a5 5 0 00-1.4 2.9 5 5 0 01-1.3.4l-1.6.1c-.6 0-1.2-.2-1.8-.6a5 5 0 01-1.5-1.7 5 5 0 00-1.4-1.5c-.5-.4-1-.6-1.4-.7l-.6-.1-.8.1c-.1.1-.2.2-.1.3l.3.4.4.3.2.1c.4.2.8.5 1.2 1.1l.9 1.4.3.6c.2.7.7 1.3 1.2 1.7.6.4 1.2.7 1.9.8l1.9.2 1.5-.1.6-.1v4c0 .3-.1.6-.4.8-.2.2-.6.3-1.1.2A21.4 21.4 0 018 15.2c2-3 4.6-5.6 7.9-7.5zm-2.6 27.9c.1-.1 0-.2-.2-.3-.2-.1-.3 0-.4.1-.1.1 0 .2.2.3.2.1.4.1.4-.1zm.9 1c.1-.1.1-.2-.1-.4s-.3-.2-.4-.1c-.1.1-.1.2.1.4.1.2.3.2.4.1zm.8 1.2c.2-.1.2-.3 0-.5-.1-.2-.3-.3-.5-.2-.2.1-.2.3 0 .5s.4.3.5.2zm1.2 1.2c.1-.1.1-.3-.1-.5s-.4-.3-.6-.1c-.2.1-.1.3.1.5.3.2.5.2.6.1zm1.6.7c.1-.2-.1-.4-.4-.4-.3-.1-.5 0-.5.2-.1.2 0 .3.4.4.2.1.4 0 .5-.2zm1.8.1c0-.2-.2-.3-.5-.3s-.4.1-.4.3c0 .2.2.3.5.3.2 0 .4-.1.4-.3zm1.6-.3c0-.2-.2-.3-.5-.3-.3.1-.4.2-.4.4s.2.3.5.2c.3.1.4-.1.4-.3z" ] []
         ]
 
 
@@ -304,19 +303,19 @@ visa attrs size =
 
 
 {-| -}
-visa_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+visa_monochrome : List (Attribute msg) -> Color -> Int -> Element.Element msg
 visa_monochrome attrs cl size =
     visa_ attrs cl cl size
 
 
 {-| -}
-visa_ : List (Attribute msg) -> Color.Color -> Color.Color -> Int -> Element.Element msg
+visa_ : List (Attribute msg) -> Color -> Color -> Int -> Element.Element msg
 visa_ attrs cl1 cl2 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 1000 323.7"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M433 319h-81L403 6h81zM727 13c-16-6-41-13-73-13-80 0-136 43-136 104-1 45 40 70 71 85s42 25 42 39c-1 21-26 30-49 30-32 0-50-5-76-16l-11-5-11 70c19 9 54 16 90 17 85 0 141-42 141-107 1-36-21-63-68-86-28-14-45-24-45-38s14-27 46-27c27-1 46 5 61 12l7 3 11-68zm108 195l32-88 11-30 5 27 19 91h-67zM935 6h-63c-19 0-34 5-42 26L709 319h85l17-47h104l10 47h75L935 6zM285 6l-80 213-8-43C182 126 136 72 85 45l72 274h86L370 6h-85z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M132 6H1l-1 6c102 26 169 89 197 164L168 32c-4-20-19-26-36-26z" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl1, SA.d "M433 319h-81L403 6h81zM727 13c-16-6-41-13-73-13-80 0-136 43-136 104-1 45 40 70 71 85s42 25 42 39c-1 21-26 30-49 30-32 0-50-5-76-16l-11-5-11 70c19 9 54 16 90 17 85 0 141-42 141-107 1-36-21-63-68-86-28-14-45-24-45-38s14-27 46-27c27-1 46 5 61 12l7 3 11-68zm108 195l32-88 11-30 5 27 19 91h-67zM935 6h-63c-19 0-34 5-42 26L709 319h85l17-47h104l10 47h75L935 6zM285 6l-80 213-8-43C182 126 136 72 85 45l72 274h86L370 6h-85z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl2, SA.d "M132 6H1l-1 6c102 26 169 89 197 164L168 32c-4-20-19-26-36-26z" ] []
         ]
 
 
@@ -327,18 +326,18 @@ americanExpress attrs size =
 
 
 {-| -}
-americanExpress_monochrome : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+americanExpress_monochrome : List (Attribute msg) -> Color -> Int -> Element.Element msg
 americanExpress_monochrome attrs cl size =
     americanExpress_ attrs cl size
 
 
 {-| -}
-americanExpress_ : List (Attribute msg) -> Color.Color -> Int -> Element.Element msg
+americanExpress_ : List (Attribute msg) -> Color -> Int -> Element.Element msg
 americanExpress_ attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 440 154"
         size
-        [ Svg.g [ SA.fill <| R10.Color.Utils.toHex cl ]
+        [ Svg.g [ SA.fill <| R10.Color.Utils.toCssRgba cl ]
             [ Svg.path [ SA.d "M38.7 38.3H54l-7.7-19.5zM120 103.7v9h25.8v9.7H120v10.5h28.5l13.3-14.6-12.6-14.6zM321 18.8l-8.4 19.5h16zM194.4 138.4V98.8l-18 19.5zM228.5 110c-.7-4.2-3.5-6.3-7.6-6.3h-14.6v12.5h15.3c4.1 0 7-2.1 7-6.3zM277.2 114.8c1.4-.7 2-2.8 2-4.9.8-2.7-.6-4.1-2-4.8-1.4-.7-3.5-.7-5.6-.7h-13.9v11.1h14c2 0 4 0 5.5-.7z" ] []
             , Svg.path [ SA.d "M377.3.8V9L373.1.8h-32.6V9L336.3.8h-44.5c-7.7 0-14 1.4-19.5 4.1V.8H241v4.1A20 20 0 00227.8.8h-112L108.3 18 100.6.8H65V9L61.6.8H31L17.1 33.4 1.1 69l-.3.7H37l.3-.7 4.2-10.4h9l4.2 11.1H95V61.3l3.5 8.3h20.1l3.5-8.3V69.6h96.7v-18h1.4c1.4 0 1.4 0 1.4 2V69h50v-4.2c4.2 2.1 10.4 4.2 18.8 4.2h20.9l4.1-11.1h9.8l4.1 11.1h40.4V58.5l6.2 10.4h32.7V.8h-31.3zM141.6 59.2h-11.1V21l-.7 1.5-16.2 36.7h-10.2L86.6 20.9v38.3H63l-4.9-10.5H34.5l-4.9 10.5H17.4L38 10.5h17.4l19.4 46.6V10.5h18.5l.3.7 8.8 19 6.3 14.4.2-.7 14-33.4h18.7v48.7zm48-38.3h-27.2v9H189v9.8h-26.5v9.7h27.2V60h-39V10.5h39v10.4zm49.6 18l.7.8c1.3 1.8 2.4 4.4 2.5 8.2v11.3H232v-5.6c0-2.8 0-7-2.1-9.7-.7-.7-1.3-1.1-2-1.4-1-.7-3-.7-6.3-.7H209v17.4h-11.8V10.5h26.4c6.3 0 10.5 0 14 2 3.4 2.1 5.4 5.5 5.5 10.9-.2 7.4-5 11.5-8.3 12.8 0 0 2.3.5 4.4 2.7zm23.4 20.3h-11.8V10.5h11.8v48.7zm135.6 0h-15.3l-22.3-36.9v36.9H337l-4.2-10.5h-24.3L304.3 60H291c-5.6 0-12.5-1.4-16.7-5.6-4.2-4.2-6.3-9.7-6.3-18.8 0-7 1.4-13.9 6.3-19.4 3.5-4.2 9.7-5.6 17.4-5.6h11.1v10.4h-11.1c-4.2 0-6.3.7-9 2.8-2.1 2.1-3.5 6.3-3.5 11.1 0 5.6.7 9 3.4 11.9 2.1 2 5 2.7 8.4 2.7h4.9l16-38.2h17.3l19.5 46.6V11.2h17.4l20.1 34v-34h11.9v48z" ] []
             , Svg.path [ SA.d "M229.2 30.8c.3-.2.4-.5.6-.8.6-1 1.3-2.8 1-5.2l-.2-.7V24c-.3-1.2-1.2-2-2-2.4-1.5-.7-3.6-.7-5.7-.7H209v11.2h14c2 0 4.1 0 5.5-.7l.6-.5.1-.1zM439.2 128.7c0-4.9-1.4-9.7-3.5-13.2V82.2h-33.5c-4.3 0-9.6 4-9.6 4v-4h-32c-4.8 0-11.1 1.3-13.9 4v-4h-57v4c-4.2-3.4-11.8-4-15.3-4h-37.6v4c-3.4-3.4-11.8-4-16-4h-41.7l-9.7 10.3-9-10.4H97.7v70.2H159l10-10 8.7 10H216.7v-15.9h3.5c4.8 0 11 0 16-2.1V153h31.2v-18h1.4c2.1 0 2.1 0 2.1 2v16h94.6c6.2 0 12.5-1.3 16-4.1v4.1h29.9c6.2 0 12.5-.7 16.7-3.4a23.4 23.4 0 0011-18.8v-.7-1.4zm-219-4.2h-14v18.1h-22.8l-13.3-15.3-.7-.7-15.3 16h-44.5V94h45.2l12.3 13.6 2.6 2.8.4-.4 14.6-16h36.9c7.1 0 15.1 1.8 18.1 9 .4 1.5.6 3.1.6 5 0 13.9-9.7 16.6-20.1 16.6zm69.5-.7c1.4 2.1 2 5 2 9v9.8H280v-6.2c0-2.8 0-7.7-2.1-9.8-1.4-2-4.2-2-8.4-2H257v18h-11.8V93.2h26.4c5.6 0 10.4 0 14 2.1 3.4 2.1 6.2 5.6 6.2 11.2 0 7.6-4.9 11.8-8.4 13.2 3.5 1.4 5.6 2.7 6.3 4.1zm48-20.1h-27.1v9H337v9.7h-26.4v9.8h27v10.4h-38.9V93.2h39v10.5zm29.2 39h-22.3v-10.5H367c2 0 3.5 0 4.8-1.4.7-.7 1.4-2 1.4-3.5 0-1.4-.7-2.8-1.4-3.5-.7-.7-2-1.3-4.1-1.3-11.2-.7-24.4 0-24.4-15.3 0-7 4.2-14.6 16.7-14.6h23v11.8h-21.6c-2 0-3.5 0-4.9.7-1.3.7-1.3 2-1.3 3.4 0 2.1 1.3 2.8 2.7 3.5 1.4.7 2.8.7 4.2.7h6.3c6.2 0 10.4 1.4 13.2 4.2 2 2 3.5 5.6 3.5 10.4 0 10.4-6.3 15.3-18.1 15.3zm59.8-5c-2.8 2.8-7.7 5-14.6 5h-22.3v-10.5h22.3c2 0 3.5 0 4.8-1.4.7-.7 1.4-2 1.4-3.5 0-1.4-.7-2.8-1.4-3.5-.7-.7-2-1.3-4.1-1.3-11.2-.7-24.4 0-24.4-15.3 0-6.7 3.8-12.6 13.1-14.4a26 26 0 013.6-.2h23v11.8H406.5c-2 0-3.5 0-4.9.7-.7.7-1.3 2-1.3 3.4 0 2.1.6 2.8 2.7 3.5 1.4.7 2.8.7 4.2.7h6.3c3 0 5.3.4 7.4 1.1a15 15 0 019.7 11c.2.8.2 1.6.2 2.5 0 4.2-1.3 7.7-4.1 10.4z" ] []
@@ -363,15 +362,15 @@ cardVisa attrs size =
 
 
 {-| -}
-cardVisa_ : List (Attribute msg) -> Color.Color -> Color.Color -> Color.Color -> Int -> Element.Element msg
+cardVisa_ : List (Attribute msg) -> Color -> Color -> Color -> Int -> Element.Element msg
 cardVisa_ attrs cl1 cl2 cl3 size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 780 500"
         size
-        [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl1, SA.d "M40 0h700c22 0 40 18 40 40v420c0 22-18 40-40 40H40c-22 0-40-18-40-40V40C0 18 18 0 40 0z" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl2, SA.d "M293 349l34-196h53l-33 196h-54zm246-192c-10-4-27-8-48-8-52 0-89 27-90 65 0 28 27 43 47 53 21 9 28 15 28 24 0 13-17 19-32 19-22 0-33-3-50-10l-7-3-8 44c13 5 36 10 60 10 56 0 92-26 93-67 0-22-14-39-45-53-19-9-30-15-30-24 0-8 9-17 30-17 18 0 30 3 40 7l5 3 7-43m138-4h-42c-12 0-22 3-28 16l-79 180h56l11-30h69l6 30h50l-43-196zm-66 126l21-54 8-19 3 17 12 56h-44zM248 153l-52 133-6-27c-10-31-40-65-74-82l48 171h56l84-195h-56" ] []
-        , Svg.path [ SA.fill <| R10.Color.Utils.toHex cl3, SA.d "M147 153H61l-1 4c67 16 111 55 130 102l-19-90c-3-12-12-16-24-16" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl1, SA.d "M40 0h700c22 0 40 18 40 40v420c0 22-18 40-40 40H40c-22 0-40-18-40-40V40C0 18 18 0 40 0z" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl2, SA.d "M293 349l34-196h53l-33 196h-54zm246-192c-10-4-27-8-48-8-52 0-89 27-90 65 0 28 27 43 47 53 21 9 28 15 28 24 0 13-17 19-32 19-22 0-33-3-50-10l-7-3-8 44c13 5 36 10 60 10 56 0 92-26 93-67 0-22-14-39-45-53-19-9-30-15-30-24 0-8 9-17 30-17 18 0 30 3 40 7l5 3 7-43m138-4h-42c-12 0-22 3-28 16l-79 180h56l11-30h69l6 30h50l-43-196zm-66 126l21-54 8-19 3 17 12 56h-44zM248 153l-52 133-6-27c-10-31-40-65-74-82l48 171h56l84-195h-56" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl3, SA.d "M147 153H61l-1 4c67 16 111 55 130 102l-19-90c-3-12-12-16-24-16" ] []
         ]
 
 

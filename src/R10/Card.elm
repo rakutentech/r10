@@ -63,15 +63,15 @@ normal theme =
     base theme ++ [ shadow 4 ]
 
 
-{-| Card with a normal shadow
--}
-noShadow : R10.Theme.Theme -> List (Attribute msg)
-noShadow theme =
-    base theme
-
-
 {-| Card with a low shadow
 -}
 low : R10.Theme.Theme -> List (Attribute msg)
 low theme =
     base theme ++ [ shadow 2 ]
+
+
+{-| Card without a shadow
+-}
+noShadow : R10.Theme.Theme -> List (Attribute msg)
+noShadow theme =
+    base theme

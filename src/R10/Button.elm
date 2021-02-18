@@ -268,13 +268,13 @@ cssButtonStyle theme =
         primaryColorHex =
             theme
                 |> R10.Color.Svg.primary
-                |> R10.Color.Utils.toHex
+                |> R10.Color.Utils.toCssRgba
 
         fontOnprimaryColorHex : String
         fontOnprimaryColorHex =
             theme
                 |> R10.Color.Svg.fontButtonPrimary
-                |> R10.Color.Utils.toHex
+                |> R10.Color.Utils.toCssRgba
     in
     -- Adding -webkit-appearance: none;
     -- because https://stackoverflow.com/questions/5449412/styling-input-buttons-for-ipad-and-iphone

@@ -117,18 +117,18 @@ getTextfieldPaddingEach args =
 
 
 icons :
-    { checkBold : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , combobox_arrow : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , eye_ban_l : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , eye_l : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , grid : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , notice_generic_l : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , search : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , sign_warning_f : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , sign_warning_l : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , validation_check : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , validation_clear : List (Attribute msg) -> Color.Color -> Int -> Element msg
-    , validation_error : List (Attribute msg) -> Color.Color -> Int -> Element msg
+    { checkBold : List (Attribute msg) -> Color -> Int -> Element msg
+    , combobox_arrow : List (Attribute msg) -> Color -> Int -> Element msg
+    , eye_ban_l : List (Attribute msg) -> Color -> Int -> Element msg
+    , eye_l : List (Attribute msg) -> Color -> Int -> Element msg
+    , grid : List (Attribute msg) -> Color -> Int -> Element msg
+    , notice_generic_l : List (Attribute msg) -> Color -> Int -> Element msg
+    , search : List (Attribute msg) -> Color -> Int -> Element msg
+    , sign_warning_f : List (Attribute msg) -> Color -> Int -> Element msg
+    , sign_warning_l : List (Attribute msg) -> Color -> Int -> Element msg
+    , validation_check : List (Attribute msg) -> Color -> Int -> Element msg
+    , validation_clear : List (Attribute msg) -> Color -> Int -> Element msg
+    , validation_error : List (Attribute msg) -> Color -> Int -> Element msg
     }
 icons =
     { checkBold = R10.Svg.IconsExtra.checkBold
@@ -500,5 +500,5 @@ showValidationIcon_ { maybeValid, displayValidation, palette } =
         , height <| px 24
         , clip
         ]
-        (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.error palette)
+        (R10.FormComponents.Internal.UI.Color.error palette)
         24

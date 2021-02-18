@@ -197,51 +197,51 @@ toColorLight_ : Color -> ( Color.Color, String )
 toColorLight_ color =
     case color of
         CrimsonRed ->
-            ( R10.Color.Utils.fromHex "#bf0000"
+            ( R10.Color.Utils.fromHexToColorColor "#bf0000"
             , "Hard coded as #bf0000"
             )
 
         Orange ->
-            ( R10.Color.Utils.fromHex "#f59600"
+            ( R10.Color.Utils.fromHexToColorColor "#f59600"
             , "Hard coded as #f59600"
             )
 
         Yellow ->
-            ( R10.Color.Utils.fromHex "#ffcc00"
+            ( R10.Color.Utils.fromHexToColorColor "#ffcc00"
             , "Hard coded as #ffcc00"
             )
 
         Green ->
-            ( R10.Color.Utils.fromHex "#00b900"
+            ( R10.Color.Utils.fromHexToColorColor "#00b900"
             , "Hard coded as #00b900"
             )
 
         LightBlue ->
-            ( R10.Color.Utils.fromHex "#00a0f0"
+            ( R10.Color.Utils.fromHexToColorColor "#00a0f0"
             , "Hard coded as #00a0f0"
             )
 
         Blue ->
-            ( R10.Color.Utils.fromHex "#002896"
+            ( R10.Color.Utils.fromHexToColorColor "#002896"
             , "Hard coded as #002896"
             )
 
         Purple ->
-            ( R10.Color.Utils.fromHex "#7d00be"
+            ( R10.Color.Utils.fromHexToColorColor "#7d00be"
             , "Hard coded as #7d00be"
             )
 
         Pink ->
             -- The pink color changed fromm to #ff008c from #ff41be as
             -- per Rakuten Mobile request on 2020.11.19
-            ( R10.Color.Utils.fromHex "#ff008c"
+            ( R10.Color.Utils.fromHexToColorColor "#ff008c"
             , "Hard coded as #ff008c"
             )
 
         BlueSky ->
             -- The pink color changed fromm to #ff008c from #ff41be as
             -- per Rakuten Mobile request on 2020.11.19
-            ( R10.Color.Utils.fromHex "#117bb4"
+            ( R10.Color.Utils.fromHexToColorColor "#117bb4"
             , "Hard coded as #117bb4"
             )
 

@@ -22,7 +22,7 @@ normal : R10.Theme.Theme -> Element.Attr decorative msg
 normal theme =
     R10.Color.Internal.Derived.Border
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color
 
 
@@ -35,7 +35,7 @@ shadow : R10.Theme.Theme -> { offset : ( Float, Float ), size : Float, blur : Fl
 shadow theme { offset, size, blur } =
     R10.Color.Internal.Derived.Border
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> (\color -> { offset = offset, size = size, blur = blur, color = color })
         |> Element.Border.shadow
 
@@ -49,7 +49,7 @@ buttonSecondary : R10.Theme.Theme -> Element.Attr decorative msg
 buttonSecondary theme =
     R10.Color.Internal.Derived.Border
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color
 
 
@@ -62,7 +62,7 @@ inputFieldNormal : R10.Theme.Theme -> Element.Attr decorative msg
 inputFieldNormal theme =
     R10.Color.Internal.Derived.Border
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color
 
 
@@ -71,7 +71,7 @@ inputFieldFocused : R10.Theme.Theme -> Element.Attr decorative msg
 inputFieldFocused theme =
     R10.Color.Internal.Derived.Primary
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color
 
 
@@ -80,7 +80,7 @@ inputFieldError : R10.Theme.Theme -> Element.Attr decorative msg
 inputFieldError theme =
     R10.Color.Internal.Derived.Error
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color
 
 
@@ -89,7 +89,7 @@ inputFieldSuccess : R10.Theme.Theme -> Element.Attr decorative msg
 inputFieldSuccess theme =
     R10.Color.Internal.Derived.Success
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color
 
 
@@ -102,7 +102,7 @@ inputFieldCheckboxNormal : R10.Theme.Theme -> Element.Attr decorative msg
 inputFieldCheckboxNormal theme =
     R10.Color.Internal.Derived.Border
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color
 
 
@@ -111,7 +111,7 @@ inputFieldCheckboxSelected : R10.Theme.Theme -> Element.Attr decorative msg
 inputFieldCheckboxSelected theme =
     R10.Color.Internal.Derived.Primary
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color
 
 
@@ -120,5 +120,5 @@ inputFieldCheckboxOver : R10.Theme.Theme -> Element.Attr decorative msg
 inputFieldCheckboxOver theme =
     R10.Color.Internal.Derived.Primary
         |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.colorToElementColor
+        |> R10.Color.Utils.fromColorColor
         |> Element.Border.color

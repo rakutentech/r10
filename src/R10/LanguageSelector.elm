@@ -17,8 +17,8 @@ view :
     List (Attribute msg)
     ->
         { changeMsg : Result String R10.Language.Language -> msg
-        , colorBackground : Color.Color
-        , colorFont : Color.Color
+        , colorBackground : Color
+        , colorFont : Color
         , currentLocale : R10.Language.Language
         , supportedLanguageList : List R10.Language.Language
         , withLanguageSelector : Bool

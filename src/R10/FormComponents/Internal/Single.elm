@@ -97,7 +97,7 @@ defaultTrailingIcon { opened, palette } =
                         )
                 , htmlAttribute <| Html.Attributes.style "transition" "all 0.13s"
                 ]
-                (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.label palette)
+                (R10.FormComponents.Internal.UI.Color.label palette)
                 24
         , palette = palette
         , size = 24

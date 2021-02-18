@@ -6,7 +6,6 @@ module R10.Svg.Others exposing (mobileWithPerson, mountain, spinnerRotation, gre
 
 -}
 
-import Color
 import Element exposing (..)
 import R10.Color.Utils
 import R10.Svg.Utils
@@ -73,11 +72,11 @@ spinnerRotation attrs size colorString =
 
 
 {-| -}
-mobileWithPerson : List (Attribute msg) -> Color.Color -> Int -> Element msg
+mobileWithPerson : List (Attribute msg) -> Color -> Int -> Element msg
 mobileWithPerson attrs cl size =
     let
         clHex =
-            R10.Color.Utils.toHex cl
+            R10.Color.Utils.toCssRgba cl
     in
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 209 160"

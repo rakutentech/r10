@@ -141,85 +141,58 @@ view theme model =
         , Font.size 16
         ]
     <|
-        column
-            [ paddingXY 20 400
-            , width fill
-            , spacing 50
-            ]
-            [ column [ width fill ] <|
-                R10.Form.view model.modelForm MsgMapperForm
-            , R10.Form.phoneView
-                []
-                model.modelPhone
-                { valid = model.valid
-                , toMsg = MsgMapperPhone
-                , label = "Telephone"
-                , helperText = Nothing
-                , disabled = model.disabled
-                , requiredLabel = Nothing
-                , style = R10.Form.style.outlined
-                , key = "field2"
-                , palette = R10.Form.themeToPalette theme
-                , countryOptions = Nothing
-                }
-
-            -- , R10.DropDown.viewBorderLessV2 [ width fill ]
-            --     { colorBackground = Color.rgba 0 0 0 0.03
-            --     , colorFont = Color.rgb 0 0 0
-            --     , currentValue = model.dropdown
-            --     , inputHandler = Change
-            --     , optionList =
-            --         []
-            --             ++ (case Countries.fromCode "JP" of
-            --                     Just country ->
-            --                         [ R10.DropDown.OptionV2
-            --                             (R10.DropDown.Label <| country.name ++ " " ++ country.flag)
-            --                             (R10.DropDown.Value country.code)
-            --                         ]
-            --
-            --                     Nothing ->
-            --                         []
-            --                )
-            --             ++ [ R10.DropDown.OptGroupV2
-            --                     (R10.DropDown.Label "Other countries")
-            --                     (List.map
-            --                         (\country ->
-            --                             R10.DropDown.OptionV2
-            --                                 (R10.DropDown.Label <| country.name ++ " " ++ country.flag)
-            --                                 (R10.DropDown.Value country.code)
-            --                         )
-            --                         (fixCountries model.language Countries.all)
-            --                     )
-            --                ]
-            --     }
-            , R10.DropDown.viewBorderLess [ width fill ]
-                { colorBackground = Color.rgba 0 0 0 0.03
-                , colorFont = Color.rgb 0 0 0
-                , currentValue = model.dropdown1
-                , inputHandler = Change1
-                , optionList =
-                    List.map
-                        (\country ->
-                            { text = country.flag ++ " " ++ country.name
-                            , value = country.code
-                            }
-                        )
-                        (fixCountries model.language Countries.all)
-                }
-            , R10.DropDown.viewBorderLess [ width fill ]
-                { colorBackground = Color.rgba 0 0 0 0.03
-                , colorFont = Color.rgb 0 0 0
-                , currentValue = model.dropdown2
-                , inputHandler = Change2
-                , optionList =
-                    List.map
-                        (\country ->
-                            { text = country.name ++ " " ++ country.flag
-                            , value = country.code
-                            }
-                        )
-                        (List.sortBy .name Countries.all)
-                }
+        column [ padding 10, width fill ]
+            [ paragraph [] [ text "Page for testing components on mobile devices. Scroll down..." ]
+            , column
+                [ paddingXY 0 400
+                , width fill
+                , spacing 50
+                ]
+                [ column [ width fill ] <|
+                    R10.Form.view model.modelForm MsgMapperForm
+                , R10.Form.phoneView
+                    []
+                    model.modelPhone
+                    { valid = model.valid
+                    , toMsg = MsgMapperPhone
+                    , label = "Telephone"
+                    , helperText = Nothing
+                    , disabled = model.disabled
+                    , requiredLabel = Nothing
+                    , style = R10.Form.style.outlined
+                    , key = "field2"
+                    , palette = R10.Form.themeToPalette theme
+                    , countryOptions = Nothing
+                    }
+                , R10.DropDown.viewBorderLess [ width fill ]
+                    { colorBackground = rgba 0 0 0 0.03
+                    , colorFont = rgb 0 0 0
+                    , currentValue = model.dropdown1
+                    , inputHandler = Change1
+                    , optionList =
+                        List.map
+                            (\country ->
+                                { text = country.flag ++ " " ++ country.name
+                                , value = country.code
+                                }
+                            )
+                            (fixCountries model.language Countries.all)
+                    }
+                , R10.DropDown.viewBorderLess [ width fill ]
+                    { colorBackground = rgba 0 0 0 0.03
+                    , colorFont = rgb 0 0 0
+                    , currentValue = model.dropdown2
+                    , inputHandler = Change2
+                    , optionList =
+                        List.map
+                            (\country ->
+                                { text = country.name ++ " " ++ country.flag
+                                , value = country.code
+                                }
+                            )
+                            (List.sortBy .name Countries.all)
+                    }
+                ]
             ]
 
 

@@ -15,6 +15,7 @@ import Element.Input as Input
 import R10.Card
 import R10.Color.AttrsBackground
 import R10.Color.Svg
+import R10.Color.Utils
 import R10.Form
 import R10.FormDebug
 import R10.FormTypes
@@ -121,7 +122,7 @@ toIconEl theme palette leadingIcon =
         Play ->
             R10.Form.viewIconButton []
                 { msgOnClick = Just <| PlayPauseClick Play
-                , icon = R10.Svg.IconsExtra.play [] (R10.Color.Svg.fontNormal theme) 24
+                , icon = R10.Svg.IconsExtra.play [] (R10.Color.Svg.fontHighEmphasis theme) 24
                 , palette = palette
                 , size = 24
                 }
@@ -129,7 +130,7 @@ toIconEl theme palette leadingIcon =
         Pause ->
             R10.Form.viewIconButton []
                 { msgOnClick = Just <| PlayPauseClick Pause
-                , icon = R10.Svg.IconsExtra.pause [] (R10.Color.Svg.fontNormal theme) 30
+                , icon = R10.Svg.IconsExtra.pause [] (R10.Color.Svg.fontHighEmphasis theme) 30
                 , palette = palette
                 , size = 30
                 }

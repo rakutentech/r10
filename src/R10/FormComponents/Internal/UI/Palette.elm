@@ -26,22 +26,23 @@ module R10.FormComponents.Internal.UI.Palette exposing
 
 import Color
 import R10.Color.Svg
+import R10.Color.Utils
 import R10.FormTypes
 import R10.Theme
 
 
-{-| get R10.FormTypes.Palette for use with R10.FormComponents lib
+{-| get R10.FormTypes.Palette to use with R10.FormComponents lib
 -}
 fromTheme : R10.Theme.Theme -> R10.FormTypes.Palette
 fromTheme theme =
-    { primary = R10.Color.Svg.primary theme
-    , primaryVariant = R10.Color.Svg.primaryVariant theme
-    , success = R10.Color.Svg.success theme
-    , error = R10.Color.Svg.error theme
-    , background = R10.Color.Svg.background theme
-    , surface = R10.Color.Svg.surface theme
-    , onSurface = R10.Color.Svg.fontNormal theme
-    , onPrimary = R10.Color.Svg.fontButtonPrimary theme
+    { primary = R10.Color.Utils.toColorColor <| R10.Color.Svg.primary theme
+    , primaryVariant = R10.Color.Utils.toColorColor <| R10.Color.Svg.primaryVariant theme
+    , success = R10.Color.Utils.toColorColor <| R10.Color.Svg.success theme
+    , error = R10.Color.Utils.toColorColor <| R10.Color.Svg.error theme
+    , background = R10.Color.Utils.toColorColor <| R10.Color.Svg.background theme
+    , surface = R10.Color.Utils.toColorColor <| R10.Color.Svg.surface theme
+    , onSurface = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontHighEmphasis theme
+    , onPrimary = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontButtonPrimary theme
     }
 
 

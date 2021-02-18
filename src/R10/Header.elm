@@ -403,7 +403,7 @@ fontColorHeader :
             , primaryColor : R10.Color.Internal.Primary.Color
             }
     }
-    -> Color.Color
+    -> Color
 fontColorHeader args =
     let
         theme =
@@ -411,10 +411,10 @@ fontColorHeader args =
     in
     if args.darkHeader then
         -- The header is always dark
-        R10.Color.Svg.fontNormal { theme | mode = R10.Mode.Dark }
+        R10.Color.Svg.fontHighEmphasis { theme | mode = R10.Mode.Dark }
 
     else
-        R10.Color.Svg.fontNormal theme
+        R10.Color.Svg.fontHighEmphasis theme
 
 
 {-| -}
@@ -447,12 +447,12 @@ view model args =
         , let
             hamburgerColor =
                 if model.sideMenuOpen then
-                    R10.Color.Svg.fontNormal args.theme
+                    R10.Color.Svg.fontHighEmphasis args.theme
 
                 else
                     fontColorHeader args
           in
-          inFront <| html <| Html.node "style" [] [ Html.text (css <| R10.Color.Utils.toHex hamburgerColor) ]
+          inFront <| html <| Html.node "style" [] [ Html.text (css <| R10.Color.Utils.toCssRgba hamburgerColor) ]
         , inFront <| cover model args
         , inFront <| sideMenu model args
         , inFront <| humbergAndLogo model args
@@ -832,7 +832,7 @@ logoColorColor darkHeader theme =
 {-| -}
 logoColor : Bool -> R10.Theme.Theme -> Color
 logoColor darkHeader theme =
-    R10.Color.Utils.colorToElementColor <| logoColorColor darkHeader theme
+    R10.Color.Utils.fromColorColor <| logoColorColor darkHeader theme
 
 
 {-| -}

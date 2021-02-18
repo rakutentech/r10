@@ -60,7 +60,7 @@ type alias Translator =
 
 
 translator : Translator
-translator key validationCode =
+translator _ validationCode =
     Dict.fromList
         [ ( validationCodes.emailFormatInvalid
           , "Invalid email format"

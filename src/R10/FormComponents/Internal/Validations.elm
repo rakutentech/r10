@@ -89,12 +89,12 @@ viewValidationIcon palette validationIcon =
             { invalidIcon =
                 R10.FormComponents.Internal.UI.icons.validation_clear
                     iconAttrs
-                    (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.error palette)
+                    (R10.FormComponents.Internal.UI.Color.error palette)
                     24
             , validIcon =
                 R10.FormComponents.Internal.UI.icons.validation_check
                     iconAttrs
-                    (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.success palette)
+                    (R10.FormComponents.Internal.UI.Color.success palette)
                     24
             }
 
@@ -102,12 +102,12 @@ viewValidationIcon palette validationIcon =
             { invalidIcon =
                 R10.FormComponents.Internal.UI.icons.validation_error
                     iconAttrs
-                    (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.error palette)
+                    (R10.FormComponents.Internal.UI.Color.error palette)
                     24
             , validIcon =
                 R10.FormComponents.Internal.UI.icons.validation_check
                     iconAttrs
-                    (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.success palette)
+                    (R10.FormComponents.Internal.UI.Color.success palette)
                     24
             }
 

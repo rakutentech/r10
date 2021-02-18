@@ -100,32 +100,32 @@ toColorLight_ : Color -> ( Color.Color, String )
 toColorLight_ color =
     case color of
         Font ->
-            ( R10.Color.Utils.fromHex "#000000"
+            ( R10.Color.Utils.fromHexToColorColor "#000000"
             , "Hard coded as #000000"
             )
 
         FontReversed ->
-            ( R10.Color.Utils.fromHex "#ffffff"
+            ( R10.Color.Utils.fromHexToColorColor "#ffffff"
             , "Hard coded as #ffffff"
             )
 
         FontLink ->
-            ( R10.Color.Utils.fromHex "#00a0f0"
+            ( R10.Color.Utils.fromHexToColorColor "#00a0f0"
             , "Hard coded as #00a0f0"
             )
 
         Error ->
-            ( R10.Color.Utils.fromHex "#df0101"
+            ( R10.Color.Utils.fromHexToColorColor "#df0101"
             , "Hard coded as #df0101"
             )
 
         Success ->
-            ( R10.Color.Utils.fromHex "#047205"
+            ( R10.Color.Utils.fromHexToColorColor "#047205"
             , "Hard coded as #047205"
             )
 
         Background ->
-            ( R10.Color.Utils.fromHex "#ebebeb"
+            ( R10.Color.Utils.fromHexToColorColor "#ebebeb"
             , "Hard coded as #f0f0f0"
             )
 
@@ -134,12 +134,12 @@ toColorDark_ : Color -> ( Color.Color, String )
 toColorDark_ color =
     case color of
         Font ->
-            ( R10.Color.Utils.fromHex "#ffffff"
+            ( R10.Color.Utils.fromHexToColorColor "#ffffff"
             , "Hard coded as #ffffff"
             )
 
         FontReversed ->
-            ( R10.Color.Utils.fromHex "#000000"
+            ( R10.Color.Utils.fromHexToColorColor "#000000"
             , "Hard coded as #000000"
             )
 
@@ -167,6 +167,6 @@ toColorDark_ color =
             )
 
         Background ->
-            ( R10.Color.Utils.fromHex "#121212"
+            ( R10.Color.Utils.fromHexToColorColor "#121212"
             , "Hard coded as #121212"
             )

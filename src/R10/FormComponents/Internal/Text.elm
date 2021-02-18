@@ -29,10 +29,10 @@ viewShowHidePasswordButton { msgOnTogglePasswordShow, showPassword, palette } =
         icon : Element msg
         icon =
             if showPassword then
-                R10.Svg.Icons.eye_ban_l [] (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.label palette) 24
+                R10.Svg.Icons.eye_ban_l [] (R10.FormComponents.Internal.UI.Color.label palette) 24
 
             else
-                R10.Svg.Icons.eye_l [] (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.label palette) 24
+                R10.Svg.Icons.eye_l [] (R10.FormComponents.Internal.UI.Color.label palette) 24
     in
     case msgOnTogglePasswordShow of
         Just msgOnTogglePasswordShow_ ->

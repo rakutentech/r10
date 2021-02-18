@@ -5,11 +5,12 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import R10.Form
 import R10.Form.Internal.Msg
 import R10.Form.Internal.Update
 
 
-button : R10.Form.Internal.Form -> (R10.Form.Internal.Msg.Msg -> msg) -> Element msg
+button : R10.Form.Form -> (R10.Form.Internal.Msg.Msg -> msg) -> Element msg
 button form msgMapper =
     let
         submittable : Bool

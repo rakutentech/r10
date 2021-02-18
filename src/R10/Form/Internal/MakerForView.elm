@@ -725,10 +725,6 @@ viewEntityMulti args entities formConf =
         activeKeys : List R10.Form.Internal.Key.Key
         activeKeys =
             R10.Form.Internal.Helpers.getMultiActiveKeys args.key args.formState
-
-        quantity : Int
-        quantity =
-            List.length activeKeys
     in
     activeKeys
         |> List.map

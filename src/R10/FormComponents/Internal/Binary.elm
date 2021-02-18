@@ -176,7 +176,7 @@ checkboxIcon args value =
                     [ centerX
                     , centerY
                     ]
-                    (R10.Color.Utils.elementColorToColor <| R10.FormComponents.Internal.UI.Color.onPrimary args.palette)
+                    (R10.FormComponents.Internal.UI.Color.onPrimary args.palette)
                     18
 
             else

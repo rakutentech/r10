@@ -1,4 +1,4 @@
-module R10.FormComponents.Internal.Single.Radio exposing (view)
+module R10.FormComponents.Internal.Single.Radio exposing (view, viewRow)
 
 import Element exposing (..)
 import Element.Background as Background
@@ -85,14 +85,26 @@ viewRadioOption { disabled, palette, focused, label } optionState =
                 , centerX
                 , centerY
                 , behindContent <| innerCircle
+                , Border.innerShadow
+                    { offset = ( 0, 0 )
+                    , size = 2
+                    , blur = 0
+                    , color = outerCircleColor
+                    }
                 , Border.rounded 20
-                , Border.width 2
-                , Border.color outerCircleColor
+                , inFront <|
+                    el [ moveUp 10, moveLeft 10, Border.rounded 20 ] <|
+                        R10.FormComponents.Internal.UI.viewSelectShadow
+                            { palette = palette
+                            , focused = focused && isSelected optionState
+                            , disabled = disabled
+                            }
+                            none
                 ]
                 none
     in
     row
-        ([ spacing 5
+        ([ spacing 17
          , width fill
          , height fill
          ]
@@ -103,12 +115,7 @@ viewRadioOption { disabled, palette, focused, label } optionState =
                     []
                )
         )
-        [ R10.FormComponents.Internal.UI.viewSelectShadow
-            { palette = palette
-            , focused = focused && isSelected optionState
-            , disabled = disabled
-            }
-            selector
+        [ selector
         , paragraph [] [ text label ]
         ]
 
@@ -134,7 +141,7 @@ viewRadioLabel palette label helperText =
 
     else
         column
-            [ paddingEach { top = 10, right = 0, bottom = 24, left = 10 }
+            [ paddingEach { top = 10, right = 0, bottom = 24, left = 0 }
             , R10.FormComponents.Internal.UI.fontSizeSubTitle
             , spacing R10.FormComponents.Internal.UI.genericSpacing
             ]
@@ -147,6 +154,66 @@ viewRadioLabel palette label helperText =
                 ]
                 helperText
             ]
+
+
+viewRow : List (Attribute msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Element msg
+viewRow attrs model args =
+    let
+        fixedValue : String
+        fixedValue =
+            --
+            -- TODO
+            --
+            -- -- Radio button should always have one option selected
+            -- -- https://uxplanet.org/radio-buttons-ux-design-588e5c0a50dc
+            -- if isOneOptionSelected then
+            --     args.value
+            --
+            -- else
+            --     Maybe.withDefault "" <| Maybe.map .value (List.head args.fieldOptions)
+            model.value
+    in
+    column
+        ([ width fill
+         ]
+            ++ attrs
+        )
+    <|
+        [ Input.radioRow
+            ([ spacing 15
+
+             --, alignTop
+             , Events.onFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus (R10.FormComponents.Internal.Single.Common.getSelectedOrFirst args.fieldOptions model.value model.select)
+             , Events.onLoseFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnLoseFocus model.value
+             , width fill
+             , height <| px 20
+             , centerY
+             ]
+                ++ (if args.disabled then
+                        [ htmlAttribute <| Html.Attributes.tabindex -1 ]
+
+                    else
+                        []
+                   )
+            )
+            { onChange =
+                if args.disabled then
+                    always <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnOptionSelect model.value
+
+                else
+                    args.toMsg << R10.FormComponents.Internal.Single.Common.OnOptionSelect
+            , options = List.map (viewRadioOptions args model.focused) args.fieldOptions
+            , selected = Just fixedValue
+            , label = Input.labelLeft [ width fill, centerY ] <| text args.label
+            }
+        , R10.FormComponents.Internal.UI.viewHelperText
+            args.palette
+            [ Font.size 14
+            , alpha 0.5
+            , paddingEach { top = R10.FormComponents.Internal.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
+            ]
+            args.helperText
+        ]
 
 
 view : List (Attribute msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Element msg
@@ -176,7 +243,7 @@ view attrs model args =
         )
     <|
         Input.radio
-            ([ spacing 5
+            ([ spacing 26
              , alignTop
              , Events.onFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus (R10.FormComponents.Internal.Single.Common.getSelectedOrFirst args.fieldOptions model.value model.select)
              , Events.onLoseFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnLoseFocus model.value

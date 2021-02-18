@@ -12,7 +12,7 @@ module R10.Form exposing
     , getField, getFieldValue, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
     , setFieldValue, setActiveTab, setMultiplicableQuantities, setFieldDisabled
     , submittable, stringToBool, boolToString
-    , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, ArgsText, viewBinary, ArgsBinary
+    , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, TextArgs, ArgsText, viewBinary, ArgsBinary
     , Style, style
     , Button, button
     , themeToPalette, label, extraCssComponents, extraCss, colorToCssString
@@ -122,7 +122,7 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 # Form Components
 
-@docs viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, ArgsText, viewBinary, ArgsBinary
+@docs viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, TextArgs, ArgsText, viewBinary, ArgsBinary
 
 
 # Style
@@ -1409,6 +1409,29 @@ phoneUpdate =
 phoneInit : PhoneModel
 phoneInit =
     R10.FormComponents.Internal.Phone.Common.init
+
+
+
+--████████ ███████ ██   ██ ████████
+--   ██    ██       ██ ██     ██
+--   ██    █████     ███      ██
+--   ██    ██       ██ ██     ██
+--   ██    ███████ ██   ██    ██
+
+
+{-| -}
+type alias TextArgs msg =
+    R10.FormComponents.Internal.Text.Args msg
+
+
+{-| -}
+textView :
+    List (Attribute msg)
+    -> List (Attribute msg)
+    -> R10.FormComponents.Internal.Text.Args msg
+    -> Element msg
+textView =
+    R10.FormComponents.Internal.Text.view
 
 
 

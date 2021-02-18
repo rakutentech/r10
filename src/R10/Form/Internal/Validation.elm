@@ -4,6 +4,7 @@ module R10.Form.Internal.Validation exposing
     )
 
 import Dict
+import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
 import R10.Form.Internal.Key
@@ -302,9 +303,26 @@ validateValidationSpecs key value formState validation =
 
 validate : R10.Form.Internal.Key.Key -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState
 validate key maybeValidationSpec formState state =
+    let
+        isDisabled : Bool
+        isDisabled =
+            R10.Form.Internal.Dict.get key formState.fieldsState
+                |> Maybe.map .disabled
+                |> Maybe.withDefault False
+
+        validationSpec : List R10.Form.Internal.FieldConf.Validation
+        validationSpec =
+            if isDisabled then
+                [ R10.Form.Internal.FieldConf.NoValidation ]
+
+            else
+                maybeValidationSpec
+                    |> Maybe.map .validation
+                    |> Maybe.withDefault [ R10.Form.Internal.FieldConf.NoValidation ]
+    in
     { state
         | validation =
-            (maybeValidationSpec |> Maybe.map .validation |> Maybe.withDefault [ R10.Form.Internal.FieldConf.NoValidation ])
+            validationSpec
                 |> List.map (validateValidationSpecs key state.value formState)
                 |> List.filterMap identity
                 |> R10.Form.Internal.FieldState.Validated

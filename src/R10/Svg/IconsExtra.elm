@@ -1,8 +1,8 @@
-module R10.Svg.IconsExtra exposing (more_vert, checkBold, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight, validation_check, validation_clear, validation_error, brokenHeart)
+module R10.Svg.IconsExtra exposing (more_vert, checkBold, copy, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight, validation_check, validation_clear, validation_error, brokenHeart)
 
 {-|
 
-@docs more_vert, checkBold, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight, validation_check, validation_clear, validation_error, brokenHeart
+@docs more_vert, checkBold, copy, aToZ, check_thick, bug, add, arrowBack, arrowForward, grid, play, pause, close, clear, submit, love, respect, organize, customSupport, card, highFive, moon, paperPlane, internet, email, waveHand, training, startup, fireworks, alarmClock, conversation, sun, keyboardArrowDown, delete, restore, keyboardArrowUp, search, darkLight, validation_check, validation_clear, validation_error, brokenHeart
 
 -}
 
@@ -31,6 +31,17 @@ check_thick attrs cl size =
         "0 0 12 10"
         size
         [ Svg.path [ SA.fill <| R10.Color.Utils.toHex cl, SA.d "M11.75.78a.72.72 0 0 0-1.03 0l-6.5 6.95-2.98-3a.64.64 0 0 0-.52-.2c-.2 0-.38.08-.52.24a.79.79 0 0 0-.2.53c0 .2.09.4.23.54l3.5 3.5c.14.14.33.22.52.22.2 0 .4-.08.52-.22l7.01-7.47A.81.81 0 0 0 12 1.3a.87.87 0 0 0-.25-.52z" ] []
+        ]
+
+
+{-| -}
+copy : List (Attribute msg) -> Color.Color -> Int -> Element msg
+copy attrs cl size =
+    R10.Svg.Utils.wrapperWithViewbox attrs
+        "0 0 24 24"
+        size
+        [ Svg.path [ SA.fill "none", SA.d "M0 0h24v24H0z" ] []
+        , Svg.path [ SA.d "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z", SA.fill <| R10.Color.Utils.toHex cl ] []
         ]
 
 

@@ -76,6 +76,11 @@ singleTypeMetaData singleType =
     case singleType of
         R10.FormTypes.SingleRadio ->
             { string = "R10.FormTypes.SingleRadio"
+            , next = R10.FormTypes.SingleRadioRow
+            }
+
+        R10.FormTypes.SingleRadioRow ->
+            { string = "R10.FormTypes.SingleRadio"
             , next = R10.FormTypes.SingleCombobox
             }
 

@@ -184,6 +184,9 @@ view attrs model conf =
         R10.FormTypes.SingleRadio ->
             R10.FormComponents.Internal.Single.Radio.view attrs model args
 
+        R10.FormTypes.SingleRadioRow ->
+            R10.FormComponents.Internal.Single.Radio.viewRow attrs model args
+
 
 type alias ArgsCustom msg =
     { label : String
@@ -244,3 +247,6 @@ viewCustom attrs model conf =
 
         R10.FormTypes.SingleRadio ->
             R10.FormComponents.Internal.Single.Radio.view attrs model args
+
+        R10.FormTypes.SingleRadioRow ->
+            R10.FormComponents.Internal.Single.Radio.viewRow attrs model args

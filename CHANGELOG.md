@@ -1,4 +1,11 @@
-# 3.0.0
+# 3.0.0 (2021-02-19)
+
+## Release Highlights
+
+* Updates color system, making Element.Color the default color.
+* Add single radio row.
+
+## Differences
 
 This is a MAJOR change.
 

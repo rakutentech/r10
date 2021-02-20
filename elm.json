@@ -1,7 +1,7 @@
 {
     "type": "package",
     "name": "rakutentech/r10",
-    "summary": "Bootstrapper and UI Componets we use at Rakuten",
+    "summary": "Bootstrapper and UI Components we use at Rakuten",
     "license": "BSD-3-Clause",
     "version": "3.0.0",
     "exposed-modules": [

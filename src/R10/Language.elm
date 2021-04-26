@@ -25,6 +25,7 @@ type alias Translations =
     , es_es : String
     , fr_fr : String
     , de_de : String
+    , zh_cn : String
     }
 
 
@@ -70,6 +71,8 @@ type
     | JA_JP
       -- Taiwanese Mandarin https://en.wikipedia.org/wiki/Taiwanese_Mandarin
     | ZH_TW
+      -- Mainland Chinese
+    | ZH_CN
       -- Spanish
     | ES_ES
       -- French
@@ -84,6 +87,7 @@ list =
     [ Key
     , EN_US
     , ZH_TW
+    , ZH_CN
     , JA_JP
     , FR_FR
     , DE_DE
@@ -103,6 +107,7 @@ defaultSupportedLanguageList =
     [ EN_US
     , JA_JP
     , ZH_TW
+    , ZH_CN
     , DE_DE
     , ES_ES
     ]
@@ -157,6 +162,9 @@ decoderFourLettersLangauge string =
         "zhtw" ->
             Ok ZH_TW
 
+        "zhcn" ->
+            Ok ZH_CN
+
         "dede" ->
             Ok DE_DE
 
@@ -180,8 +188,11 @@ decoderTwoLettersLangauge string =
         "ja" ->
             Ok JA_JP
 
-        "zh" ->
+        "zht" ->
             Ok ZH_TW
+
+        "zhc" ->
+            Ok ZH_CN
 
         "de" ->
             Ok DE_DE
@@ -304,6 +315,9 @@ toString language =
         ZH_TW ->
             "zh-TW"
 
+        ZH_CN ->
+            "zh-CN"
+
         ES_ES ->
             "es-ES"
 
@@ -356,6 +370,12 @@ toLongString languageType language =
         ( Localization, ZH_TW ) ->
             "繁體中文"
 
+        ( International, ZH_CN ) ->
+            "Chinese"
+
+        ( Localization, ZH_CN ) ->
+            "简体中文"
+
         ( International, ES_ES ) ->
             "Spanish"
 
@@ -393,6 +413,9 @@ select language translation =
 
         ZH_TW ->
             .zh_tw translation
+
+        ZH_CN ->
+            .zh_cn translation
 
         ES_ES ->
             .es_es translation

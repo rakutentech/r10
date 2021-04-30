@@ -20,7 +20,10 @@ import R10.FormComponents.Internal.Utils.FocusOut
 import R10.FormTypes
 
 
-viewSearchBox : R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Element msg
+viewSearchBox :
+    R10.FormComponents.Internal.Single.Common.Model
+    -> R10.FormComponents.Internal.Single.Common.Args msg
+    -> Element msg
 viewSearchBox model args =
     if args.searchable then
         el
@@ -45,12 +48,14 @@ viewSearchBox model args =
                 , style = R10.FormComponents.Internal.Style.Outlined
                 , showPassword = False
                 , textType = R10.FormTypes.TextPlain
-                , leadingIcon = Nothing
-                , trailingIcon = Nothing
+                , leadingIcon = []
+                , trailingIcon = []
                 , value = model.search
-                , valid = args.valid
+                , maybeValid = args.maybeValid
                 , helperText = args.helperText
                 , requiredLabel = args.requiredLabel
+                , autocomplete = Nothing
+                , idDom = Nothing
                 }
 
     else
@@ -247,7 +252,7 @@ view attrs model args =
         textArgs : R10.FormComponents.Internal.Text.Args msg
         textArgs =
             { disabled = args.disabled
-            , valid = args.valid
+            , maybeValid = args.maybeValid
             , focused = model.focused
             , label = args.label
             , msgOnChange = args.toMsg << always R10.FormComponents.Internal.Single.Common.NoOp
@@ -265,6 +270,7 @@ view attrs model args =
             , helperText = args.helperText
             , requiredLabel = args.requiredLabel
             , idDom = Nothing
+            , autocomplete = Nothing
             }
 
         inputAttrs : List (Attribute msg)

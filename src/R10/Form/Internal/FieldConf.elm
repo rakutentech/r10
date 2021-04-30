@@ -73,6 +73,11 @@ type alias FieldConf =
     , helperText : Maybe String
     , requiredLabel : Maybe String
     , validationSpecs : Maybe ValidationSpecs
+    , minWidth : Maybe Int
+    , maxWidth : Maybe Int
+
+    -- If autocomplete is Nothing, we just use the default value, set by elm-ui
+    , autocomplete : Maybe String
     }
 
 
@@ -85,8 +90,8 @@ type alias FieldConf =
 
 
 type alias ValidationSpecs =
-    { showPassedValidationMessages : Bool
-    , hidePassedValidationStyle : Bool
+    { showAlsoPassedValidation : Bool
+    , pretendIsNotValidatedIfValid : Bool
     , validation : List Validation
     , validationIcon : R10.FormTypes.ValidationIcon
     }
@@ -101,13 +106,16 @@ init =
     , helperText = Nothing
     , requiredLabel = Nothing
     , validationSpecs = Just initValidationSpecs
+    , minWidth = Nothing
+    , maxWidth = Nothing
+    , autocomplete = Nothing
     }
 
 
 initValidationSpecs : ValidationSpecs
 initValidationSpecs =
-    { showPassedValidationMessages = False
-    , hidePassedValidationStyle = False
+    { showAlsoPassedValidation = False
+    , pretendIsNotValidatedIfValid = False
     , validation = [ NoValidation ]
     , validationIcon = R10.FormTypes.NoIcon
     }
@@ -143,19 +151,51 @@ encoderFieldConf fieldConf =
         , ( "helperText", Json.Encode.Extra.maybe E.string fieldConf.helperText )
         , ( "requiredLabel", Json.Encode.Extra.maybe E.string fieldConf.requiredLabel )
         , ( "validationSpecs", Json.Encode.Extra.maybe encodeValidationSpecs fieldConf.validationSpecs )
+        , ( "minWidth", Json.Encode.Extra.maybe E.int fieldConf.minWidth )
+        , ( "maxWidth", Json.Encode.Extra.maybe E.int fieldConf.maxWidth )
+        , ( "autocomplete", Json.Encode.Extra.maybe E.string fieldConf.autocomplete )
         ]
+
+
+
+--
+-- map9 :
+--     (a -> b -> c -> d -> e -> f -> g -> h -> i -> value)
+--     -> D.Decoder a
+--     -> D.Decoder b
+--     -> D.Decoder c
+--     -> D.Decoder d
+--     -> D.Decoder e
+--     -> D.Decoder f
+--     -> D.Decoder g
+--     -> D.Decoder h
+--     -> D.Decoder i
+--     -> D.Decoder value
+-- map9 a b c d e f g h i =
+--     D.map2 (D.map8 (\a b c d e f g h -> v) a b c d e f g h) i
+--
 
 
 decoderFieldConf : D.Decoder FieldConf
 decoderFieldConf =
-    D.map7 FieldConf
-        (D.field "id" D.string)
-        (D.field "idDom" (D.maybe D.string))
-        (D.field "type" decoderFieldType)
-        (D.field "Label" D.string)
-        (D.field "helperText" (D.maybe D.string))
-        (D.field "requiredLabel" (D.maybe D.string))
-        (D.field "validationSpecs" (D.maybe decoderValidationSpecs))
+    -- From https://korban.net/posts/elm/2018-06-22-json-decode-tricks/
+    let
+        mainFields =
+            D.map8 FieldConf
+                (D.field "id" D.string)
+                (D.field "idDom" (D.maybe D.string))
+                (D.field "type" decoderFieldType)
+                (D.field "Label" D.string)
+                (D.field "helperText" (D.maybe D.string))
+                (D.field "requiredLabel" (D.maybe D.string))
+                (D.field "validationSpecs" (D.maybe decoderValidationSpecs))
+                (D.field "minWidth" (D.maybe D.int))
+    in
+    D.map3
+        (<|)
+        mainFields
+        (D.field "maxWidth" (D.maybe D.int))
+        (D.field "autocomplete" (D.maybe D.string))
 
 
 encoderFieldType : R10.FormTypes.FieldType -> E.Value
@@ -272,8 +312,8 @@ decoderFieldType =
 encodeValidationSpecs : ValidationSpecs -> E.Value
 encodeValidationSpecs validationSpecs =
     E.object
-        [ ( "showPassedValidationMessages", E.bool validationSpecs.showPassedValidationMessages )
-        , ( "hideCheckmark", E.bool validationSpecs.hidePassedValidationStyle )
+        [ ( "showAlsoPassedValidation", E.bool validationSpecs.showAlsoPassedValidation )
+        , ( "hideCheckmark", E.bool validationSpecs.pretendIsNotValidatedIfValid )
         , ( "validation", E.list encodeValidation validationSpecs.validation )
         , ( "validationIcon", encodeValidationIcon validationSpecs.validationIcon )
         ]
@@ -282,7 +322,7 @@ encodeValidationSpecs validationSpecs =
 decoderValidationSpecs : D.Decoder ValidationSpecs
 decoderValidationSpecs =
     D.map4 ValidationSpecs
-        (D.field "showPassedValidationMessages" D.bool)
+        (D.field "showAlsoPassedValidation" D.bool)
         (D.field "hideCheckmark" D.bool)
         (D.field "validation" (D.list decoderValidation))
         (D.field "validationIcon" decoderValidationIcon)

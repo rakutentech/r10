@@ -3,6 +3,7 @@ module R10.Form.Internal.Conf exposing
     , Entity(..)
     , EntityId
     , TextConf
+    , changeFieldConf
     , fieldConfigConcatMap
     , fieldConfigMap
     , filter
@@ -50,6 +51,34 @@ type alias Conf =
 -- ███████ █████   ██      ██████  █████   ██████  ███████
 -- ██   ██ ██      ██      ██      ██      ██   ██      ██
 -- ██   ██ ███████ ███████ ██      ███████ ██   ██ ███████
+
+
+changeFieldConf : (R10.Form.Internal.FieldConf.FieldConf -> R10.Form.Internal.FieldConf.FieldConf) -> Entity -> Entity
+changeFieldConf mapper entity =
+    case entity of
+        EntityNormal entityId entityList ->
+            EntityNormal entityId (List.map (changeFieldConf mapper) entityList)
+
+        EntityWrappable entityId entityList ->
+            EntityWrappable entityId (List.map (changeFieldConf mapper) entityList)
+
+        EntityWithBorder entityId entityList ->
+            EntityWithBorder entityId (List.map (changeFieldConf mapper) entityList)
+
+        EntityWithTabs entityId entityStringList ->
+            EntityWithTabs entityId (List.map (\( string, entity_ ) -> ( string, changeFieldConf mapper entity_ )) entityStringList)
+
+        EntityMulti entityId entityList ->
+            EntityMulti entityId (List.map (changeFieldConf mapper) entityList)
+
+        EntityField fieldConf ->
+            EntityField (mapper fieldConf)
+
+        EntityTitle entityId textConf ->
+            entity
+
+        EntitySubTitle entityId textConf ->
+            entity
 
 
 init : List Entity

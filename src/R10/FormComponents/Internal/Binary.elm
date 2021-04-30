@@ -9,7 +9,6 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes
-import R10.Color.Utils
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
@@ -30,7 +29,7 @@ type alias Args msg =
     --
     , value : Bool
     , focused : Bool
-    , valid : Maybe Bool
+    , maybeValid : Maybe Bool
     , disabled : Bool
 
     -- Messages

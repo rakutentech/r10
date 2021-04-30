@@ -6,7 +6,6 @@ module R10.LanguageSelector exposing (view)
 
 -}
 
-import Color
 import Element exposing (..)
 import R10.DropDown
 import R10.Language

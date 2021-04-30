@@ -37,9 +37,17 @@ viewSearchBox model args =
         , style = args.style
         , showPassword = False
         , textType = R10.FormTypes.TextPlain
-        , leadingIcon = Nothing
-        , trailingIcon = Nothing
+        , leadingIcon = []
+        , trailingIcon = []
         , value = model.search
+        , autocomplete = Nothing
+
+        --
+        , helperText = Nothing
+        , idDom = Nothing
+        , msgOnTogglePasswordShow = Nothing
+        , requiredLabel = Nothing
+        , maybeValid = Nothing
         }
 
 
@@ -195,7 +203,11 @@ viewComboboxOption countryValue select args country =
         args.toOptionEl country
 
 
-view : List (Attribute msg) -> R10.FormComponents.Internal.Phone.Common.Model -> R10.FormComponents.Internal.Phone.Common.Args msg -> Element msg
+view :
+    List (Attribute msg)
+    -> R10.FormComponents.Internal.Phone.Common.Model
+    -> R10.FormComponents.Internal.Phone.Common.Args msg
+    -> Element msg
 view attrs model args =
     -- todo add selected validation
     let
@@ -208,7 +220,6 @@ view attrs model args =
             , helperText : Maybe String
             , idDom : Maybe String
             , label : String
-            , leadingIcon : Maybe (Element msg)
             , msgOnChange : String -> msg
             , msgOnEnter : Maybe msg
             , msgOnFocus : msg
@@ -219,9 +230,11 @@ view attrs model args =
             , showPassword : Bool
             , style : R10.FormComponents.Internal.Style.Style
             , textType : R10.FormTypes.TypeText
-            , trailingIcon : Maybe (Element msg)
-            , valid : Maybe Bool
+            , leadingIcon : List (Element msg)
+            , trailingIcon : List (Element msg)
+            , maybeValid : Maybe Bool
             , value : String
+            , autocomplete : Maybe String
             }
         textArgs =
             { disabled = args.disabled
@@ -237,12 +250,13 @@ view attrs model args =
             , showPassword = False
             , textType = R10.FormTypes.TextPlain
             , leadingIcon = args.leadingIcon
-            , trailingIcon = Nothing
+            , trailingIcon = args.trailingIcon
             , value = model.value
-            , valid = args.valid
+            , maybeValid = args.maybeValid
             , helperText = args.helperText
             , requiredLabel = args.requiredLabel
             , idDom = Nothing
+            , autocomplete = Nothing
             }
 
         inputAttrs : List (Attribute msg)

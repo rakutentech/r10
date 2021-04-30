@@ -117,17 +117,27 @@ getFieldConfig entity =
             R10.Form.Internal.FieldConf.init
 
 
-isFieldStateValidationValid : R10.Form.Internal.FieldState.Validation2 -> Maybe Bool
-isFieldStateValidationValid validation =
+maybeValid : R10.Form.Internal.FieldState.Validation -> Maybe Bool
+maybeValid validation =
+    --
+    -- Before this function was:
+    --
+    -- case validation of
+    --     R10.Form.Internal.FieldState.NotYetValidated2 ->
+    --         Nothing
+    --
+    --     R10.Form.Internal.FieldState.Valid ->
+    --         Just True
+    --
+    --     R10.Form.Internal.FieldState.NotValid ->
+    --         Just False
+    --
     case validation of
-        R10.Form.Internal.FieldState.NotYetValidated2 ->
+        R10.Form.Internal.FieldState.NotYetValidated ->
             Nothing
 
-        R10.Form.Internal.FieldState.Valid ->
-            Just True
-
-        R10.Form.Internal.FieldState.NotValid ->
-            Just False
+        R10.Form.Internal.FieldState.Validated listValidationMessage ->
+            Just (R10.Form.Internal.FieldState.isValid listValidationMessage)
 
 
 
@@ -147,18 +157,38 @@ viewText args textType formConf =
     R10.FormComponents.Internal.Text.view
         [ width
             (fill
-                |> minimum 300
-                |> maximum 900
+                --
+                -- Min width can be customized in case we need to keep
+                -- two fields in the same row.
+                --
+                -- Before minimum and maximum were set at 300 and 900 (for
+                -- the Self Service Portal). Now they are set in the formConf
+                -- of each field.
+                --
+                |> (case args.fieldConf.minWidth of
+                        Just int ->
+                            minimum int
+
+                        Nothing ->
+                            identity
+                   )
+                |> (case args.fieldConf.maxWidth of
+                        Just int ->
+                            maximum int
+
+                        Nothing ->
+                            identity
+                   )
             )
         ]
         []
         -- Stuff that change
         { value = args.fieldState.value
         , focused = args.focused
-        , valid = isFieldStateValidationValid <| R10.Form.Internal.FieldState.isValid args.fieldState.validation
+        , maybeValid = maybeValid args.fieldState.validation
         , showPassword = args.fieldState.showPassword
-        , leadingIcon = Nothing
-        , trailingIcon = Nothing
+        , leadingIcon = []
+        , trailingIcon = []
 
         -- Messages
         , msgOnChange = R10.Form.Internal.Msg.ChangeValue args.key args.fieldConf formConf
@@ -175,6 +205,7 @@ viewText args textType formConf =
         , style = args.style
         , requiredLabel = args.fieldConf.requiredLabel
         , palette = args.palette
+        , autocomplete = args.fieldConf.autocomplete
 
         -- Specific
         , textType = textType
@@ -214,7 +245,7 @@ viewBinary args typeBinary formConf =
         -- Stuff that change
         { value = value
         , focused = args.focused
-        , valid = isFieldStateValidationValid <| R10.Form.Internal.FieldState.isValid args.fieldState.validation
+        , maybeValid = maybeValid args.fieldState.validation
 
         -- Messages
         , msgOnChange = \_ -> msgOnClick
@@ -263,7 +294,7 @@ viewSingleSelection args singleType fieldOptions formConf =
         , focused = args.focused
         , opened = args.active
         }
-        { valid = isFieldStateValidationValid <| R10.Form.Internal.FieldState.isValid args.fieldState.validation
+        { maybeValid = maybeValid args.fieldState.validation
 
         -- Message mapper
         , toMsg = R10.Form.Internal.Msg.OnSingleMsg args.key args.fieldConf formConf
@@ -827,8 +858,8 @@ viewEntitySubTitle palette titleConf =
     ]
 
 
-viewWithValidationMessage : MakerArgs -> R10.Form.Internal.Conf.Entity -> List (Element msg) -> List (Element msg)
-viewWithValidationMessage args entity listEl =
+addValidationMessagesUnderTheField : MakerArgs -> R10.Form.Internal.Conf.Entity -> List (Element msg) -> List (Element msg)
+addValidationMessagesUnderTheField args entity listEl =
     let
         validationIcon : R10.FormTypes.ValidationIcon
         validationIcon =
@@ -915,7 +946,7 @@ maker_ args branchConf rootFormConf =
                 R10.Form.Internal.Conf.EntitySubTitle _ titleConf ->
                     viewEntitySubTitle args.palette titleConf
             )
-                |> viewWithValidationMessage (normalizeKey args entity) entity
+                |> addValidationMessagesUnderTheField (normalizeKey args entity) entity
         )
         branchConf
         |> List.concat

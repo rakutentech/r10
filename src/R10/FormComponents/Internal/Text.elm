@@ -12,7 +12,6 @@ import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes
-import R10.Color.Utils
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
@@ -53,11 +52,11 @@ type alias Args msg =
       --
       value : String
     , focused : Bool
-    , valid : Maybe Bool
+    , maybeValid : Maybe Bool
     , disabled : Bool
     , showPassword : Bool
-    , leadingIcon : Maybe (Element msg)
-    , trailingIcon : Maybe (Element msg)
+    , leadingIcon : List (Element msg)
+    , trailingIcon : List (Element msg)
 
     -- Messages
     , msgOnChange : String -> msg
@@ -75,6 +74,7 @@ type alias Args msg =
     , idDom : Maybe String
     , style : R10.FormComponents.Internal.Style.Style
     , palette : R10.FormTypes.Palette
+    , autocomplete : Maybe String
 
     -- Specific
     , textType : R10.FormTypes.TypeText
@@ -86,7 +86,7 @@ getBorder :
         | focused : Bool
         , style : R10.FormComponents.Internal.Style.Style
         , palette : R10.FormTypes.Palette
-        , valid : Maybe Bool
+        , maybeValid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
         , disabled : Bool
@@ -105,24 +105,7 @@ getBorder args =
         }
 
 
-viewBehindPattern :
-    { a
-        | disabled : Bool
-        , focused : Bool
-        , label : String
-        , leadingIcon : Maybe (Element msg)
-        , msgOnChange : String -> msg
-        , msgOnEnter : Maybe msg
-        , msgOnFocus : msg
-        , msgOnLoseFocus : Maybe msg
-        , palette : R10.FormTypes.Palette
-        , showPassword : Bool
-        , style : R10.FormComponents.Internal.Style.Style
-        , textType : R10.FormTypes.TypeText
-        , trailingIcon : Maybe (Element msg)
-        , value : String
-    }
-    -> List (Attribute msg)
+viewBehindPattern : Args msg -> List (Attribute msg)
 viewBehindPattern args =
     case args.textType of
         R10.FormTypes.TextWithPattern pattern ->
@@ -285,25 +268,36 @@ view attrs extraInputAttrs args =
     let
         displayValidation : Bool
         displayValidation =
-            args.valid /= Nothing
+            args.maybeValid /= Nothing
 
         newArgs : Args msg
         newArgs =
+            -- Adding extra icons to the arguments:
+            --
+            -- * Password eye
+            -- * Validation result
+            --
             { args
                 | trailingIcon =
-                    if needShowHideIcon args.textType then
-                        Just <| viewShowHidePasswordButton args
+                    args.trailingIcon
+                        |> (\icons ->
+                                -- Adding the password eye if needed
+                                if needShowHideIcon args.textType then
+                                    (el [ paddingEach { top = 0, right = 8, bottom = 0, left = 0 } ] <| viewShowHidePasswordButton args) :: icons
 
-                    else if args.trailingIcon /= Nothing then
-                        args.trailingIcon
-
-                    else
-                        Just <|
-                            R10.FormComponents.Internal.UI.showValidationIcon_
-                                { maybeValid = args.valid
-                                , displayValidation = displayValidation
-                                , palette = args.palette
-                                }
+                                else
+                                    icons
+                           )
+                        |> (\icons ->
+                                -- Adding the validation icon. Should not this be conditional?
+                                icons
+                                    ++ [ R10.FormComponents.Internal.UI.showValidationIcon_
+                                            { maybeValid = args.maybeValid
+                                            , displayValidation = displayValidation
+                                            , palette = args.palette
+                                            }
+                                       ]
+                           )
             }
 
         styleArgs :
@@ -312,12 +306,12 @@ view attrs extraInputAttrs args =
             , focused : Bool
             , isMouseOver : Bool
             , label : String
-            , leadingIcon : Maybe (Element msg)
+            , leadingIcon : List (Element msg)
             , palette : R10.FormTypes.Palette
             , requiredLabel : Maybe String
             , style : R10.FormComponents.Internal.Style.Style
-            , trailingIcon : Maybe (Element msg)
-            , valid : Maybe Bool
+            , trailingIcon : List (Element msg)
+            , maybeValid : Maybe Bool
             , value : String
             }
         styleArgs =
@@ -330,7 +324,7 @@ view attrs extraInputAttrs args =
             , palette = newArgs.palette
             , leadingIcon = newArgs.leadingIcon
             , trailingIcon = newArgs.trailingIcon
-            , valid = args.valid
+            , maybeValid = args.maybeValid
             , displayValidation = displayValidation
             , isMouseOver = False
             }
@@ -341,7 +335,7 @@ view attrs extraInputAttrs args =
            -- If there is spacing and no error, it will appear as a double spacing.
            spacing 0
          , width (fill |> minimum 150)
-         , inFront <| R10.FormComponents.Internal.UI.labelBuilder styleArgs
+         , inFront <| R10.FormComponents.Internal.UI.floatingLabel styleArgs
          ]
             ++ (if newArgs.disabled then
                     [ alpha 0.6 ]
@@ -357,9 +351,9 @@ view attrs extraInputAttrs args =
          -- ++ [ width <| (fill |> minimum 100) ]
         )
         [ viewInput
-            ([ getBorder styleArgs
-             , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
-             , case newArgs.style of
+            -- ([ getBorder styleArgs
+            --  , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
+            ([ case newArgs.style of
                 R10.FormComponents.Internal.Style.Filled ->
                     Border.rounded 0
 
@@ -393,26 +387,7 @@ view attrs extraInputAttrs args =
         ]
 
 
-viewInput :
-    List (Attribute msg)
-    ->
-        { a
-            | disabled : Bool
-            , focused : Bool
-            , label : String
-            , leadingIcon : Maybe (Element msg)
-            , msgOnChange : String -> msg
-            , msgOnEnter : Maybe msg
-            , msgOnFocus : msg
-            , msgOnLoseFocus : Maybe msg
-            , palette : R10.FormTypes.Palette
-            , showPassword : Bool
-            , style : R10.FormComponents.Internal.Style.Style
-            , textType : R10.FormTypes.TypeText
-            , trailingIcon : Maybe (Element msg)
-            , value : String
-        }
-    -> Element msg
+viewInput : List (Attribute msg) -> Args msg -> Element msg
 viewInput extraAttr args =
     let
         inputDisabledAttrs : List (Attribute msg)
@@ -429,15 +404,36 @@ viewInput extraAttr args =
 
                     R10.FormComponents.Internal.Style.Outlined ->
                         0
-            , paddingXY 8 13
             ]
 
-        paddingValues : { top : Int, right : Int, bottom : Int, left : Int }
-        paddingValues =
-            R10.FormComponents.Internal.UI.getTextfieldPaddingEach args
-
+        -- paddingValues : { top : Int, right : Int, bottom : Int, left : Int }
+        -- paddingValues =
+        --     R10.FormComponents.Internal.UI.getTextfieldPaddingEach args
         paddingOffset =
             12
+
+        name =
+            case args.textType of
+                R10.FormTypes.TextUsername ->
+                    "username"
+
+                R10.FormTypes.TextEmail ->
+                    "email"
+
+                R10.FormTypes.TextPasswordCurrent ->
+                    "password"
+
+                R10.FormTypes.TextPasswordNew ->
+                    "password"
+
+                R10.FormTypes.TextPlain ->
+                    ""
+
+                R10.FormTypes.TextMultiline ->
+                    ""
+
+                R10.FormTypes.TextWithPattern pattern ->
+                    ""
 
         inputAttrs : List (Attribute msg)
         inputAttrs =
@@ -446,24 +442,27 @@ viewInput extraAttr args =
             , htmlAttribute <| Html.Attributes.attribute "autocorrect" "off"
             , htmlAttribute <| Html.Attributes.attribute "autocapitalize" "off"
             , htmlAttribute <| Html.Attributes.style "transition" "all 0.15s"
+            , htmlAttribute <| Html.Attributes.name name
             , width fill
             , Font.size R10.FormComponents.Internal.UI.Const.inputTextFontSize
+            , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
             , Border.width 0
             , Background.color <| R10.FormComponents.Internal.UI.Color.transparent
-            , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
             , Events.onFocus args.msgOnFocus
 
-            -- Remove part of the top padding and re-apply it as a margin,
-            -- fixes issue with chrome auto-fill styles. more info: https://jira.rakuten-it.com/jira/browse/OMN-2279
-            -- Please feel free to modify it if you would find some better solution.
-            -- Possibly could be fixed in elm-ui 2.0. At the time 1.1.8 in use
-            , paddingEach <| { paddingValues | top = paddingValues.top - paddingOffset }
-            , htmlAttribute <| Html.Attributes.style "margin-top" (String.fromInt paddingOffset ++ "px")
-
-            -- We want selection tab order to be: leadingIcon <-> input  <-> trailingIcon
-            , behindContent <| el (alignLeft :: iconCommonAttrs) (Maybe.withDefault none args.leadingIcon)
-            , inFront <| el (alignRight :: iconCommonAttrs) (Maybe.withDefault none args.trailingIcon)
+            -- Adding some padding to have the input field to stay in a good position
+            -- This value also influence the light blue area of the Browsers's
+            -- autocomplete feature.
+            , paddingEach { top = 20, right = 16, bottom = 5, left = 16 }
             ]
+                ++ (case args.autocomplete of
+                        Nothing ->
+                            []
+
+                        Just string ->
+                            [ htmlAttribute <| Html.Attributes.attribute "autocomplete" string
+                            ]
+                   )
                 ++ (case args.msgOnEnter of
                         Just msgOnEnter_ ->
                             [ htmlAttribute <| R10.FormComponents.Internal.UI.onEnter msgOnEnter_ ]
@@ -546,25 +545,72 @@ viewInput extraAttr args =
             , label = Input.labelHidden args.label
             , spellcheck = False
             }
+
+        styleArgs :
+            { disabled : Bool
+            , displayValidation : Bool
+            , focused : Bool
+            , isMouseOver : Bool
+            , label : String
+            , palette : R10.FormTypes.Palette
+            , requiredLabel : Maybe String
+            , style : R10.FormComponents.Internal.Style.Style
+            , leadingIcon : List (Element msg)
+            , trailingIcon : List (Element msg)
+            , maybeValid : Maybe Bool
+            , value : String
+            }
+        styleArgs =
+            { label = args.label
+            , value = args.value
+            , focused = args.focused
+            , disabled = args.disabled
+            , requiredLabel = args.requiredLabel
+            , style = args.style
+            , palette = args.palette
+            , leadingIcon = args.leadingIcon
+            , trailingIcon = args.trailingIcon
+            , maybeValid = args.maybeValid
+            , displayValidation = displayValidation
+            , isMouseOver = False
+            }
+
+        displayValidation : Bool
+        displayValidation =
+            args.maybeValid /= Nothing
     in
-    case args.textType of
-        R10.FormTypes.TextUsername ->
-            Input.username inputAttrs behavioursText
+    row
+        [ getBorder styleArgs
+        , Border.rounded 5
+        , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
+        , width fill
+        , padding 0
 
-        R10.FormTypes.TextEmail ->
-            Input.email inputAttrs behavioursText
+        -- Spacing must be 0 here
+        , spacing 0
+        ]
+    <|
+        List.map (\icon -> el iconCommonAttrs icon) args.leadingIcon
+            ++ [ case args.textType of
+                    R10.FormTypes.TextUsername ->
+                        Input.username inputAttrs behavioursText
 
-        R10.FormTypes.TextPasswordCurrent ->
-            Input.currentPassword inputAttrs (behavioursPassword args.showPassword)
+                    R10.FormTypes.TextEmail ->
+                        Input.email inputAttrs behavioursText
 
-        R10.FormTypes.TextPasswordNew ->
-            Input.newPassword inputAttrs (behavioursPassword args.showPassword)
+                    R10.FormTypes.TextPasswordCurrent ->
+                        Input.currentPassword inputAttrs (behavioursPassword args.showPassword)
 
-        R10.FormTypes.TextPlain ->
-            Input.text inputAttrs behavioursText
+                    R10.FormTypes.TextPasswordNew ->
+                        Input.newPassword inputAttrs (behavioursPassword args.showPassword)
 
-        R10.FormTypes.TextMultiline ->
-            Input.multiline inputAttrs behavioursMultiline
+                    R10.FormTypes.TextPlain ->
+                        Input.text inputAttrs behavioursText
 
-        R10.FormTypes.TextWithPattern pattern ->
-            Input.text inputAttrs <| behavioursTextWithPattern pattern
+                    R10.FormTypes.TextMultiline ->
+                        Input.multiline inputAttrs behavioursMultiline
+
+                    R10.FormTypes.TextWithPattern pattern ->
+                        Input.text inputAttrs <| behavioursTextWithPattern pattern
+               ]
+            ++ List.map (\icon -> el iconCommonAttrs icon) args.trailingIcon

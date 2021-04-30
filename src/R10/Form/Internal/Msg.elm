@@ -55,10 +55,10 @@ handleChangesSinceLastSubmissions changesSinceLastSubmissions msg =
                 changesSinceLastSubmissions
 
 
-{-| -}
+{-| Return true if the message can potentially change some value
+-}
 isChangingValues : Msg -> Bool
 isChangingValues msg =
-    -- This is a list of messages that potentially can change values
     case msg of
         ChangeValue _ _ _ _ ->
             True

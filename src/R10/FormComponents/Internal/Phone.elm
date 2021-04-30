@@ -9,7 +9,6 @@ import Element exposing (..)
 import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes
-import R10.Color.Utils
 import R10.Country
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Phone.Common
@@ -192,7 +191,7 @@ view :
     List (Attribute msg)
     -> R10.FormComponents.Internal.Phone.Common.Model
     ->
-        { valid : Maybe Bool
+        { maybeValid : Maybe Bool
         , toMsg : R10.FormComponents.Internal.Phone.Common.Msg -> msg
         , label : String
         , helperText : Maybe String
@@ -218,7 +217,7 @@ view attrs model conf =
 
         args : R10.FormComponents.Internal.Phone.Common.Args msg
         args =
-            { valid = conf.valid
+            { maybeValid = conf.maybeValid
             , toMsg = conf.toMsg
             , label = conf.label
             , helperText = conf.helperText
@@ -236,16 +235,16 @@ view attrs model conf =
             , selectOptionHeight = 36
             , maxDisplayCount = 5
             , leadingIcon =
-                Just <|
-                    getFlagButton
-                        { palette = conf.palette
-                        , disabled = conf.disabled
-                        , toMsg = conf.toMsg
-                        , key = conf.key
-                        , filteredCountryOptions = filteredCountryOptions
-                        , model = model
-                        }
-            , trailingIcon = Just <| defaultTrailingIcon { opened = model.opened, palette = conf.palette }
+                [ getFlagButton
+                    { palette = conf.palette
+                    , disabled = conf.disabled
+                    , toMsg = conf.toMsg
+                    , key = conf.key
+                    , filteredCountryOptions = filteredCountryOptions
+                    , model = model
+                    }
+                ]
+            , trailingIcon = [ defaultTrailingIcon { opened = model.opened, palette = conf.palette } ]
             }
     in
     R10.FormComponents.Internal.Phone.Views.view attrs model args

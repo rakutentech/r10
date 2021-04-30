@@ -66,7 +66,7 @@ type alias FieldOption =
 
 type alias Args msg =
     -- Stuff that change
-    { valid : Maybe Bool
+    { maybeValid : Maybe Bool
 
     ---- Messages
     , toMsg : Msg -> msg
@@ -85,8 +85,8 @@ type alias Args msg =
     , toOptionEl : R10.Country.Country -> Element msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : Maybe (Element msg)
-    , trailingIcon : Maybe (Element msg)
+    , leadingIcon : List (Element msg)
+    , trailingIcon : List (Element msg)
     }
 
 

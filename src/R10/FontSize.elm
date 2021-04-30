@@ -1,8 +1,13 @@
-module R10.FontSize exposing (large, normal, small, xlarge, xxlarge, xsmall, xxsmall)
+module R10.FontSize exposing
+    ( large, normal, small, xlarge, xxlarge, xsmall, xxsmall
+    , normalAsInt
+    )
 
 {-| Font sizes
 
 @docs large, normal, small, xlarge, xxlarge, xsmall, xxsmall
+
+@docs normalAsInt
 
 -}
 
@@ -29,9 +34,15 @@ large =
 
 
 {-| -}
+normalAsInt : Int
+normalAsInt =
+    16
+
+
+{-| -}
 normal : Attr decorative msg
 normal =
-    Element.Font.size 16
+    Element.Font.size normalAsInt
 
 
 {-| -}

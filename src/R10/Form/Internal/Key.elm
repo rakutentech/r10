@@ -8,6 +8,7 @@ module R10.Form.Internal.Key exposing
     , fromString
     , headId
     , replaceLeaf
+    , separator
     , toQuantity
     , toString
     )

@@ -14,7 +14,6 @@ module R10.FormComponents.Internal.Single exposing
 import Element exposing (..)
 import Element.Events as Events
 import Html.Attributes
-import R10.Color.Utils
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Single.Combobox
 import R10.FormComponents.Internal.Single.Common
@@ -26,7 +25,6 @@ import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormTypes
 import R10.SimpleMarkdown
-import String.Extra
 
 
 
@@ -135,7 +133,7 @@ type alias Args msg =
     , palette : R10.FormTypes.Palette
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List R10.FormComponents.Internal.Single.Common.FieldOption
-    , valid : Maybe Bool
+    , maybeValid : Maybe Bool
     , toMsg : R10.FormComponents.Internal.Single.Common.Msg -> msg
     }
 
@@ -150,7 +148,7 @@ view attrs model conf =
     let
         args : R10.FormComponents.Internal.Single.Common.Args msg
         args =
-            { valid = conf.valid
+            { maybeValid = conf.maybeValid
             , toMsg = conf.toMsg
             , label = conf.label
             , helperText = conf.helperText
@@ -170,8 +168,9 @@ view attrs model conf =
             , searchFn = defaultSearchFn
             , selectOptionHeight = 32
             , maxDisplayCount = 3
-            , leadingIcon = Nothing
-            , trailingIcon = Just <| defaultTrailingIcon { opened = model.opened, palette = conf.palette }
+            , leadingIcon = []
+            , trailingIcon = [ defaultTrailingIcon { opened = model.opened, palette = conf.palette } ]
+            , autocomplete = Nothing
             }
     in
     case args.singleType of
@@ -198,14 +197,14 @@ type alias ArgsCustom msg =
     , palette : R10.FormTypes.Palette
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List R10.FormComponents.Internal.Single.Common.FieldOption
-    , valid : Maybe Bool
+    , maybeValid : Maybe Bool
     , toMsg : R10.FormComponents.Internal.Single.Common.Msg -> msg
     , searchFn : String -> R10.FormComponents.Internal.Single.Common.FieldOption -> Bool
     , viewOptionEl : R10.FormComponents.Internal.Single.Common.FieldOption -> Element msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : Maybe (Element msg)
-    , trailingIcon : Maybe (Element msg)
+    , leadingIcon : List (Element msg)
+    , trailingIcon : List (Element msg)
     }
 
 
@@ -214,39 +213,40 @@ viewCustom :
     -> R10.FormComponents.Internal.Single.Common.Model
     -> ArgsCustom msg
     -> Element msg
-viewCustom attrs model conf =
+viewCustom attrs model args =
     let
-        args : R10.FormComponents.Internal.Single.Common.Args msg
-        args =
-            { valid = conf.valid
-            , toMsg = conf.toMsg
-            , label = conf.label
-            , helperText = conf.helperText
-            , disabled = conf.disabled
-            , requiredLabel = conf.requiredLabel
-            , style = conf.style
-            , key = conf.key
-            , palette = conf.palette
+        args_ : R10.FormComponents.Internal.Single.Common.Args msg
+        args_ =
+            { maybeValid = args.maybeValid
+            , toMsg = args.toMsg
+            , label = args.label
+            , helperText = args.helperText
+            , disabled = args.disabled
+            , requiredLabel = args.requiredLabel
+            , style = args.style
+            , key = args.key
+            , palette = args.palette
             , searchable = False
-            , searchFn = conf.searchFn
-            , singleType = conf.singleType
-            , fieldOptions = conf.fieldOptions
-            , viewOptionEl = conf.viewOptionEl
-            , selectOptionHeight = conf.selectOptionHeight
-            , maxDisplayCount = conf.maxDisplayCount
-            , leadingIcon = conf.leadingIcon
-            , trailingIcon = conf.trailingIcon
+            , searchFn = args.searchFn
+            , singleType = args.singleType
+            , fieldOptions = args.fieldOptions
+            , viewOptionEl = args.viewOptionEl
+            , selectOptionHeight = args.selectOptionHeight
+            , maxDisplayCount = args.maxDisplayCount
+            , leadingIcon = args.leadingIcon
+            , trailingIcon = args.trailingIcon
+            , autocomplete = Nothing
             }
     in
     case args.singleType of
         R10.FormTypes.SingleCombobox ->
-            R10.FormComponents.Internal.Single.Combobox.view attrs model { args | searchable = True }
+            R10.FormComponents.Internal.Single.Combobox.view attrs model { args_ | searchable = True }
 
         R10.FormTypes.SingleSelect ->
-            R10.FormComponents.Internal.Single.Combobox.view attrs model { args | searchable = False }
+            R10.FormComponents.Internal.Single.Combobox.view attrs model { args_ | searchable = False }
 
         R10.FormTypes.SingleRadio ->
-            R10.FormComponents.Internal.Single.Radio.view attrs model args
+            R10.FormComponents.Internal.Single.Radio.view attrs model args_
 
         R10.FormTypes.SingleRadioRow ->
-            R10.FormComponents.Internal.Single.Radio.viewRow attrs model args
+            R10.FormComponents.Internal.Single.Radio.viewRow attrs model args_

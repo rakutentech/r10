@@ -7,6 +7,7 @@ module R10.Svg.Lists exposing (listIcons, listIconsExtra, listLogos, listLogosEx
 -}
 
 import Element exposing (..)
+import R10.Color.Utils
 import R10.Svg.Icons
 import R10.Svg.IconsExtra
 import R10.Svg.Logos
@@ -23,6 +24,16 @@ listOthers : Int -> Color -> List ( Element msg, String )
 listOthers size cl =
     [ ( R10.Svg.Others.mountain [] size, "mountain" )
     , ( R10.Svg.Others.mobileWithPerson [] cl size, "mobileWithPerson" )
+    , ( R10.Svg.Others.greenCheck [] size, "greenCheck" )
+    , ( R10.Svg.Others.rocket [] size, "rocket" )
+    , ( R10.Svg.Others.checkMark [] size, "checkMark" )
+    , ( R10.Svg.Others.letterOpen [] size, "letterOpen" )
+    , ( R10.Svg.Others.letterClosed [] size, "letterClosed" )
+    , ( R10.Svg.Others.errorLens [] size, "errorLens" )
+    , ( R10.Svg.Others.errorTriangle [] size, "errorTriangle" )
+    , ( R10.Svg.Others.paperPlane [] size, "paperPlane" )
+    , ( R10.Svg.Others.externalLink [] size, "externalLink" )
+    , ( R10.Svg.Others.spinnerRotation [] size (R10.Color.Utils.toCssRgba cl), "spinnerRotation" )
     ]
 
 

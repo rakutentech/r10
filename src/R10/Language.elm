@@ -26,6 +26,7 @@ type alias Translations =
     , fr_fr : String
     , de_de : String
     , zh_cn : String
+    , it_it : String
     }
 
 
@@ -79,6 +80,8 @@ type
     | FR_FR
       -- German
     | DE_DE
+      -- Italian
+    | IT_IT
 
 
 {-| -}
@@ -110,6 +113,8 @@ defaultSupportedLanguageList =
     , ZH_CN
     , DE_DE
     , ES_ES
+    , FR_FR
+    , IT_IT
     ]
 
 
@@ -327,6 +332,9 @@ toString language =
         DE_DE ->
             "de-DE"
 
+        IT_IT ->
+            "it-IT"
+
 
 {-| -}
 type LanguageType
@@ -394,6 +402,12 @@ toLongString languageType language =
         ( Localization, DE_DE ) ->
             "Deutsch"
 
+        ( International, IT_IT ) ->
+            "Italian"
+
+        ( Localization, IT_IT ) ->
+            "Italiano"
+
 
 {-| -}
 select : Language -> Translations -> String
@@ -425,3 +439,6 @@ select language translation =
 
         DE_DE ->
             .de_de translation
+
+        IT_IT ->
+            .it_it translation

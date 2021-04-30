@@ -4,6 +4,8 @@ module R10.FormComponents.Internal.UI.Const exposing
     , inputTextHeight
     )
 
+import R10.FontSize
+
 
 inputTextHeight : number
 inputTextHeight =
@@ -16,9 +18,9 @@ inputTextHeight =
     50
 
 
-inputTextFontSize : number
+inputTextFontSize : Int
 inputTextFontSize =
-    16
+    R10.FontSize.normalAsInt
 
 
 inputTextFilledDown : number

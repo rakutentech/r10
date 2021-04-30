@@ -3,8 +3,10 @@ module R10.Form.Internal.Helpers exposing
     , clearFieldValidation
     , getActiveTab
     , getField
+    , getFieldIgnoringPath
     , getFieldValue
     , getFieldValueAsBool
+    , getFieldValueIgnoringPath
     , getMultiActiveKeys
     , setActiveTab
     , setFieldDisabled
@@ -51,9 +53,38 @@ getField key formState =
     Dict.get key formState.fieldsState
 
 
+getFieldIgnoringPath : String -> R10.Form.Internal.State.State -> Maybe R10.Form.Internal.FieldState.FieldState
+getFieldIgnoringPath id formState =
+    List.head <|
+        Dict.foldl
+            (\k v acc ->
+                let
+                    lastIdIgnoringPath =
+                        k
+                            |> String.split R10.Form.Internal.Key.separator
+                            |> List.reverse
+                            |> List.head
+                            |> Maybe.withDefault ""
+                in
+                if id == lastIdIgnoringPath then
+                    v :: acc
+
+                else
+                    acc
+            )
+            []
+            formState.fieldsState
+
+
 getFieldValue : R10.Form.Internal.Key.KeyAsString -> R10.Form.Internal.State.State -> Maybe String
 getFieldValue key formState =
     getField key formState
+        |> Maybe.map .value
+
+
+getFieldValueIgnoringPath : String -> R10.Form.Internal.State.State -> Maybe String
+getFieldValueIgnoringPath id formState =
+    getFieldIgnoringPath id formState
         |> Maybe.map .value
 
 

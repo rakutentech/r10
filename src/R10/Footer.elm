@@ -22,7 +22,7 @@ view model args =
         , Background.color <| rgb 0.3 0.3 0.3
         , Font.color <| rgb 0.8 0.8 0.8
         , paddingXY 0 60
-        , Font.size 16
+        , R10.FontSize.normal
         , spacing 50
         ]
     <|

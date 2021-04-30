@@ -20,17 +20,15 @@ type ValidationOutcome
 
 runRegex : String -> String -> ValidationOutcome
 runRegex pattern value =
-    case Regex.fromString pattern of
-        Just regex ->
-            if Regex.contains regex value then
-                Valid
+    let
+        regex =
+            Maybe.withDefault Regex.never <| Regex.fromString pattern
+    in
+    if Regex.contains regex value then
+        Valid
 
-            else
-                NotValid
-
-        Nothing ->
-            -- Regex Not Valid
-            NotValid
+    else
+        NotValid
 
 
 isValid : R10.Form.Internal.FieldState.ValidationOutcome -> Bool

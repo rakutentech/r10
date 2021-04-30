@@ -40,7 +40,7 @@ fromTheme theme =
     , success = R10.Color.Utils.toColorColor <| R10.Color.Svg.success theme
     , error = R10.Color.Utils.toColorColor <| R10.Color.Svg.error theme
     , background = R10.Color.Utils.toColorColor <| R10.Color.Svg.background theme
-    , surface = R10.Color.Utils.toColorColor <| R10.Color.Svg.surface theme
+    , surface = R10.Color.Utils.toColorColor <| R10.Color.Svg.surface2dp theme
     , onSurface = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontHighEmphasis theme
     , onPrimary = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontButtonPrimary theme
     }

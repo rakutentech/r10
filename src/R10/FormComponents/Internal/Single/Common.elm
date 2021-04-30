@@ -69,12 +69,13 @@ type alias Args msg =
     , label : String
     , helperText : Maybe String
     , disabled : Bool
-    , valid : Maybe Bool
+    , maybeValid : Maybe Bool
     , requiredLabel : Maybe String
     , style : R10.FormComponents.Internal.Style.Style
     , key : String
     , palette : R10.FormTypes.Palette
     , searchable : Bool
+    , autocomplete : Maybe String
 
     -- Specific
     , singleType : R10.FormTypes.TypeSingle
@@ -83,8 +84,8 @@ type alias Args msg =
     , searchFn : String -> FieldOption -> Bool
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : Maybe (Element msg)
-    , trailingIcon : Maybe (Element msg)
+    , leadingIcon : List (Element msg)
+    , trailingIcon : List (Element msg)
     }
 
 

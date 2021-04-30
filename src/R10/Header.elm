@@ -25,6 +25,7 @@ import R10.Color.AttrsBackground
 import R10.Color.Internal.Primary
 import R10.Color.Svg
 import R10.Color.Utils
+import R10.FontSize
 import R10.I18n
 import R10.Language
 import R10.Libu
@@ -467,7 +468,7 @@ header model args =
     el
         [ width fill
         , centerX
-        , Font.size 16
+        , R10.FontSize.normal
         , paddingXY 30 0
         , htmlAttribute <| Html.Attributes.style "transition" "height 0.3s, box-shadow 0.5s"
         , Border.shadow
@@ -636,24 +637,13 @@ userMenu model args =
             [ map args.msgMapper <| el [ centerX, paddingXY 0 30 ] <| loginButton model args ]
     in
     el
-        -- [ R10.Color.AttrsBackground.surface args.theme
-        -- , Border.width 1
-        -- , Border.color <| rgba 0 0 0 0.1
-        -- , height <| px 320
-        -- , moveDown 45
-        -- , alignRight
-        -- , moveRight 10
-        -- , width <| px 280
-        -- , Font.size 16
-        -- , htmlAttribute <| Html.Attributes.id userMenuId
-        -- ]
         (R10.Card.normal args.theme
             ++ [ height <| px 320
                , width <| px 280
                , moveDown 40
                , moveRight 10
                , alignRight
-               , Font.size 16
+               , R10.FontSize.normal
                , htmlAttribute <| Html.Attributes.id userMenuId
                , R10.Color.AttrsBackground.surface2dp args.theme
                , padding 0
@@ -949,7 +939,7 @@ sideMenu model args =
     column
         [ R10.Color.AttrsBackground.surface2dp args.theme
         , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 12, color = rgba 0 0 0 0.3 }
-        , Font.size 16
+        , R10.FontSize.normal
         , width <| px 300
         , paddingEach { top = 60, right = 0, bottom = 20, left = 0 }
         , htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"

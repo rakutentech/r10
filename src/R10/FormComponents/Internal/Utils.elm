@@ -93,7 +93,7 @@ entitiesWithErrors form =
 entitiesValidationOutcomes :
     R10.Form.Internal.Shared.Form
     -> Maybe R10.Form.Internal.Translator.Translator
-    -> List ( R10.Form.Internal.Key.Key, R10.FormComponents.Internal.Validations.Validation )
+    -> List ( R10.Form.Internal.Key.Key, R10.FormComponents.Internal.Validations.ValidationForView )
 entitiesValidationOutcomes form maybeTranslator =
     let
         translator : R10.Form.Internal.Translator.Translator

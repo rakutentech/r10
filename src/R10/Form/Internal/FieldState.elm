@@ -2,7 +2,6 @@ module R10.Form.Internal.FieldState exposing
     ( DictFieldState
     , FieldState
     , Validation(..)
-    , Validation2(..)
     , ValidationOutcome(..)
     , decoderFieldState
     , encoderFieldState
@@ -26,24 +25,14 @@ import R10.Form.Internal.FieldConf
 --    ██       ██    ██      ███████ ███████
 
 
-type ValidationOutcome
-    = MessageOk R10.Form.Internal.FieldConf.ValidationCode R10.Form.Internal.FieldConf.ValidationPayload
-    | MessageErr R10.Form.Internal.FieldConf.ValidationCode R10.Form.Internal.FieldConf.ValidationPayload
-
-
-
--- TODO - Consolidate Validation2 and Validation
-
-
 type Validation
     = NotYetValidated
     | Validated (List ValidationOutcome)
 
 
-type Validation2
-    = NotYetValidated2
-    | Valid
-    | NotValid
+type ValidationOutcome
+    = MessageOk R10.Form.Internal.FieldConf.ValidationCode R10.Form.Internal.FieldConf.ValidationPayload
+    | MessageErr R10.Form.Internal.FieldConf.ValidationCode R10.Form.Internal.FieldConf.ValidationPayload
 
 
 type alias FieldState =
@@ -91,30 +80,36 @@ init =
 -- ███████ █████   ██      ██████  █████   ██████  ███████
 -- ██   ██ ██      ██      ██      ██      ██   ██      ██
 -- ██   ██ ███████ ███████ ██      ███████ ██   ██ ███████
-
-
-isValid : Validation -> Validation2
-isValid validation =
-    case validation of
-        NotYetValidated ->
-            NotYetValidated2
-
-        Validated listValidationMessage ->
-            List.foldl
-                (\validationMessage acc ->
-                    case validationMessage of
-                        MessageErr _ _ ->
-                            NotValid
-
-                        MessageOk _ _ ->
-                            acc
-                )
-                Valid
-                listValidationMessage
-
-
-
 --
+--
+-- xxxx : Validation -> Bool
+-- xxxx validation =
+--     case validation of
+--         NotYetValidated ->
+--             False
+--
+--         Validated listValidationMessage ->
+--             not (isValid listValidationMessage)
+--
+--
+
+
+isValid : List ValidationOutcome -> Bool
+isValid listValidationMessage =
+    List.foldl
+        (\validationMessage acc ->
+            case validationMessage of
+                MessageErr _ _ ->
+                    False
+
+                MessageOk _ _ ->
+                    acc
+        )
+        True
+        listValidationMessage
+
+
+
 -- ███████ ███    ██  ██████  ██████  ██████  ███████ ██████
 -- ██      ████   ██ ██      ██    ██ ██   ██ ██      ██   ██
 -- █████   ██ ██  ██ ██      ██    ██ ██   ██ █████   ██████

@@ -2,16 +2,16 @@ module R10.Form exposing
     ( Form
     , view, viewWithTheme, viewWithPalette, viewWithOptions, Options
     , Msg, MsgMapper
-    , isChangingValues, isFormSubmittableAndSubmitted, msg
+    , isChangingValues, isFormSubmittable, isFormSubmittableAndSubmitted, msg
     , State, initState, stateToString, stringToState
     , update
-    , Conf, initConf, confToString, stringToConf
+    , Conf, initConf, confToString, stringToConf, changeFieldConf
     , Entity, entity, EntityId, TextConf
     , FieldConf, initFieldConf, FieldState, initFieldState
     , Key, KeyAsString, keyToString, stringToKey, composeKey, listToKey, headId, emptyKey
-    , getField, getFieldValue, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
+    , getField, getFieldValue, getFieldValueIgnoringPath, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
     , setFieldValue, setActiveTab, setMultiplicableQuantities, setFieldDisabled
-    , submittable, stringToBool, boolToString
+    , stringToBool, boolToString
     , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, TextArgs, ArgsText, viewBinary, ArgsBinary
     , Style, style
     , Button, button
@@ -21,7 +21,7 @@ module R10.Form exposing
     , Translator, defaultTranslator, validationCodes
     , SingleModel, SingleMsg, SingleFieldOption, defaultSearchFn, initSingle, normalizeString, insertBold, defaultToOptionEl, defaultTrailingIcon, singleMsg, updateSingle
     , viewSingle, ArgsSingle, viewSingleCustom, ArgsSingleCustom
-    , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
+    , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationForView, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , PhoneModel, PhoneMsg, phoneView, phoneUpdate, phoneInit
     , fieldConfigConcatMap, fieldConfigMap
     )
@@ -55,7 +55,7 @@ There are four functions to render a `Form`, each with a different degree of cus
 
 ## Messages helpers
 
-@docs isChangingValues, isFormSubmittableAndSubmitted, msg
+@docs isChangingValues, isFormSubmittable, isFormSubmittableAndSubmitted, msg
 
 
 # State
@@ -85,7 +85,7 @@ This means that if you want to go crazy and also change the configuration, you c
 
 ## Configuration
 
-@docs Conf, initConf, confToString, stringToConf
+@docs Conf, initConf, confToString, stringToConf, changeFieldConf
 
 
 ## Entities
@@ -109,7 +109,7 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 **Get**
 
-@docs getField, getFieldValue, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
+@docs getField, getFieldValue, getFieldValueIgnoringPath, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
 
 **Set**
 
@@ -117,7 +117,7 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 **Others**
 
-@docs submittable, stringToBool, boolToString
+@docs stringToBool, boolToString
 
 
 # Form Components
@@ -186,7 +186,7 @@ If you want to personalise the translations or you want to translate them in dif
 
 # Validation
 
-@docs validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationComponent, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
+@docs validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationForView, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
 
 
 # Phone
@@ -420,7 +420,8 @@ type alias MsgMapper msg =
 -- MESSAGES HELPERS
 
 
-{-| -}
+{-| Return true if the message can potentially change some value
+-}
 isChangingValues : Msg -> Bool
 isChangingValues =
     R10.Form.Internal.Msg.isChangingValues
@@ -542,6 +543,12 @@ confToString =
 stringToConf : String -> Result Json.Decode.Error Conf
 stringToConf =
     R10.Form.Internal.Conf.fromString
+
+
+{-| -}
+changeFieldConf : (FieldConf -> FieldConf) -> Entity -> Entity
+changeFieldConf =
+    R10.Form.Internal.Conf.changeFieldConf
 
 
 
@@ -741,6 +748,12 @@ getFieldValue =
 
 
 {-| -}
+getFieldValueIgnoringPath : KeyAsString -> State -> Maybe String
+getFieldValueIgnoringPath =
+    R10.Form.Internal.Helpers.getFieldValueIgnoringPath
+
+
+{-| -}
 getFieldValueAsBool : KeyAsString -> State -> Maybe Bool
 getFieldValueAsBool =
     R10.Form.Internal.Helpers.getFieldValueAsBool
@@ -798,8 +811,8 @@ setFieldDisabled =
 This function is normally used to disble or not the submit button.
 
 -}
-submittable : Form -> Bool
-submittable =
+isFormSubmittable : Form -> Bool
+isFormSubmittable =
     R10.Form.Internal.Update.submittable
 
 
@@ -1174,8 +1187,8 @@ type alias Validation =
 
 
 {-| -}
-type alias ValidationComponent =
-    R10.FormComponents.Internal.Validations.Validation
+type alias ValidationForView =
+    R10.FormComponents.Internal.Validations.ValidationForView
 
 
 {-| -}
@@ -1240,20 +1253,20 @@ type alias ValidationCode =
 
 
 {-| -}
-validationToString : ValidationComponent -> String
+validationToString : ValidationForView -> String
 validationToString =
     R10.FormComponents.Internal.Validations.validationToString
 
 
 {-| -}
 componentValidation :
-    { notYetValidated : ValidationComponent
+    { pretendIsNotYetValidated : ValidationForView
     , validated :
         List R10.FormComponents.Internal.Validations.ValidationMessage
-        -> ValidationComponent
+        -> ValidationForView
     }
 componentValidation =
-    { notYetValidated = R10.FormComponents.Internal.Validations.NotYetValidated
+    { pretendIsNotYetValidated = R10.FormComponents.Internal.Validations.PretendIsNotYetValidated
     , validated = R10.FormComponents.Internal.Validations.Validated
     }
 
@@ -1355,7 +1368,7 @@ entitiesWithErrors =
 
 
 {-| -}
-entitiesValidationOutcomes : Form -> Maybe Translator -> List ( Key, ValidationComponent )
+entitiesValidationOutcomes : Form -> Maybe Translator -> List ( Key, ValidationForView )
 entitiesValidationOutcomes =
     R10.FormComponents.Internal.Utils.entitiesValidationOutcomes
 
@@ -1383,7 +1396,7 @@ phoneView :
     List (Attribute msg)
     -> PhoneModel
     ->
-        { valid : Maybe Bool
+        { maybeValid : Maybe Bool
         , toMsg : PhoneMsg -> msg
         , label : String
         , helperText : Maybe String

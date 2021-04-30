@@ -1,5 +1,5 @@
 module R10.FormComponents.Internal.Validations exposing
-    ( Validation(..)
+    ( ValidationForView(..)
     , ValidationMessage(..)
     , extraCss
     , isValid
@@ -10,16 +10,15 @@ module R10.FormComponents.Internal.Validations exposing
 import Element exposing (..)
 import Element.Font as Font
 import Html.Attributes
-import R10.Color.Utils
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
 
 
-isValid : Validation -> Maybe Bool
+isValid : ValidationForView -> Maybe Bool
 isValid validation =
     case validation of
-        NotYetValidated ->
+        PretendIsNotYetValidated ->
             Nothing
 
         Validated listValidationMessage ->
@@ -47,24 +46,24 @@ validationMessageToString validationMessage =
             "MessageErr \"" ++ string ++ "\""
 
 
-validationToString : Validation -> String
+validationToString : ValidationForView -> String
 validationToString validation =
     case validation of
-        NotYetValidated ->
+        PretendIsNotYetValidated ->
             "NotYetValidated"
 
         Validated validationMessageList ->
             "Validated [" ++ String.join "," (List.map validationMessageToString validationMessageList) ++ "]"
 
 
+type ValidationForView
+    = PretendIsNotYetValidated
+    | Validated (List ValidationMessage)
+
+
 type ValidationMessage
     = MessageOk String
     | MessageErr String
-
-
-type Validation
-    = NotYetValidated
-    | Validated (List ValidationMessage)
 
 
 extraCss : String
@@ -90,12 +89,12 @@ viewValidationIcon palette validationIcon =
                 R10.FormComponents.Internal.UI.icons.validation_clear
                     iconAttrs
                     (R10.FormComponents.Internal.UI.Color.error palette)
-                    24
+                    16
             , validIcon =
                 R10.FormComponents.Internal.UI.icons.validation_check
                     iconAttrs
                     (R10.FormComponents.Internal.UI.Color.success palette)
-                    24
+                    16
             }
 
         R10.FormTypes.ErrorOrCheck ->
@@ -103,12 +102,12 @@ viewValidationIcon palette validationIcon =
                 R10.FormComponents.Internal.UI.icons.validation_error
                     iconAttrs
                     (R10.FormComponents.Internal.UI.Color.error palette)
-                    24
+                    16
             , validIcon =
                 R10.FormComponents.Internal.UI.icons.validation_check
                     iconAttrs
                     (R10.FormComponents.Internal.UI.Color.success palette)
-                    24
+                    16
             }
 
 
@@ -134,10 +133,10 @@ viewValidationMessage palette validationIcon validationMessage =
                 ]
 
 
-viewValidation : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> Validation -> Element msg
+viewValidation : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> ValidationForView -> Element msg
 viewValidation palette validationIcon validation =
     case validation of
-        NotYetValidated ->
+        PretendIsNotYetValidated ->
             animatedList []
 
         Validated listValidationMessage ->

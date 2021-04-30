@@ -1,5 +1,6 @@
 module R10.FormComponents.Internal.UI exposing
     ( borderEntityWithBorder
+    , floatingLabel
     , fontSizeSubTitle
     , fontSizeTitle
     , genericSpacing
@@ -9,7 +10,6 @@ module R10.FormComponents.Internal.UI exposing
     , iconWidth
     , icons
     , keyCode
-    , labelBuilder
     , onClickWithStopPropagation
     , onEnter
     , onKeyPressBatch
@@ -21,7 +21,6 @@ module R10.FormComponents.Internal.UI exposing
     , viewSelectShadowCustomSize
     )
 
-import Color
 import Dict
 import Element exposing (..)
 import Element.Background as Background
@@ -31,7 +30,6 @@ import Html
 import Html.Attributes
 import Html.Events
 import Json.Decode
-import R10.Color.Utils
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.UI.Const
@@ -98,12 +96,12 @@ getTextfieldPaddingEach args =
     let
         paddingCenterY : Int
         paddingCenterY =
-            ceiling <| (R10.FormComponents.Internal.UI.Const.inputTextHeight - R10.FormComponents.Internal.UI.Const.inputTextFontSize) / 2
+            ceiling <| (R10.FormComponents.Internal.UI.Const.inputTextHeight - toFloat R10.FormComponents.Internal.UI.Const.inputTextFontSize) / 2
     in
     case args.style of
         R10.FormComponents.Internal.Style.Filled ->
             { top = paddingCenterY + R10.FormComponents.Internal.UI.Const.inputTextFilledDown
-            , right = 0 + iconWidth args.trailingIcon
+            , right = 0
             , bottom = paddingCenterY - R10.FormComponents.Internal.UI.Const.inputTextFilledDown
             , left = 0 + iconWidth args.leadingIcon
             }
@@ -117,7 +115,8 @@ getTextfieldPaddingEach args =
 
 
 icons :
-    { checkBold : List (Attribute msg) -> Color -> Int -> Element msg
+    { check : List (Attribute msg) -> Color -> Int -> Element msg
+    , checkBold : List (Attribute msg) -> Color -> Int -> Element msg
     , combobox_arrow : List (Attribute msg) -> Color -> Int -> Element msg
     , eye_ban_l : List (Attribute msg) -> Color -> Int -> Element msg
     , eye_l : List (Attribute msg) -> Color -> Int -> Element msg
@@ -131,7 +130,8 @@ icons :
     , validation_error : List (Attribute msg) -> Color -> Int -> Element msg
     }
 icons =
-    { checkBold = R10.Svg.IconsExtra.checkBold
+    { check = R10.Svg.Icons.check
+    , checkBold = R10.Svg.IconsExtra.checkBold
     , combobox_arrow = R10.Svg.IconsExtra.keyboardArrowDown
     , eye_ban_l = R10.Svg.Icons.eye_ban_l
     , eye_l = R10.Svg.IconsExtra.email
@@ -150,25 +150,20 @@ getTextfieldBorderSizeOffset :
     { a
         | focused : Bool
         , style : R10.FormComponents.Internal.Style.Style
-        , valid : Maybe Bool
+        , maybeValid : Maybe Bool
         , displayValidation : Bool
     }
     -> { size : Float, offset : ( Float, Float ) }
-getTextfieldBorderSizeOffset { focused, style, valid, displayValidation } =
-    let
-        validationActive : Bool
-        validationActive =
-            displayValidation && valid == Just False
-    in
-    case ( validationActive || focused, style ) of
+getTextfieldBorderSizeOffset { focused, style, maybeValid, displayValidation } =
+    case ( focused, style ) of
         ( True, R10.FormComponents.Internal.Style.Filled ) ->
-            { size = 0, offset = ( 0, -2 ) }
+            { size = 0, offset = ( 0, -2.5 ) }
+
+        ( False, R10.FormComponents.Internal.Style.Filled ) ->
+            { size = 0, offset = ( 0, -1.5 ) }
 
         ( True, R10.FormComponents.Internal.Style.Outlined ) ->
             { size = 2, offset = ( 0, 0 ) }
-
-        ( False, R10.FormComponents.Internal.Style.Filled ) ->
-            { size = 0, offset = ( 0, -1 ) }
 
         ( False, R10.FormComponents.Internal.Style.Outlined ) ->
             { size = 1, offset = ( 0, 0 ) }
@@ -179,17 +174,17 @@ getBorderColor :
         | focused : Bool
         , disabled : Bool
         , style : R10.FormComponents.Internal.Style.Style
-        , valid : Maybe Bool
+        , maybeValid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
         , palette : R10.FormTypes.Palette
     }
     -> Color
-getBorderColor { disabled, focused, style, valid, displayValidation, isMouseOver, palette } =
+getBorderColor { disabled, focused, style, maybeValid, displayValidation, isMouseOver, palette } =
     let
         validationActive : Bool
         validationActive =
-            displayValidation && valid == Just False
+            displayValidation && maybeValid == Just False
 
         alpha : Float
         alpha =
@@ -201,9 +196,10 @@ getBorderColor { disabled, focused, style, valid, displayValidation, isMouseOver
     in
     case style of
         R10.FormComponents.Internal.Style.Filled ->
-            case ( displayValidation, valid, focused ) of
-                --( True, Just True, _ ) ->
-                --    R10.FormComponents.Internal.UI.Color.successA alpha palette
+            case ( displayValidation, maybeValid, focused ) of
+                ( True, Just True, _ ) ->
+                    R10.FormComponents.Internal.UI.Color.successA alpha palette
+
                 ( True, Just False, _ ) ->
                     R10.FormComponents.Internal.UI.Color.errorA alpha palette
 
@@ -211,7 +207,7 @@ getBorderColor { disabled, focused, style, valid, displayValidation, isMouseOver
                     R10.FormComponents.Internal.UI.Color.onSurfaceA (0.3 * alpha) palette
 
         R10.FormComponents.Internal.Style.Outlined ->
-            case ( displayValidation, valid, focused ) of
+            case ( displayValidation, maybeValid, focused ) of
                 ( True, Just False, _ ) ->
                     R10.FormComponents.Internal.UI.Color.errorA alpha palette
 
@@ -226,15 +222,15 @@ textfieldLabelColor :
     { a
         | focused : Bool
         , style : R10.FormComponents.Internal.Style.Style
-        , valid : Maybe Bool
+        , maybeValid : Maybe Bool
         , displayValidation : Bool
         , palette : R10.FormTypes.Palette
     }
     -> Color
-textfieldLabelColor { focused, style, valid, displayValidation, palette } =
+textfieldLabelColor { focused, style, maybeValid, displayValidation, palette } =
     case style of
         R10.FormComponents.Internal.Style.Filled ->
-            case ( displayValidation, valid, focused ) of
+            case ( displayValidation, maybeValid, focused ) of
                 --( True, Just True, True ) ->
                 --    R10.FormComponents.Internal.UI.Color.success palette
                 ( True, Just False, True ) ->
@@ -245,7 +241,7 @@ textfieldLabelColor { focused, style, valid, displayValidation, palette } =
                     R10.FormComponents.Internal.UI.Color.label palette
 
         R10.FormComponents.Internal.Style.Outlined ->
-            case ( displayValidation, valid, focused ) of
+            case ( displayValidation, maybeValid, focused ) of
                 ( True, Just False, True ) ->
                     R10.FormComponents.Internal.UI.Color.error palette
 
@@ -358,41 +354,26 @@ onKeyPressBatch codesMsg =
         |> Html.Events.preventDefaultOn "keydown"
 
 
-labelBuilder :
+floatingLabel :
     { a
         | label : String
         , value : String
         , focused : Bool
         , requiredLabel : Maybe String
-        , leadingIcon : Maybe (Element msg)
-        , trailingIcon : Maybe (Element msg)
-        , valid : Maybe Bool
+
+        -- , leadingIcon : Maybe (Element msg)
+        -- , trailingIcon : Maybe (Element msg)
+        , maybeValid : Maybe Bool
         , displayValidation : Bool
         , style : R10.FormComponents.Internal.Style.Style
         , palette : R10.FormTypes.Palette
     }
     -> Element msg
-labelBuilder args =
+floatingLabel args =
     let
         labelIsAbove : Bool
         labelIsAbove =
             args.focused || String.length args.value > 0
-
-        containerPaddingAttrs :
-            { bottom : Int
-            , left : Int
-            , right : Int
-            , top : Int
-            }
-        containerPaddingAttrs =
-            getTextfieldPaddingEach { args | leadingIcon = Nothing }
-
-        labelBelowLeftPadding : Float
-        labelBelowLeftPadding =
-            -- while below, label should make space for a leading icon
-            -- but label's container already have some padding on its own, so we subtract it
-            ((getTextfieldPaddingEach args |> .left) - containerPaddingAttrs.left)
-                |> toFloat
 
         notchClearance : Int
         notchClearance =
@@ -401,42 +382,24 @@ labelBuilder args =
                     0
 
                 R10.FormComponents.Internal.Style.Outlined ->
-                    3
-
-        notch : Element msg
-        notch =
-            case args.style of
-                R10.FormComponents.Internal.Style.Filled ->
-                    none
-
-                R10.FormComponents.Internal.Style.Outlined ->
-                    el
-                        [ htmlAttribute (Html.Attributes.style "transition" "all 0.15s")
-                        , height <| px 2
-                        , width fill
-                        , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
-                        , alpha
-                            (if labelIsAbove then
-                                1
-
-                             else
-                                0
-                            )
-                        ]
-                        none
+                    6
 
         labelAboveAttrs : List (Attribute msg)
         labelAboveAttrs =
             if labelIsAbove then
                 case args.style of
                     R10.FormComponents.Internal.Style.Filled ->
-                        [ moveUp 28, moveRight 0 ]
+                        [ moveUp <| 28 - 16, moveRight 0 ]
 
                     R10.FormComponents.Internal.Style.Outlined ->
-                        [ moveUp 21, Font.size 12, moveRight 0 ]
+                        [ moveUp <| 23 - 16, Font.size 14, moveRight 0 ]
 
             else
-                [ moveUp 0, moveRight labelBelowLeftPadding, Font.size R10.FormComponents.Internal.UI.Const.inputTextFontSize ]
+                [ moveUp <| 0 - 16
+
+                -- , moveRight labelBelowLeftPadding
+                , Font.size R10.FormComponents.Internal.UI.Const.inputTextFontSize
+                ]
 
         requiredEl : Element msg
         requiredEl =
@@ -449,27 +412,25 @@ labelBuilder args =
 
         labelEl : Element msg
         labelEl =
-            el
-                [ htmlAttribute (Html.Attributes.style "transition" "all 0.15s")
-                , paddingEach
-                    { top = containerPaddingAttrs.top
-                    , bottom = containerPaddingAttrs.bottom
-                    , right = notchClearance
-                    , left = notchClearance
-                    }
-                , htmlAttribute <| Html.Attributes.style "pointer-events" "none"
-                , behindContent <| notch
-                , Border.width 0
-                ]
-            <|
-                row
-                    ([ htmlAttribute (Html.Attributes.style "transition" "all 0.15s")
-                     , spacing 6
-                     , centerY
-                     ]
-                        ++ labelAboveAttrs
-                    )
-                    [ text args.label, requiredEl ]
+            -- If the label is too long, it doesn't wrap. I tried adding a
+            -- paragraph here, but then the label overlap with the
+            -- input field.
+            row
+                ([ htmlAttribute (Html.Attributes.style "transition" "all 0.15s")
+                 , htmlAttribute <| Html.Attributes.style "pointer-events" "none"
+                 , spacing 6
+                 , paddingXY 8 0
+                 , centerY
+                 ]
+                    ++ (if labelIsAbove then
+                            [ Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette ]
+
+                        else
+                            []
+                       )
+                    ++ labelAboveAttrs
+                )
+                [ text args.label, requiredEl ]
     in
     if String.isEmpty args.label && args.requiredLabel == Nothing then
         none
@@ -478,27 +439,51 @@ labelBuilder args =
         el
             [ height <| px 0
             , Font.color <| textfieldLabelColor args
-            , paddingEach { top = 0, bottom = 0, right = containerPaddingAttrs.right, left = containerPaddingAttrs.left - notchClearance }
+            , moveRight 8
             ]
             labelEl
 
 
-showValidationIcon_ : { a | maybeValid : Maybe Bool, displayValidation : Bool, palette : R10.FormTypes.Palette } -> Element msg
+showValidationIcon_ :
+    { a
+        | maybeValid : Maybe Bool
+        , displayValidation : Bool
+        , palette : R10.FormTypes.Palette
+    }
+    -> Element msg
 showValidationIcon_ { maybeValid, displayValidation, palette } =
     let
+        iconSize : Int
+        iconSize =
+            18
+
         widthPx : Int
         widthPx =
-            if displayValidation && maybeValid == Just False then
-                24
+            if displayValidation then
+                -- Extra 16 px for the margin on the left. This icon is always
+                -- the last on the right. This is to have it entering with
+                -- an animation
+                iconSize + 16
 
             else
                 0
     in
-    icons.sign_warning_f
-        [ htmlAttribute <| Html.Attributes.style "transition" "width 0.4s"
-        , width <| px widthPx
-        , height <| px 24
-        , clip
-        ]
-        (R10.FormComponents.Internal.UI.Color.error palette)
-        24
+    if maybeValid == Just False then
+        icons.sign_warning_f
+            [ htmlAttribute <| Html.Attributes.style "transition" "width 0.4s"
+            , width <| px widthPx
+            , height <| px iconSize
+            , clip
+            ]
+            (R10.FormComponents.Internal.UI.Color.error palette)
+            iconSize
+
+    else
+        icons.check
+            [ htmlAttribute <| Html.Attributes.style "transition" "width 0.4s"
+            , width <| px widthPx
+            , height <| px iconSize
+            , clip
+            ]
+            (R10.FormComponents.Internal.UI.Color.success palette)
+            iconSize

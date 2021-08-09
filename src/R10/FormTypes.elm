@@ -1,15 +1,14 @@
 module R10.FormTypes exposing
-    ( TypeText(..), TypeBinary(..), TypeMulti(..), TypeSingle(..)
+    ( TypeText(..), TypeBinary(..), TypeMulti(..), TypeSingle(..), TypeSpecial(..)
     , FieldType(..), FieldOption
     , inputField
     , ValidationIcon(..)
     , Palette
-    , TypeSpecial(..)
     )
 
 {-| Types for Forms
 
-@docs TypeText, TypeBinary, TypeMulti, TypeSingle
+@docs TypeText, TypeBinary, TypeMulti, TypeSingle, TypeSpecial
 
 @docs FieldType, FieldOption
 

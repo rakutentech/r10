@@ -5,10 +5,11 @@ module R10.Table.Internal.Style exposing
     )
 
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Html.Attributes
+import R10.Context exposing (..)
+import R10.Transition
 
 
 
@@ -17,7 +18,7 @@ import Html.Attributes
 
 borderColor : Color
 borderColor =
-    Element.rgba 0 0 0 0.2
+    rgba 0 0 0 0.2
 
 
 

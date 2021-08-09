@@ -8,9 +8,9 @@ module R10.Counter exposing (Counter, add, animationPosition, areMoving, init, j
 
 import Array
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Element.WithContext.Font as Font
 import Html.Attributes
+import R10.Context exposing (..)
 
 
 {-| -}

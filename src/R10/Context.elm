@@ -8,9 +8,6 @@ module R10.Context exposing
     , empty
     , fromModel
     , toContextForForm
-    , withContext
-    , withContextAttribute
-    , withContextDecoration
     )
 
 import Dict
@@ -459,21 +456,6 @@ type alias AttrC decorative msg =
 
 type alias DecorationC =
     Element.WithContext.Decoration Context
-
-
-withContext : (Context -> ElementC msg) -> ElementC msg
-withContext =
-    Element.WithContext.with identity
-
-
-withContextAttribute : (Context -> AttributeC msg) -> AttributeC msg
-withContextAttribute =
-    Element.WithContext.withAttribute identity
-
-
-withContextDecoration : (msg -> Element.WithContext.Decoration msg) -> Element.WithContext.Decoration msg
-withContextDecoration =
-    Element.WithContext.withDecoration identity
 
 
 matchCallCenterValue :

@@ -1,16 +1,17 @@
 module R10.Table.Internal.Header exposing (simpleHeader, toHeaderInfo, toSortArrowInfo, viewHeaderSortArrow, viewHeaderTitle)
 
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Element.WithContext.Events as Events
 import Element.WithContext.Font as Font
 import Html.Attributes
+import R10.Context exposing (..)
 import R10.FormTypes
 import R10.Table.Internal.Config
 import R10.Table.Internal.State
 import R10.Table.Internal.Style
 import R10.Table.Internal.Svg
 import R10.Table.Internal.Types
+import R10.Transition
 
 
 type ArrowType

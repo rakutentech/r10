@@ -1,8 +1,8 @@
 module R10.Table.Internal.Cell exposing (simpleCell)
 
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Element.WithContext.Font as Font
+import R10.Context exposing (..)
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
 import R10.Table.Internal.Placeholder

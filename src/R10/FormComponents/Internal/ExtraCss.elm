@@ -1,12 +1,12 @@
 module R10.FormComponents.Internal.ExtraCss exposing (extraCss)
 
 import Element.WithContext exposing (..)
+import R10.Context exposing (..)
 import R10.FormComponents.Internal.Single
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Validations
 import R10.FormTypes
-import R10.Context exposing (..)
 
 
 extraCss : R10.FormTypes.Palette -> String

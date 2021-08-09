@@ -12,10 +12,10 @@ module R10.Paragraph exposing
 -}
 
 import Element.WithContext exposing (..)
+import R10.Context exposing (..)
 import R10.FontSize
 import R10.Link
 import R10.SimpleMarkdown
-import R10.Context exposing (..)
 
 
 spacingNormal : Int

@@ -12,11 +12,11 @@ module R10.FormComponents.Internal.Phone.Common exposing
     )
 
 import Element.WithContext exposing (..)
+import R10.Context exposing (..)
 import R10.Country
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Style
 import R10.FormTypes
-import R10.Context exposing (..)
 
 
 

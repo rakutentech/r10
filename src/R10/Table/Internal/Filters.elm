@@ -2,13 +2,13 @@ module R10.Table.Internal.Filters exposing (view)
 
 import Dict
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Events as Events
 import Html.Attributes
 import Html.Events
 import Json.Decode
+import R10.Context exposing (..)
 import R10.Form
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
@@ -18,6 +18,7 @@ import R10.Table.Internal.State
 import R10.Table.Internal.Style
 import R10.Table.Internal.Svg
 import R10.Table.Internal.Types
+import R10.Transition
 
 
 onClickWithStopPropagation : msg -> AttributeC msg
@@ -52,7 +53,7 @@ getFilterLabel filterType =
 viewEditPopup :
     R10.FormTypes.Palette
     -> R10.Form.Form
-    -> Element R10.Table.Internal.Msg.Msg
+    -> ElementC R10.Table.Internal.Msg.Msg
 viewEditPopup palette formModel =
     row
         [ width <| px 400 ]
@@ -81,7 +82,7 @@ getFilterValue filterType filtersState =
     Dict.get (getFilterKey filterType) filtersState.filterValues
 
 
-viewChipRemoveButton : String -> Element R10.Table.Internal.Msg.Msg
+viewChipRemoveButton : String -> ElementC R10.Table.Internal.Msg.Msg
 viewChipRemoveButton key =
     el
         [ alpha 0.5
@@ -99,7 +100,7 @@ viewChip :
     R10.FormTypes.Palette
     -> R10.Table.Internal.State.FiltersStateRecord
     -> R10.Table.Internal.Types.Filter
-    -> Element R10.Table.Internal.Msg.Msg
+    -> ElementC R10.Table.Internal.Msg.Msg
 viewChip palette filtersState filterType =
     let
         key : String
@@ -119,7 +120,7 @@ viewChip palette filtersState filterType =
                 Nothing ->
                     False
 
-        removeButton : Element R10.Table.Internal.Msg.Msg
+        removeButton : ElementC R10.Table.Internal.Msg.Msg
         removeButton =
             if isActive then
                 viewChipRemoveButton key
@@ -156,14 +157,14 @@ viewFilter :
     R10.FormTypes.Palette
     -> R10.Table.Internal.State.FiltersStateRecord
     -> R10.Table.Internal.Types.Filter
-    -> Element R10.Table.Internal.Msg.Msg
+    -> ElementC R10.Table.Internal.Msg.Msg
 viewFilter palette filtersState filterType =
     let
         key : String
         key =
             getFilterKey filterType
 
-        maybeEditPopupEl : Maybe (Element R10.Table.Internal.Msg.Msg)
+        maybeEditPopupEl : Maybe (ElementC R10.Table.Internal.Msg.Msg)
         maybeEditPopupEl =
             case filtersState.filterEditor of
                 Just ( key_, formModel ) ->
@@ -184,7 +185,7 @@ viewFilter palette filtersState filterType =
             viewChip palette filtersState filterType
 
 
-viewFilterPanelButton : Element R10.Table.Internal.Msg.Msg
+viewFilterPanelButton : ElementC R10.Table.Internal.Msg.Msg
 viewFilterPanelButton =
     el
         [ R10.Transition.transition "all 0.2s ease-out"
@@ -204,7 +205,7 @@ view :
     R10.FormTypes.Palette
     -> R10.Table.Internal.Config.FiltersConfig
     -> R10.Table.Internal.State.State
-    -> Element R10.Table.Internal.Msg.Msg
+    -> ElementC R10.Table.Internal.Msg.Msg
 view palette filtersConfig state =
     case state.filters of
         R10.Table.Internal.State.Filters filtersState ->

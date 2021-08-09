@@ -2,7 +2,7 @@ module R10.Color.AttrsFont exposing (buttonPrimary, buttonPrimaryDisabled, butto
 
 {-| Font colors
 
-@docs buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid, linkOver
+@docs buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid
 
 -}
 

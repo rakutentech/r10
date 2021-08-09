@@ -154,6 +154,7 @@ fontHighEmphasisWithMaximumContrast theme =
         |> R10.Color.Utils.fromColorColor
 
 
+{-| -}
 border : R10.Theme.Theme -> Color
 border theme =
     R10.Color.Internal.Derived.Border

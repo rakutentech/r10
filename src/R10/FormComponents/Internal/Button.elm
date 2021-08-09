@@ -10,11 +10,11 @@ import Element.WithContext.Border as Border
 import Element.WithContext.Events as Events
 import Element.WithContext.Font as Font
 import Html.Attributes
+import R10.Context exposing (..)
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
-import R10.Context exposing (..)
 
 
 

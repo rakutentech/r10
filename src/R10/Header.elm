@@ -32,6 +32,7 @@ import R10.Language
 import R10.Libu
 import R10.Mode
 import R10.Theme
+import R10.Transition
 import R10.Translations
 import Task
 
@@ -728,12 +729,26 @@ logoutLink model args =
     if model.debuggingMode then
         Input.button
             attrsLink
-            { label = R10.I18n.paragraph [] R10.Translations.signOut, onPress = Just Logout }
+            { label =
+                R10.I18n.paragraph []
+                    { renderingMode = R10.I18n.Normal
+                    , tagReplacer = \c s -> s
+                    , translation = R10.Translations.signOut
+                    }
+            , onPress = Just Logout
+            }
 
     else
         link
             attrsLink
-            { label = R10.I18n.paragraph [] R10.Translations.signOut, url = model.urlLogout ++ "?from=" ++ args.from }
+            { label =
+                R10.I18n.paragraph []
+                    { renderingMode = R10.I18n.Normal
+                    , tagReplacer = \c s -> s
+                    , translation = R10.Translations.signOut
+                    }
+            , url = model.urlLogout ++ "?from=" ++ args.from
+            }
 
 
 {-| -}
@@ -742,12 +757,26 @@ loginLink model args =
     if model.debuggingMode then
         Input.button
             attrsLink
-            { label = R10.I18n.paragraph [] R10.Translations.signIn, onPress = Just Login }
+            { label =
+                R10.I18n.paragraph []
+                    { renderingMode = R10.I18n.Normal
+                    , tagReplacer = \c s -> s
+                    , translation = R10.Translations.signIn
+                    }
+            , onPress = Just Login
+            }
 
     else
         link
             attrsLink
-            { label = R10.I18n.paragraph [] R10.Translations.signIn, url = loginUrl model args }
+            { label =
+                R10.I18n.paragraph []
+                    { renderingMode = R10.I18n.Normal
+                    , tagReplacer = \c s -> s
+                    , translation = R10.Translations.signIn
+                    }
+            , url = loginUrl model args
+            }
 
 
 {-| -}
@@ -761,13 +790,23 @@ loginButton : Header -> ViewArgs msg route -> ElementC Msg
 loginButton model args =
     if model.debuggingMode then
         Input.button (attrsButton ++ [ alignRight ])
-            { label = R10.I18n.paragraph [] R10.Translations.signIn
+            { label =
+                R10.I18n.paragraph []
+                    { renderingMode = R10.I18n.Normal
+                    , tagReplacer = \c s -> s
+                    , translation = R10.Translations.signIn
+                    }
             , onPress = Just Login
             }
 
     else
         link (attrsButton ++ [ alignRight ])
-            { label = R10.I18n.paragraph [] R10.Translations.signIn
+            { label =
+                R10.I18n.paragraph []
+                    { renderingMode = R10.I18n.Normal
+                    , tagReplacer = \c s -> s
+                    , translation = R10.Translations.signIn
+                    }
             , url = loginUrl model args
             }
 
@@ -957,7 +996,14 @@ sideMenu model args =
     <|
         []
             ++ args.extraContent
-            ++ [ menuTitle [ R10.I18n.paragraph [] R10.Translations.language ] ]
+            ++ [ menuTitle
+                    [ R10.I18n.paragraph []
+                        { renderingMode = R10.I18n.Normal
+                        , tagReplacer = \c s -> s
+                        , translation = R10.Translations.language
+                        }
+                    ]
+               ]
             ++ menuSeparator
             ++ languageMenu model args
             ++ menuSeparator

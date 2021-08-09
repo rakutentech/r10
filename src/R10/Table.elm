@@ -10,8 +10,8 @@ module R10.Table exposing (Column, columnCustom, columnSimple, columnWithAttrs, 
 
 import Dict exposing (Dict)
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Element.WithContext.Keyed as Keyed
+import R10.Context exposing (..)
 import R10.FormTypes
 import R10.Table.Internal.Accordion
 import R10.Table.Internal.Cell
@@ -406,7 +406,7 @@ that.
 view : R10.FormTypes.Palette -> R10.Table.Internal.Config.Config data msg -> R10.Table.Internal.State.State -> List data -> ElementC msg
 view palette conf state data =
     let
-        filters : Element R10.Table.Internal.Msg.Msg
+        filters : ElementC R10.Table.Internal.Msg.Msg
         filters =
             case conf.maybeFiltersConfig of
                 Just filtersConfig ->
@@ -415,7 +415,7 @@ view palette conf state data =
                 Nothing ->
                     none
 
-        paginator : Element R10.Table.Internal.Msg.Msg
+        paginator : ElementC R10.Table.Internal.Msg.Msg
         paginator =
             case ( conf.maybePaginationConfig, state ) of
                 ( Just paginationConfig, { pagination } ) ->
@@ -430,10 +430,10 @@ view palette conf state data =
     in
     column
         [ width fill, height fill ]
-        [ Element.map conf.toMsg filters
+        [ map conf.toMsg filters
         , viewHeaderRowHelp palette state conf.columns sortMsg
         , viewBody palette conf state data
-        , Element.map conf.toMsg paginator
+        , map conf.toMsg paginator
         ]
 
 

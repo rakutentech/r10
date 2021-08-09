@@ -8,8 +8,8 @@ module R10.Svg.IconsExtra exposing (more_vert, checkBold, copy, aToZ, check_thic
 
 import Element.WithContext exposing (..)
 import R10.Color.Utils
-import R10.Svg.Utils
 import R10.Context exposing (..)
+import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA
 

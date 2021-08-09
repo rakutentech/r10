@@ -122,6 +122,7 @@ viewBorderLess attrs args =
 -- if you use this module. The String argument is the `colorHover`
 
 
+{-| -}
 extraCss : Color -> String
 extraCss colorHover =
     -- Remove the triangle button (select arrow) from IE11

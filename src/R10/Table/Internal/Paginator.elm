@@ -1,18 +1,19 @@
 module R10.Table.Internal.Paginator exposing (getPaginationStateRecord_, paginationButtonDisableAll_, paginationButtonEnableAll_, paginationButtonEnableOther_, paginationButtonNextFetch_, paginationButtonPrevFetch_, updatePaginationState_, view)
 
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Events as Events
 import Html
 import Html.Attributes
 import Html.Events
+import R10.Context exposing (..)
 import R10.FormTypes
 import R10.Table.Internal.Config
 import R10.Table.Internal.Msg
 import R10.Table.Internal.State
 import R10.Table.Internal.Svg
+import R10.Transition
 import Svg
 
 
@@ -33,7 +34,10 @@ intToOption v =
     Html.option [ Html.Attributes.value (String.fromInt v) ] [ Html.text (String.fromInt v) ]
 
 
-numberOfRowsSelector : R10.Table.Internal.Config.PaginationConfig -> R10.Table.Internal.State.PaginationStateRecord -> Element R10.Table.Internal.Msg.Msg
+numberOfRowsSelector :
+    R10.Table.Internal.Config.PaginationConfig
+    -> R10.Table.Internal.State.PaginationStateRecord
+    -> ElementC R10.Table.Internal.Msg.Msg
 numberOfRowsSelector paginationConfig state =
     row
         [ alignRight
@@ -54,7 +58,11 @@ numberOfRowsSelector paginationConfig state =
         ]
 
 
-viewPaginationButton : R10.Table.Internal.Msg.Msg -> (String -> Int -> Svg.Svg R10.Table.Internal.Msg.Msg) -> R10.Table.Internal.State.PaginationButtonState -> Element R10.Table.Internal.Msg.Msg
+viewPaginationButton :
+    R10.Table.Internal.Msg.Msg
+    -> (String -> Int -> Svg.Svg R10.Table.Internal.Msg.Msg)
+    -> R10.Table.Internal.State.PaginationButtonState
+    -> ElementC R10.Table.Internal.Msg.Msg
 viewPaginationButton msg icon state =
     el
         (buttonStyle
@@ -72,7 +80,11 @@ viewPaginationButton msg icon state =
         (html <| icon "black" 22)
 
 
-view : R10.FormTypes.Palette -> R10.Table.Internal.Config.PaginationConfig -> R10.Table.Internal.State.PaginationState -> Element R10.Table.Internal.Msg.Msg
+view :
+    R10.FormTypes.Palette
+    -> R10.Table.Internal.Config.PaginationConfig
+    -> R10.Table.Internal.State.PaginationState
+    -> ElementC R10.Table.Internal.Msg.Msg
 view _ paginationConfig paginationState =
     case paginationState of
         -- todo refactor it so pagination would work with default state initially,

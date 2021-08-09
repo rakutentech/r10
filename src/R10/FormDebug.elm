@@ -47,6 +47,16 @@ textTypeMetaData textType =
 
         R10.FormTypes.TextWithPattern pattern ->
             { string = "R10.FormTypes.TextWithPattern " ++ pattern
+            , next = R10.FormTypes.TextEmailWithSuggestions [ "aaa.com", "bbb.com", "ccc.com" ]
+            }
+
+        R10.FormTypes.TextEmailWithSuggestions pattern ->
+            { string = "R10.FormTypes.TextEmailWithSuggestions " ++ String.join ", " pattern
+            , next = R10.FormTypes.TextWithPatternLarge "YY/MMMM"
+            }
+
+        R10.FormTypes.TextWithPatternLarge pattern ->
+            { string = "R10.FormTypes.TextWithPatternLarge " ++ pattern
             , next = R10.FormTypes.TextPasswordNew
             }
 

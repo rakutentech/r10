@@ -1,10 +1,11 @@
 module R10.Table.Internal.Accordion exposing (getAttrs)
 
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Html
 import Html.Attributes
+import R10.Context exposing (..)
 import R10.Table.Internal.Style
+import R10.Transition
 
 
 spinnerElementCss : ElementC msg

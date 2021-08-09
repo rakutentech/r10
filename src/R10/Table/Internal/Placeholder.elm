@@ -1,8 +1,8 @@
 module R10.Table.Internal.Placeholder exposing (placeholderSvg, view)
 
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import Element.WithContext.Border as Border
+import R10.Context exposing (..)
 import Svg
 import Svg.Attributes as SA
 
@@ -53,7 +53,7 @@ placeholderSvg color =
         speed =
             "2s"
     in
-    Element.html <|
+    html <|
         Svg.svg
             [ SA.xmlSpace "http://www.w3.org/2000/svg"
             , SA.width "auto"

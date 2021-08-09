@@ -33,9 +33,9 @@ module R10.FormComponents.Internal.UI.Color exposing
 import Color
 import Color.Blending
 import Element.WithContext exposing (..)
+import R10.Context exposing (..)
 import R10.FormComponents.Internal.UI.Palette
 import R10.FormTypes
-import R10.Context exposing (..)
 
 
 

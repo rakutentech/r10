@@ -10,7 +10,6 @@ import Element.WithContext exposing (..)
 import Element.WithContext.Border as Border
 import R10.Color.Internal.Derived
 import R10.Color.Utils
-import R10.Context exposing (Context)
 import R10.Context exposing (..)
 
 

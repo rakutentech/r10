@@ -8,8 +8,8 @@ module R10.Svg.Icons exposing (arrow_down_l, arrow_left_l, arrow_link_l, arrow_r
 
 import Element.WithContext exposing (..)
 import R10.Color.Utils
-import R10.Svg.Utils
 import R10.Context exposing (..)
+import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA
 

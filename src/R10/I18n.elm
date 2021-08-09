@@ -70,6 +70,7 @@ paragraph attrs { renderingMode, tagReplacer, translation } =
                 }
 
 
+{-| -}
 paragraphFromString :
     List (AttributeC msg)
     ->
@@ -126,6 +127,7 @@ applySubstitutions { tagReplacer, context, renderingMode } translationAsString =
             }
 
 
+{-| -}
 type RenderingMode
     = Normal
     | Error

@@ -15,6 +15,7 @@ import R10.Color.AttrsFont
 import R10.Context exposing (..)
 import R10.Mode
 import R10.Theme
+import R10.Transition
 
 
 shadow : Float -> AttrC decorative msg

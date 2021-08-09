@@ -7,10 +7,9 @@ module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monochrome
 -}
 
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
-import R10.Context exposing (..)
 import Html.Attributes
 import R10.Color.Utils
+import R10.Context exposing (..)
 import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA

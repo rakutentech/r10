@@ -1,14 +1,13 @@
-module R10.Context exposing
-    ( AttrC
-    , AttributeC
-    , Context
-    , ContextForForm
-    , DecorationC
-    , ElementC
-    , empty
-    , fromModel
-    , toContextForForm
-    )
+module R10.Context exposing (AttrC, AttributeC, Context, ContextForForm, DecorationC, ElementC, empty, fromModel, toContextForForm)
+
+{-|
+
+
+# Base
+
+@docs AttrC, AttributeC, Context, ContextForForm, DecorationC, ElementC, empty, fromModel, toContextForForm
+
+-}
 
 import Dict
 import Element.WithContext
@@ -22,6 +21,7 @@ import R10.When exposing (..)
 import Url
 
 
+{-| -}
 type alias Context =
     { language : R10.Language.Language
     , theme : R10.Theme.Theme
@@ -66,6 +66,7 @@ type alias Context =
     }
 
 
+{-| -}
 emptyModel :
     { flags :
         { callCenterUrl : String
@@ -148,11 +149,13 @@ emptyModel =
     }
 
 
+{-| -}
 empty : Context
 empty =
     fromModel emptyModel
 
 
+{-| -}
 type alias ContextForForm =
     { language : R10.Language.Language
     , countryCode : R10.CountryCode.CountryCode
@@ -160,6 +163,7 @@ type alias ContextForForm =
     }
 
 
+{-| -}
 toContextForForm : Context -> ContextForForm
 toContextForForm c =
     { language = c.language
@@ -168,6 +172,7 @@ toContextForForm c =
     }
 
 
+{-| -}
 fromModel :
     { d
         | flags :
@@ -259,6 +264,7 @@ fromModel model =
     }
 
 
+{-| -}
 isSmallScreen : { b | windowSize : { a | width : Int } } -> Bool
 isSmallScreen model =
     model.windowSize.width < 350
@@ -442,22 +448,27 @@ isSmallScreen model =
 --
 
 
+{-| -}
 type alias ElementC msg =
     Element.WithContext.Element Context msg
 
 
+{-| -}
 type alias AttributeC msg =
     Element.WithContext.Attribute Context msg
 
 
+{-| -}
 type alias AttrC decorative msg =
     Element.WithContext.Attr Context decorative msg
 
 
+{-| -}
 type alias DecorationC =
     Element.WithContext.Decoration Context
 
 
+{-| -}
 matchCallCenterValue :
     { b
         | language : R10.Language.Language

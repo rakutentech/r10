@@ -26,6 +26,7 @@ type Color
     | FontLink
     | Success
     | Error
+    | Border
 
 
 toColor : R10.Theme.Theme -> (Color -> Color.Color)
@@ -84,6 +85,9 @@ toString_ value =
         Error ->
             "Error"
 
+        Border ->
+            "Border"
+
 
 list_ : List Color
 list_ =
@@ -93,6 +97,7 @@ list_ =
     , FontLink
     , Success
     , Error
+    , Border
     ]
 
 
@@ -127,6 +132,11 @@ toColorLight_ color =
         Background ->
             ( R10.Color.Utils.fromHexToColorColor "#ebebeb"
             , "Hard coded as #f0f0f0"
+            )
+
+        Border ->
+            ( R10.Color.Utils.fromHexToColorColor "#999999"
+            , "Hard coded as #999999"
             )
 
 
@@ -169,4 +179,9 @@ toColorDark_ color =
         Background ->
             ( R10.Color.Utils.fromHexToColorColor "#121212"
             , "Hard coded as #121212"
+            )
+
+        Border ->
+            ( R10.Color.Utils.fromHexToColorColor "#999999"
+            , "Hard coded as #cccccc"
             )

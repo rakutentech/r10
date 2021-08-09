@@ -6,15 +6,16 @@ module R10.Svg.Others exposing (mobileWithPerson, mountain, spinnerRotation, gre
 
 -}
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import R10.Color.Utils
+import R10.Context exposing (..)
 import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA
 
 
 {-| -}
-spinnerRotation : List (Attribute msg) -> Int -> String -> Element msg
+spinnerRotation : List (AttributeC msg) -> Int -> String -> ElementC msg
 spinnerRotation attrs size colorString =
     let
         idElement =
@@ -72,7 +73,7 @@ spinnerRotation attrs size colorString =
 
 
 {-| -}
-mobileWithPerson : List (Attribute msg) -> Color -> Int -> Element msg
+mobileWithPerson : List (AttributeC msg) -> Color -> Int -> ElementC msg
 mobileWithPerson attrs cl size =
     let
         clHex =
@@ -115,7 +116,7 @@ mobileWithPerson attrs cl size =
 
 
 {-| -}
-mountain : List (Attribute msg) -> Int -> Element msg
+mountain : List (AttributeC msg) -> Int -> ElementC msg
 mountain attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 152 148"
@@ -154,7 +155,7 @@ mountain attrs size =
 
 
 {-| -}
-greenCheck : List (Attribute msg) -> Int -> Element msg
+greenCheck : List (AttributeC msg) -> Int -> ElementC msg
 greenCheck attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 131 130"
@@ -166,7 +167,7 @@ greenCheck attrs size =
 
 
 {-| -}
-errorTriangle : List (Attribute msg) -> Int -> Element msg
+errorTriangle : List (AttributeC msg) -> Int -> ElementC msg
 errorTriangle attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 183 141"
@@ -197,7 +198,7 @@ errorTriangle attrs size =
 
 
 {-| -}
-errorLens : List (Attribute msg) -> Int -> Element msg
+errorLens : List (AttributeC msg) -> Int -> ElementC msg
 errorLens attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 179 149"
@@ -230,7 +231,7 @@ errorLens attrs size =
 
 
 {-| -}
-letterClosed : List (Attribute msg) -> Int -> Element msg
+letterClosed : List (AttributeC msg) -> Int -> ElementC msg
 letterClosed attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 237 135"
@@ -254,7 +255,7 @@ letterClosed attrs size =
 
 
 {-| -}
-letterOpen : List (Attribute msg) -> Int -> Element msg
+letterOpen : List (AttributeC msg) -> Int -> ElementC msg
 letterOpen attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 208 161"
@@ -291,7 +292,7 @@ letterOpen attrs size =
 
 
 {-| -}
-checkMark : List (Attribute msg) -> Int -> Element msg
+checkMark : List (AttributeC msg) -> Int -> ElementC msg
 checkMark attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 183 141"
@@ -321,7 +322,7 @@ checkMark attrs size =
 
 
 {-| -}
-rocket : List (Attribute msg) -> Int -> Element msg
+rocket : List (AttributeC msg) -> Int -> ElementC msg
 rocket attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 159 149"
@@ -358,7 +359,7 @@ rocket attrs size =
 
 
 {-| -}
-paperPlane : List (Attribute msg) -> Int -> Element msg
+paperPlane : List (AttributeC msg) -> Int -> ElementC msg
 paperPlane attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 381 200"
@@ -378,11 +379,11 @@ paperPlane attrs size =
 
 
 {-| -}
-externalLink : List (Attribute msg) -> Int -> Element msg
-externalLink attrs size =
+externalLink : List (AttributeC msg) -> Color -> Int -> ElementC msg
+externalLink attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 16 16"
         size
-        [ Svg.path [ SA.fill "#000", SA.fillRule "evenodd", SA.d "M11 13H2V6.5h1v-1H2a1 1 0 00-1 1V13c0 .6.4 1 1 1h9c.6 0 1-.4 1-1v-1.5h-1V13z", SA.clipRule "evenodd" ] []
-        , Svg.path [ SA.fill "#000", SA.fillRule "evenodd", SA.d "M5 4h9V3H5v1zm0 5.5h9V5H5v4.5zM14 2H5a1 1 0 00-1 1v6.5c0 .6.4 1 1 1h9c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1z", SA.clipRule "evenodd" ] []
+        [ Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.fillRule "evenodd", SA.d "M11 13H2V6.5h1v-1H2a1 1 0 00-1 1V13c0 .6.4 1 1 1h9c.6 0 1-.4 1-1v-1.5h-1V13z", SA.clipRule "evenodd" ] []
+        , Svg.path [ SA.fill <| R10.Color.Utils.toCssRgba cl, SA.fillRule "evenodd", SA.d "M5 4h9V3H5v1zm0 5.5h9V5H5v4.5zM14 2H5a1 1 0 00-1 1v6.5c0 .6.4 1 1 1h9c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1z", SA.clipRule "evenodd" ] []
         ]

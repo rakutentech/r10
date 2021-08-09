@@ -4,16 +4,17 @@ module R10.FormComponents.Internal.Button exposing
     , view
     )
 
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Events as Events
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Events as Events
+import Element.WithContext.Font as Font
 import Html.Attributes
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
+import R10.Context exposing (..)
 
 
 
@@ -85,7 +86,7 @@ getLeftPadding args =
                 12
 
 
-viewIcon : Args msg -> Element msg -> Element msg
+viewIcon : Args msg -> ElementC msg -> ElementC msg
 viewIcon args icon =
     el
         [ width <| px (getIconSize args)
@@ -241,7 +242,7 @@ type alias Args msg =
     { type_ : Button
 
     --  icon should be 18px, for Icon button 24px https://material.io/components/buttons#specs
-    , icon : Maybe (Element msg)
+    , icon : Maybe (ElementC msg)
     , text : String
     , onClick : msg
     , palette : R10.FormTypes.Palette
@@ -250,7 +251,7 @@ type alias Args msg =
     }
 
 
-view : List (Attribute msg) -> Args msg -> Element msg
+view : List (AttributeC msg) -> Args msg -> ElementC msg
 view attrs args =
     row
         ([ Background.color <| getBackgroundColor args

@@ -7,8 +7,9 @@ module R10.Counter exposing (Counter, add, animationPosition, areMoving, init, j
 -}
 
 import Array
-import Element exposing (..)
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
+import Element.WithContext.Font as Font
 import Html.Attributes
 
 
@@ -508,7 +509,7 @@ transition :
         , size : Float
         , target : String
     }
-    -> Element msg
+    -> ElementC msg
 transition { present, target, size, position } =
     let
         noTransition =
@@ -597,7 +598,7 @@ getCharFromStart index string =
 
 
 {-| -}
-view : Counter -> Float -> Element msg
+view : Counter -> Float -> ElementC msg
 view counter size =
     let
         wheelsQuantity_ =

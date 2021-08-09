@@ -11,65 +11,70 @@ module R10.Paragraph exposing
 
 -}
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import R10.FontSize
 import R10.Link
 import R10.SimpleMarkdown
-import R10.Theme
+import R10.Context exposing (..)
 
 
-paragraphSpacing : Attribute msg
+spacingNormal : Int
+spacingNormal =
+    10
+
+
+paragraphSpacing : AttributeC msg
 paragraphSpacing =
-    spacing 10
+    spacing spacingNormal
 
 
 {-| -}
-normalMarkdown : List (Attribute msg) -> R10.Theme.Theme -> String -> Element msg
-normalMarkdown attrs theme string =
+xxlarge : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+xxlarge attrs children =
+    paragraph ([ R10.FontSize.xxlarge, spacing <| spacingNormal ] ++ attrs) children
+
+
+{-| -}
+xlarge : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+xlarge attrs children =
+    paragraph ([ R10.FontSize.xlarge, spacing <| spacingNormal ] ++ attrs) children
+
+
+{-| -}
+large : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+large attrs children =
+    paragraph ([ R10.FontSize.large, spacing <| spacingNormal ] ++ attrs) children
+
+
+{-| -}
+normalMarkdown : List (AttributeC msg) -> String -> ElementC msg
+normalMarkdown attrs string =
     normal attrs
         (R10.SimpleMarkdown.elementMarkdownAdvanced
-            { link = R10.Link.attrs theme }
+            { link = R10.Link.attrs }
             string
         )
 
 
 {-| -}
-normal : List (Attribute msg) -> List (Element msg) -> Element msg
+normal : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
 normal attrs children =
-    paragraph ([ R10.FontSize.normal, paragraphSpacing ] ++ attrs) children
+    paragraph ([ R10.FontSize.normal, spacing <| spacingNormal ] ++ attrs) children
 
 
 {-| -}
-large : List (Attribute msg) -> List (Element msg) -> Element msg
-large attrs children =
-    paragraph ([ R10.FontSize.large ] ++ attrs) children
-
-
-{-| -}
-xlarge : List (Attribute msg) -> List (Element msg) -> Element msg
-xlarge attrs children =
-    paragraph ([ R10.FontSize.xlarge ] ++ attrs) children
-
-
-{-| -}
-xxlarge : List (Attribute msg) -> List (Element msg) -> Element msg
-xxlarge attrs children =
-    paragraph ([ R10.FontSize.xxlarge ] ++ attrs) children
-
-
-{-| -}
-small : List (Attribute msg) -> List (Element msg) -> Element msg
+small : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
 small attrs children =
-    paragraph ([ R10.FontSize.small ] ++ attrs) children
+    paragraph ([ R10.FontSize.small, spacing <| spacingNormal - 3 ] ++ attrs) children
 
 
 {-| -}
-xsmall : List (Attribute msg) -> List (Element msg) -> Element msg
+xsmall : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
 xsmall attrs children =
-    paragraph ([ R10.FontSize.xsmall ] ++ attrs) children
+    paragraph ([ R10.FontSize.xsmall, spacing <| spacingNormal - 6 ] ++ attrs) children
 
 
 {-| -}
-xxsmall : List (Attribute msg) -> List (Element msg) -> Element msg
+xxsmall : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
 xxsmall attrs children =
-    paragraph ([ R10.FontSize.xsmall ] ++ attrs) children
+    paragraph ([ R10.FontSize.xsmall, spacing <| spacingNormal - 9 ] ++ attrs) children

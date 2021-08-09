@@ -5,13 +5,14 @@ module R10.Form.Internal.MakerForView exposing
     , maker
     )
 
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Events as Events
-import Element.Font as Font
-import Element.Input as Input
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Events as Events
+import Element.WithContext.Font as Font
+import Element.WithContext.Input as Input
 import Html.Attributes
+import R10.Context exposing (..)
 import R10.Form.Internal.Conf
 import R10.Form.Internal.Converter
 import R10.Form.Internal.Dict
@@ -25,7 +26,11 @@ import R10.Form.Internal.Translator
 import R10.Form.Internal.Update
 import R10.FormComponents.Internal.Binary
 import R10.FormComponents.Internal.ExtraCss
+import R10.FormComponents.Internal.Phone
+import R10.FormComponents.Internal.Phone.Combobox
+import R10.FormComponents.Internal.Phone.Common
 import R10.FormComponents.Internal.Single
+import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI
@@ -33,6 +38,7 @@ import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.UI.Palette
 import R10.FormComponents.Internal.Validations
 import R10.FormTypes
+import R10.Transition
 
 
 
@@ -44,7 +50,7 @@ import R10.FormTypes
 
 
 type alias Outcome =
-    Element R10.Form.Internal.Msg.Msg
+    ElementC R10.Form.Internal.Msg.Msg
 
 
 
@@ -67,12 +73,12 @@ type alias ArgsForFields =
     }
 
 
-paddingGeneric : Attribute msg
+paddingGeneric : AttributeC msg
 paddingGeneric =
     paddingXY 20 25
 
 
-spacingGeneric : Attribute msg
+spacingGeneric : AttributeC msg
 spacingGeneric =
     spacingXY 15 25
 
@@ -141,18 +147,18 @@ maybeValid validation =
 
 
 
--- ██ ███    ██ ██████  ██    ██ ████████     ████████ ███████ ██   ██ ████████
--- ██ ████   ██ ██   ██ ██    ██    ██           ██    ██       ██ ██     ██
--- ██ ██ ██  ██ ██████  ██    ██    ██           ██    █████     ███      ██
--- ██ ██  ██ ██ ██      ██    ██    ██           ██    ██       ██ ██     ██
--- ██ ██   ████ ██       ██████     ██           ██    ███████ ██   ██    ██
+-- ██    ██ ██ ███████ ██     ██     ████████ ███████ ██   ██ ████████
+-- ██    ██ ██ ██      ██     ██        ██    ██       ██ ██     ██
+-- ██    ██ ██ █████   ██  █  ██        ██    █████     ███      ██
+--  ██  ██  ██ ██      ██ ███ ██        ██    ██       ██ ██     ██
+--   ████   ██ ███████  ███ ███         ██    ███████ ██   ██    ██
 
 
 viewText :
     ArgsForFields
     -> R10.FormTypes.TypeText
     -> R10.Form.Internal.Conf.Conf
-    -> Element R10.Form.Internal.Msg.Msg
+    -> ElementC R10.Form.Internal.Msg.Msg
 viewText args textType formConf =
     R10.FormComponents.Internal.Text.view
         [ width
@@ -206,25 +212,33 @@ viewText args textType formConf =
         , requiredLabel = args.fieldConf.requiredLabel
         , palette = args.palette
         , autocomplete = args.fieldConf.autocomplete
+        , floatingLabelAlwaysUp =
+            case textType of
+                R10.FormTypes.TextWithPatternLarge _ ->
+                    True
+
+                _ ->
+                    False
 
         -- Specific
         , textType = textType
+        , placeholder = Nothing
         }
 
 
 
---  ██████ ██   ██ ███████  ██████ ██   ██ ██████   ██████  ██   ██
--- ██      ██   ██ ██      ██      ██  ██  ██   ██ ██    ██  ██ ██
--- ██      ███████ █████   ██      █████   ██████  ██    ██   ███
--- ██      ██   ██ ██      ██      ██  ██  ██   ██ ██    ██  ██ ██
---  ██████ ██   ██ ███████  ██████ ██   ██ ██████   ██████  ██   ██
+-- ██    ██ ██ ███████ ██     ██     ██████  ██ ███    ██  █████  ██████  ██    ██
+-- ██    ██ ██ ██      ██     ██     ██   ██ ██ ████   ██ ██   ██ ██   ██  ██  ██
+-- ██    ██ ██ █████   ██  █  ██     ██████  ██ ██ ██  ██ ███████ ██████    ████
+--  ██  ██  ██ ██      ██ ███ ██     ██   ██ ██ ██  ██ ██ ██   ██ ██   ██    ██
+--   ████   ██ ███████  ███ ███      ██████  ██ ██   ████ ██   ██ ██   ██    ██
 
 
 viewBinary :
     ArgsForFields
     -> R10.FormTypes.TypeBinary
     -> R10.Form.Internal.Conf.Conf
-    -> Element R10.Form.Internal.Msg.Msg
+    -> ElementC R10.Form.Internal.Msg.Msg
 viewBinary args typeBinary formConf =
     let
         value : Bool
@@ -236,12 +250,7 @@ viewBinary args typeBinary formConf =
             R10.Form.Internal.Msg.ChangeValue args.key args.fieldConf formConf (R10.Form.Internal.Helpers.boolToString <| not value)
     in
     R10.FormComponents.Internal.Binary.view
-        [ width
-            (fill
-                |> minimum 300
-                |> maximum 900
-            )
-        ]
+        []
         -- Stuff that change
         { value = value
         , focused = args.focused
@@ -258,6 +267,7 @@ viewBinary args typeBinary formConf =
         , disabled = args.fieldState.disabled
         , helperText = args.fieldConf.helperText
         , palette = args.palette
+        , clickableLabel = args.fieldConf.clickableLabel
 
         -- Specific stuff
         , typeBinary = typeBinary
@@ -265,28 +275,24 @@ viewBinary args typeBinary formConf =
 
 
 
--- ██████   █████  ██████  ██  ██████
--- ██   ██ ██   ██ ██   ██ ██ ██    ██
--- ██████  ███████ ██   ██ ██ ██    ██
--- ██   ██ ██   ██ ██   ██ ██ ██    ██
--- ██   ██ ██   ██ ██████  ██  ██████
+-- ██    ██ ██ ███████ ██     ██     ███████ ██ ███    ██  ██████  ██      ███████
+-- ██    ██ ██ ██      ██     ██     ██      ██ ████   ██ ██       ██      ██
+-- ██    ██ ██ █████   ██  █  ██     ███████ ██ ██ ██  ██ ██   ███ ██      █████
+--  ██  ██  ██ ██      ██ ███ ██          ██ ██ ██  ██ ██ ██    ██ ██      ██
+--   ████   ██ ███████  ███ ███      ███████ ██ ██   ████  ██████  ███████ ███████
 
 
-viewSingleSelection :
+viewSingle :
     ArgsForFields
     -> R10.FormTypes.TypeSingle
     -> List R10.FormTypes.FieldOption
     -> R10.Form.Internal.Conf.Conf
-    -> Element.Element R10.Form.Internal.Msg.Msg
-viewSingleSelection args singleType fieldOptions formConf =
+    -> ElementC R10.Form.Internal.Msg.Msg
+viewSingle args singleType fieldOptions formConf =
     R10.FormComponents.Internal.Single.view
-        [ width
-            (fill
-                |> minimum 300
-                |> maximum 900
-            )
-        ]
+        []
         -- Stuff that change
+        -- R10.FormComponents.Internal.Single.Common.Model
         { value = args.fieldState.value
         , search = args.fieldState.search
         , select = args.fieldState.select
@@ -312,6 +318,41 @@ viewSingleSelection args singleType fieldOptions formConf =
         , singleType = singleType
         , fieldOptions = fieldOptions
         }
+
+
+viewSpecial :
+    ArgsForFields
+    -> R10.FormTypes.TypeSpecial
+    -> R10.Form.Internal.Conf.Conf
+    -> ElementC R10.Form.Internal.Msg.Msg
+viewSpecial args typeSpecial formConf =
+    case typeSpecial of
+        R10.FormTypes.SpecialPhone ->
+            let
+                model : R10.FormComponents.Internal.Single.Common.Model
+                model =
+                    { value = args.fieldState.value
+                    , search = args.fieldState.search
+                    , select = args.fieldState.select
+                    , scroll = args.fieldState.scroll
+                    , focused = args.focused
+                    , opened = args.active
+                    }
+            in
+            R10.FormComponents.Internal.Phone.view
+                []
+                model
+                { maybeValid = maybeValid args.fieldState.validation
+                , toMsg = R10.Form.Internal.Msg.OnPhoneMsg args.key args.fieldConf formConf
+                , label = args.fieldConf.label
+                , helperText = args.fieldConf.helperText
+                , disabled = args.fieldState.disabled
+                , requiredLabel = args.fieldConf.requiredLabel
+                , style = args.style
+                , key = R10.Form.Internal.Key.toString args.key
+                , palette = args.palette
+                , countryOptions = Nothing
+                }
 
 
 
@@ -398,7 +439,7 @@ viewTab :
         , label : String
         , entity : R10.Form.Internal.Conf.Entity
         }
-    -> Element R10.Form.Internal.Msg.Msg
+    -> ElementC R10.Form.Internal.Msg.Msg
 viewTab args fieldState { index, selected, entity, label } =
     let
         valid : Bool
@@ -463,6 +504,7 @@ viewTab args fieldState { index, selected, entity, label } =
                             { maybeValid = Just valid
                             , displayValidation = True
                             , palette = args.palette
+                            , style = args.style
                             }
                 , height <| px 24
                 , width <| px 24
@@ -490,7 +532,7 @@ viewTab args fieldState { index, selected, entity, label } =
                     ([ Font.size 11
                      , clip
                      , Font.color <| R10.FormComponents.Internal.UI.Color.error args.palette
-                     , htmlAttribute <| Html.Attributes.style "transition" "all 0.15s ease-out"
+                     , R10.Transition.transition "all 0.15s ease-out"
                      ]
                         ++ (if valid then
                                 [ width <| px 0
@@ -538,11 +580,11 @@ viewEntityWithTabs args titleEntityList formConf =
                 Nothing ->
                     firstEntity
 
-        tabSpacer : Element msg
+        tabSpacer : ElementC msg
         tabSpacer =
             el [ width (fill |> maximum 40), height fill ] none
 
-        emptyTab : Element msg
+        emptyTab : ElementC msg
         emptyTab =
             el [ width fill, height fill, moveLeft paddingPx, Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette ] none
     in
@@ -608,14 +650,14 @@ viewEntityMultiSingleRow :
     -> R10.Form.Internal.Key.Key
     -> List R10.Form.Internal.Conf.Entity
     -> R10.Form.Internal.Conf.Conf
-    -> List (Element R10.Form.Internal.Msg.Msg)
+    -> List (ElementC R10.Form.Internal.Msg.Msg)
 viewEntityMultiSingleRow args newKey entities formConf =
     let
         iconSize : Int
         iconSize =
             18
 
-        shadow : Float -> Float -> Attr decorative msg
+        shadow : Float -> Float -> AttrC decorative msg
         shadow size_ a =
             Border.shadow
                 { offset = ( 0, 0 )
@@ -624,12 +666,12 @@ viewEntityMultiSingleRow args newKey entities formConf =
                 , color = R10.FormComponents.Internal.UI.Color.labelA a args.palette
                 }
 
-        buttonAttrs : List (Attr () msg)
+        buttonAttrs : List (AttrC () msg)
         buttonAttrs =
             [ Border.width 1
             , Border.rounded 5
             , htmlAttribute <| Html.Attributes.class <| "ripple"
-            , htmlAttribute <| Html.Attributes.style "transition" "all 0.11s ease-out"
+            , R10.Transition.transition "all 0.11s ease-out"
             , padding 8
             , width <| px 28
             , height fill
@@ -643,9 +685,9 @@ viewEntityMultiSingleRow args newKey entities formConf =
         removeColor =
             R10.FormComponents.Internal.UI.Color.label args.palette
 
-        iconCommonAttrs : Int -> Int -> Color -> Float -> List (Attribute msg)
+        iconCommonAttrs : Int -> Int -> Color -> Float -> List (AttributeC msg)
         iconCommonAttrs widthPx heightPx color rotateDeg =
-            [ htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
+            [ R10.Transition.transition "all 0.2s "
             , Border.rounded 2
             , centerX
             , centerY
@@ -655,14 +697,14 @@ viewEntityMultiSingleRow args newKey entities formConf =
             , rotate <| degrees rotateDeg
             ]
 
-        buttonToRemoveEntity : R10.Form.Internal.Key.Key -> Element R10.Form.Internal.Msg.Msg
+        buttonToRemoveEntity : R10.Form.Internal.Key.Key -> ElementC R10.Form.Internal.Msg.Msg
         buttonToRemoveEntity key_ =
             Input.button buttonAttrs
                 { label =
                     el
                         [ width <| px iconSize
                         , height <| px iconSize
-                        , htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
+                        , R10.Transition.transition "all 0.2s "
                         , inFront <| el (iconCommonAttrs iconSize 2 removeColor 45) none
                         , inFront <| el (iconCommonAttrs 2 iconSize removeColor -135) none
                         ]
@@ -678,14 +720,14 @@ viewEntityMultiSingleRow args newKey entities formConf =
     ]
 
 
-viewEntityMultiLastRow : MakerArgs -> Element R10.Form.Internal.Msg.Msg
+viewEntityMultiLastRow : MakerArgs -> ElementC R10.Form.Internal.Msg.Msg
 viewEntityMultiLastRow args =
     let
         iconSize : Int
         iconSize =
             18
 
-        shadow : Float -> Float -> Attr decorative msg
+        shadow : Float -> Float -> AttrC decorative msg
         shadow size_ a =
             Border.shadow
                 { offset = ( 0, 0 )
@@ -694,12 +736,12 @@ viewEntityMultiLastRow args =
                 , color = R10.FormComponents.Internal.UI.Color.labelA a args.palette
                 }
 
-        buttonAttrs : List (Attr () msg)
+        buttonAttrs : List (AttrC () msg)
         buttonAttrs =
             [ Border.width 1
             , Border.rounded 5
             , htmlAttribute <| Html.Attributes.class <| "ripple"
-            , htmlAttribute <| Html.Attributes.style "transition" "all 0.11s ease-out"
+            , R10.Transition.transition "all 0.11s ease-out"
             , padding 8
             , width <| px 28
             , height fill
@@ -713,9 +755,9 @@ viewEntityMultiLastRow args =
         plusColor =
             R10.FormComponents.Internal.UI.Color.label args.palette
 
-        iconCommonAttrs : Int -> Int -> Color -> Float -> List (Attribute msg)
+        iconCommonAttrs : Int -> Int -> Color -> Float -> List (AttributeC msg)
         iconCommonAttrs widthPx heightPx color rotateDeg =
-            [ htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
+            [ R10.Transition.transition "all 0.2s "
             , Border.rounded 2
             , centerX
             , centerY
@@ -725,7 +767,7 @@ viewEntityMultiLastRow args =
             , rotate <| degrees rotateDeg
             ]
 
-        buttonToAddEntity : Element R10.Form.Internal.Msg.Msg
+        buttonToAddEntity : ElementC R10.Form.Internal.Msg.Msg
         buttonToAddEntity =
             Input.button buttonAttrs
                 { label =
@@ -809,7 +851,7 @@ viewEntityField args fieldConf formConf =
             , palette = args.palette
             }
 
-        field : Element R10.Form.Internal.Msg.Msg
+        field : ElementC R10.Form.Internal.Msg.Msg
         field =
             case fieldConf.type_ of
                 R10.FormTypes.TypeText typeText ->
@@ -819,10 +861,13 @@ viewEntityField args fieldConf formConf =
                     viewBinary args2 typeBinary formConf
 
                 R10.FormTypes.TypeSingle typeSingle options ->
-                    viewSingleSelection args2 typeSingle options formConf
+                    viewSingle args2 typeSingle options formConf
 
                 R10.FormTypes.TypeMulti _ _ ->
                     text "TODO"
+
+                R10.FormTypes.TypeSpecial typeSpecial ->
+                    viewSpecial args2 typeSpecial formConf
     in
     [ field ]
 
@@ -858,7 +903,7 @@ viewEntitySubTitle palette titleConf =
     ]
 
 
-addValidationMessagesUnderTheField : MakerArgs -> R10.Form.Internal.Conf.Entity -> List (Element msg) -> List (Element msg)
+addValidationMessagesUnderTheField : MakerArgs -> R10.Form.Internal.Conf.Entity -> List (ElementC msg) -> List (ElementC msg)
 addValidationMessagesUnderTheField args entity listEl =
     let
         validationIcon : R10.FormTypes.ValidationIcon

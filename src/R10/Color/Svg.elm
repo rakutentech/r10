@@ -1,7 +1,7 @@
 module R10.Color.Svg exposing
-    ( logo, primary, error, success, primaryVariant
+    ( logo, primary, error, success, primaryVariant, border
     , background, surface, surface2dp, backgroundButtonMinorOver, backgroundPhoneDropdown
-    , fontHighEmphasis, fontMediumEmphasis, fontButtonPrimary
+    , fontHighEmphasis, fontMediumEmphasis, fontHighEmphasisWithMaximumContrast, link
     )
 
 {-|
@@ -13,7 +13,7 @@ These are colors that can be used directly.
 
 In general is better to use colors from `R10.Color.Attrs...` modules.
 
-@docs logo, primary, error, success, primaryVariant
+@docs logo, primary, error, success, primaryVariant, border
 
 
 # Background
@@ -23,13 +23,14 @@ In general is better to use colors from `R10.Color.Attrs...` modules.
 
 # Font
 
-@docs fontHighEmphasis, fontMediumEmphasis, fontButtonPrimary
+@docs fontHighEmphasis, fontMediumEmphasis, fontHighEmphasisWithMaximumContrast, link
 
 -}
 
-import Element
+import Element.WithContext exposing (..)
 import R10.Color.Internal.Derived
 import R10.Color.Utils
+import R10.Context exposing (..)
 import R10.Theme
 
 
@@ -38,7 +39,7 @@ import R10.Theme
 
 
 {-| -}
-background : R10.Theme.Theme -> Element.Color
+background : R10.Theme.Theme -> Color
 background theme =
     R10.Color.Internal.Derived.Background
         |> R10.Color.Internal.Derived.toColor theme
@@ -46,7 +47,7 @@ background theme =
 
 
 {-| -}
-surface : R10.Theme.Theme -> Element.Color
+surface : R10.Theme.Theme -> Color
 surface theme =
     R10.Color.Internal.Derived.Surface
         |> R10.Color.Internal.Derived.toColor theme
@@ -54,7 +55,7 @@ surface theme =
 
 
 {-| -}
-surface2dp : R10.Theme.Theme -> Element.Color
+surface2dp : R10.Theme.Theme -> Color
 surface2dp theme =
     R10.Color.Internal.Derived.Surface2dp
         |> R10.Color.Internal.Derived.toColor theme
@@ -63,7 +64,7 @@ surface2dp theme =
 
 {-| Used for the logo. Similar to the primary color but in dark mode it is white.
 -}
-logo : R10.Theme.Theme -> Element.Color
+logo : R10.Theme.Theme -> Color
 logo theme =
     R10.Color.Internal.Derived.Logo
         |> R10.Color.Internal.Derived.toColor theme
@@ -71,7 +72,15 @@ logo theme =
 
 
 {-| -}
-primary : R10.Theme.Theme -> Element.Color
+link : R10.Theme.Theme -> Color
+link theme =
+    R10.Color.Internal.Derived.FontLink
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.fromColorColor
+
+
+{-| -}
+primary : R10.Theme.Theme -> Color
 primary theme =
     R10.Color.Internal.Derived.Primary
         |> R10.Color.Internal.Derived.toColor theme
@@ -79,7 +88,7 @@ primary theme =
 
 
 {-| -}
-primaryVariant : R10.Theme.Theme -> Element.Color
+primaryVariant : R10.Theme.Theme -> Color
 primaryVariant theme =
     R10.Color.Internal.Derived.PrimaryVariant
         |> R10.Color.Internal.Derived.toColor theme
@@ -87,7 +96,7 @@ primaryVariant theme =
 
 
 {-| -}
-error : R10.Theme.Theme -> Element.Color
+error : R10.Theme.Theme -> Color
 error theme =
     R10.Color.Internal.Derived.Error
         |> R10.Color.Internal.Derived.toColor theme
@@ -95,7 +104,7 @@ error theme =
 
 
 {-| -}
-success : R10.Theme.Theme -> Element.Color
+success : R10.Theme.Theme -> Color
 success theme =
     R10.Color.Internal.Derived.Success
         |> R10.Color.Internal.Derived.toColor theme
@@ -103,7 +112,7 @@ success theme =
 
 
 {-| -}
-backgroundButtonMinorOver : R10.Theme.Theme -> Element.Color
+backgroundButtonMinorOver : R10.Theme.Theme -> Color
 backgroundButtonMinorOver theme =
     R10.Color.Internal.Derived.BackgroundButtonMinorOver
         |> R10.Color.Internal.Derived.toColor theme
@@ -111,7 +120,7 @@ backgroundButtonMinorOver theme =
 
 
 {-| -}
-backgroundPhoneDropdown : R10.Theme.Theme -> Element.Color
+backgroundPhoneDropdown : R10.Theme.Theme -> Color
 backgroundPhoneDropdown theme =
     R10.Color.Internal.Derived.BackgroundPhoneDropdown
         |> R10.Color.Internal.Derived.toColor theme
@@ -120,7 +129,7 @@ backgroundPhoneDropdown theme =
 
 {-| Font color used in most places.
 -}
-fontHighEmphasis : R10.Theme.Theme -> Element.Color
+fontHighEmphasis : R10.Theme.Theme -> Color
 fontHighEmphasis theme =
     R10.Color.Internal.Derived.FontHighEmphasis
         |> R10.Color.Internal.Derived.toColor theme
@@ -129,7 +138,7 @@ fontHighEmphasis theme =
 
 {-| Weak font color for text with minor importance.
 -}
-fontMediumEmphasis : R10.Theme.Theme -> Element.Color
+fontMediumEmphasis : R10.Theme.Theme -> Color
 fontMediumEmphasis theme =
     R10.Color.Internal.Derived.FontMediumEmphasis
         |> R10.Color.Internal.Derived.toColor theme
@@ -138,8 +147,28 @@ fontMediumEmphasis theme =
 
 {-| Font color to be used above a primary color, like in primary buttons.
 -}
-fontButtonPrimary : R10.Theme.Theme -> Element.Color
-fontButtonPrimary theme =
+fontHighEmphasisWithMaximumContrast : R10.Theme.Theme -> Color
+fontHighEmphasisWithMaximumContrast theme =
     R10.Color.Internal.Derived.FontHighEmphasisWithMaximumContrast
         |> R10.Color.Internal.Derived.toColor theme
         |> R10.Color.Utils.fromColorColor
+
+
+border : R10.Theme.Theme -> Color
+border theme =
+    R10.Color.Internal.Derived.Border
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.fromColorColor
+
+
+
+-- MISSING COLORS
+--
+-- | FontMediumEmphasisWithMaximumContrast
+-- | FontLink
+-- | Debugger
+-- | BackgroundInputFieldText
+-- | BackgroundButtonPrimaryOver
+-- | BackgroundButtonPrimaryDisabledOver
+-- | BackgroundButtonPrimaryDisabled
+-- | BackgroundButtonPrimary

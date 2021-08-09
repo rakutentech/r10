@@ -11,6 +11,7 @@ module R10.Form.Internal.Msg exposing
 import R10.Form.Internal.Conf
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.Key
+import R10.FormComponents.Internal.Phone.Common
 import R10.FormComponents.Internal.Single.Common
 
 
@@ -21,11 +22,13 @@ type Msg
     | LoseFocus R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf
     | TogglePasswordShow R10.Form.Internal.Key.Key
     | ChangeValue R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf R10.Form.Internal.Conf.Conf String
-    | OnSingleMsg R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf R10.Form.Internal.Conf.Conf R10.FormComponents.Internal.Single.Common.Msg
     | ChangeTab R10.Form.Internal.Key.Key String
     | AddEntity R10.Form.Internal.Key.Key
     | RemoveEntity R10.Form.Internal.Key.Key
     | Submit R10.Form.Internal.Conf.Conf
+      -- SUB COMPONENTS
+    | OnSingleMsg R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf R10.Form.Internal.Conf.Conf R10.FormComponents.Internal.Single.Common.Msg
+    | OnPhoneMsg R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf R10.Form.Internal.Conf.Conf R10.FormComponents.Internal.Phone.Common.Msg
 
 
 {-| -}

@@ -1,10 +1,11 @@
 module R10.Table.Internal.Filters exposing (view)
 
 import Dict
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Events as Events
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Events as Events
 import Html.Attributes
 import Html.Events
 import Json.Decode
@@ -19,7 +20,7 @@ import R10.Table.Internal.Svg
 import R10.Table.Internal.Types
 
 
-onClickWithStopPropagation : msg -> Attribute msg
+onClickWithStopPropagation : msg -> AttributeC msg
 onClickWithStopPropagation message =
     htmlAttribute <| Html.Events.stopPropagationOn "click" (Json.Decode.succeed ( message, True ))
 
@@ -62,7 +63,7 @@ viewEditPopup palette formModel =
             palette
 
 
-viewChipLabel : String -> Maybe String -> Element msg
+viewChipLabel : String -> Maybe String -> ElementC msg
 viewChipLabel label maybeValue =
     -- having 248 allows us to sum up max to 300, which is Form's field length
     el [ width (fill |> maximum 248), clip ]
@@ -84,7 +85,7 @@ viewChipRemoveButton : String -> Element R10.Table.Internal.Msg.Msg
 viewChipRemoveButton key =
     el
         [ alpha 0.5
-        , htmlAttribute <| Html.Attributes.style "transition" "all 0.2s ease-out"
+        , R10.Transition.transition "all 0.2s ease-out"
         , pointer
         , mouseOver [ alpha 0.9 ]
         , onClickWithStopPropagation <| R10.Table.Internal.Msg.FilterClear key
@@ -129,7 +130,7 @@ viewChip palette filtersState filterType =
     row
         ([ Border.width 1
          , Border.rounded 50
-         , htmlAttribute <| Html.Attributes.style "transition" "opacity 0.2s ease-out"
+         , R10.Transition.transition "opacity 0.2s ease-out"
          , alpha 0.7
          , mouseOver [ alpha 1 ]
          , paddingXY 12 8
@@ -186,7 +187,7 @@ viewFilter palette filtersState filterType =
 viewFilterPanelButton : Element R10.Table.Internal.Msg.Msg
 viewFilterPanelButton =
     el
-        [ htmlAttribute <| Html.Attributes.style "transition" "all 0.2s ease-out"
+        [ R10.Transition.transition "all 0.2s ease-out"
         , alpha 0.7
         , padding 8
         , pointer

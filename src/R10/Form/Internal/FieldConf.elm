@@ -70,6 +70,7 @@ type alias FieldConf =
     , idDom : Maybe String
     , type_ : R10.FormTypes.FieldType
     , label : String
+    , clickableLabel : Bool
     , helperText : Maybe String
     , requiredLabel : Maybe String
     , validationSpecs : Maybe ValidationSpecs
@@ -103,6 +104,7 @@ init =
     , idDom = Nothing
     , type_ = R10.FormTypes.TypeText R10.FormTypes.TextPlain
     , label = ""
+    , clickableLabel = True
     , helperText = Nothing
     , requiredLabel = Nothing
     , validationSpecs = Just initValidationSpecs
@@ -147,7 +149,8 @@ encoderFieldConf fieldConf =
         [ ( "id", E.string fieldConf.id )
         , ( "idDom", Json.Encode.Extra.maybe E.string fieldConf.idDom )
         , ( "type", encoderFieldType fieldConf.type_ )
-        , ( "Label", E.string fieldConf.label )
+        , ( "label", E.string fieldConf.label )
+        , ( "clickableLabel", E.bool fieldConf.clickableLabel )
         , ( "helperText", Json.Encode.Extra.maybe E.string fieldConf.helperText )
         , ( "requiredLabel", Json.Encode.Extra.maybe E.string fieldConf.requiredLabel )
         , ( "validationSpecs", Json.Encode.Extra.maybe encodeValidationSpecs fieldConf.validationSpecs )
@@ -185,15 +188,16 @@ decoderFieldConf =
                 (D.field "id" D.string)
                 (D.field "idDom" (D.maybe D.string))
                 (D.field "type" decoderFieldType)
-                (D.field "Label" D.string)
+                (D.field "label" D.string)
+                (D.field "clickableLabel" D.bool)
                 (D.field "helperText" (D.maybe D.string))
                 (D.field "requiredLabel" (D.maybe D.string))
                 (D.field "validationSpecs" (D.maybe decoderValidationSpecs))
-                (D.field "minWidth" (D.maybe D.int))
     in
-    D.map3
+    D.map4
         (<|)
         mainFields
+        (D.field "minWidth" (D.maybe D.int))
         (D.field "maxWidth" (D.maybe D.int))
         (D.field "autocomplete" (D.maybe D.string))
 
@@ -201,13 +205,16 @@ decoderFieldConf =
 encoderFieldType : R10.FormTypes.FieldType -> E.Value
 encoderFieldType fieldType =
     case fieldType of
-        R10.FormTypes.TypeText testType ->
-            case testType of
+        R10.FormTypes.TypeText typeText ->
+            case typeText of
                 R10.FormTypes.TextPlain ->
                     E.string "TypeTextPlain"
 
                 R10.FormTypes.TextEmail ->
                     E.string "TypeTextEmail"
+
+                R10.FormTypes.TextEmailWithSuggestions listSuggestions ->
+                    E.string <| "TextEmailWithSuggestions" ++ jsonSeparator ++ String.join "," listSuggestions
 
                 R10.FormTypes.TextUsername ->
                     E.string "TypeTextUsername"
@@ -223,6 +230,9 @@ encoderFieldType fieldType =
 
                 R10.FormTypes.TextWithPattern pattern ->
                     E.string <| "TextWithPattern" ++ jsonSeparator ++ pattern
+
+                R10.FormTypes.TextWithPatternLarge pattern ->
+                    E.string <| "TextWithPatternLarge" ++ jsonSeparator ++ pattern
 
         R10.FormTypes.TypeBinary typeBinary ->
             case typeBinary of
@@ -251,6 +261,11 @@ encoderFieldType fieldType =
                 R10.FormTypes.MultiCombobox ->
                     E.string "TypeMultiCombobox"
 
+        R10.FormTypes.TypeSpecial typeSpecial ->
+            case typeSpecial of
+                R10.FormTypes.SpecialPhone ->
+                    E.string "TypeSpecialPhone"
+
 
 decoderFieldType : D.Decoder R10.FormTypes.FieldType
 decoderFieldType =
@@ -263,6 +278,9 @@ decoderFieldType =
 
                     [ "TypeTextEmail" ] ->
                         D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextEmail)
+
+                    [ "TextEmailWithSuggestions", listSuggestions ] ->
+                        D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextEmailWithSuggestions (String.split "," listSuggestions))
 
                     [ "TypeTextUsername" ] ->
                         D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextUsername)
@@ -278,6 +296,9 @@ decoderFieldType =
 
                     [ "TextWithPattern", pattern ] ->
                         D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextWithPattern pattern)
+
+                    [ "TextWithPatternLarge", pattern ] ->
+                        D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextWithPatternLarge pattern)
 
                     [ "TypeBinaryCheckbox" ] ->
                         D.succeed (R10.FormTypes.TypeBinary R10.FormTypes.BinaryCheckbox)
@@ -299,6 +320,9 @@ decoderFieldType =
 
                     [ "TypeMultiCombobox" ] ->
                         D.succeed (R10.FormTypes.TypeMulti R10.FormTypes.MultiCombobox [])
+
+                    [ "TypeSpecial" ] ->
+                        D.succeed (R10.FormTypes.TypeSpecial R10.FormTypes.SpecialPhone)
 
                     somethingElse ->
                         D.fail <| "Unknown FieldType: " ++ List.foldl (++) "" somethingElse ++ ". It should be something like TypeTextPlain, TypeTextEmail, TypeTextUsername, TypeTextPasswordNew, TypeTextPasswordCurrent, TypeCheckbox, TypeRadio, TypeDate, TypePhoneNumber, TypeBirthday or TypeCombobox."

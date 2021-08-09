@@ -11,9 +11,10 @@ module R10.FormComponents.Internal.Single.Common exposing
     , singleSearchBoxId
     )
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import R10.FormComponents.Internal.Style
 import R10.FormTypes
+import R10.Context exposing (..)
 
 
 
@@ -25,33 +26,35 @@ type Msg
     | OnFocus String
     | OnLoseFocus String
     | OnScroll Float
-    | OnSearch { selectOptionHeight : Int, maxDisplayCount : Int, key : String, filteredFieldOption : List FieldOption } String
-    | OnOptionSelect String --newValue
-    | OnArrowUp { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption } -- newSelect selectionY
-    | OnArrowDown { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption } -- newSelect selectionY
-    | OnDelBackspace
     | OnEsc
+      --
     | OnInputClick { key : String, selectedY : Float }
+    | OnOptionSelect String
+    | OnSearch { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption } String
+    | OnArrowUp { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption }
+    | OnArrowDown { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List FieldOption }
+      --
+    | OnDelBackspace
 
 
 init : Model
 init =
     { value = ""
     , search = ""
-    , select = ""
     , focused = False
     , scroll = 0
     , opened = False
+    , select = ""
     }
 
 
 type alias Model =
     { value : String
     , search : String
-    , select : String
     , focused : Bool
     , scroll : Float
     , opened : Bool
+    , select : String
     }
 
 
@@ -80,12 +83,12 @@ type alias Args msg =
     -- Specific
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List FieldOption
-    , viewOptionEl : FieldOption -> Element msg
+    , viewOptionEl : FieldOption -> ElementC msg
     , searchFn : String -> FieldOption -> Bool
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : List (Element msg)
-    , trailingIcon : List (Element msg)
+    , leadingIcon : List (ElementC msg)
+    , trailingIcon : List (ElementC msg)
     }
 
 

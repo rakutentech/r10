@@ -17,11 +17,12 @@ as I will let user to go wherever they want.
 
 -}
 
-import Element exposing (..)
-import Element.Input as Input
+import Element.WithContext exposing (..)
+import Element.WithContext.Input as Input
 import Html
 import Html.Events
 import Json.Decode
+import R10.Context exposing (..)
 
 
 {-| `LiNewTab` => A link that open in a new tab.
@@ -42,20 +43,20 @@ type Type msg
 
 {-| -}
 view :
-    List (Attribute msg)
-    -> { type_ : Type msg, label : Element msg }
-    -> Element msg
+    List (AttributeC msg)
+    -> { type_ : Type msg, label : ElementC msg }
+    -> ElementC msg
 view attrs args =
     case args.type_ of
         Li url ->
-            Element.link
+            link
                 attrs
                 { label = args.label
                 , url = url
                 }
 
         LiNewTab url ->
-            Element.newTabLink
+            newTabLink
                 attrs
                 { label = args.label
                 , url = url
@@ -68,7 +69,7 @@ view attrs args =
                 preventDefault msg =
                     Html.Events.preventDefaultOn "click" (Json.Decode.succeed ( msg, True ))
             in
-            Element.link
+            link
                 ((htmlAttribute <| preventDefault (onClick url)) :: attrs)
                 { label = args.label
                 , url = url

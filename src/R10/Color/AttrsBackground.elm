@@ -7,11 +7,11 @@ module R10.Color.AttrsBackground exposing (buttonMinorOver, buttonPrimary, butto
 -}
 
 import Color.Manipulate
-import Element
-import Element.Background
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
 import R10.Color.Internal.Derived
 import R10.Color.Utils
-import R10.Theme
+import R10.Context exposing (..)
 
 
 
@@ -19,12 +19,14 @@ import R10.Theme
 
 
 {-| -}
-background : R10.Theme.Theme -> Element.Attr decorative msg
-background theme =
-    R10.Color.Internal.Derived.Background
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+background : AttributeC msg
+background =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.Background
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -32,21 +34,25 @@ background theme =
 
 
 {-| -}
-surface : R10.Theme.Theme -> Element.Attr decorative msg
-surface theme =
-    R10.Color.Internal.Derived.Surface
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+surface : AttributeC msg
+surface =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.Surface
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 {-| -}
-surface2dp : R10.Theme.Theme -> Element.Attr decorative msg
-surface2dp theme =
-    R10.Color.Internal.Derived.Surface2dp
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+surface2dp : AttributeC msg
+surface2dp =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.Surface2dp
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -54,12 +60,14 @@ surface2dp theme =
 
 
 {-| -}
-buttonPrimary : R10.Theme.Theme -> Element.Attr decorative msg
-buttonPrimary theme =
-    R10.Color.Internal.Derived.BackgroundButtonPrimary
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+buttonPrimary : AttributeC msg
+buttonPrimary =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundButtonPrimary
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -67,12 +75,14 @@ buttonPrimary theme =
 
 
 {-| -}
-buttonPrimaryOver : R10.Theme.Theme -> Element.Attr decorative msg
-buttonPrimaryOver theme =
-    R10.Color.Internal.Derived.BackgroundButtonPrimaryOver
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+buttonPrimaryOver : Decoration R10.Context.Context
+buttonPrimaryOver =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundButtonPrimaryOver
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -80,12 +90,14 @@ buttonPrimaryOver theme =
 
 
 {-| -}
-buttonPrimaryDisabled : R10.Theme.Theme -> Element.Attr decorative msg
-buttonPrimaryDisabled theme =
-    R10.Color.Internal.Derived.BackgroundButtonPrimaryDisabled
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+buttonPrimaryDisabled : AttributeC msg
+buttonPrimaryDisabled =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundButtonPrimaryDisabled
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -93,12 +105,14 @@ buttonPrimaryDisabled theme =
 
 
 {-| -}
-buttonPrimaryDisabledOver : R10.Theme.Theme -> Element.Attr decorative msg
-buttonPrimaryDisabledOver theme =
-    R10.Color.Internal.Derived.BackgroundButtonPrimaryDisabledOver
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+buttonPrimaryDisabledOver : Decoration R10.Context.Context
+buttonPrimaryDisabledOver =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundButtonPrimaryDisabledOver
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -106,12 +120,14 @@ buttonPrimaryDisabledOver theme =
 
 
 {-| -}
-buttonMinorOver : R10.Theme.Theme -> Element.Attr decorative msg
-buttonMinorOver theme =
-    R10.Color.Internal.Derived.BackgroundButtonMinorOver
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+buttonMinorOver : Decoration R10.Context.Context
+buttonMinorOver =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundButtonMinorOver
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -119,32 +135,38 @@ buttonMinorOver theme =
 
 
 {-| -}
-dropdown : R10.Theme.Theme -> Element.Attr decorative msg
-dropdown theme =
-    R10.Color.Internal.Derived.BackgroundPhoneDropdown
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+dropdown : AttributeC msg
+dropdown =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundPhoneDropdown
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 {-| -}
-dropdownHover : R10.Theme.Theme -> Element.Attr decorative msg
-dropdownHover theme =
-    R10.Color.Internal.Derived.BackgroundPhoneDropdown
-        |> R10.Color.Internal.Derived.toColor theme
-        |> Color.Manipulate.darken 0.01
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+dropdownHover : Decoration R10.Context.Context
+dropdownHover =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundPhoneDropdown
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> Color.Manipulate.darken 0.01
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 {-| -}
-dropdownSelected : R10.Theme.Theme -> Element.Attr decorative msg
-dropdownSelected theme =
-    R10.Color.Internal.Derived.BackgroundPhoneDropdown
-        |> R10.Color.Internal.Derived.toColor theme
-        |> Color.Manipulate.darken 0.03
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+dropdownSelected : Decoration R10.Context.Context
+dropdownSelected =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundPhoneDropdown
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> Color.Manipulate.darken 0.03
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -152,30 +174,36 @@ dropdownSelected theme =
 
 
 {-| -}
-inputFieldCheckboxSelected : R10.Theme.Theme -> Element.Attr decorative msg
-inputFieldCheckboxSelected theme =
-    R10.Color.Internal.Derived.Primary
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+inputFieldCheckboxSelected : AttributeC msg
+inputFieldCheckboxSelected =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.Primary
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 {-| -}
-inputFieldCheckboxOver : R10.Theme.Theme -> Element.Attr decorative msg
-inputFieldCheckboxOver theme =
-    R10.Color.Internal.Derived.Primary
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+inputFieldCheckboxOver : Decoration R10.Context.Context
+inputFieldCheckboxOver =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.Primary
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 {-| -}
-sameAsBorderNormal : R10.Theme.Theme -> Element.Attr decorative msg
-sameAsBorderNormal theme =
-    R10.Color.Internal.Derived.Border
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+sameAsBorderNormal : AttributeC msg
+sameAsBorderNormal =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.Border
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 
@@ -183,18 +211,22 @@ sameAsBorderNormal theme =
 
 
 {-| -}
-debugger : R10.Theme.Theme -> Element.Attr decorative msg
-debugger theme =
-    R10.Color.Internal.Derived.Debugger
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+debugger : AttributeC msg
+debugger =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.Debugger
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
 
 
 {-| -}
-debuggerOver : R10.Theme.Theme -> Element.Attr decorative msg
-debuggerOver theme =
-    R10.Color.Internal.Derived.Debugger
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Background.color
+debuggerOver : Decoration R10.Context.Context
+debuggerOver =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.Debugger
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color

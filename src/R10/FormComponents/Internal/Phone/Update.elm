@@ -1,7 +1,7 @@
 module R10.FormComponents.Internal.Phone.Update exposing
     ( dropdownHingeHeight
     , getDropdownHeight
-    , getMsgOnFlagClick
+    , getMsgOnInputClick
     , getMsgOnSearch
     , update
     )
@@ -19,8 +19,8 @@ dropdownHingeHeight =
 
 
 onArrowHelper : R10.FormComponents.Internal.Phone.Common.Model -> String -> R10.Country.Country -> Float -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
-onArrowHelper model key value float =
-    ( { model | scroll = float, select = Just value }
+onArrowHelper model key country float =
+    ( { model | scroll = float, select = R10.Country.toString country }
     , Task.attempt
         (always R10.FormComponents.Internal.Phone.Common.NoOp)
         (Browser.Dom.setViewportOf
@@ -154,20 +154,24 @@ getOptionIndex fieldOptions value =
         |> List.Extra.findIndex (\country -> country == value)
 
 
-getMsgOnFlagClick : { a | countryValue : Maybe R10.Country.Country, scroll : Float } -> { b | selectOptionHeight : Int, maxDisplayCount : Int, key : String } -> List R10.Country.Country -> R10.FormComponents.Internal.Phone.Common.Msg
-getMsgOnFlagClick model args filteredCountryOptions =
+getMsgOnInputClick : { a | scroll : Float, value : String } -> { b | selectOptionHeight : Int, maxDisplayCount : Int, key : String } -> List R10.Country.Country -> R10.FormComponents.Internal.Phone.Common.Msg
+getMsgOnInputClick model args filteredFieldOption =
     let
+        maybeCountryValue : Maybe R10.Country.Country
+        maybeCountryValue =
+            R10.Country.fromTelephoneAsString model.value
+
         activeOptionIndex : Int
         activeOptionIndex =
-            model.countryValue
-                |> Maybe.andThen (getOptionIndex filteredCountryOptions)
+            maybeCountryValue
+                |> Maybe.andThen (getOptionIndex filteredFieldOption)
                 |> Maybe.withDefault -1
 
         activeOptionY : Float
         activeOptionY =
-            getOptionY model.scroll args activeOptionIndex (List.length filteredCountryOptions)
+            getOptionY model.scroll args activeOptionIndex (List.length filteredFieldOption)
     in
-    R10.FormComponents.Internal.Phone.Common.OnFlagClick args.key activeOptionY
+    R10.FormComponents.Internal.Phone.Common.OnInputClick { key = args.key, selectedY = activeOptionY }
 
 
 inboundIndex : number -> number -> Maybe number
@@ -188,17 +192,18 @@ getMsgOnSearch :
     }
     -> (String -> R10.FormComponents.Internal.Phone.Common.Msg)
 getMsgOnSearch args newSearch =
-    R10.FormComponents.Internal.Phone.Common.OnSearch args.key
-        { selectOptionHeight = args.selectOptionHeight
+    R10.FormComponents.Internal.Phone.Common.OnSearch
+        { key = args.key
+        , selectOptionHeight = args.selectOptionHeight
         , maxDisplayCount = args.maxDisplayCount
-        , filteredCountryOptions = R10.FormComponents.Internal.Phone.Common.filterBySearch newSearch args.countryOptions
+        , filteredFieldOption = R10.FormComponents.Internal.Phone.Common.filterBySearch newSearch args.countryOptions
         }
         newSearch
 
 
 getNextNewSelectAndY :
     R10.FormComponents.Internal.Phone.Common.Model
-    -> { b | filteredCountryOptions : List R10.Country.Country, selectOptionHeight : Int, maxDisplayCount : Int }
+    -> { b | filteredFieldOption : List R10.Country.Country, selectOptionHeight : Int, maxDisplayCount : Int }
     -> ( R10.Country.Country, Float )
 getNextNewSelectAndY model args =
     getNewSelectAndY_ 1 0 R10.Country.listHead model args
@@ -206,10 +211,10 @@ getNextNewSelectAndY model args =
 
 getPrevNewSelectAndY :
     R10.FormComponents.Internal.Phone.Common.Model
-    -> { b | filteredCountryOptions : List R10.Country.Country, selectOptionHeight : Int, maxDisplayCount : Int }
+    -> { b | filteredFieldOption : List R10.Country.Country, selectOptionHeight : Int, maxDisplayCount : Int }
     -> ( R10.Country.Country, Float )
 getPrevNewSelectAndY model args =
-    getNewSelectAndY_ -1 (List.length args.filteredCountryOptions - 1) R10.Country.listTail model args
+    getNewSelectAndY_ -1 (List.length args.filteredFieldOption - 1) R10.Country.listTail model args
 
 
 getNewSelectAndY_ :
@@ -219,41 +224,46 @@ getNewSelectAndY_ :
     -> R10.FormComponents.Internal.Phone.Common.Model
     ->
         { b
-            | filteredCountryOptions : List R10.Country.Country
+            | filteredFieldOption : List R10.Country.Country
             , selectOptionHeight : Int
             , maxDisplayCount : Int
         }
     -> ( R10.Country.Country, Float )
 getNewSelectAndY_ step defaultIndex defaultCountry model args =
     let
+        maybeCountryValue : Maybe R10.Country.Country
+        maybeCountryValue =
+            R10.Country.fromTelephoneAsString model.value
+
         currentSelect : Maybe R10.Country.Country
         currentSelect =
-            if model.select == Nothing then
-                model.countryValue
+            case R10.Country.fromString model.select of
+                Nothing ->
+                    maybeCountryValue
 
-            else
-                model.select
+                Just country ->
+                    Just country
 
         currentIndex : Maybe Int
         currentIndex =
             currentSelect
-                |> Maybe.andThen (getOptionIndex args.filteredCountryOptions)
+                |> Maybe.andThen (getOptionIndex args.filteredFieldOption)
 
         newIndex : Int
         newIndex =
             currentIndex
                 |> Maybe.map (\index -> index + step)
-                |> Maybe.andThen (inboundIndex <| (List.length args.filteredCountryOptions - 1))
+                |> Maybe.andThen (inboundIndex <| (List.length args.filteredFieldOption - 1))
                 |> Maybe.withDefault defaultIndex
 
         newSelect : R10.Country.Country
         newSelect =
-            List.Extra.getAt newIndex args.filteredCountryOptions
+            List.Extra.getAt newIndex args.filteredFieldOption
                 |> Maybe.withDefault defaultCountry
 
         newY : Float
         newY =
-            getOptionY model.scroll args newIndex (List.length args.filteredCountryOptions)
+            getOptionY model.scroll args newIndex (List.length args.filteredFieldOption)
     in
     ( newSelect, newY )
 
@@ -264,11 +274,40 @@ update msg model =
         R10.FormComponents.Internal.Phone.Common.NoOp ->
             ( model, Cmd.none )
 
-        R10.FormComponents.Internal.Phone.Common.OnValueChange key args newValue ->
+        R10.FormComponents.Internal.Phone.Common.OnFocus value ->
+            ( { model | focused = True, value = value }, Cmd.none )
+
+        R10.FormComponents.Internal.Phone.Common.OnLoseFocus value ->
+            ( { model | focused = False, opened = False, value = value, select = "", search = "" }, Cmd.none )
+
+        R10.FormComponents.Internal.Phone.Common.OnScroll scroll ->
+            ( { model | scroll = scroll }, Cmd.none )
+
+        R10.FormComponents.Internal.Phone.Common.OnEsc ->
+            ( { model | search = "", opened = False }, Cmd.none )
+
+        --
+        --
+        --
+        --
+        R10.FormComponents.Internal.Phone.Common.OnValueChange key args newValue_ ->
             let
+                maybeCountryValue : Maybe R10.Country.Country
+                maybeCountryValue =
+                    R10.Country.fromTelephoneAsString model.value
+
+                newValue : String
+                newValue =
+                    -- Here we add the country code because this is how it
+                    -- was working before
+                    maybeCountryValue
+                        |> Maybe.map R10.Country.toCountryTelCode
+                        |> Maybe.withDefault ""
+                        |> (\v -> v ++ newValue_)
+
                 hasCurrentCountryCode : Bool
                 hasCurrentCountryCode =
-                    case model.countryValue of
+                    case maybeCountryValue of
                         Just countryValue ->
                             newValue
                                 |> String.replace " " ""
@@ -281,7 +320,7 @@ update msg model =
                 newCountryValue : Maybe R10.Country.Country
                 newCountryValue =
                     if hasCurrentCountryCode then
-                        model.countryValue
+                        maybeCountryValue
 
                     else
                         let
@@ -292,22 +331,21 @@ update msg model =
                             codeFromVal
 
                         else
-                            model.countryValue
+                            maybeCountryValue
 
                 newY : Float
                 newY =
-                    if newCountryValue == model.countryValue then
+                    if newCountryValue == maybeCountryValue then
                         model.scroll
 
                     else
                         newCountryValue
-                            |> Maybe.andThen (getOptionIndex args.filteredCountryOptions)
-                            |> Maybe.map (\newIndex -> getOptionY model.scroll args newIndex (List.length args.filteredCountryOptions))
+                            |> Maybe.andThen (getOptionIndex args.filteredFieldOption)
+                            |> Maybe.map (\newIndex -> getOptionY model.scroll args newIndex (List.length args.filteredFieldOption))
                             |> Maybe.withDefault model.scroll
             in
             ( { model
                 | value = newValue
-                , countryValue = newCountryValue
                 , scroll = newY
               }
             , Task.attempt
@@ -319,42 +357,45 @@ update msg model =
                 )
             )
 
-        R10.FormComponents.Internal.Phone.Common.OnSearch key args newSearch ->
+        R10.FormComponents.Internal.Phone.Common.OnSearch args newSearch ->
             let
                 isSelectInsideCountryOptions : Bool
                 isSelectInsideCountryOptions =
                     model.select
-                        |> Maybe.map (\s -> List.member s args.filteredCountryOptions)
+                        |> R10.Country.fromString
+                        |> Maybe.map (\s -> List.member s args.filteredFieldOption)
                         |> Maybe.withDefault False
 
                 newSelect : Maybe R10.Country.Country
                 newSelect =
                     if isSelectInsideCountryOptions then
                         model.select
+                            |> R10.Country.fromString
 
                     else
-                        args.filteredCountryOptions |> List.head
+                        args.filteredFieldOption
+                            |> List.head
 
                 maybeNewIndex : Maybe Int
                 maybeNewIndex =
-                    newSelect |> Maybe.andThen (getOptionIndex args.filteredCountryOptions)
+                    newSelect |> Maybe.andThen (getOptionIndex args.filteredFieldOption)
 
                 newY : Float
                 newY =
                     maybeNewIndex
-                        |> Maybe.map (\newIndex -> getOptionY model.scroll args newIndex (List.length args.filteredCountryOptions))
+                        |> Maybe.map (\newIndex -> getOptionY model.scroll args newIndex (List.length args.filteredFieldOption))
                         |> Maybe.withDefault model.scroll
             in
             ( { model
                 | search = newSearch
-                , select = newSelect
+                , select = Maybe.withDefault "" (Maybe.map R10.Country.toString newSelect)
                 , scroll = newY
               }
             , Cmd.batch
                 [ Task.attempt
                     (always R10.FormComponents.Internal.Phone.Common.NoOp)
                     (Browser.Dom.setViewportOf
-                        (R10.FormComponents.Internal.Phone.Common.dropdownContentId key)
+                        (R10.FormComponents.Internal.Phone.Common.dropdownContentId args.key)
                         0
                         newY
                     )
@@ -368,9 +409,13 @@ update msg model =
                     newCountry
                         |> R10.Country.toCountryTelCode
 
+                maybeCountryValue : Maybe R10.Country.Country
+                maybeCountryValue =
+                    R10.Country.fromTelephoneAsString model.value
+
                 newValue : String
                 newValue =
-                    case model.countryValue of
+                    case maybeCountryValue of
                         Just oldCountry ->
                             let
                                 oldCode : String
@@ -379,7 +424,7 @@ update msg model =
                             in
                             model.value
                                 |> String.replace " " ""
-                                |> String.replace oldCode (newCode ++ " ")
+                                |> String.replace oldCode newCode
                                 |> String.replace "  " " "
 
                         Nothing ->
@@ -387,57 +432,35 @@ update msg model =
             in
             ( { model
                 | value = newValue
-                , countryValue = Just newCountry
                 , opened = False
-                , select = Nothing
+                , select = ""
                 , search = ""
               }
             , Cmd.none
             )
 
-        R10.FormComponents.Internal.Phone.Common.OnScroll scroll ->
-            ( { model | scroll = scroll }, Cmd.none )
-
-        R10.FormComponents.Internal.Phone.Common.OnFlagClick key scroll ->
+        R10.FormComponents.Internal.Phone.Common.OnInputClick args ->
             if model.opened then
-                ( { model | scroll = scroll, opened = False }, Cmd.none )
+                ( { model | scroll = args.selectedY, opened = False }, Cmd.none )
 
             else
-                onOpenHelper model key scroll
-                    |> focusSearchBoxCmd key
+                onOpenHelper model args.key args.selectedY
+                    |> focusSearchBoxCmd args.key
 
-        R10.FormComponents.Internal.Phone.Common.OnLoseFocus ->
-            ( { model
-                | focused = False
-                , opened = False
-              }
-            , Cmd.none
-            )
-
-        R10.FormComponents.Internal.Phone.Common.OnFocus ->
-            ( { model
-                | focused = True
-              }
-            , Cmd.none
-            )
-
-        R10.FormComponents.Internal.Phone.Common.OnArrowUp key args ->
+        R10.FormComponents.Internal.Phone.Common.OnArrowUp args ->
             -- skip arrow msg if dropdown is closed
             if model.opened then
                 getPrevNewSelectAndY model args
-                    |> (\( newValue, newY ) -> onArrowHelper model key newValue newY)
+                    |> (\( newValue, newY ) -> onArrowHelper model args.key newValue newY)
 
             else
-                onOpenHelper model key model.scroll
+                onOpenHelper model args.key model.scroll
 
-        R10.FormComponents.Internal.Phone.Common.OnArrowDown key args ->
+        R10.FormComponents.Internal.Phone.Common.OnArrowDown args ->
             -- skip arrow msg if dropdown is closed
             if model.opened then
                 getNextNewSelectAndY model args
-                    |> (\( newValue, newY ) -> onArrowHelper model key newValue newY)
+                    |> (\( newValue, newY ) -> onArrowHelper model args.key newValue newY)
 
             else
-                onOpenHelper model key model.scroll
-
-        R10.FormComponents.Internal.Phone.Common.OnEsc ->
-            ( { model | search = "", opened = False }, Cmd.none )
+                onOpenHelper model args.key model.scroll

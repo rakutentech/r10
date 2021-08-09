@@ -1,8 +1,9 @@
 module R10.Table.Internal.Header exposing (simpleHeader, toHeaderInfo, toSortArrowInfo, viewHeaderSortArrow, viewHeaderTitle)
 
-import Element exposing (..)
-import Element.Events as Events
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
+import Element.WithContext.Events as Events
+import Element.WithContext.Font as Font
 import Html.Attributes
 import R10.FormTypes
 import R10.Table.Internal.Config
@@ -104,7 +105,7 @@ toHeaderInfo state columnData sortMsg =
                 }
 
 
-viewHeaderTitle : String -> Element msg
+viewHeaderTitle : String -> ElementC msg
 viewHeaderTitle columnName =
     paragraph
         [ paddingEach { top = 0, right = 0, bottom = 0, left = 16 }
@@ -115,10 +116,10 @@ viewHeaderTitle columnName =
         [ text columnName ]
 
 
-viewHeaderSortArrow : ( ArrowType, Bool ) -> Element msg
+viewHeaderSortArrow : ( ArrowType, Bool ) -> ElementC msg
 viewHeaderSortArrow ( buttonType, isReversed ) =
     let
-        buttonAttrs : List (Attr () msg)
+        buttonAttrs : List (AttrC () msg)
         buttonAttrs =
             case buttonType of
                 ArrowActive ->
@@ -133,7 +134,7 @@ viewHeaderSortArrow ( buttonType, isReversed ) =
     el
         ([ width fill
          , height fill
-         , htmlAttribute <| Html.Attributes.style "transition" "all 0.15s"
+         , R10.Transition.transition "all 0.15s"
          ]
             ++ buttonAttrs
         )
@@ -148,18 +149,18 @@ viewHeaderSortArrow ( buttonType, isReversed ) =
                  else
                     0
                 )
-            , htmlAttribute <| Html.Attributes.style "transition" "all 0.15s, transform 0.2s"
+            , R10.Transition.transition "all 0.15s, transform 0.2s"
             ]
         <|
             html <|
                 R10.Table.Internal.Svg.arrowDown "black" 18
 
 
-simpleHeader : List (Attribute msg) -> R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> Element msg
+simpleHeader : List (AttributeC msg) -> R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> ElementC msg
 simpleHeader attrs palette headerInfo =
     el
         (R10.Table.Internal.Style.defaultHeaderAttrs
-            ++ [ htmlAttribute <| Html.Attributes.style "transition" "all 0.25s ease-out"
+            ++ [ R10.Transition.transition "all 0.25s ease-out"
                , Events.onClick <| headerInfo.onSortMsg
                , behindContent <| viewHeaderTitle headerInfo.name
                , behindContent <| viewHeaderSortArrow <| toSortArrowInfo headerInfo.sortStatus

@@ -2,70 +2,98 @@ module R10.Color.AttrsFont exposing (buttonPrimary, buttonPrimaryDisabled, butto
 
 {-| Font colors
 
-@docs buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid
+@docs buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid, linkOver
 
 -}
 
-import Element
-import Element.Font
+import Color.Manipulate
+import Element.WithContext exposing (..)
+import Element.WithContext.Font as Font
 import R10.Color.Internal.Derived
 import R10.Color.Utils
-import R10.Theme
+import R10.Context exposing (..)
 
 
 {-| -}
-normal : R10.Theme.Theme -> Element.Attr decorative msg
-normal theme =
-    R10.Color.Internal.Derived.FontHighEmphasis
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
+normal : AttributeC msg
+normal =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.FontHighEmphasis
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
 
 
 {-| -}
-normalLighter : R10.Theme.Theme -> Element.Attr decorative msg
-normalLighter theme =
-    R10.Color.Internal.Derived.FontMediumEmphasis
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
+inputFieldCheckboxOver : Decoration Context
+inputFieldCheckboxOver =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.FontHighEmphasis
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
 
 
 {-| -}
-link : R10.Theme.Theme -> Element.Attr decorative msg
-link theme =
-    R10.Color.Internal.Derived.FontLink
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
+normalLighter : AttributeC msg
+normalLighter =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.FontMediumEmphasis
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
 
 
 {-| -}
-linkOver : R10.Theme.Theme -> Element.Attr decorative msg
-linkOver theme =
-    R10.Color.Internal.Derived.FontLink
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.setAlpha 0.8
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
+link : AttributeC msg
+link =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.FontLink
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
 
 
 {-| -}
-error : R10.Theme.Theme -> Element.Attr decorative msg
-error theme =
-    R10.Color.Internal.Derived.Error
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
+linkOver : Decoration Context
+linkOver =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.FontLink
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> Color.Manipulate.scaleHsl
+                    { saturationScale = 0.3
+                    , lightnessScale = -0.2
+                    , alphaScale = 0
+                    }
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
 
 
 {-| -}
-valid : R10.Theme.Theme -> Element.Attr decorative msg
-valid theme =
-    R10.Color.Internal.Derived.Success
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
+error : AttributeC msg
+error =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.Error
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
+
+
+{-| -}
+valid : AttributeC msg
+valid =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.Success
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
 
 
 
@@ -73,33 +101,33 @@ valid theme =
 
 
 {-| -}
-buttonPrimary : R10.Theme.Theme -> Element.Attr decorative msg
-buttonPrimary theme =
-    R10.Color.Internal.Derived.FontHighEmphasisWithMaximumContrast
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
+buttonPrimary : AttributeC msg
+buttonPrimary =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.FontHighEmphasisWithMaximumContrast
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
 
 
 {-| -}
-buttonPrimaryDisabled : R10.Theme.Theme -> Element.Attr decorative msg
-buttonPrimaryDisabled theme =
-    R10.Color.Internal.Derived.FontMediumEmphasisWithMaximumContrast
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
+buttonPrimaryDisabled : AttributeC msg
+buttonPrimaryDisabled =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.FontMediumEmphasisWithMaximumContrast
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
 
 
 {-| -}
-buttonPrimaryDisabledOver : R10.Theme.Theme -> Element.Attr decorative msg
-buttonPrimaryDisabledOver theme =
-    R10.Color.Internal.Derived.FontMediumEmphasisWithMaximumContrast
-        |> R10.Color.Internal.Derived.toColor theme
-        |> R10.Color.Utils.fromColorColor
-        |> Element.Font.color
-
-
-{-| -}
-inputFieldCheckboxOver : R10.Theme.Theme -> Element.Attr decorative msg
-inputFieldCheckboxOver theme =
-    normal theme
+buttonPrimaryDisabledOver : Decoration Context
+buttonPrimaryDisabledOver =
+    withContextDecoration <|
+        \c ->
+            R10.Color.Internal.Derived.FontMediumEmphasisWithMaximumContrast
+                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color

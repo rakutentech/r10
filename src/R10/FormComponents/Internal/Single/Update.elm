@@ -205,6 +205,22 @@ update msg model =
         R10.FormComponents.Internal.Single.Common.NoOp ->
             ( model, Cmd.none )
 
+        R10.FormComponents.Internal.Single.Common.OnFocus value ->
+            ( { model | focused = True, value = value }, Cmd.none )
+
+        R10.FormComponents.Internal.Single.Common.OnLoseFocus value ->
+            ( { model | focused = False, opened = False, value = value, select = "", search = "" }, Cmd.none )
+
+        R10.FormComponents.Internal.Single.Common.OnScroll scroll ->
+            ( { model | scroll = scroll }, Cmd.none )
+
+        R10.FormComponents.Internal.Single.Common.OnEsc ->
+            ( { model | search = "", opened = False }, Cmd.none )
+
+        --
+        --
+        --
+        --
         R10.FormComponents.Internal.Single.Common.OnSearch args newSearch ->
             let
                 isSelectInsideCountryOptions : Bool
@@ -249,21 +265,12 @@ update msg model =
         R10.FormComponents.Internal.Single.Common.OnOptionSelect value ->
             ( { model | value = value, opened = False, select = "", search = "" }, Cmd.none )
 
-        R10.FormComponents.Internal.Single.Common.OnScroll scroll ->
-            ( { model | scroll = scroll }, Cmd.none )
-
         R10.FormComponents.Internal.Single.Common.OnInputClick args ->
             if model.opened then
                 ( { model | scroll = args.selectedY, opened = False }, Cmd.none )
 
             else
                 onOpenHelper args.key model args.selectedY
-
-        R10.FormComponents.Internal.Single.Common.OnLoseFocus value ->
-            ( { model | focused = False, opened = False, value = value, select = "", search = "" }, Cmd.none )
-
-        R10.FormComponents.Internal.Single.Common.OnFocus value ->
-            ( { model | focused = True, value = value }, Cmd.none )
 
         R10.FormComponents.Internal.Single.Common.OnArrowUp args ->
             -- skip arrow msg if dropdown is closed
@@ -285,6 +292,3 @@ update msg model =
 
         R10.FormComponents.Internal.Single.Common.OnDelBackspace ->
             ( { model | value = "" }, Cmd.none )
-
-        R10.FormComponents.Internal.Single.Common.OnEsc ->
-            ( { model | search = "", opened = False }, Cmd.none )

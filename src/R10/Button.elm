@@ -1,6 +1,6 @@
 module R10.Button exposing
     ( primary, secondary, tertiary, quaternary
-    , Data, cssButtonStyle, numberPadding, withLimitedWidth
+    , Data, cssButtonStyle, numberPadding, withLimitedWidth, withId
     )
 
 {-| Buttons!
@@ -12,30 +12,31 @@ module R10.Button exposing
 
 # Others
 
-@docs Data, cssButtonStyle, numberPadding, withLimitedWidth
+@docs Data, cssButtonStyle, numberPadding, withLimitedWidth, withId
 
 -}
 
-import Element exposing (..)
-import Element.Border as Border
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Border as Border
+import Element.WithContext.Font as Font
 import Html.Attributes
 import R10.Color.AttrsBackground
 import R10.Color.AttrsBorder
 import R10.Color.AttrsFont
 import R10.Color.Svg
 import R10.Color.Utils
+import R10.Context exposing (..)
 import R10.FontSize
 import R10.Libu
 import R10.Theme
+import R10.Transition
 
 
 {-| Type of data required by buttons
 -}
 type alias Data msg =
-    { label : Element msg
+    { label : ElementC msg
     , libu : R10.Libu.Type msg
-    , theme : R10.Theme.Theme
     }
 
 
@@ -52,16 +53,15 @@ type alias Data msg =
 
 -}
 primary :
-    List (Attribute msg)
+    List (AttributeC msg)
     ->
-        { label : Element msg
+        { label : ElementC msg
         , libu : R10.Libu.Type msg
-        , theme : R10.Theme.Theme
         }
-    -> Element msg
+    -> ElementC msg
 primary attrsExtra data =
     let
-        attrs : R10.Theme.Theme -> List (Attribute msg)
+        attrs : List (AttributeC msg)
         attrs =
             if data.libu == R10.Libu.Bu Nothing then
                 attrsPrimaryDisabled
@@ -70,25 +70,29 @@ primary attrsExtra data =
                 attrsPrimary
     in
     R10.Libu.view
-        (attrs data.theme ++ attrsExtra)
+        (attrs ++ attrsExtra)
         { label = data.label
         , type_ = data.libu
         }
 
 
+withId : String -> ElementC msg -> ElementC msg
+withId id button =
+    button
+
+
 {-| Secondary Button
 -}
 secondary :
-    List (Attribute msg)
+    List (AttributeC msg)
     ->
-        { label : Element msg
+        { label : ElementC msg
         , libu : R10.Libu.Type msg
-        , theme : R10.Theme.Theme
         }
-    -> Element msg
+    -> ElementC msg
 secondary attrsExtra data =
     let
-        attrs : R10.Theme.Theme -> List (Attribute msg)
+        attrs : List (AttributeC msg)
         attrs =
             if data.libu == R10.Libu.Bu Nothing then
                 attrsSecondaryDisabled
@@ -97,7 +101,7 @@ secondary attrsExtra data =
                 attrsSecondary
     in
     R10.Libu.view
-        (attrs data.theme ++ attrsExtra)
+        (attrs ++ attrsExtra)
         { label = data.label
         , type_ = data.libu
         }
@@ -106,16 +110,24 @@ secondary attrsExtra data =
 {-| Tertiary Button
 -}
 tertiary :
-    List (Attribute msg)
+    List (AttributeC msg)
     ->
-        { label : Element msg
+        { label : ElementC msg
         , libu : R10.Libu.Type msg
-        , theme : R10.Theme.Theme
         }
-    -> Element msg
+    -> ElementC msg
 tertiary attrsExtra data =
+    let
+        attrs : List (AttributeC msg)
+        attrs =
+            if data.libu == R10.Libu.Bu Nothing then
+                attrsTertiaryDisabled
+
+            else
+                attrsTertiary
+    in
     R10.Libu.view
-        (attrsTertiary data.theme ++ attrsExtra)
+        (attrs ++ attrsExtra)
         { label = data.label
         , type_ = data.libu
         }
@@ -124,16 +136,15 @@ tertiary attrsExtra data =
 {-| Quaternary Button
 -}
 quaternary :
-    List (Attribute msg)
+    List (AttributeC msg)
     ->
-        { label : Element msg
+        { label : ElementC msg
         , libu : R10.Libu.Type msg
-        , theme : R10.Theme.Theme
         }
-    -> Element msg
+    -> ElementC msg
 quaternary attrsExtra data =
     R10.Libu.view
-        (attrsQuaternary data.theme ++ attrsExtra)
+        (attrsQuaternary ++ attrsExtra)
         { label = data.label
         , type_ = data.libu
         }
@@ -156,19 +167,19 @@ numberPadding =
 
 {-| Attributes for buttons with limited width. By default buttons are `width fill`.
 -}
-withLimitedWidth : List (Attribute msg)
+withLimitedWidth : List (AttributeC msg)
 withLimitedWidth =
     [ width (fill |> maximum 250)
     , centerX
     ]
 
 
-transition : Attribute msg
+transition : AttributeC msg
 transition =
-    htmlAttribute <| Html.Attributes.style "transition" "color .2s ease-out, background-color .2s ease-out"
+    R10.Transition.transition "color .2s ease-out, background-color .2s ease-out"
 
 
-attrsInCommon : List (Attribute msg)
+attrsInCommon : List (AttributeC msg)
 attrsInCommon =
     [ padding numberPadding
     , width fill
@@ -179,62 +190,62 @@ attrsInCommon =
     ]
 
 
-attrsPrimary : R10.Theme.Theme -> List (Attribute msg)
-attrsPrimary theme =
+attrsPrimary : List (AttributeC msg)
+attrsPrimary =
     attrsInCommon
-        ++ [ R10.Color.AttrsBackground.buttonPrimary theme
-           , R10.Color.AttrsFont.buttonPrimary theme
-           , mouseOver [ R10.Color.AttrsBackground.buttonPrimaryOver theme ]
-           , focused [ R10.Color.AttrsBackground.buttonPrimaryOver theme ]
+        ++ [ R10.Color.AttrsBackground.buttonPrimary
+           , R10.Color.AttrsFont.buttonPrimary
+           , mouseOver [ R10.Color.AttrsBackground.buttonPrimaryOver ]
+           , focused [ R10.Color.AttrsBackground.buttonPrimaryOver ]
            ]
 
 
-attrsPrimaryDisabled : R10.Theme.Theme -> List (Attribute msg)
-attrsPrimaryDisabled theme =
+attrsPrimaryDisabled : List (AttributeC msg)
+attrsPrimaryDisabled =
     attrsInCommon
-        ++ [ R10.Color.AttrsBackground.buttonPrimaryDisabled theme
-           , R10.Color.AttrsFont.buttonPrimaryDisabled theme
+        ++ [ R10.Color.AttrsBackground.buttonPrimaryDisabled
+           , R10.Color.AttrsFont.buttonPrimaryDisabled
            , mouseOver
-                [ R10.Color.AttrsBackground.buttonPrimaryDisabledOver theme
-                , R10.Color.AttrsFont.buttonPrimaryDisabledOver theme
+                [ R10.Color.AttrsBackground.buttonPrimaryDisabledOver
+                , R10.Color.AttrsFont.buttonPrimaryDisabledOver
                 ]
            , focused
-                [ R10.Color.AttrsBackground.buttonPrimaryDisabledOver theme
-                , R10.Color.AttrsFont.buttonPrimaryDisabledOver theme
+                [ R10.Color.AttrsBackground.buttonPrimaryDisabledOver
+                , R10.Color.AttrsFont.buttonPrimaryDisabledOver
                 ]
            , htmlAttribute <| Html.Attributes.style "cursor" "not-allowed"
            ]
 
 
-attrsSecondary : R10.Theme.Theme -> List (Attribute msg)
-attrsSecondary theme =
+attrsSecondary : List (AttributeC msg)
+attrsSecondary =
     attrsInCommon
         ++ [ -- Font color is just "normal" so we omit
-             R10.Color.AttrsBorder.buttonSecondary theme
+             R10.Color.AttrsBorder.buttonSecondary
            , Border.width 1
-           , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver theme ]
-           , focused [ R10.Color.AttrsBackground.buttonMinorOver theme ]
+           , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver ]
+           , focused [ R10.Color.AttrsBackground.buttonMinorOver ]
            ]
 
 
-attrsSecondaryDisabled : R10.Theme.Theme -> List (Attribute msg)
-attrsSecondaryDisabled theme =
+attrsSecondaryDisabled : List (AttributeC msg)
+attrsSecondaryDisabled =
     attrsInCommon
-        ++ [ R10.Color.AttrsBackground.buttonPrimaryDisabled theme
-           , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver theme ]
-           , focused [ R10.Color.AttrsBackground.buttonMinorOver theme ]
-           , R10.Color.AttrsBorder.buttonSecondary theme
+        ++ [ R10.Color.AttrsBackground.buttonPrimaryDisabled
+           , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver ]
+           , focused [ R10.Color.AttrsBackground.buttonMinorOver ]
+           , R10.Color.AttrsBorder.buttonSecondary
            , Border.width 1
            , htmlAttribute <| Html.Attributes.style "cursor" "not-allowed"
            ]
 
 
-attrsTertiary : R10.Theme.Theme -> List (Attribute msg)
-attrsTertiary theme =
+attrsTertiary : List (AttributeC msg)
+attrsTertiary =
     [ padding numberPadding
     , width fill
-    , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver theme ]
-    , focused [ R10.Color.AttrsBackground.buttonMinorOver theme ]
+    , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver ]
+    , focused [ R10.Color.AttrsBackground.buttonMinorOver ]
     , transition
     , Border.rounded 5
     , Font.center
@@ -242,16 +253,25 @@ attrsTertiary theme =
     ]
 
 
-attrsQuaternary : R10.Theme.Theme -> List (Attribute msg)
-attrsQuaternary theme =
+attrsTertiaryDisabled : List (AttributeC msg)
+attrsTertiaryDisabled =
+    attrsTertiary
+        ++ [ mouseOver []
+           , focused []
+           , htmlAttribute <| Html.Attributes.style "cursor" "not-allowed"
+           ]
+
+
+attrsQuaternary : List (AttributeC msg)
+attrsQuaternary =
     [ paddingXY (numberPadding - 4) (numberPadding - 8)
-    , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver theme ]
-    , focused [ R10.Color.AttrsBackground.buttonMinorOver theme ]
+    , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver ]
+    , focused [ R10.Color.AttrsBackground.buttonMinorOver ]
     , transition
     , Border.rounded 5
     , Font.center
     , R10.FontSize.xxsmall
-    , R10.Color.AttrsFont.normalLighter theme
+    , R10.Color.AttrsFont.normalLighter
     ]
 
 
@@ -273,7 +293,7 @@ cssButtonStyle theme =
         fontOnprimaryColorHex : String
         fontOnprimaryColorHex =
             theme
-                |> R10.Color.Svg.fontButtonPrimary
+                |> R10.Color.Svg.fontHighEmphasisWithMaximumContrast
                 |> R10.Color.Utils.toCssRgba
     in
     -- Adding -webkit-appearance: none;

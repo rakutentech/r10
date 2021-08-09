@@ -9,8 +9,9 @@ module R10.Table exposing (Column, columnCustom, columnSimple, columnWithAttrs, 
 -- Elm-UI adapted version of <https://github.com/NoRedInk/elm-sortable-table>
 
 import Dict exposing (Dict)
-import Element exposing (..)
-import Element.Keyed as Keyed
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
+import Element.WithContext.Keyed as Keyed
 import R10.FormTypes
 import R10.Table.Internal.Accordion
 import R10.Table.Internal.Cell
@@ -203,8 +204,8 @@ customConfig :
     { toId : data -> String
     , toMsg : R10.Table.Internal.Msg.Msg -> msg
     , columns : List (Column data msg)
-    , bodyAttrs : List (Attribute msg)
-    , rowAttrsBuilder : Maybe data -> List (Attribute msg)
+    , bodyAttrs : List (AttributeC msg)
+    , rowAttrsBuilder : Maybe data -> List (AttributeC msg)
     , pagination : Maybe R10.Table.Internal.Config.PaginationConfig
     , filters : Maybe R10.Table.Internal.Config.FiltersConfig
     }
@@ -223,7 +224,7 @@ customConfig { toId, toMsg, columns, bodyAttrs, rowAttrsBuilder, pagination, fil
 
 {-| -}
 configWithAccordionRow :
-    (Maybe data -> Element msg)
+    (Maybe data -> ElementC msg)
     -> Int
     -> (Maybe data -> Bool)
     -> (Maybe data -> Bool)
@@ -262,12 +263,12 @@ columnWithAttrs :
     { name : String
     , toStr : data -> String
     , maybeToCmp : Maybe (data -> comparable)
-    , maybeAttrs : Maybe { header : List (Attribute msg), cell : List (Attribute msg) }
+    , maybeAttrs : Maybe { header : List (AttributeC msg), cell : List (AttributeC msg) }
     }
     -> Column data msg
 columnWithAttrs { name, toStr, maybeToCmp, maybeAttrs } =
     let
-        attrs : { header : List (Attribute msg), cell : List (Attribute msg) }
+        attrs : { header : List (AttributeC msg), cell : List (AttributeC msg) }
         attrs =
             maybeAttrs |> Maybe.withDefault { header = [], cell = [] }
     in
@@ -288,8 +289,8 @@ columnWithAttrs { name, toStr, maybeToCmp, maybeAttrs } =
 {-| -}
 columnWithViews :
     { name : String
-    , viewCell : R10.FormTypes.Palette -> Maybe data -> Element msg
-    , viewHeader : R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> Element msg
+    , viewCell : R10.FormTypes.Palette -> Maybe data -> ElementC msg
+    , viewHeader : R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> ElementC msg
     , maybeToCmp : Maybe (data -> comparable)
     }
     -> Column data msg
@@ -311,8 +312,8 @@ columnWithViews { name, viewCell, viewHeader, maybeToCmp } =
 {-| -}
 columnCustom :
     { name : String
-    , viewCell : R10.FormTypes.Palette -> Maybe data -> Element msg
-    , viewHeader : R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> Element msg
+    , viewCell : R10.FormTypes.Palette -> Maybe data -> ElementC msg
+    , viewHeader : R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> ElementC msg
     , sorter : R10.Table.Internal.Types.Sorter data
     }
     -> Column data msg
@@ -326,17 +327,17 @@ columnCustom { name, viewCell, viewHeader, sorter } =
 
 
 {-| -}
-viewHeaderRowHelp : R10.FormTypes.Palette -> R10.Table.Internal.State.State -> List (R10.Table.Internal.Config.ColumnConf data msg) -> (String -> Bool -> msg) -> Element msg
+viewHeaderRowHelp : R10.FormTypes.Palette -> R10.Table.Internal.State.State -> List (R10.Table.Internal.Config.ColumnConf data msg) -> (String -> Bool -> msg) -> ElementC msg
 viewHeaderRowHelp palette state columns sortMsg =
     row [ width fill ] (List.map (viewHeaderRow_ palette state sortMsg) columns)
 
 
-viewHeaderRow_ : R10.FormTypes.Palette -> R10.Table.Internal.State.State -> (String -> Bool -> msg) -> R10.Table.Internal.Config.ColumnConf data msg -> Element msg
+viewHeaderRow_ : R10.FormTypes.Palette -> R10.Table.Internal.State.State -> (String -> Bool -> msg) -> R10.Table.Internal.Config.ColumnConf data msg -> ElementC msg
 viewHeaderRow_ palette state sortMsg column =
     column.viewHeader palette (R10.Table.Internal.Header.toHeaderInfo state column sortMsg)
 
 
-viewRowHelp : R10.FormTypes.Palette -> List (R10.Table.Internal.Config.ColumnConf data msg) -> (Maybe data -> List (Attribute msg)) -> Maybe data -> Element msg
+viewRowHelp : R10.FormTypes.Palette -> List (R10.Table.Internal.Config.ColumnConf data msg) -> (Maybe data -> List (AttributeC msg)) -> Maybe data -> ElementC msg
 viewRowHelp palette columns toRowAttrs maybeData =
     row
         (toRowAttrs maybeData)
@@ -348,7 +349,7 @@ viewBody :
     -> R10.Table.Internal.Config.Config data msg
     -> R10.Table.Internal.State.State
     -> List data
-    -> Element msg
+    -> ElementC msg
 viewBody palette { toId, columns, bodyAttrs, rowAttrsBuilder } state data =
     let
         countTODO : number
@@ -378,7 +379,7 @@ viewBody palette { toId, columns, bodyAttrs, rowAttrsBuilder } state data =
                             Nothing ->
                                 String.fromInt idx
 
-                    el_ : Element msg
+                    el_ : ElementC msg
                     el_ =
                         viewRowHelp palette columns rowAttrsBuilder maybeRowData
                 in
@@ -402,7 +403,7 @@ statically, and look for a different library if you need something crazier than
 that.
 
 -}
-view : R10.FormTypes.Palette -> R10.Table.Internal.Config.Config data msg -> R10.Table.Internal.State.State -> List data -> Element msg
+view : R10.FormTypes.Palette -> R10.Table.Internal.Config.Config data msg -> R10.Table.Internal.State.State -> List data -> ElementC msg
 view palette conf state data =
     let
         filters : Element R10.Table.Internal.Msg.Msg

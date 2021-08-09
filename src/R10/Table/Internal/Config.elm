@@ -7,7 +7,8 @@ module R10.Table.Internal.Config exposing
     , PaginationConfig
     )
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
 import R10.FormTypes
 import R10.Table.Internal.Msg
 import R10.Table.Internal.Types
@@ -23,10 +24,10 @@ or on particular rows in the body. All these customizations are available to you
 
 
 --type alias Customizations data msg =
---    { --columnHeaderView : List (HeaderData data msg) -> Element msg
+--    { --columnHeaderView : List (HeaderData data msg) -> ElementC msg
 --      --,
---      bodyAttrs : List (Attribute msg)
---    , rowAttrsBuilder : Maybe data -> List (Attribute msg)
+--      bodyAttrs : List (AttributeC msg)
+--    , rowAttrsBuilder : Maybe data -> List (AttributeC msg)
 --    }
 
 
@@ -55,8 +56,8 @@ type alias Config data msg =
     { toId : data -> String
     , toMsg : R10.Table.Internal.Msg.Msg -> msg
     , columns : List (ColumnConf data msg)
-    , bodyAttrs : List (Attribute msg)
-    , rowAttrsBuilder : Maybe data -> List (Attribute msg)
+    , bodyAttrs : List (AttributeC msg)
+    , rowAttrsBuilder : Maybe data -> List (AttributeC msg)
     , maybePaginationConfig : Maybe PaginationConfig
     , maybeFiltersConfig : Maybe FiltersConfig
     }
@@ -64,8 +65,8 @@ type alias Config data msg =
 
 type alias ColumnConf data msg =
     { name : String
-    , viewCell : R10.FormTypes.Palette -> Maybe data -> Element msg
-    , viewHeader : R10.FormTypes.Palette -> HeaderInfo msg -> Element msg
+    , viewCell : R10.FormTypes.Palette -> Maybe data -> ElementC msg
+    , viewHeader : R10.FormTypes.Palette -> HeaderInfo msg -> ElementC msg
     , sorter : R10.Table.Internal.Types.Sorter data
     }
 
@@ -78,6 +79,6 @@ type alias HeaderInfo msg =
 
 
 type alias ColumnAttrs msg =
-    { header : List (Attribute msg)
-    , cell : List (Attribute msg)
+    { header : List (AttributeC msg)
+    , cell : List (AttributeC msg)
     }

@@ -1,9 +1,10 @@
 module R10.Table.Internal.Paginator exposing (getPaginationStateRecord_, paginationButtonDisableAll_, paginationButtonEnableAll_, paginationButtonEnableOther_, paginationButtonNextFetch_, paginationButtonPrevFetch_, updatePaginationState_, view)
 
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Events as Events
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Events as Events
 import Html
 import Html.Attributes
 import Html.Events
@@ -15,7 +16,7 @@ import R10.Table.Internal.Svg
 import Svg
 
 
-buttonStyle : List (Attribute msg)
+buttonStyle : List (AttributeC msg)
 buttonStyle =
     [ padding 9
     , alignRight
@@ -23,7 +24,7 @@ buttonStyle =
     , alpha 0.7
     , width <| px 40
     , height <| px 40
-    , htmlAttribute <| Html.Attributes.style "transition" "all 0.2s ease-out"
+    , R10.Transition.transition "all 0.2s ease-out"
     ]
 
 

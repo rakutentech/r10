@@ -9,12 +9,12 @@ module R10.Header exposing (view, Header, LanguageSystem(..), Msg(..), Session(.
 import Browser.Events
 import Color
 import Color.Convert
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Events as Events
-import Element.Font as Font
-import Element.Input as Input
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Events as Events
+import Element.WithContext.Font as Font
+import Element.WithContext.Input as Input
 import Html
 import Html.Attributes
 import Http
@@ -25,6 +25,7 @@ import R10.Color.AttrsBackground
 import R10.Color.Internal.Primary
 import R10.Color.Svg
 import R10.Color.Utils
+import R10.Context exposing (..)
 import R10.FontSize
 import R10.I18n
 import R10.Language
@@ -84,8 +85,8 @@ type alias Header =
 
 {-| -}
 type alias ViewArgs msg route =
-    { extraContent : List (Element msg)
-    , extraContentRightSide : List (Element msg)
+    { extraContent : List (ElementC msg)
+    , extraContentRightSide : List (ElementC msg)
     , from : String
     , msgMapper : Msg -> msg
     , isTop : Bool
@@ -93,8 +94,8 @@ type alias ViewArgs msg route =
     , onClick : String -> msg
     , urlTop : String
     , languageSystem : LanguageSystem route
-    , logoOnDark : Element msg
-    , logoOnLight : Element msg
+    , logoOnDark : ElementC msg
+    , logoOnLight : ElementC msg
     , darkHeader : Bool
     , theme : R10.Theme.Theme
     }
@@ -247,7 +248,7 @@ update msg model =
 
 
 {-| -}
-menuTitle : List (Element msg) -> Element msg
+menuTitle : List (ElementC msg) -> ElementC msg
 menuTitle elements =
     paragraph
         [ width fill
@@ -263,7 +264,7 @@ menuTitle elements =
 
 
 {-| -}
-menuSeparator : List (Element msg)
+menuSeparator : List (ElementC msg)
 menuSeparator =
     [ el
         [ width fill
@@ -419,17 +420,17 @@ fontColorHeader args =
 
 
 {-| -}
-view : Header -> ViewArgs msg route -> Element msg
+view : Header -> ViewArgs msg route -> ElementC msg
 view model args =
     el
         [ padding 0
         , width fill
-        , htmlAttribute <| Html.Attributes.style "transition" "background 0.4s"
+        , R10.Transition.transition "background 0.4s"
         , htmlAttribute <| Html.Attributes.style "z-index" "20"
         , if args.darkHeader then
             case model.backgroundColor of
                 Nothing ->
-                    R10.Color.AttrsBackground.buttonPrimary args.theme
+                    R10.Color.AttrsBackground.buttonPrimary
 
                 Just color ->
                     Background.color color
@@ -463,14 +464,14 @@ view model args =
 
 
 {-| -}
-header : Header -> ViewArgs msg route -> Element msg
+header : Header -> ViewArgs msg route -> ElementC msg
 header model args =
     el
         [ width fill
         , centerX
         , R10.FontSize.normal
         , paddingXY 30 0
-        , htmlAttribute <| Html.Attributes.style "transition" "height 0.3s, box-shadow 0.5s"
+        , R10.Transition.transition "height 0.3s, box-shadow 0.5s"
         , Border.shadow
             { offset = ( 0, 0 )
             , size = 0
@@ -507,10 +508,10 @@ header model args =
 
 
 {-| -}
-userSection : Header -> ViewArgs msg route -> List (Element msg)
+userSection : Header -> ViewArgs msg route -> List (ElementC msg)
 userSection model args =
     [ el
-        [ htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"
+        [ R10.Transition.transition "transform 0.2s"
         , inFront <|
             if model.userMenuOpen then
                 userMenu model args
@@ -521,7 +522,7 @@ userSection model args =
       <|
         let
             transition =
-                htmlAttribute <| Html.Attributes.style "transition" "opacity 0.5s"
+                R10.Transition.transition "opacity 0.5s"
 
             emptyButton =
                 el [ alpha 0, transition ] none
@@ -561,7 +562,7 @@ userSection model args =
 
 
 {-| -}
-rightArea : Header -> ViewArgs msg route -> Element Msg -> Element msg
+rightArea : Header -> ViewArgs msg route -> ElementC Msg -> ElementC msg
 rightArea model args loginButtonElement =
     map args.msgMapper <|
         Input.button
@@ -579,7 +580,7 @@ rightArea model args loginButtonElement =
 
 
 {-| -}
-rightMenuButton : Bool -> R10.Theme.Theme -> Element msg
+rightMenuButton : Bool -> R10.Theme.Theme -> ElementC msg
 rightMenuButton darkHeader theme =
     el
         [ Font.size 26
@@ -588,7 +589,7 @@ rightMenuButton darkHeader theme =
         , Font.bold
         , Font.color <| logoColor darkHeader theme
         , mouseOver [ Background.color <| rgba 0 0 0 0.05 ]
-        , htmlAttribute <| Html.Attributes.style "transition" "background 0.2s"
+        , R10.Transition.transition "background 0.2s"
         ]
     <|
         text "⋮"
@@ -605,7 +606,7 @@ userMenuButtonId =
 
 
 {-| -}
-dontBreakOut : List (Attribute msg)
+dontBreakOut : List (AttributeC msg)
 dontBreakOut =
     --
     -- From https://css-tricks.com/snippets/css/prevent-long-urls-from-breaking-out-of-container/
@@ -630,7 +631,7 @@ dontBreakOut =
 
 
 {-| -}
-userMenu : Header -> ViewArgs msg route -> Element msg
+userMenu : Header -> ViewArgs msg route -> ElementC msg
 userMenu model args =
     let
         loginArea =
@@ -645,7 +646,7 @@ userMenu model args =
                , alignRight
                , R10.FontSize.normal
                , htmlAttribute <| Html.Attributes.id userMenuId
-               , R10.Color.AttrsBackground.surface2dp args.theme
+               , R10.Color.AttrsBackground.surface2dp
                , padding 0
                ]
         )
@@ -722,31 +723,31 @@ userMenu model args =
 
 
 {-| -}
-logoutLink : Header -> ViewArgs msg route -> Element Msg
+logoutLink : Header -> ViewArgs msg route -> ElementC Msg
 logoutLink model args =
     if model.debuggingMode then
         Input.button
             attrsLink
-            { label = paragraph [] <| R10.I18n.tmd (argsToLanguage args) <| R10.Translations.signOut, onPress = Just Logout }
+            { label = R10.I18n.paragraph [] R10.Translations.signOut, onPress = Just Logout }
 
     else
         link
             attrsLink
-            { label = paragraph [] <| R10.I18n.tmd (argsToLanguage args) <| R10.Translations.signOut, url = model.urlLogout ++ "?from=" ++ args.from }
+            { label = R10.I18n.paragraph [] R10.Translations.signOut, url = model.urlLogout ++ "?from=" ++ args.from }
 
 
 {-| -}
-loginLink : Header -> ViewArgs msg route -> Element Msg
+loginLink : Header -> ViewArgs msg route -> ElementC Msg
 loginLink model args =
     if model.debuggingMode then
         Input.button
             attrsLink
-            { label = paragraph [] <| R10.I18n.tmd (argsToLanguage args) <| R10.Translations.signIn, onPress = Just Login }
+            { label = R10.I18n.paragraph [] R10.Translations.signIn, onPress = Just Login }
 
     else
         link
             attrsLink
-            { label = paragraph [] <| R10.I18n.tmd (argsToLanguage args) <| R10.Translations.signIn, url = loginUrl model args }
+            { label = R10.I18n.paragraph [] R10.Translations.signIn, url = loginUrl model args }
 
 
 {-| -}
@@ -756,33 +757,33 @@ loginUrl model args =
 
 
 {-| -}
-loginButton : Header -> ViewArgs msg route -> Element Msg
+loginButton : Header -> ViewArgs msg route -> ElementC Msg
 loginButton model args =
     if model.debuggingMode then
         Input.button (attrsButton ++ [ alignRight ])
-            { label = row [] <| R10.I18n.tmd (argsToLanguage args) <| R10.Translations.signIn
+            { label = R10.I18n.paragraph [] R10.Translations.signIn
             , onPress = Just Login
             }
 
     else
         link (attrsButton ++ [ alignRight ])
-            { label = row [] <| R10.I18n.tmd (argsToLanguage args) <| R10.Translations.signIn
+            { label = R10.I18n.paragraph [] R10.Translations.signIn
             , url = loginUrl model args
             }
 
 
 {-| -}
-attrsLink : List (Attribute msg)
+attrsLink : List (AttributeC msg)
 attrsLink =
     [ mouseOver [ Background.color <| rgba 0 0 0 0.05 ]
-    , htmlAttribute <| Html.Attributes.style "transition" "background 0.2s"
+    , R10.Transition.transition "background 0.2s"
     , width fill
     , paddingXY 20 13
     ]
 
 
 {-| -}
-attrsButton : List (Attribute msg)
+attrsButton : List (AttributeC msg)
 attrsButton =
     attrsLink
         ++ [ Border.width 1
@@ -826,7 +827,7 @@ logoColor darkHeader theme =
 
 
 {-| -}
-humbergAndLogo : Header -> ViewArgs msg route -> Element msg
+humbergAndLogo : Header -> ViewArgs msg route -> ElementC msg
 humbergAndLogo model args =
     row
         [ paddingXY 10 0
@@ -835,13 +836,13 @@ humbergAndLogo model args =
         [ map args.msgMapper <|
             el
                 [ moveDown (fromTop args.isTop)
-                , htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"
+                , R10.Transition.transition "transform 0.2s"
                 ]
             <|
                 hamburger model.sideMenuOpen
         , R10.Libu.view
             [ moveDown (fromTop args.isTop + 2)
-            , htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"
+            , R10.Transition.transition "transform 0.2s"
             ]
             { label =
                 logo
@@ -860,7 +861,7 @@ humbergAndLogo model args =
         ]
 
 
-hamburger : Bool -> Element Msg
+hamburger : Bool -> ElementC Msg
 hamburger sideMenuOpen =
     -- From https://jonsuh.com/hamburgers/
     Input.button
@@ -872,7 +873,7 @@ hamburger sideMenuOpen =
         , width <| px 60
         , height <| px 60
         , mouseOver [ Background.color <| rgba 0 0 0 0.05 ]
-        , htmlAttribute <| Html.Attributes.style "transition" "background 0.2s"
+        , R10.Transition.transition "background 0.2s"
         , scale 0.7
         ]
         { label =
@@ -885,7 +886,7 @@ hamburger sideMenuOpen =
 
 
 {-| -}
-logo : Element msg -> Element msg
+logo : ElementC msg -> ElementC msg
 logo elementLogo =
     el
         [ spacing 20
@@ -896,7 +897,7 @@ logo elementLogo =
 
 
 {-| -}
-cover : { a | sideMenuOpen : Bool } -> { b | msgMapper : Msg -> msg1 } -> Element msg1
+cover : { a | sideMenuOpen : Bool } -> { b | msgMapper : Msg -> msg } -> ElementC msg
 cover model args =
     map args.msgMapper <|
         el
@@ -904,7 +905,7 @@ cover model args =
              , Background.color <| rgba 0 0 0 0.5
              , htmlAttribute <| Html.Attributes.style "position" "fixed"
              , htmlAttribute <| Html.Attributes.style "height" "100vh"
-             , htmlAttribute <| Html.Attributes.style "transition" "opacity 0.2s, visibility 0.2s"
+             , R10.Transition.transition "opacity 0.2s, visibility 0.2s"
              , Events.onClick ToggleSideMenu
              ]
                 ++ (if model.sideMenuOpen then
@@ -934,15 +935,15 @@ argsToLanguage args =
 
 
 {-| -}
-sideMenu : Header -> ViewArgs msg route -> Element msg
+sideMenu : Header -> ViewArgs msg route -> ElementC msg
 sideMenu model args =
     column
-        [ R10.Color.AttrsBackground.surface2dp args.theme
+        [ R10.Color.AttrsBackground.surface2dp
         , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 12, color = rgba 0 0 0 0.3 }
         , R10.FontSize.normal
         , width <| px 300
         , paddingEach { top = 60, right = 0, bottom = 20, left = 0 }
-        , htmlAttribute <| Html.Attributes.style "transition" "transform 0.2s"
+        , R10.Transition.transition "transform 0.2s"
         , htmlAttribute <| Html.Attributes.style "position" "fixed"
         , htmlAttribute <| Html.Attributes.style "height" "100vh"
         , scrollbarY
@@ -956,7 +957,7 @@ sideMenu model args =
     <|
         []
             ++ args.extraContent
-            ++ [ menuTitle <| R10.I18n.tmd (argsToLanguage args) R10.Translations.language ]
+            ++ [ menuTitle [ R10.I18n.paragraph [] R10.Translations.language ] ]
             ++ menuSeparator
             ++ languageMenu model args
             ++ menuSeparator
@@ -979,16 +980,16 @@ sideMenu model args =
 
 
 {-| -}
-languageMenu : Header -> ViewArgs msg route -> List (Element msg)
+languageMenu : Header -> ViewArgs msg route -> List (ElementC msg)
 languageMenu model args =
     List.map
         (\language ->
             let
                 int =
-                    R10.Language.toLongString R10.Language.International language
+                    R10.Language.toStringLong R10.Language.International language
 
                 loc =
-                    R10.Language.toLongString R10.Language.Localization language
+                    R10.Language.toStringLong R10.Language.Localization language
 
                 label =
                     text <|

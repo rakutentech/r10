@@ -3,23 +3,29 @@ module R10.FormComponents.Internal.Phone exposing
     , defaultTrailingIcon
     , extraCss
     , view
+    , viewOptionEl
     )
 
-import Element exposing (..)
-import Element.Events as Events
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Events as Events
+import Element.WithContext.Font as Font
+import Element.WithContext.Input as Input
 import Html.Attributes
+import R10.Context exposing (..)
 import R10.Country
 import R10.FormComponents.Internal.IconButton
+import R10.FormComponents.Internal.Phone.Combobox
 import R10.FormComponents.Internal.Phone.Common
 import R10.FormComponents.Internal.Phone.Update
-import R10.FormComponents.Internal.Phone.Views
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormTypes
 import R10.SimpleMarkdown
+import R10.Transition
 import String.Extra
 
 
@@ -36,7 +42,7 @@ extraCss =
     ""
 
 
-defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> Element msg
+defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> ElementC msg
 defaultTrailingIcon { opened, palette } =
     R10.FormComponents.Internal.IconButton.view []
         { msgOnClick = Nothing
@@ -50,7 +56,7 @@ defaultTrailingIcon { opened, palette } =
                          else
                             0
                         )
-                , htmlAttribute <| Html.Attributes.style "transition" "all 0.13s"
+                , R10.Transition.transition "all 0.13s"
                 ]
                 (R10.FormComponents.Internal.UI.Color.label palette)
                 24
@@ -68,7 +74,7 @@ update =
     R10.FormComponents.Internal.Phone.Update.update
 
 
-getFlagIcon : Int -> Maybe R10.Country.Country -> Element msg
+getFlagIcon : Int -> Maybe R10.Country.Country -> ElementC msg
 getFlagIcon size maybeCountry =
     el
         [ Font.size size ]
@@ -96,7 +102,7 @@ viewOptionEl :
         , msgOnSelect : R10.Country.Country -> msg
     }
     -> R10.Country.Country
-    -> Element msg
+    -> ElementC msg
 viewOptionEl { search, msgOnSelect } country =
     let
         label =
@@ -139,46 +145,68 @@ getFlagButton :
     , disabled : Bool
     , toMsg : R10.FormComponents.Internal.Phone.Common.Msg -> msg
     , key : String
-    , filteredCountryOptions : List R10.Country.Country
+    , filteredFieldOption : List R10.Country.Country
     , model : R10.FormComponents.Internal.Phone.Common.Model
+    , style : R10.FormComponents.Internal.Style.Style
     }
-    -> Element msg
-getFlagButton { palette, disabled, toMsg, key, filteredCountryOptions, model } =
-    R10.FormComponents.Internal.IconButton.view []
-        { msgOnClick =
+    -> ElementC msg
+getFlagButton { palette, disabled, toMsg, key, filteredFieldOption, model, style } =
+    Input.button
+        ([ mouseOver [ Background.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 palette ]
+         , R10.Transition.transition "all 0.2s"
+         , paddingXY 10 5
+         , Border.rounded 10
+         ]
+            ++ (case style of
+                    R10.FormComponents.Internal.Style.Filled ->
+                        [ moveDown -2
+                        , moveRight 0
+                        ]
+
+                    R10.FormComponents.Internal.Style.Outlined ->
+                        [ moveDown 3
+                        , moveRight 8
+                        ]
+               )
+        )
+        { onPress =
             if disabled then
                 Nothing
 
             else
                 Just <|
                     toMsg <|
-                        R10.FormComponents.Internal.Phone.Update.getMsgOnFlagClick model
+                        R10.FormComponents.Internal.Phone.Update.getMsgOnInputClick model
                             { key = key
                             , selectOptionHeight = 36
                             , maxDisplayCount = 5
                             }
-                            filteredCountryOptions
-        , icon =
-            row [ width fill, centerY, centerX, moveLeft 2 ]
-                [ model.countryValue
-                    |> getFlagIcon 20
-                    |> el
-                        [ width fill
-                        , centerY
-                        , centerX
-                        , moveDown 2
-                        ]
-                , R10.FormComponents.Internal.UI.icons.combobox_arrow
-                    [ width fill
-                    , moveLeft 1
-                    , centerY
-                    , centerX
+                            filteredFieldOption
+        , label =
+            let
+                maybeCountryValue : Maybe R10.Country.Country
+                maybeCountryValue =
+                    R10.Country.fromTelephoneAsString model.value
+            in
+            row
+                [ spacing 7 ]
+                [ el [] (getFlagIcon 24 maybeCountryValue)
+                , text <| Maybe.withDefault "" (Maybe.map R10.Country.toCountryTelCode maybeCountryValue)
+                , el
+                    [ Font.size 11
+                    , alpha 0.6
+                    , R10.Transition.transition "all 0.2s"
+                    , rotate
+                        (if model.opened then
+                            pi
+
+                         else
+                            0
+                        )
                     ]
-                    (R10.FormComponents.Internal.UI.Color.label palette)
-                    16
+                  <|
+                    text "▼"
                 ]
-        , palette = palette
-        , size = 24
         }
 
 
@@ -188,7 +216,7 @@ countryOptions =
 
 
 view :
-    List (Attribute msg)
+    List (AttributeC msg)
     -> R10.FormComponents.Internal.Phone.Common.Model
     ->
         { maybeValid : Maybe Bool
@@ -202,7 +230,7 @@ view :
         , palette : R10.FormTypes.Palette
         , countryOptions : Maybe (List R10.Country.Country)
         }
-    -> Element msg
+    -> ElementC msg
 view attrs model conf =
     let
         countryOptions_ : List R10.Country.Country
@@ -210,8 +238,8 @@ view attrs model conf =
             conf.countryOptions
                 |> Maybe.withDefault countryOptions
 
-        filteredCountryOptions : List R10.Country.Country
-        filteredCountryOptions =
+        filteredFieldOption : List R10.Country.Country
+        filteredFieldOption =
             countryOptions_
                 |> R10.FormComponents.Internal.Phone.Common.filterBySearch model.search
 
@@ -240,11 +268,14 @@ view attrs model conf =
                     , disabled = conf.disabled
                     , toMsg = conf.toMsg
                     , key = conf.key
-                    , filteredCountryOptions = filteredCountryOptions
+                    , filteredFieldOption = filteredFieldOption
                     , model = model
+                    , style = conf.style
                     }
                 ]
-            , trailingIcon = [ defaultTrailingIcon { opened = model.opened, palette = conf.palette } ]
+
+            -- , trailingIcon = [ defaultTrailingIcon { opened = model.opened, palette = conf.palette } ]
+            , trailingIcon = []
             }
     in
-    R10.FormComponents.Internal.Phone.Views.view attrs model args
+    R10.FormComponents.Internal.Phone.Combobox.view attrs model args

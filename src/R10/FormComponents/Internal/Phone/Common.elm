@@ -11,10 +11,12 @@ module R10.FormComponents.Internal.Phone.Common exposing
     , normalizeString
     )
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import R10.Country
+import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Style
 import R10.FormTypes
+import R10.Context exposing (..)
 
 
 
@@ -23,45 +25,31 @@ import R10.FormTypes
 
 type Msg
     = NoOp
-    | OnFocus
-    | OnLoseFocus
+    | OnFocus String
+    | OnLoseFocus String
     | OnScroll Float
-    | OnValueChange String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } String -- newValue, newValue
-    | OnSearch String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } String -- newSearch, newSelect
-    | OnOptionSelect R10.Country.Country --newValue
-    | OnArrowUp String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } -- newSelect selectionY
-    | OnArrowDown String { selectOptionHeight : Int, maxDisplayCount : Int, filteredCountryOptions : List R10.Country.Country } -- newSelect selectionY
     | OnEsc
-    | OnFlagClick String Float -- selectionY
+      --
+    | OnInputClick { key : String, selectedY : Float }
+    | OnOptionSelect R10.Country.Country
+    | OnSearch { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List R10.Country.Country } String
+    | OnArrowUp { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List R10.Country.Country }
+    | OnArrowDown { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List R10.Country.Country }
+      --
+    | OnValueChange String { selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List R10.Country.Country } String
 
 
 init : Model
 init =
-    { value = ""
-    , countryValue = Nothing
-    , search = ""
-    , select = Nothing
-    , focused = False
-    , scroll = 0
-    , opened = False
-    }
+    R10.FormComponents.Internal.Single.Common.init
 
 
 type alias Model =
-    { value : String
-    , countryValue : Maybe R10.Country.Country
-    , search : String
-    , select : Maybe R10.Country.Country
-    , focused : Bool
-    , scroll : Float
-    , opened : Bool
-    }
+    R10.FormComponents.Internal.Single.Common.Model
 
 
 type alias FieldOption =
-    { value : String
-    , label : String
-    }
+    R10.FormComponents.Internal.Single.Common.FieldOption
 
 
 type alias Args msg =
@@ -82,11 +70,11 @@ type alias Args msg =
 
     -- Specific
     , countryOptions : List R10.Country.Country
-    , toOptionEl : R10.Country.Country -> Element msg
+    , toOptionEl : R10.Country.Country -> ElementC msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : List (Element msg)
-    , trailingIcon : List (Element msg)
+    , leadingIcon : List (ElementC msg)
+    , trailingIcon : List (ElementC msg)
     }
 
 

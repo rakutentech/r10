@@ -11,9 +11,10 @@ module R10.FormComponents.Internal.Single exposing
     , viewCustom
     )
 
-import Element exposing (..)
-import Element.Events as Events
+import Element.WithContext exposing (..)
+import Element.WithContext.Events as Events
 import Html.Attributes
+import R10.Context exposing (..)
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Single.Combobox
 import R10.FormComponents.Internal.Single.Common
@@ -25,6 +26,7 @@ import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormTypes
 import R10.SimpleMarkdown
+import R10.Transition
 
 
 
@@ -47,7 +49,7 @@ defaultSearchFn search opt =
         (opt.label |> normalizeString)
 
 
-defaultViewOptionEl : { a | search : String, msgOnSelect : String -> msg } -> R10.FormComponents.Internal.Single.Common.FieldOption -> Element msg
+defaultViewOptionEl : { a | search : String, msgOnSelect : String -> msg } -> R10.FormComponents.Internal.Single.Common.FieldOption -> ElementC msg
 defaultViewOptionEl { search, msgOnSelect } { label, value } =
     let
         insertPositions : List Int
@@ -78,10 +80,11 @@ defaultViewOptionEl { search, msgOnSelect } { label, value } =
         (withBold |> R10.SimpleMarkdown.elementMarkdown)
 
 
-defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> Element msg
+defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> ElementC msg
 defaultTrailingIcon { opened, palette } =
     R10.FormComponents.Internal.IconButton.view
-        [ pointer ]
+        [ pointer
+        ]
         { msgOnClick = Nothing
         , icon =
             R10.FormComponents.Internal.UI.icons.combobox_arrow
@@ -93,7 +96,7 @@ defaultTrailingIcon { opened, palette } =
                          else
                             0
                         )
-                , htmlAttribute <| Html.Attributes.style "transition" "all 0.13s"
+                , R10.Transition.transition "all 0.2s"
                 ]
                 (R10.FormComponents.Internal.UI.Color.label palette)
                 24
@@ -139,11 +142,10 @@ type alias Args msg =
 
 
 view :
-    List (Attribute msg)
-    -- Shared.Args msg - without [toOptionEl, searchFn]
+    List (AttributeC msg)
     -> R10.FormComponents.Internal.Single.Common.Model
     -> Args msg
-    -> Element msg
+    -> ElementC msg
 view attrs model conf =
     let
         args : R10.FormComponents.Internal.Single.Common.Args msg
@@ -169,7 +171,9 @@ view attrs model conf =
             , selectOptionHeight = 32
             , maxDisplayCount = 3
             , leadingIcon = []
-            , trailingIcon = [ defaultTrailingIcon { opened = model.opened, palette = conf.palette } ]
+
+            -- , trailingIcon = [ defaultTrailingIcon { opened = model.opened, palette = conf.palette } ]
+            , trailingIcon = []
             , autocomplete = Nothing
             }
     in
@@ -200,19 +204,19 @@ type alias ArgsCustom msg =
     , maybeValid : Maybe Bool
     , toMsg : R10.FormComponents.Internal.Single.Common.Msg -> msg
     , searchFn : String -> R10.FormComponents.Internal.Single.Common.FieldOption -> Bool
-    , viewOptionEl : R10.FormComponents.Internal.Single.Common.FieldOption -> Element msg
+    , viewOptionEl : R10.FormComponents.Internal.Single.Common.FieldOption -> ElementC msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : List (Element msg)
-    , trailingIcon : List (Element msg)
+    , leadingIcon : List (ElementC msg)
+    , trailingIcon : List (ElementC msg)
     }
 
 
 viewCustom :
-    List (Attribute msg)
+    List (AttributeC msg)
     -> R10.FormComponents.Internal.Single.Common.Model
     -> ArgsCustom msg
-    -> Element msg
+    -> ElementC msg
 viewCustom attrs model args =
     let
         args_ : R10.FormComponents.Internal.Single.Common.Args msg

@@ -1,11 +1,12 @@
 module R10.FormComponents.Internal.ExtraCss exposing (extraCss)
 
-import Element
+import Element.WithContext exposing (..)
 import R10.FormComponents.Internal.Single
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Validations
 import R10.FormTypes
+import R10.Context exposing (..)
 
 
 extraCss : R10.FormTypes.Palette -> String
@@ -19,7 +20,7 @@ extraCss palette =
             (R10.FormComponents.Internal.UI.Color.onPrimary palette)
 
 
-ripple : Element.Color -> Element.Color -> Element.Color -> String
+ripple : Color -> Color -> Color -> String
 ripple onSurface primary onPrimary =
     let
         onSurfaceStr : String

@@ -6,8 +6,9 @@ module R10.Svg.Utils exposing (wrapperWithViewbox, wrapper32)
 
 -}
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import Html.Attributes
+import R10.Context exposing (..)
 import Svg
 import Svg.Attributes as SA
 
@@ -67,12 +68,12 @@ wrapperWithViewbox_ viewbox ySize listSvg =
 
 
 {-| -}
-wrapperWithViewbox : List (Attribute msg) -> String -> Int -> List (Svg.Svg msg) -> Element.Element msg
+wrapperWithViewbox : List (AttributeC msg) -> String -> Int -> List (Svg.Svg msg) -> ElementC msg
 wrapperWithViewbox attrs viewbox size listSvg =
-    el attrs <| Element.html <| wrapperWithViewbox_ viewbox size listSvg
+    el attrs <| html <| wrapperWithViewbox_ viewbox size listSvg
 
 
 {-| -}
-wrapper32 : List (Attribute msg) -> Int -> List (Svg.Svg msg) -> Element.Element msg
+wrapper32 : List (AttributeC msg) -> Int -> List (Svg.Svg msg) -> ElementC msg
 wrapper32 attrs size listSvg =
     wrapperWithViewbox attrs "0 0 32 32" size listSvg

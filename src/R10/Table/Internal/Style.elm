@@ -4,9 +4,10 @@ module R10.Table.Internal.Style exposing
     , defaultRowAttrs
     )
 
-import Element exposing (..)
-import Element.Border as Border
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
+import Element.WithContext.Border as Border
+import Element.WithContext.Font as Font
 import Html.Attributes
 
 
@@ -14,7 +15,7 @@ import Html.Attributes
 -- Application specific
 
 
-borderColor : Element.Color
+borderColor : Color
 borderColor =
     Element.rgba 0 0 0 0.2
 
@@ -80,7 +81,7 @@ columnPadding =
 -}
 
 
-defaultHeadRowAttrs : List (Attribute msg)
+defaultHeadRowAttrs : List (AttributeC msg)
 defaultHeadRowAttrs =
     [ width fill
     , height fill
@@ -89,7 +90,7 @@ defaultHeadRowAttrs =
     ]
 
 
-defaultHeaderAttrs : List (Attribute msg)
+defaultHeaderAttrs : List (AttributeC msg)
 defaultHeaderAttrs =
     [ paddingXY columnPadding 0
     , spacing columnPadding
@@ -103,7 +104,7 @@ defaultHeaderAttrs =
     ]
 
 
-defaultRowAttrs : List (Attribute msg)
+defaultRowAttrs : List (AttributeC msg)
 defaultRowAttrs =
     [ width fill
     , height fill
@@ -112,10 +113,10 @@ defaultRowAttrs =
     ]
 
 
-defaultCellAttrs : List (Attribute msg)
+defaultCellAttrs : List (AttributeC msg)
 defaultCellAttrs =
     [ width (fill |> minimum 120)
-    , htmlAttribute <| Html.Attributes.style "transition" "all 0.25s ease-out"
+    , R10.Transition.transition "all 0.25s ease-out"
     , height (fill |> minimum 54)
     , paddingXY 16 6
     , htmlAttribute <| Html.Attributes.style "word-break" "break-word"

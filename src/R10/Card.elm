@@ -6,17 +6,18 @@ module R10.Card exposing (high, low, normal, noShadow)
 
 -}
 
-import Element exposing (..)
-import Element.Border as Border
+import Element.WithContext exposing (..)
+import Element.WithContext.Border as Border
 import Html.Attributes
 import R10.Color.AttrsBackground
 import R10.Color.AttrsBorder
 import R10.Color.AttrsFont
+import R10.Context exposing (..)
 import R10.Mode
 import R10.Theme
 
 
-shadow : Float -> Attr decorative msg
+shadow : Float -> AttrC decorative msg
 shadow level =
     Border.shadow
         { offset = ( 0, level )
@@ -26,11 +27,11 @@ shadow level =
         }
 
 
-base : R10.Theme.Theme -> List (Attribute msg)
+base : R10.Theme.Theme -> List (AttributeC msg)
 base theme =
-    [ R10.Color.AttrsBackground.surface theme
-    , R10.Color.AttrsBorder.normal theme
-    , R10.Color.AttrsFont.normal theme
+    [ R10.Color.AttrsBackground.surface
+    , R10.Color.AttrsBorder.normal
+    , R10.Color.AttrsFont.normal
     , Border.rounded 10
     , Border.width 1
     , Border.color <|
@@ -43,13 +44,13 @@ base theme =
     , padding 30
     , width fill
     , height fill
-    , htmlAttribute <| Html.Attributes.style "transition" "background-color 0.8s"
+    , R10.Transition.transition "background-color 0.8s"
     ]
 
 
 {-| Card with an high shadow
 -}
-high : R10.Theme.Theme -> List (Attribute msg)
+high : R10.Theme.Theme -> List (AttributeC msg)
 high theme =
     --https://material.io/design/environment/elevation.html#elevation-in-material-design
     base theme ++ [ shadow 8 ]
@@ -57,7 +58,7 @@ high theme =
 
 {-| Card with a normal shadow
 -}
-normal : R10.Theme.Theme -> List (Attribute msg)
+normal : R10.Theme.Theme -> List (AttributeC msg)
 normal theme =
     -- base theme ++ [ shadow 2, mouseOver [ shadow 8 ] ]
     base theme ++ [ shadow 4 ]
@@ -65,13 +66,13 @@ normal theme =
 
 {-| Card with a low shadow
 -}
-low : R10.Theme.Theme -> List (Attribute msg)
+low : R10.Theme.Theme -> List (AttributeC msg)
 low theme =
     base theme ++ [ shadow 2 ]
 
 
 {-| Card without a shadow
 -}
-noShadow : R10.Theme.Theme -> List (Attribute msg)
+noShadow : R10.Theme.Theme -> List (AttributeC msg)
 noShadow theme =
     base theme

@@ -6,12 +6,14 @@ module R10.DropDown exposing (Option, extraCss, view, viewBorderLess)
 
 -}
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import Html
 import Html.Attributes
 import Html.Events
 import Json.Decode
 import R10.Color.Utils
+import R10.Context exposing (..)
+import R10.Transition
 
 
 {-| -}
@@ -25,37 +27,19 @@ type Type
     = BorderLess
 
 
-getBorderAttr : Int -> String -> String
-getBorderAttr width colorHex =
-    String.join " " [ String.fromInt width ++ "px", "solid", colorHex ]
+renderHtmlOption : String -> Option -> Html.Html msg
+renderHtmlOption selected { value, text } =
+    Html.option
+        [ Html.Attributes.value value
+        , Html.Attributes.selected (value == selected)
+        ]
+        [ Html.text text ]
 
 
-triangle : Color -> Element msg
-triangle colorFont =
-    el
-        (List.map htmlAttribute <|
-            [ Html.Attributes.style "width" "0"
-            , Html.Attributes.style "height" "0"
-            , Html.Attributes.style "border-left" <| getBorderAttr 4 "transparent"
-            , Html.Attributes.style "border-right" <| getBorderAttr 4 "transparent"
-            , Html.Attributes.style "border-top" <| getBorderAttr 6 (R10.Color.Utils.toCssRgba colorFont)
-            , Html.Attributes.style "position" "absolute"
-            , Html.Attributes.style "right" "12px"
-            ]
-        )
-        none
-
-
-renderHtmlOption : Option -> Html.Html msg
-renderHtmlOption { value, text } =
-    Html.option [ Html.Attributes.value value ] [ Html.text text ]
-
-
-commonStyle : Color -> Color -> List (Html.Attribute msg)
-commonStyle colorFont colorBackground =
-    [ Html.Attributes.style "font-size" "12px"
-    , Html.Attributes.style "padding" "8px 12px"
-    , Html.Attributes.style "padding-right" "2.5em"
+commonStyle : Float -> Int -> Color -> Color -> List (Html.Attribute msg)
+commonStyle ratio fontSize colorFont colorBackground =
+    [ Html.Attributes.style "font-size" (String.fromInt fontSize ++ "px")
+    , Html.Attributes.style "padding" "8px 28px 8px 30px"
     , Html.Attributes.style "color" (R10.Color.Utils.toCssRgba colorFont)
     , Html.Attributes.style "background-color" (R10.Color.Utils.toCssRgba colorBackground)
     , Html.Attributes.style "-webkit-appearance" "none"
@@ -64,16 +48,16 @@ commonStyle colorFont colorBackground =
     , Html.Attributes.style "cursor" "pointer"
     , Html.Attributes.style "outline" "none"
     , Html.Attributes.class "drop-down"
-    , Html.Attributes.style "transition" "color .2s ease-out, background-color .2s ease-out"
+    , Html.Attributes.style "transition" (R10.Transition.parseCharacteristics ratio "color .2s ease-out, background-color .2s ease-out")
     ]
 
 
-getDropDownStyle : Color -> Color -> Type -> List (Html.Attribute msg)
-getDropDownStyle colorFont colorBackground dropDownType =
+getDropDownStyle : Float -> Int -> Color -> Color -> Type -> List (Html.Attribute msg)
+getDropDownStyle ratio fontSize colorFont colorBackground dropDownType =
     case dropDownType of
         BorderLess ->
             -- Set margin left for alignment by compensating the spacing gap of padding left
-            commonStyle colorFont colorBackground
+            commonStyle ratio fontSize colorFont colorBackground
                 ++ [ Html.Attributes.style "border" "none"
                    , Html.Attributes.style "margin-left" "-8px"
                    ]
@@ -82,7 +66,7 @@ getDropDownStyle colorFont colorBackground dropDownType =
 {-| The dropdown.
 -}
 view :
-    List (Attribute msg)
+    List (AttributeC msg)
     ->
         { a
             | colorBackground : Color
@@ -90,22 +74,24 @@ view :
             , currentValue : String
             , inputHandler : String -> msg
             , optionList : List Option
+            , fontSize : Int
         }
     -> Type
-    -> Element msg
+    -> ElementC msg
 view attrs args dropDownType =
-    row
-        attrs
-        [ html <|
-            Html.select
-                ([ Html.Events.on "change" (Json.Decode.map args.inputHandler Html.Events.targetValue)
-                 , Html.Attributes.value args.currentValue
-                 ]
-                    ++ getDropDownStyle args.colorFont args.colorBackground dropDownType
+    withContext <|
+        \c ->
+            el
+                attrs
+                (html <|
+                    Html.select
+                        ([ Html.Events.on "change" (Json.Decode.map args.inputHandler Html.Events.targetValue)
+                         , Html.Attributes.value args.currentValue
+                         ]
+                            ++ getDropDownStyle c.debugger_transitionSpeed args.fontSize args.colorFont args.colorBackground dropDownType
+                        )
+                        (List.map (renderHtmlOption args.currentValue) args.optionList)
                 )
-                (List.map renderHtmlOption args.optionList)
-        , triangle args.colorFont
-        ]
 
 
 
@@ -116,7 +102,7 @@ view attrs args dropDownType =
 {-| Slightly different version of the dropdown that has no borders.
 -}
 viewBorderLess :
-    List (Attribute msg)
+    List (AttributeC msg)
     ->
         { a
             | colorBackground : Color
@@ -124,17 +110,26 @@ viewBorderLess :
             , currentValue : String
             , inputHandler : String -> msg
             , optionList : List Option
+            , fontSize : Int
         }
-    -> Element msg
+    -> ElementC msg
 viewBorderLess attrs args =
     view attrs args BorderLess
 
 
-{-| This is some extra CSS that you need to add to the page if you use this module. The String argument is the `colorHover`
--}
+
+-- This is some extra CSS that you need to add to the page
+-- if you use this module. The String argument is the `colorHover`
+
+
 extraCss : Color -> String
 extraCss colorHover =
+    -- Remove the triangle button (select arrow) from IE11
+    -- https://stackoverflow.com/questions/20163079/remove-select-arrow-on-ie
     """
+select::-ms-expand {
+    display: none;
+}
 .drop-down:hover, .drop-down:focus {
     background-color: """ ++ R10.Color.Utils.toCssRgba colorHover ++ """ !important;
 }

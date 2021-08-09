@@ -4,6 +4,7 @@ module R10.FormTypes exposing
     , inputField
     , ValidationIcon(..)
     , Palette
+    , TypeSpecial(..)
     )
 
 {-| Types for Forms
@@ -28,11 +29,13 @@ import Color
 type TypeText
     = TextPlain
     | TextEmail
+    | TextEmailWithSuggestions (List String)
     | TextUsername
     | TextPasswordNew
     | TextPasswordCurrent
     | TextMultiline
     | TextWithPattern String
+    | TextWithPatternLarge String
 
 
 {-| Possible types of **Single** input fields
@@ -44,17 +47,23 @@ type TypeSingle
     | SingleSelect
 
 
-{-| Possible types of **Binarye** input fields
+{-| Possible types of **Binary** input fields
 -}
 type TypeBinary
     = BinaryCheckbox
     | BinarySwitch
 
 
-{-| Possible types of **Multy** input fields
+{-| Possible types of **Multi** input fields
 -}
 type TypeMulti
     = MultiCombobox -- TODO
+
+
+{-| Possible types of **Special** input fields
+-}
+type TypeSpecial
+    = SpecialPhone -- TODO
 
 
 
@@ -79,6 +88,7 @@ type FieldType
     | TypeSingle TypeSingle (List FieldOption)
     | TypeMulti TypeMulti (List FieldOption)
     | TypeBinary TypeBinary
+    | TypeSpecial TypeSpecial
 
 
 
@@ -102,6 +112,7 @@ inputField :
     , singleRadio : List FieldOption -> FieldType
     , singleRadioRow : List FieldOption -> FieldType
     , textEmail : FieldType
+    , textEmailWithSuggestions : List String -> FieldType
     , textMultiline : FieldType
     , textPasswordCurrent : FieldType
     , textPasswordNew : FieldType
@@ -112,6 +123,7 @@ inputField :
 inputField =
     { textPlain = TypeText TextPlain
     , textEmail = TypeText TextEmail
+    , textEmailWithSuggestions = \listSuggestions -> TypeText (TextEmailWithSuggestions listSuggestions)
     , textUsername = TypeText TextUsername
     , textPasswordNew = TypeText TextPasswordNew
     , textPasswordCurrent = TypeText TextPasswordCurrent
@@ -145,8 +157,8 @@ inputField =
 {-| -}
 type ValidationIcon
     = NoIcon
-    | ClearOrCheck -- clear aka cross
-    | ErrorOrCheck -- "!" in circle, just like Google's
+    | ClearOrCheck -- Error = "batsu"
+    | ErrorOrCheck -- Error = "!" in a triangle
 
 
 
@@ -177,7 +189,7 @@ type ValidationIcon
         , background : Color
         }
 
-Note that these are `Element.Color` from `elm-ui`.
+Note that these are `Color` from `elm-ui`.
 
 See <https://material.io/design/color/dark-theme.html#properties> for more details.
 
@@ -190,6 +202,7 @@ type alias Palette =
     , primaryVariant : Color.Color
     , success : Color.Color
     , error : Color.Color
+    , border : Color.Color
 
     -- Text Colors
     , onSurface : Color.Color

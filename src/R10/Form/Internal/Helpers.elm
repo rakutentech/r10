@@ -14,6 +14,7 @@ module R10.Form.Internal.Helpers exposing
     , setFieldValue
     , setMultiplicableQuantities
     , stringToBool
+    , updateField
     )
 
 import Dict
@@ -55,6 +56,23 @@ getField key formState =
 
 getFieldIgnoringPath : String -> R10.Form.Internal.State.State -> Maybe R10.Form.Internal.FieldState.FieldState
 getFieldIgnoringPath id formState =
+    --
+    -- This is to facilitate the retrivial of a field even if the path is not know.
+    --
+    -- For example:
+    --
+    -- aaa/bbb/ccc/id
+    --
+    -- It return the first field with such id even in case of multiple field
+    -- exsist with the same id, for example:
+    --
+    -- aaa/bbb/ccc/id
+    -- aaa/id
+    -- id
+    --
+    -- It is useful when we are sure that only one unique id exsists but we
+    -- don't know the path.
+    --
     List.head <|
         Dict.foldl
             (\k v acc ->
@@ -94,32 +112,32 @@ getFieldValueAsBool key formState =
         |> Maybe.map stringToBool
 
 
-setFieldDisabled : R10.Form.Internal.Key.KeyAsString -> Bool -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
-setFieldDisabled key isDisabled formState =
+updateField :
+    R10.Form.Internal.Key.KeyAsString
+    -> (R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState)
+    -> R10.Form.Internal.State.State
+    -> R10.Form.Internal.State.State
+updateField key mapper formState =
     let
-        newFieldsState : R10.Form.Internal.FieldState.FieldState
-        newFieldsState =
-            Dict.get key formState.fieldsState
+        fieldState : R10.Form.Internal.FieldState.FieldState
+        fieldState =
+            getField key formState
                 |> Maybe.withDefault R10.Form.Internal.FieldState.init
     in
     { formState
         | fieldsState =
-            Dict.insert key { newFieldsState | disabled = isDisabled } formState.fieldsState
+            Dict.insert key (mapper fieldState) formState.fieldsState
     }
+
+
+setFieldDisabled : R10.Form.Internal.Key.KeyAsString -> Bool -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
+setFieldDisabled key disabled formState =
+    updateField key (\fieldState -> { fieldState | disabled = disabled }) formState
 
 
 setFieldValue : R10.Form.Internal.Key.KeyAsString -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
 setFieldValue key value formState =
-    let
-        newFieldsState : R10.Form.Internal.FieldState.FieldState
-        newFieldsState =
-            Dict.get key formState.fieldsState
-                |> Maybe.withDefault R10.Form.Internal.FieldState.init
-    in
-    { formState
-        | fieldsState =
-            Dict.insert key { newFieldsState | value = value } formState.fieldsState
-    }
+    updateField key (\fieldState -> { fieldState | value = value }) formState
 
 
 setMultiplicableQuantities : R10.Form.Internal.Key.KeyAsString -> Int -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State

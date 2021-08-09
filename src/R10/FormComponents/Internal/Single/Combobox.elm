@@ -1,14 +1,17 @@
 module R10.FormComponents.Internal.Single.Combobox exposing (view)
 
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Events as Events
-import Element.Font as Font
-import Element.Keyed as Keyed
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Events as Events
+import Element.WithContext.Font as Font
+import Element.WithContext.Input as Input
+import Element.WithContext.Keyed as Keyed
 import Html.Attributes
 import Html.Events
 import List.Extra
+import R10.Color.Svg
+import R10.Context exposing (..)
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Single.Update
 import R10.FormComponents.Internal.Style
@@ -18,45 +21,38 @@ import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormComponents.Internal.Utils.FocusOut
 import R10.FormTypes
+import R10.Svg.Icons
 
 
 viewSearchBox :
     R10.FormComponents.Internal.Single.Common.Model
     -> R10.FormComponents.Internal.Single.Common.Args msg
-    -> Element msg
+    -> ElementC msg
 viewSearchBox model args =
+    --
+    -- This function is similar to R10.FormComponents.Internal.Phone.Combobox.viewSearchBox
+    --
     if args.searchable then
-        el
-            [ height <| px 52
+        row
+            [ Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
+            , Border.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 args.palette
+            , paddingXY 17 0
             , width fill
             ]
-        <|
-            R10.FormComponents.Internal.Text.viewInput
-                [ htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Single.Common.singleSearchBoxId args.key
-                , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
-                , Border.rounded 0
-                ]
-                { disabled = args.disabled
-                , focused = model.focused
-                , label = args.label
-                , msgOnChange = args.toMsg << R10.FormComponents.Internal.Single.Update.getMsgOnSearch args
-                , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus model.value
-                , msgOnLoseFocus = Nothing
-                , msgOnEnter = Nothing
-                , msgOnTogglePasswordShow = Nothing
-                , palette = args.palette
-                , style = R10.FormComponents.Internal.Style.Outlined
-                , showPassword = False
-                , textType = R10.FormTypes.TextPlain
-                , leadingIcon = []
-                , trailingIcon = []
-                , value = model.search
-                , maybeValid = args.maybeValid
-                , helperText = args.helperText
-                , requiredLabel = args.requiredLabel
-                , autocomplete = Nothing
-                , idDom = Nothing
-                }
+            [ withContext <|
+                \c ->
+                    Input.text
+                        [ htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Single.Common.singleSearchBoxId args.key
+                        , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
+                        , paddingEach { top = 16, bottom = 16, left = 10, right = 16 }
+                        , Border.width 0
+                        ]
+                        { onChange = \string -> args.toMsg (R10.FormComponents.Internal.Single.Update.getMsgOnSearch args string)
+                        , text = model.search
+                        , placeholder = Nothing
+                        , label = Input.labelLeft [ moveDown 3 ] <| R10.Svg.Icons.search [] (R10.Color.Svg.fontHighEmphasis c.theme) 18
+                        }
+            ]
 
     else
         none
@@ -91,7 +87,7 @@ getMsgOnInputClick model args filteredOptions =
     R10.FormComponents.Internal.Single.Common.OnInputClick { key = args.key, selectedY = selectedY }
 
 
-viewComboboxDropdown : R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Bool -> List R10.FormComponents.Internal.Single.Common.FieldOption -> Element msg
+viewComboboxDropdown : R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Bool -> List R10.FormComponents.Internal.Single.Common.FieldOption -> ElementC msg
 viewComboboxDropdown model args opened filteredOptions =
     let
         elementsScrolledFromTop : Int
@@ -115,7 +111,7 @@ viewComboboxDropdown model args opened filteredOptions =
         visibleMoveDown =
             toFloat (R10.FormComponents.Internal.Single.Update.dropdownHingeHeight + max 0 visibleFrom * args.selectOptionHeight)
 
-        visibleOptions : List ( String, Element msg )
+        visibleOptions : List ( String, ElementC msg )
         visibleOptions =
             if List.length filteredOptions > 0 then
                 filteredOptions
@@ -140,9 +136,11 @@ viewComboboxDropdown model args opened filteredOptions =
         column
             [ width fill
             , clip
-            , moveDown 52
+            , moveDown 60
             , htmlAttribute <| Html.Attributes.tabindex -1
             , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
+            , Border.color <| R10.FormComponents.Internal.UI.Color.borderA 0.5 args.palette
+            , Border.width 1
             , htmlAttribute <| Html.Attributes.style "z-index" "1"
             , Border.rounded
                 (case args.style of
@@ -153,10 +151,10 @@ viewComboboxDropdown model args opened filteredOptions =
                         8
                 )
             , Border.shadow
-                { color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.1 args.palette
+                { color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.3 args.palette
                 , offset = ( 0, 0 )
-                , blur = 3
-                , size = 1
+                , blur = 10
+                , size = 3
                 }
             ]
             [ viewSearchBox model args
@@ -167,7 +165,6 @@ viewComboboxDropdown model args opened filteredOptions =
                 , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << R10.FormComponents.Internal.Single.Common.OnScroll)
                 , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
                 , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
-                , paddingXY 0 R10.FormComponents.Internal.Single.Update.dropdownHingeHeight
                 , htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Single.Common.dropdownContentId <| args.key
                 , scrollbarX
                 , inFront <| Keyed.column [ width <| fill, moveDown visibleMoveDown ] visibleOptions
@@ -177,7 +174,7 @@ viewComboboxDropdown model args opened filteredOptions =
             ]
 
 
-comboboxOptionNoResults : { a | palette : R10.FormTypes.Palette, selectOptionHeight : Int } -> Element msg
+comboboxOptionNoResults : { a | palette : R10.FormTypes.Palette, selectOptionHeight : Int } -> ElementC msg
 comboboxOptionNoResults { palette, selectOptionHeight } =
     el
         [ width fill
@@ -190,7 +187,7 @@ comboboxOptionNoResults { palette, selectOptionHeight } =
             text "No results"
 
 
-viewComboboxOption : String -> String -> R10.FormComponents.Internal.Single.Common.Args msg -> R10.FormComponents.Internal.Single.Common.FieldOption -> Element msg
+viewComboboxOption : String -> String -> R10.FormComponents.Internal.Single.Common.Args msg -> R10.FormComponents.Internal.Single.Common.FieldOption -> ElementC msg
 viewComboboxOption value select args opt =
     let
         isActiveValue : Bool
@@ -234,7 +231,11 @@ viewComboboxOption value select args opt =
         args.viewOptionEl opt
 
 
-view : List (Attribute msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Element msg
+view :
+    List (AttributeC msg)
+    -> R10.FormComponents.Internal.Single.Common.Model
+    -> R10.FormComponents.Internal.Single.Common.Args msg
+    -> ElementC msg
 view attrs model args =
     let
         filteredFieldOption : List R10.FormComponents.Internal.Single.Common.FieldOption
@@ -271,9 +272,11 @@ view attrs model args =
             , requiredLabel = args.requiredLabel
             , idDom = Nothing
             , autocomplete = Nothing
+            , floatingLabelAlwaysUp = False
+            , placeholder = Nothing
             }
 
-        inputAttrs : List (Attribute msg)
+        inputAttrs : List (AttributeC msg)
         inputAttrs =
             [ Events.onClick <| args.toMsg <| getMsgOnInputClick model args filteredFieldOption
             , htmlAttribute <| Html.Attributes.attribute "readonly" "true"

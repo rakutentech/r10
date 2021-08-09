@@ -6,15 +6,16 @@ module R10.Svg.IconsExtra exposing (more_vert, checkBold, copy, aToZ, check_thic
 
 -}
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import R10.Color.Utils
 import R10.Svg.Utils
+import R10.Context exposing (..)
 import Svg
 import Svg.Attributes as SA
 
 
 {-| -}
-brokenHeart : List (Attribute msg) -> Color -> Int -> Element msg
+brokenHeart : List (AttributeC msg) -> Color -> Int -> ElementC msg
 brokenHeart attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 14 12"
@@ -24,7 +25,7 @@ brokenHeart attrs cl size =
 
 
 {-| -}
-check_thick : List (Attribute msg) -> Color -> Int -> Element msg
+check_thick : List (AttributeC msg) -> Color -> Int -> ElementC msg
 check_thick attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 12 10"
@@ -34,7 +35,7 @@ check_thick attrs cl size =
 
 
 {-| -}
-copy : List (Attribute msg) -> Color -> Int -> Element msg
+copy : List (AttributeC msg) -> Color -> Int -> ElementC msg
 copy attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -45,7 +46,7 @@ copy attrs cl size =
 
 
 {-| -}
-bug : List (Attribute msg) -> Color -> Int -> Element msg
+bug : List (AttributeC msg) -> Color -> Int -> ElementC msg
 bug attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 412.8 412.8"
@@ -55,7 +56,7 @@ bug attrs cl size =
 
 
 {-| -}
-add : List (Attribute msg) -> Color -> Int -> Element msg
+add : List (AttributeC msg) -> Color -> Int -> ElementC msg
 add attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -65,7 +66,7 @@ add attrs cl size =
 
 
 {-| -}
-arrowBack : List (Attribute msg) -> Color -> Int -> Element msg
+arrowBack : List (AttributeC msg) -> Color -> Int -> ElementC msg
 arrowBack attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -75,7 +76,7 @@ arrowBack attrs cl size =
 
 
 {-| -}
-arrowForward : List (Attribute msg) -> Color -> Int -> Element msg
+arrowForward : List (AttributeC msg) -> Color -> Int -> ElementC msg
 arrowForward attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -85,7 +86,7 @@ arrowForward attrs cl size =
 
 
 {-| -}
-grid : List (Attribute msg) -> Color -> Int -> Element msg
+grid : List (AttributeC msg) -> Color -> Int -> ElementC msg
 grid attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -95,7 +96,7 @@ grid attrs cl size =
 
 
 {-| -}
-play : List (Attribute msg) -> Color -> Int -> Element msg
+play : List (AttributeC msg) -> Color -> Int -> ElementC msg
 play attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 60 60"
@@ -106,7 +107,7 @@ play attrs cl size =
 
 
 {-| -}
-pause : List (Attribute msg) -> Color -> Int -> Element msg
+pause : List (AttributeC msg) -> Color -> Int -> ElementC msg
 pause attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 60 60"
@@ -117,7 +118,7 @@ pause attrs cl size =
 
 
 {-| -}
-close : List (Attribute msg) -> Color -> Int -> Element msg
+close : List (AttributeC msg) -> Color -> Int -> ElementC msg
 close attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -126,7 +127,7 @@ close attrs cl size =
 
 
 {-| -}
-clear : List (Attribute msg) -> Color -> Int -> Element msg
+clear : List (AttributeC msg) -> Color -> Int -> ElementC msg
 clear attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -135,7 +136,7 @@ clear attrs cl size =
 
 
 {-| -}
-submit : List (Attribute msg) -> Color -> Int -> Element msg
+submit : List (AttributeC msg) -> Color -> Int -> ElementC msg
 submit attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -144,7 +145,7 @@ submit attrs cl size =
 
 
 {-| -}
-love : List (Attribute msg) -> Color -> Int -> Element msg
+love : List (AttributeC msg) -> Color -> Int -> ElementC msg
 love attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 52 52"
@@ -154,7 +155,7 @@ love attrs cl size =
 
 
 {-| -}
-respect : List (Attribute msg) -> Color -> Int -> Element msg
+respect : List (AttributeC msg) -> Color -> Int -> ElementC msg
 respect attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -165,7 +166,7 @@ respect attrs cl size =
 
 
 {-| -}
-organize : List (Attribute msg) -> Color -> Int -> Element msg
+organize : List (AttributeC msg) -> Color -> Int -> ElementC msg
 organize attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -177,7 +178,7 @@ organize attrs cl size =
 
 
 {-| -}
-customSupport : List (Attribute msg) -> Color -> Int -> Element msg
+customSupport : List (AttributeC msg) -> Color -> Int -> ElementC msg
 customSupport attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 575 575"
@@ -189,7 +190,7 @@ customSupport attrs cl size =
 
 
 {-| -}
-card : List (Attribute msg) -> Color -> Int -> Element msg
+card : List (AttributeC msg) -> Color -> Int -> ElementC msg
 card attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 -84 512 512"
@@ -201,7 +202,7 @@ card attrs cl size =
 
 
 {-| -}
-highFive : List (Attribute msg) -> Color -> Int -> Element msg
+highFive : List (AttributeC msg) -> Color -> Int -> ElementC msg
 highFive attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -212,7 +213,7 @@ highFive attrs cl size =
 
 
 {-| -}
-moon : List (Attribute msg) -> Color -> Int -> Element msg
+moon : List (AttributeC msg) -> Color -> Int -> ElementC msg
 moon attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 383.19 383.19"
@@ -223,7 +224,7 @@ moon attrs cl size =
 
 
 {-| -}
-paperPlane : List (Attribute msg) -> Color -> Int -> Element msg
+paperPlane : List (AttributeC msg) -> Color -> Int -> ElementC msg
 paperPlane attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -234,7 +235,7 @@ paperPlane attrs cl size =
 
 
 {-| -}
-internet : List (Attribute msg) -> Color -> Int -> Element msg
+internet : List (AttributeC msg) -> Color -> Int -> ElementC msg
 internet attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 58 58"
@@ -244,7 +245,7 @@ internet attrs cl size =
 
 
 {-| -}
-email : List (Attribute msg) -> Color -> Int -> Element msg
+email : List (AttributeC msg) -> Color -> Int -> ElementC msg
 email attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -255,7 +256,7 @@ email attrs cl size =
 
 
 {-| -}
-waveHand : List (Attribute msg) -> Color -> Int -> Element msg
+waveHand : List (AttributeC msg) -> Color -> Int -> ElementC msg
 waveHand attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 297.7 297.7"
@@ -267,7 +268,7 @@ waveHand attrs cl size =
 
 
 {-| -}
-training : List (Attribute msg) -> Color -> Int -> Element msg
+training : List (AttributeC msg) -> Color -> Int -> ElementC msg
 training attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 500 500"
@@ -279,7 +280,7 @@ training attrs cl size =
 
 
 {-| -}
-startup : List (Attribute msg) -> Color -> Int -> Element msg
+startup : List (AttributeC msg) -> Color -> Int -> ElementC msg
 startup attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -292,7 +293,7 @@ startup attrs cl size =
 
 
 {-| -}
-fireworks : List (Attribute msg) -> Color -> Int -> Element msg
+fireworks : List (AttributeC msg) -> Color -> Int -> ElementC msg
 fireworks attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -302,7 +303,7 @@ fireworks attrs cl size =
 
 
 {-| -}
-alarmClock : List (Attribute msg) -> Color -> Int -> Element msg
+alarmClock : List (AttributeC msg) -> Color -> Int -> ElementC msg
 alarmClock attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 58.15 58.15"
@@ -314,7 +315,7 @@ alarmClock attrs cl size =
 
 
 {-| -}
-conversation : List (Attribute msg) -> Color -> Int -> Element msg
+conversation : List (AttributeC msg) -> Color -> Int -> ElementC msg
 conversation attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -326,7 +327,7 @@ conversation attrs cl size =
 
 
 {-| -}
-sun : List (Attribute msg) -> Color -> Int -> Element msg
+sun : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sun attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 397.4 397.4"
@@ -336,7 +337,7 @@ sun attrs cl size =
 
 
 {-| -}
-checkBold : List (Attribute msg) -> Color -> Int -> Element msg
+checkBold : List (AttributeC msg) -> Color -> Int -> ElementC msg
 checkBold attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -346,7 +347,7 @@ checkBold attrs cl size =
 
 
 {-| -}
-keyboardArrowDown : List (Attribute msg) -> Color -> Int -> Element msg
+keyboardArrowDown : List (AttributeC msg) -> Color -> Int -> ElementC msg
 keyboardArrowDown attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -356,7 +357,7 @@ keyboardArrowDown attrs cl size =
 
 
 {-| -}
-delete : List (Attribute msg) -> Color -> Int -> Element msg
+delete : List (AttributeC msg) -> Color -> Int -> ElementC msg
 delete attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -366,7 +367,7 @@ delete attrs cl size =
 
 
 {-| -}
-restore : List (Attribute msg) -> Color -> Int -> Element msg
+restore : List (AttributeC msg) -> Color -> Int -> ElementC msg
 restore attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -376,7 +377,7 @@ restore attrs cl size =
 
 
 {-| -}
-keyboardArrowUp : List (Attribute msg) -> Color -> Int -> Element msg
+keyboardArrowUp : List (AttributeC msg) -> Color -> Int -> ElementC msg
 keyboardArrowUp attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -386,7 +387,7 @@ keyboardArrowUp attrs cl size =
 
 
 {-| -}
-search : List (Attribute msg) -> Color -> Int -> Element msg
+search : List (AttributeC msg) -> Color -> Int -> ElementC msg
 search attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -396,7 +397,7 @@ search attrs cl size =
 
 
 {-| -}
-more_vert : List (Attribute msg) -> Color -> Int -> Element msg
+more_vert : List (AttributeC msg) -> Color -> Int -> ElementC msg
 more_vert attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 48 48"
@@ -406,7 +407,7 @@ more_vert attrs cl size =
 
 
 {-| -}
-aToZ : List (Attribute msg) -> Color -> Int -> Element msg
+aToZ : List (AttributeC msg) -> Color -> Int -> ElementC msg
 aToZ attrs _ size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -423,7 +424,7 @@ aToZ attrs _ size =
 
 
 {-| -}
-darkLight : List (Attribute msg) -> Color -> Int -> Element msg
+darkLight : List (AttributeC msg) -> Color -> Int -> ElementC msg
 darkLight attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 1024 1024"
@@ -433,7 +434,7 @@ darkLight attrs cl size =
 
 
 {-| -}
-validation_clear : List (Attribute msg) -> Color -> Int -> Element msg
+validation_clear : List (AttributeC msg) -> Color -> Int -> ElementC msg
 validation_clear attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "2 2 20 20"
@@ -443,7 +444,7 @@ validation_clear attrs cl size =
 
 
 {-| -}
-validation_error : List (Attribute msg) -> Color -> Int -> Element msg
+validation_error : List (AttributeC msg) -> Color -> Int -> ElementC msg
 validation_error attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -453,7 +454,7 @@ validation_error attrs cl size =
 
 
 {-| -}
-validation_check : List (Attribute msg) -> Color -> Int -> Element msg
+validation_check : List (AttributeC msg) -> Color -> Int -> ElementC msg
 validation_check attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"

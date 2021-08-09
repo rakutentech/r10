@@ -5,9 +5,9 @@ module R10.Color.Utils exposing (fromColorColor, toColorColor, fromHex, fromLigh
 There are two competing color types in this library:
 
   - `Color.Color` (from `avh4/elm-color`)
-  - `Element.Color` (from `mdgriffith/elm-ui`)
+  - `Color` (from `mdgriffith/elm-ui`)
 
-The default color type is `Element.Color`.
+The default color type is `Color`.
 
 @docs fromColorColor, toColorColor, fromHex, fromLightToDark, setAlpha, toCssRgba, fromHexToColorColor
 
@@ -16,27 +16,31 @@ The default color type is `Element.Color`.
 import Color
 import Color.Convert
 import Color.Manipulate
-import Element
+import Element.WithContext exposing (..)
 
 
-{-| Transform a `Color.Color` into an `Element.Color`.
+
+-- import R10.Context exposing (..)
+
+
+{-| Transform a `Color.Color` into an `Color`.
 -}
-fromColorColor : Color.Color -> Element.Color
+fromColorColor : Color.Color -> Color
 fromColorColor color =
     let
         { red, green, blue, alpha } =
             Color.toRgba color
     in
-    Element.rgba red green blue alpha
+    rgba red green blue alpha
 
 
-{-| Transform an `Element.Color` into a `Color.Color`.
+{-| Transform an `Color` into a `Color.Color`.
 -}
-toColorColor : Element.Color -> Color.Color
+toColorColor : Color -> Color.Color
 toColorColor elementColor =
     let
         { red, green, blue, alpha } =
-            Element.toRgb elementColor
+            toRgb elementColor
     in
     Color.fromRgba { red = red, green = green, blue = blue, alpha = alpha }
 
@@ -57,18 +61,18 @@ fromHexToColorColor hex =
     color
 
 
-{-| Convert a string containing an hexadecimal number into an `Element.Color`.
+{-| Convert a string containing an hexadecimal number into an `Color`.
 -}
-fromHex : String -> Element.Color
+fromHex : String -> Color
 fromHex hex =
     hex
         |> fromHexToColorColor
         |> fromColorColor
 
 
-{-| Convert an `Element.Color` to a RGBA string, for example: rgba(100, 200, 0, 1)
+{-| Convert an `Color` to a RGBA string, for example: rgba(100, 200, 0, 1)
 -}
-toCssRgba : Element.Color -> String
+toCssRgba : Color -> String
 toCssRgba elementColor =
     elementColor
         |> toColorColor

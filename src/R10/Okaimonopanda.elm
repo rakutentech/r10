@@ -11,8 +11,8 @@ module R10.Okaimonopanda exposing (view)
 import Browser
 import Browser.Events
 import Dict
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html
+import Html.Attributes
 import Html.Events
 import Json.Decode
 import Svg
@@ -79,13 +79,13 @@ update msg model =
             ( { model | codeError = codeError }, Cmd.none )
 
 
-attrs : Float -> Float -> Float -> Float -> Float -> List (Attribute msg)
+attrs : Float -> Float -> Float -> Float -> Float -> List (Html.Attribute msg)
 attrs shiftX shiftY deltaX deltaY rate =
-    [ style "position" "absolute"
-    , style "pointer-events" "none"
+    [ Html.Attributes.style "position" "absolute"
+    , Html.Attributes.style "pointer-events" "none"
 
-    -- , style "border" "1px solid green"
-    , style
+    -- , Html.Attributes.style "border" "1px solid green"
+    , Html.Attributes.style
         "transform"
         ("translate("
             ++ String.fromFloat (shiftX + ((deltaX * (rate * 6)) - (rate * 3)))
@@ -132,7 +132,7 @@ view :
         | mouse : { x : Int, y : Int }
         , screen : { x : Int, y : Int }
     }
-    -> List (Html msg)
+    -> List (Html.Html msg)
 view model =
     let
         deltaX =
@@ -144,22 +144,22 @@ view model =
         svgWidth =
             Basics.max 180 (Basics.min (model.screen.x - 220) svgWidthOnScreen)
     in
-    [ div
-        [ style "margin" "0 auto"
-        , style "width" (String.fromInt svgWidth ++ "px")
-        , style "height" (String.fromFloat (toFloat svgWidth * toFloat svgY / toFloat svgX) ++ "px")
+    [ Html.div
+        [ Html.Attributes.style "margin" "0 auto"
+        , Html.Attributes.style "width" (String.fromInt svgWidth ++ "px")
+        , Html.Attributes.style "height" (String.fromFloat (toFloat svgWidth * toFloat svgY / toFloat svgX) ++ "px")
         ]
-        [ div (attrs 0 0 deltaX deltaY 6) [ svgHeadStroke svgWidth ]
-        , div (attrs 0 0 deltaX deltaY 10) [ svgBodyStroke svgWidth ]
-        , div (attrs 0 0 deltaX deltaY 13) [ svgLegsStroke svgWidth ]
-        , div (attrs 0 0 deltaX deltaY 6) [ svgHead svgWidth ]
-        , div (attrs 0 0 deltaX deltaY 10) [ svgBody svgWidth ]
-        , div (attrs 0 0 deltaX deltaY 13) [ svgLegs svgWidth ]
+        [ Html.div (attrs 0 0 deltaX deltaY 6) [ svgHeadStroke svgWidth ]
+        , Html.div (attrs 0 0 deltaX deltaY 10) [ svgBodyStroke svgWidth ]
+        , Html.div (attrs 0 0 deltaX deltaY 13) [ svgLegsStroke svgWidth ]
+        , Html.div (attrs 0 0 deltaX deltaY 6) [ svgHead svgWidth ]
+        , Html.div (attrs 0 0 deltaX deltaY 10) [ svgBody svgWidth ]
+        , Html.div (attrs 0 0 deltaX deltaY 13) [ svgLegs svgWidth ]
         ]
     ]
 
 
-viewFullPage : Okaimonopanda -> Html Msg
+viewFullPage : Okaimonopanda -> Html.Html Msg
 viewFullPage model =
     let
         windowRatio =
@@ -194,53 +194,53 @@ viewFullPage model =
                 -- model.screen.y : backgroundY = ? : backgroundX
                 round <| toFloat model.screen.y * backgroundX / toFloat backgroundY
     in
-    div [ class "meta" ]
+    Html.div [ Html.Attributes.class "meta" ]
         -- here we sliglty enlarge the background and we shift to the top left so that the borders are not showing
-        [ div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -5 ++ [ style "position" "fixed" ]) [ back1 <| round (toFloat widthBackground * 1.1) ]
-        , div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -10 ++ [ style "position" "fixed" ]) [ back2 <| round (toFloat widthBackground * 1.1) ]
-        , div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -20 ++ [ style "position" "fixed" ]) [ back3 <| round (toFloat widthBackground * 1.1) ]
-        , div [ class "container" ]
-            [ div [ class "section left" ]
+        [ Html.div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -5 ++ [ Html.Attributes.style "position" "fixed" ]) [ back1 <| round (toFloat widthBackground * 1.1) ]
+        , Html.div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -10 ++ [ Html.Attributes.style "position" "fixed" ]) [ back2 <| round (toFloat widthBackground * 1.1) ]
+        , Html.div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -20 ++ [ Html.Attributes.style "position" "fixed" ]) [ back3 <| round (toFloat widthBackground * 1.1) ]
+        , Html.div [ Html.Attributes.class "container" ]
+            [ Html.div [ Html.Attributes.class "section left" ]
                 -- Panda
                 (view model)
-            , div [ class "section right" ]
-                [ h1 [ class "centerIfMobile", id "title" ] [ text error.title ]
-                , h2 [ class "centerIfMobile", id "subTitle" ] [ text error.subTitle ]
-                , hr [] []
-                , div [] [ text translation.text1 ]
-                , div [] [ text translation.text2 ]
-                , ul []
-                    [ li [] [ text translation.point1 ]
-                    , li [] [ text translation.point2 ]
-                    , li [] [ text translation.point3 ]
+            , Html.div [ Html.Attributes.class "section right" ]
+                [ Html.h1 [ Html.Attributes.class "centerIfMobile", Html.Attributes.id "title" ] [ Html.text error.title ]
+                , Html.h2 [ Html.Attributes.class "centerIfMobile", Html.Attributes.id "subTitle" ] [ Html.text error.subTitle ]
+                , Html.hr [] []
+                , Html.div [] [ Html.text translation.text1 ]
+                , Html.div [] [ Html.text translation.text2 ]
+                , Html.ul []
+                    [ Html.li [] [ Html.text translation.point1 ]
+                    , Html.li [] [ Html.text translation.point2 ]
+                    , Html.li [] [ Html.text translation.point3 ]
                     ]
                 , case ( translation.buttonHref, translation.buttonText ) of
                     ( Just "", _ ) ->
-                        text ""
+                        Html.text ""
 
                     ( _, Just "" ) ->
-                        text ""
+                        Html.text ""
 
                     ( Just buttonHref, Just buttonText ) ->
-                        div []
-                            [ a
-                                [ class "button largeIfMobile centerIfMobile"
-                                , href buttonHref
+                        Html.div []
+                            [ Html.a
+                                [ Html.Attributes.class "button largeIfMobile centerIfMobile"
+                                , Html.Attributes.href buttonHref
                                 ]
-                                [ text buttonText ]
+                                [ Html.text buttonText ]
                             ]
 
                     _ ->
-                        text ""
+                        Html.text ""
                 , if Dict.size dictTranslations < 2 then
-                    text ""
+                    Html.text ""
 
                   else
-                    div [ class "languageSelectorWrapper" ]
-                        [ select
+                    Html.div [ Html.Attributes.class "languageSelectorWrapper" ]
+                        [ Html.select
                             [ Html.Events.on "change" (Json.Decode.map ChangeCodeLanguage Html.Events.targetValue)
-                            , value model.codeLanguage
-                            , class "select"
+                            , Html.Attributes.value model.codeLanguage
+                            , Html.Attributes.class "select"
                             ]
                             (List.map
                                 (\codeLanguage ->
@@ -248,21 +248,21 @@ viewFullPage model =
                                         translation_ =
                                             getTranslation emptyTranslation defaultCodeLanguage codeLanguage dictTranslations
                                     in
-                                    option
-                                        ([ value codeLanguage ]
+                                    Html.option
+                                        ([ Html.Attributes.value codeLanguage ]
                                             ++ (if codeLanguage == model.codeLanguage then
-                                                    [ selected True ]
+                                                    [ Html.Attributes.selected True ]
 
                                                 else
                                                     []
                                                )
                                         )
-                                        [ text translation_.language ]
+                                        [ Html.text translation_.language ]
                                 )
                                 (Dict.keys dictTranslations)
                             )
                         ]
-                , div [ class "codeError" ] [ text <| model.codeError ]
+                , Html.div [ Html.Attributes.class "codeError" ] [ Html.text <| model.codeError ]
                 ]
             ]
         ]

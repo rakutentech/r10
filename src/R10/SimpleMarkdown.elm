@@ -7,10 +7,11 @@ module R10.SimpleMarkdown exposing (MarkDown(..), elementMarkdown, elementMarkdo
 -}
 
 import Array
-import Element exposing (..)
-import Element.Border as Border
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Border as Border
+import Element.WithContext.Font as Font
 import Html.Attributes
+import R10.Context exposing (..)
 import Regex
 
 
@@ -182,7 +183,12 @@ parseTextForLinks text =
 
 
 {-| -}
-markdown : (String -> Element msg) -> (String -> Element msg) -> (String -> String -> Element msg) -> String -> List (Element msg)
+markdown :
+    (String -> ElementC msg)
+    -> (String -> ElementC msg)
+    -> (String -> String -> ElementC msg)
+    -> String
+    -> List (ElementC msg)
 markdown boldGenerator textGenerator linkGenerator string =
     let
         step1 =
@@ -216,33 +222,33 @@ markdown boldGenerator textGenerator linkGenerator string =
         step2
 
 
-elementBoldGenerator : String -> Element msg
+elementBoldGenerator : String -> ElementC msg
 elementBoldGenerator string =
     el [ Font.bold ] <| text string
 
 
-elementTextGenerator : String -> Element msg
+elementTextGenerator : String -> ElementC msg
 elementTextGenerator string =
     text string
 
 
-elementLabelGenerator : String -> Element msg
+elementLabelGenerator : String -> ElementC msg
 elementLabelGenerator string =
     text string
 
 
-elementLinkGenerator : String -> String -> Element msg
+elementLinkGenerator : String -> String -> ElementC msg
 elementLinkGenerator linkLabel url =
     newTabLink [] { url = url, label = elementLabelGenerator linkLabel }
 
 
 elementLinkGeneratorAdvanced :
     { a
-        | link : List (Attribute msg)
+        | link : List (AttributeC msg)
     }
     -> String
     -> String
-    -> Element msg
+    -> ElementC msg
 elementLinkGeneratorAdvanced attrs linkLabel url =
     newTabLink
         ([ Border.rounded 4
@@ -255,16 +261,16 @@ elementLinkGeneratorAdvanced attrs linkLabel url =
 
 
 {-| -}
-elementMarkdown : String -> List (Element msg)
+elementMarkdown : String -> List (ElementC msg)
 elementMarkdown string =
     markdown elementBoldGenerator elementTextGenerator elementLinkGenerator string
 
 
 {-| -}
 elementMarkdownAdvanced :
-    { link : List (Attribute msg)
+    { link : List (AttributeC msg)
     }
     -> String
-    -> List (Element msg)
+    -> List (ElementC msg)
 elementMarkdownAdvanced attrs string =
     markdown elementBoldGenerator elementTextGenerator (elementLinkGeneratorAdvanced attrs) string

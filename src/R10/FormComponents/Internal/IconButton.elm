@@ -1,25 +1,27 @@
 module R10.FormComponents.Internal.IconButton exposing (view)
 
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
 import Html.Attributes
 import Html.Events
 import Json.Decode
+import R10.Context exposing (..)
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
+import R10.Transition
 
 
 view :
-    List (Attribute msg)
+    List (AttributeC msg)
     ->
         { msgOnClick : Maybe msg
-        , icon : Element msg
+        , icon : ElementC msg
         , palette : R10.FormTypes.Palette
         , size : Int
         }
-    -> Element msg
+    -> ElementC msg
 view args { msgOnClick, icon, palette, size } =
     let
         padding_ : Int
@@ -38,7 +40,7 @@ view args { msgOnClick, icon, palette, size } =
         moveUp_ =
             toFloat (iconHitboxSize - containerSize) / 2
 
-        attrsCommon : List (Attr () msg)
+        attrsCommon : List (AttrC () msg)
         attrsCommon =
             [ Background.color <| R10.FormComponents.Internal.UI.Color.onSurfaceA 0 palette
             , padding padding_
@@ -48,7 +50,7 @@ view args { msgOnClick, icon, palette, size } =
             , htmlAttribute <| Html.Attributes.style "margin-top" ("-" ++ String.fromFloat moveUp_ ++ "px")
             ]
 
-        attrsClickable : List (Attr () msg)
+        attrsClickable : List (AttrC () msg)
         attrsClickable =
             case msgOnClick of
                 Just msgOnClick_ ->
@@ -56,7 +58,7 @@ view args { msgOnClick, icon, palette, size } =
                     , htmlAttribute <| R10.FormComponents.Internal.UI.onSelectKey msgOnClick_
                     , htmlAttribute <| Html.Events.stopPropagationOn "mouseup" (Json.Decode.succeed ( msgOnClick_, False ))
                     , htmlAttribute <| Html.Attributes.class <| "ripple"
-                    , htmlAttribute <| Html.Attributes.style "transition" "all 0.13s; margin-top 0s "
+                    , R10.Transition.transition "all 0.13s; margin-top 0s "
                     , pointer
                     , Border.rounded 40
                     , mouseOver [ Border.innerShadow { offset = ( 0, 0 ), size = 40, blur = 0, color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.07 palette } ]

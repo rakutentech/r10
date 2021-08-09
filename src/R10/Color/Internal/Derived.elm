@@ -276,10 +276,9 @@ toColor_ theme colorDerived =
             )
 
         Border ->
-            ( R10.Color.Internal.Base.Font
+            ( R10.Color.Internal.Base.Border
                 |> R10.Color.Internal.Base.toColor theme
-                |> R10.Color.Utils.setAlpha 0.2
-            , "Color for borders derived from the base `Font` changing the alpha channel to 0.2"
+            , "Color for borders are hard coded"
             )
 
         BackgroundPhoneDropdown ->
@@ -375,7 +374,7 @@ toColor_ theme colorDerived =
                                 Color.Manipulate.lighten 0.07 color
 
                             R10.Mode.Light ->
-                                Color.Manipulate.darken 0.08 color
+                                Color.Manipulate.lighten 0.03 color
                    )
             , "Background of minors buttons based on the normal background color. Just making it lighter in Dark mode and darker in Light mode"
             )

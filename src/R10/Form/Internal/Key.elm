@@ -50,9 +50,11 @@ composeMultiKeys key quantity =
         (List.repeat quantity ())
 
 
-headId : Key -> Maybe String
+headId : Key -> String
 headId (Key list) =
-    List.head <| list
+    list
+        |> List.head
+        |> Maybe.withDefault "CANNOT_FIND_THE_HEAD_ID_IN_AN_EMPTY_KEY"
 
 
 separator : String

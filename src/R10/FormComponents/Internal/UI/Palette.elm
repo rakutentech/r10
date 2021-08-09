@@ -36,13 +36,20 @@ import R10.Theme
 fromTheme : R10.Theme.Theme -> R10.FormTypes.Palette
 fromTheme theme =
     { primary = R10.Color.Utils.toColorColor <| R10.Color.Svg.primary theme
+    , onPrimary = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontHighEmphasisWithMaximumContrast theme
+
+    --
+    , surface = R10.Color.Utils.toColorColor <| R10.Color.Svg.surface2dp theme
+    , onSurface = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontHighEmphasis theme
+
+    --
     , primaryVariant = R10.Color.Utils.toColorColor <| R10.Color.Svg.primaryVariant theme
     , success = R10.Color.Utils.toColorColor <| R10.Color.Svg.success theme
     , error = R10.Color.Utils.toColorColor <| R10.Color.Svg.error theme
     , background = R10.Color.Utils.toColorColor <| R10.Color.Svg.background theme
-    , surface = R10.Color.Utils.toColorColor <| R10.Color.Svg.surface2dp theme
-    , onSurface = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontHighEmphasis theme
-    , onPrimary = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontButtonPrimary theme
+
+    --
+    , border = R10.Color.Utils.toColorColor <| R10.Color.Svg.border theme
     }
 
 
@@ -73,6 +80,7 @@ dark =
     , onPrimary = white
     , surface = grayDarker
     , background = grayDarkest
+    , border = gray
     }
 
 
@@ -86,6 +94,7 @@ light =
     , onPrimary = white -- https://material.io/design/color/text-legibility.html#text-types
     , surface = white
     , background = grayLightest
+    , border = gray
     }
 
 

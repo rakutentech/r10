@@ -6,15 +6,16 @@ module R10.Svg.Icons exposing (arrow_down_l, arrow_left_l, arrow_link_l, arrow_r
 
 -}
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import R10.Color.Utils
 import R10.Svg.Utils
+import R10.Context exposing (..)
 import Svg
 import Svg.Attributes as SA
 
 
 {-| -}
-arrow_down_l : List (Attribute msg) -> Color -> Int -> Element msg
+arrow_down_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 arrow_down_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -24,7 +25,7 @@ arrow_down_l attrs cl size =
 
 
 {-| -}
-arrow_left_l : List (Attribute msg) -> Color -> Int -> Element msg
+arrow_left_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 arrow_left_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -34,7 +35,7 @@ arrow_left_l attrs cl size =
 
 
 {-| -}
-arrow_right_l : List (Attribute msg) -> Color -> Int -> Element msg
+arrow_right_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 arrow_right_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -44,7 +45,7 @@ arrow_right_l attrs cl size =
 
 
 {-| -}
-arrow_link_l : List (Attribute msg) -> Color -> Int -> Element msg
+arrow_link_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 arrow_link_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -54,7 +55,7 @@ arrow_link_l attrs cl size =
 
 
 {-| -}
-arrow_up_l : List (Attribute msg) -> Color -> Int -> Element msg
+arrow_up_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 arrow_up_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -64,7 +65,7 @@ arrow_up_l attrs cl size =
 
 
 {-| -}
-barcode_f : List (Attribute msg) -> Color -> Int -> Element msg
+barcode_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 barcode_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -77,7 +78,7 @@ barcode_f attrs cl size =
 
 
 {-| -}
-barcode_l : List (Attribute msg) -> Color -> Int -> Element msg
+barcode_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 barcode_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -87,7 +88,7 @@ barcode_l attrs cl size =
 
 
 {-| -}
-blockquote_left : List (Attribute msg) -> Color -> Int -> Element msg
+blockquote_left : List (AttributeC msg) -> Color -> Int -> ElementC msg
 blockquote_left attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -97,7 +98,7 @@ blockquote_left attrs cl size =
 
 
 {-| -}
-blockquote_right : List (Attribute msg) -> Color -> Int -> Element msg
+blockquote_right : List (AttributeC msg) -> Color -> Int -> ElementC msg
 blockquote_right attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -107,7 +108,7 @@ blockquote_right attrs cl size =
 
 
 {-| -}
-browsing_history_f : List (Attribute msg) -> Color -> Int -> Element msg
+browsing_history_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 browsing_history_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -120,7 +121,7 @@ browsing_history_f attrs cl size =
 
 
 {-| -}
-browsing_history_l : List (Attribute msg) -> Color -> Int -> Element msg
+browsing_history_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 browsing_history_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -133,7 +134,7 @@ browsing_history_l attrs cl size =
 
 
 {-| -}
-building_f : List (Attribute msg) -> Color -> Int -> Element msg
+building_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 building_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -146,7 +147,7 @@ building_f attrs cl size =
 
 
 {-| -}
-building_l : List (Attribute msg) -> Color -> Int -> Element msg
+building_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 building_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -159,7 +160,7 @@ building_l attrs cl size =
 
 
 {-| -}
-bus_f : List (Attribute msg) -> Color -> Int -> Element msg
+bus_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 bus_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -169,7 +170,7 @@ bus_f attrs cl size =
 
 
 {-| -}
-bus_l : List (Attribute msg) -> Color -> Int -> Element msg
+bus_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 bus_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -183,7 +184,7 @@ bus_l attrs cl size =
 
 
 {-| -}
-button_chevron_left_f : List (Attribute msg) -> Color -> Int -> Element msg
+button_chevron_left_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 button_chevron_left_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -193,7 +194,7 @@ button_chevron_left_f attrs cl size =
 
 
 {-| -}
-button_chevron_left_l : List (Attribute msg) -> Color -> Int -> Element msg
+button_chevron_left_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 button_chevron_left_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -204,7 +205,7 @@ button_chevron_left_l attrs cl size =
 
 
 {-| -}
-button_chevron_right_f : List (Attribute msg) -> Color -> Int -> Element msg
+button_chevron_right_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 button_chevron_right_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -214,7 +215,7 @@ button_chevron_right_f attrs cl size =
 
 
 {-| -}
-button_chevron_right_l : List (Attribute msg) -> Color -> Int -> Element msg
+button_chevron_right_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 button_chevron_right_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -225,7 +226,7 @@ button_chevron_right_l attrs cl size =
 
 
 {-| -}
-button_minus_f : List (Attribute msg) -> Color -> Int -> Element msg
+button_minus_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 button_minus_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -235,7 +236,7 @@ button_minus_f attrs cl size =
 
 
 {-| -}
-button_minus_l : List (Attribute msg) -> Color -> Int -> Element msg
+button_minus_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 button_minus_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -246,7 +247,7 @@ button_minus_l attrs cl size =
 
 
 {-| -}
-button_plus_f : List (Attribute msg) -> Color -> Int -> Element msg
+button_plus_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 button_plus_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -256,7 +257,7 @@ button_plus_f attrs cl size =
 
 
 {-| -}
-button_plus_l : List (Attribute msg) -> Color -> Int -> Element msg
+button_plus_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 button_plus_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -267,7 +268,7 @@ button_plus_l attrs cl size =
 
 
 {-| -}
-calculator_f : List (Attribute msg) -> Color -> Int -> Element msg
+calculator_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 calculator_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -277,7 +278,7 @@ calculator_f attrs cl size =
 
 
 {-| -}
-calculator_l : List (Attribute msg) -> Color -> Int -> Element msg
+calculator_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 calculator_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -290,7 +291,7 @@ calculator_l attrs cl size =
 
 
 {-| -}
-calendar_f : List (Attribute msg) -> Color -> Int -> Element msg
+calendar_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 calendar_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -300,7 +301,7 @@ calendar_f attrs cl size =
 
 
 {-| -}
-calendar_l : List (Attribute msg) -> Color -> Int -> Element msg
+calendar_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 calendar_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -314,7 +315,7 @@ calendar_l attrs cl size =
 
 
 {-| -}
-campaign_f : List (Attribute msg) -> Color -> Int -> Element msg
+campaign_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 campaign_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -324,7 +325,7 @@ campaign_f attrs cl size =
 
 
 {-| -}
-campaign_l : List (Attribute msg) -> Color -> Int -> Element msg
+campaign_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 campaign_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -334,7 +335,7 @@ campaign_l attrs cl size =
 
 
 {-| -}
-car_f : List (Attribute msg) -> Color -> Int -> Element msg
+car_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 car_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -344,7 +345,7 @@ car_f attrs cl size =
 
 
 {-| -}
-car_l : List (Attribute msg) -> Color -> Int -> Element msg
+car_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 car_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -361,7 +362,7 @@ car_l attrs cl size =
 
 
 {-| -}
-cart_f : List (Attribute msg) -> Color -> Int -> Element msg
+cart_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 cart_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -379,7 +380,7 @@ cart_f attrs cl size =
 
 
 {-| -}
-cart_l : List (Attribute msg) -> Color -> Int -> Element msg
+cart_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 cart_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -394,7 +395,7 @@ cart_l attrs cl size =
 
 
 {-| -}
-change_order_l : List (Attribute msg) -> Color -> Int -> Element msg
+change_order_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 change_order_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -404,7 +405,7 @@ change_order_l attrs cl size =
 
 
 {-| -}
-check : List (Attribute msg) -> Color -> Int -> Element msg
+check : List (AttributeC msg) -> Color -> Int -> ElementC msg
 check attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -414,7 +415,7 @@ check attrs cl size =
 
 
 {-| -}
-chevron_left : List (Attribute msg) -> Color -> Int -> Element msg
+chevron_left : List (AttributeC msg) -> Color -> Int -> ElementC msg
 chevron_left attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -424,7 +425,7 @@ chevron_left attrs cl size =
 
 
 {-| -}
-chevron_right : List (Attribute msg) -> Color -> Int -> Element msg
+chevron_right : List (AttributeC msg) -> Color -> Int -> ElementC msg
 chevron_right attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -434,7 +435,7 @@ chevron_right attrs cl size =
 
 
 {-| -}
-cloud_f : List (Attribute msg) -> Color -> Int -> Element msg
+cloud_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 cloud_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -444,7 +445,7 @@ cloud_f attrs cl size =
 
 
 {-| -}
-cloud_l : List (Attribute msg) -> Color -> Int -> Element msg
+cloud_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 cloud_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -454,7 +455,7 @@ cloud_l attrs cl size =
 
 
 {-| -}
-code_f : List (Attribute msg) -> Color -> Int -> Element msg
+code_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 code_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -465,7 +466,7 @@ code_f attrs cl size =
 
 
 {-| -}
-code_l : List (Attribute msg) -> Color -> Int -> Element msg
+code_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 code_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -476,7 +477,7 @@ code_l attrs cl size =
 
 
 {-| -}
-comment_f : List (Attribute msg) -> Color -> Int -> Element msg
+comment_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 comment_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -489,7 +490,7 @@ comment_f attrs cl size =
 
 
 {-| -}
-comment_l : List (Attribute msg) -> Color -> Int -> Element msg
+comment_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 comment_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -503,7 +504,7 @@ comment_l attrs cl size =
 
 
 {-| -}
-compare_f : List (Attribute msg) -> Color -> Int -> Element msg
+compare_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 compare_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -514,7 +515,7 @@ compare_f attrs cl size =
 
 
 {-| -}
-compare_l : List (Attribute msg) -> Color -> Int -> Element msg
+compare_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 compare_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -528,7 +529,7 @@ compare_l attrs cl size =
 
 
 {-| -}
-coupon_f : List (Attribute msg) -> Color -> Int -> Element msg
+coupon_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 coupon_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -538,7 +539,7 @@ coupon_f attrs cl size =
 
 
 {-| -}
-coupon_l : List (Attribute msg) -> Color -> Int -> Element msg
+coupon_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 coupon_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -551,7 +552,7 @@ coupon_l attrs cl size =
 
 
 {-| -}
-credit_card_f : List (Attribute msg) -> Color -> Int -> Element msg
+credit_card_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 credit_card_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -561,7 +562,7 @@ credit_card_f attrs cl size =
 
 
 {-| -}
-credit_card_l : List (Attribute msg) -> Color -> Int -> Element msg
+credit_card_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 credit_card_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -578,7 +579,7 @@ credit_card_l attrs cl size =
 
 
 {-| -}
-currency_f : List (Attribute msg) -> Color -> Int -> Element msg
+currency_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 currency_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -591,7 +592,7 @@ currency_f attrs cl size =
 
 
 {-| -}
-currency_l : List (Attribute msg) -> Color -> Int -> Element msg
+currency_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 currency_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -605,7 +606,7 @@ currency_l attrs cl size =
 
 
 {-| -}
-delete_f : List (Attribute msg) -> Color -> Int -> Element msg
+delete_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 delete_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -615,7 +616,7 @@ delete_f attrs cl size =
 
 
 {-| -}
-delete_l : List (Attribute msg) -> Color -> Int -> Element msg
+delete_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 delete_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -628,7 +629,7 @@ delete_l attrs cl size =
 
 
 {-| -}
-delivery_f : List (Attribute msg) -> Color -> Int -> Element msg
+delivery_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 delivery_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -643,7 +644,7 @@ delivery_f attrs cl size =
 
 
 {-| -}
-delivery_l : List (Attribute msg) -> Color -> Int -> Element msg
+delivery_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 delivery_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -653,7 +654,7 @@ delivery_l attrs cl size =
 
 
 {-| -}
-desktop_f : List (Attribute msg) -> Color -> Int -> Element msg
+desktop_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 desktop_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -666,7 +667,7 @@ desktop_f attrs cl size =
 
 
 {-| -}
-desktop_l : List (Attribute msg) -> Color -> Int -> Element msg
+desktop_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 desktop_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -679,7 +680,7 @@ desktop_l attrs cl size =
 
 
 {-| -}
-domestic_area_f : List (Attribute msg) -> Color -> Int -> Element msg
+domestic_area_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 domestic_area_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -693,7 +694,7 @@ domestic_area_f attrs cl size =
 
 
 {-| -}
-domestic_area_l : List (Attribute msg) -> Color -> Int -> Element msg
+domestic_area_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 domestic_area_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -707,7 +708,7 @@ domestic_area_l attrs cl size =
 
 
 {-| -}
-download_f : List (Attribute msg) -> Color -> Int -> Element msg
+download_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 download_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -720,7 +721,7 @@ download_f attrs cl size =
 
 
 {-| -}
-download_l : List (Attribute msg) -> Color -> Int -> Element msg
+download_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 download_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -733,7 +734,7 @@ download_l attrs cl size =
 
 
 {-| -}
-eye_ban_f : List (Attribute msg) -> Color -> Int -> Element msg
+eye_ban_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 eye_ban_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -743,7 +744,7 @@ eye_ban_f attrs cl size =
 
 
 {-| -}
-eye_ban_l : List (Attribute msg) -> Color -> Int -> Element msg
+eye_ban_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 eye_ban_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -753,7 +754,7 @@ eye_ban_l attrs cl size =
 
 
 {-| -}
-eye_f : List (Attribute msg) -> Color -> Int -> Element msg
+eye_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 eye_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -763,7 +764,7 @@ eye_f attrs cl size =
 
 
 {-| -}
-eye_l : List (Attribute msg) -> Color -> Int -> Element msg
+eye_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 eye_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -776,7 +777,7 @@ eye_l attrs cl size =
 
 
 {-| -}
-favorite_f : List (Attribute msg) -> Color -> Int -> Element msg
+favorite_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 favorite_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -787,7 +788,7 @@ favorite_f attrs cl size =
 
 
 {-| -}
-favorite_half_f : List (Attribute msg) -> Color -> Int -> Element msg
+favorite_half_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 favorite_half_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -797,7 +798,7 @@ favorite_half_f attrs cl size =
 
 
 {-| -}
-favorite_l : List (Attribute msg) -> Color -> Int -> Element msg
+favorite_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 favorite_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -807,7 +808,7 @@ favorite_l attrs cl size =
 
 
 {-| -}
-ferry_f : List (Attribute msg) -> Color -> Int -> Element msg
+ferry_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 ferry_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -820,7 +821,7 @@ ferry_f attrs cl size =
 
 
 {-| -}
-ferry_l : List (Attribute msg) -> Color -> Int -> Element msg
+ferry_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 ferry_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -833,7 +834,7 @@ ferry_l attrs cl size =
 
 
 {-| -}
-fill_color_f : List (Attribute msg) -> Color -> Int -> Element msg
+fill_color_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 fill_color_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -843,7 +844,7 @@ fill_color_f attrs cl size =
 
 
 {-| -}
-fill_color_l : List (Attribute msg) -> Color -> Int -> Element msg
+fill_color_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 fill_color_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -852,7 +853,7 @@ fill_color_l attrs cl size =
 
 
 {-| -}
-folder_f : List (Attribute msg) -> Color -> Int -> Element msg
+folder_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 folder_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -862,7 +863,7 @@ folder_f attrs cl size =
 
 
 {-| -}
-folder_l : List (Attribute msg) -> Color -> Int -> Element msg
+folder_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 folder_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -872,7 +873,7 @@ folder_l attrs cl size =
 
 
 {-| -}
-gift_f : List (Attribute msg) -> Color -> Int -> Element msg
+gift_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 gift_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -882,7 +883,7 @@ gift_f attrs cl size =
 
 
 {-| -}
-gift_l : List (Attribute msg) -> Color -> Int -> Element msg
+gift_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 gift_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -892,7 +893,7 @@ gift_l attrs cl size =
 
 
 {-| -}
-heart_f : List (Attribute msg) -> Color -> Int -> Element msg
+heart_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 heart_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -902,7 +903,7 @@ heart_f attrs cl size =
 
 
 {-| -}
-heart_l : List (Attribute msg) -> Color -> Int -> Element msg
+heart_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 heart_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -912,7 +913,7 @@ heart_l attrs cl size =
 
 
 {-| -}
-home_f : List (Attribute msg) -> Color -> Int -> Element msg
+home_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 home_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -925,7 +926,7 @@ home_f attrs cl size =
 
 
 {-| -}
-home_l : List (Attribute msg) -> Color -> Int -> Element msg
+home_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 home_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -938,7 +939,7 @@ home_l attrs cl size =
 
 
 {-| -}
-image_f : List (Attribute msg) -> Color -> Int -> Element msg
+image_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 image_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -952,7 +953,7 @@ image_f attrs cl size =
 
 
 {-| -}
-image_l : List (Attribute msg) -> Color -> Int -> Element msg
+image_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 image_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -969,7 +970,7 @@ image_l attrs cl size =
 
 
 {-| -}
-keyboard_f : List (Attribute msg) -> Color -> Int -> Element msg
+keyboard_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 keyboard_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -979,7 +980,7 @@ keyboard_f attrs cl size =
 
 
 {-| -}
-keyboard_l : List (Attribute msg) -> Color -> Int -> Element msg
+keyboard_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 keyboard_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -992,7 +993,7 @@ keyboard_l attrs cl size =
 
 
 {-| -}
-language_f : List (Attribute msg) -> Color -> Int -> Element msg
+language_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 language_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1005,7 +1006,7 @@ language_f attrs cl size =
 
 
 {-| -}
-language_l : List (Attribute msg) -> Color -> Int -> Element msg
+language_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 language_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1018,7 +1019,7 @@ language_l attrs cl size =
 
 
 {-| -}
-laptop_f : List (Attribute msg) -> Color -> Int -> Element msg
+laptop_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 laptop_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1028,7 +1029,7 @@ laptop_f attrs cl size =
 
 
 {-| -}
-laptop_l : List (Attribute msg) -> Color -> Int -> Element msg
+laptop_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 laptop_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1041,7 +1042,7 @@ laptop_l attrs cl size =
 
 
 {-| -}
-like_f : List (Attribute msg) -> Color -> Int -> Element msg
+like_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 like_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1051,7 +1052,7 @@ like_f attrs cl size =
 
 
 {-| -}
-like_l : List (Attribute msg) -> Color -> Int -> Element msg
+like_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 like_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1061,7 +1062,7 @@ like_l attrs cl size =
 
 
 {-| -}
-list_f : List (Attribute msg) -> Color -> Int -> Element msg
+list_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 list_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1074,7 +1075,7 @@ list_f attrs cl size =
 
 
 {-| -}
-list_l : List (Attribute msg) -> Color -> Int -> Element msg
+list_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 list_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1087,7 +1088,7 @@ list_l attrs cl size =
 
 
 {-| -}
-loading_l : List (Attribute msg) -> Color -> Int -> Element msg
+loading_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 loading_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1096,7 +1097,7 @@ loading_l attrs cl size =
 
 
 {-| -}
-location_f : List (Attribute msg) -> Color -> Int -> Element msg
+location_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 location_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1106,7 +1107,7 @@ location_f attrs cl size =
 
 
 {-| -}
-location_l : List (Attribute msg) -> Color -> Int -> Element msg
+location_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 location_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1119,7 +1120,7 @@ location_l attrs cl size =
 
 
 {-| -}
-login_l : List (Attribute msg) -> Color -> Int -> Element msg
+login_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 login_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1132,7 +1133,7 @@ login_l attrs cl size =
 
 
 {-| -}
-logout_l : List (Attribute msg) -> Color -> Int -> Element msg
+logout_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 logout_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1145,7 +1146,7 @@ logout_l attrs cl size =
 
 
 {-| -}
-lucky_kuji_f : List (Attribute msg) -> Color -> Int -> Element msg
+lucky_kuji_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 lucky_kuji_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1159,7 +1160,7 @@ lucky_kuji_f attrs cl size =
 
 
 {-| -}
-lucky_kuji_l : List (Attribute msg) -> Color -> Int -> Element msg
+lucky_kuji_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 lucky_kuji_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1173,7 +1174,7 @@ lucky_kuji_l attrs cl size =
 
 
 {-| -}
-mail_f : List (Attribute msg) -> Color -> Int -> Element msg
+mail_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 mail_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1186,7 +1187,7 @@ mail_f attrs cl size =
 
 
 {-| -}
-mail_l : List (Attribute msg) -> Color -> Int -> Element msg
+mail_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 mail_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1199,7 +1200,7 @@ mail_l attrs cl size =
 
 
 {-| -}
-map_f : List (Attribute msg) -> Color -> Int -> Element msg
+map_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 map_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1212,7 +1213,7 @@ map_f attrs cl size =
 
 
 {-| -}
-map_l : List (Attribute msg) -> Color -> Int -> Element msg
+map_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 map_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1229,7 +1230,7 @@ map_l attrs cl size =
 
 
 {-| -}
-menu : List (Attribute msg) -> Color -> Int -> Element msg
+menu : List (AttributeC msg) -> Color -> Int -> ElementC msg
 menu attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1239,7 +1240,7 @@ menu attrs cl size =
 
 
 {-| -}
-minus : List (Attribute msg) -> Color -> Int -> Element msg
+minus : List (AttributeC msg) -> Color -> Int -> ElementC msg
 minus attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1249,7 +1250,7 @@ minus attrs cl size =
 
 
 {-| -}
-mobile_phone_f : List (Attribute msg) -> Color -> Int -> Element msg
+mobile_phone_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 mobile_phone_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1259,7 +1260,7 @@ mobile_phone_f attrs cl size =
 
 
 {-| -}
-mobile_phone_l : List (Attribute msg) -> Color -> Int -> Element msg
+mobile_phone_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 mobile_phone_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1273,7 +1274,7 @@ mobile_phone_l attrs cl size =
 
 
 {-| -}
-movie_f : List (Attribute msg) -> Color -> Int -> Element msg
+movie_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 movie_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1283,7 +1284,7 @@ movie_f attrs cl size =
 
 
 {-| -}
-movie_l : List (Attribute msg) -> Color -> Int -> Element msg
+movie_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 movie_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1296,7 +1297,7 @@ movie_l attrs cl size =
 
 
 {-| -}
-new_user_f : List (Attribute msg) -> Color -> Int -> Element msg
+new_user_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 new_user_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1306,7 +1307,7 @@ new_user_f attrs cl size =
 
 
 {-| -}
-new_window_l : List (Attribute msg) -> Color -> Int -> Element msg
+new_window_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 new_window_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1319,7 +1320,7 @@ new_window_l attrs cl size =
 
 
 {-| -}
-notice_generic_f : List (Attribute msg) -> Color -> Int -> Element msg
+notice_generic_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 notice_generic_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1329,7 +1330,7 @@ notice_generic_f attrs cl size =
 
 
 {-| -}
-notice_generic_l : List (Attribute msg) -> Color -> Int -> Element msg
+notice_generic_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 notice_generic_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1339,7 +1340,7 @@ notice_generic_l attrs cl size =
 
 
 {-| -}
-notice_user_f : List (Attribute msg) -> Color -> Int -> Element msg
+notice_user_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 notice_user_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1349,7 +1350,7 @@ notice_user_f attrs cl size =
 
 
 {-| -}
-notice_user_l : List (Attribute msg) -> Color -> Int -> Element msg
+notice_user_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 notice_user_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1366,7 +1367,7 @@ notice_user_l attrs cl size =
 
 
 {-| -}
-paint_f : List (Attribute msg) -> Color -> Int -> Element msg
+paint_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 paint_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1376,7 +1377,7 @@ paint_f attrs cl size =
 
 
 {-| -}
-paint_l : List (Attribute msg) -> Color -> Int -> Element msg
+paint_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 paint_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1386,7 +1387,7 @@ paint_l attrs cl size =
 
 
 {-| -}
-paper_plane_f : List (Attribute msg) -> Color -> Int -> Element msg
+paper_plane_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 paper_plane_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1396,7 +1397,7 @@ paper_plane_f attrs cl size =
 
 
 {-| -}
-paper_plane_l : List (Attribute msg) -> Color -> Int -> Element msg
+paper_plane_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 paper_plane_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1406,7 +1407,7 @@ paper_plane_l attrs cl size =
 
 
 {-| -}
-pdf_f : List (Attribute msg) -> Color -> Int -> Element msg
+pdf_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 pdf_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1419,7 +1420,7 @@ pdf_f attrs cl size =
 
 
 {-| -}
-pdf_l : List (Attribute msg) -> Color -> Int -> Element msg
+pdf_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 pdf_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1432,7 +1433,7 @@ pdf_l attrs cl size =
 
 
 {-| -}
-phone_f : List (Attribute msg) -> Color -> Int -> Element msg
+phone_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 phone_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1442,7 +1443,7 @@ phone_f attrs cl size =
 
 
 {-| -}
-phone_l : List (Attribute msg) -> Color -> Int -> Element msg
+phone_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 phone_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1452,7 +1453,7 @@ phone_l attrs cl size =
 
 
 {-| -}
-photograph_f : List (Attribute msg) -> Color -> Int -> Element msg
+photograph_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 photograph_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1468,7 +1469,7 @@ photograph_f attrs cl size =
 
 
 {-| -}
-photograph_l : List (Attribute msg) -> Color -> Int -> Element msg
+photograph_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 photograph_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1481,7 +1482,7 @@ photograph_l attrs cl size =
 
 
 {-| -}
-pin_f : List (Attribute msg) -> Color -> Int -> Element msg
+pin_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 pin_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1491,7 +1492,7 @@ pin_f attrs cl size =
 
 
 {-| -}
-pin_l : List (Attribute msg) -> Color -> Int -> Element msg
+pin_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 pin_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1501,7 +1502,7 @@ pin_l attrs cl size =
 
 
 {-| -}
-plane_f : List (Attribute msg) -> Color -> Int -> Element msg
+plane_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 plane_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1511,7 +1512,7 @@ plane_f attrs cl size =
 
 
 {-| -}
-plane_l : List (Attribute msg) -> Color -> Int -> Element msg
+plane_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 plane_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1521,7 +1522,7 @@ plane_l attrs cl size =
 
 
 {-| -}
-plus : List (Attribute msg) -> Color -> Int -> Element msg
+plus : List (AttributeC msg) -> Color -> Int -> ElementC msg
 plus attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1531,7 +1532,7 @@ plus attrs cl size =
 
 
 {-| -}
-point_f : List (Attribute msg) -> Color -> Int -> Element msg
+point_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 point_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1544,7 +1545,7 @@ point_f attrs cl size =
 
 
 {-| -}
-point_l : List (Attribute msg) -> Color -> Int -> Element msg
+point_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 point_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1557,7 +1558,7 @@ point_l attrs cl size =
 
 
 {-| -}
-price_f : List (Attribute msg) -> Color -> Int -> Element msg
+price_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 price_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1567,7 +1568,7 @@ price_f attrs cl size =
 
 
 {-| -}
-price_l : List (Attribute msg) -> Color -> Int -> Element msg
+price_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 price_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1580,7 +1581,7 @@ price_l attrs cl size =
 
 
 {-| -}
-print_f : List (Attribute msg) -> Color -> Int -> Element msg
+print_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 print_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1593,7 +1594,7 @@ print_f attrs cl size =
 
 
 {-| -}
-print_l : List (Attribute msg) -> Color -> Int -> Element msg
+print_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 print_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1606,7 +1607,7 @@ print_l attrs cl size =
 
 
 {-| -}
-purchase_history_f : List (Attribute msg) -> Color -> Int -> Element msg
+purchase_history_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 purchase_history_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1624,7 +1625,7 @@ purchase_history_f attrs cl size =
 
 
 {-| -}
-purchase_history_l : List (Attribute msg) -> Color -> Int -> Element msg
+purchase_history_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 purchase_history_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1640,7 +1641,7 @@ purchase_history_l attrs cl size =
 
 
 {-| -}
-qrcode_f : List (Attribute msg) -> Color -> Int -> Element msg
+qrcode_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 qrcode_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1654,7 +1655,7 @@ qrcode_f attrs cl size =
 
 
 {-| -}
-qrcode_l : List (Attribute msg) -> Color -> Int -> Element msg
+qrcode_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 qrcode_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1667,7 +1668,7 @@ qrcode_l attrs cl size =
 
 
 {-| -}
-rakuten_account_f : List (Attribute msg) -> Color -> Int -> Element msg
+rakuten_account_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 rakuten_account_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1677,7 +1678,7 @@ rakuten_account_f attrs cl size =
 
 
 {-| -}
-rakuten_account_l : List (Attribute msg) -> Color -> Int -> Element msg
+rakuten_account_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 rakuten_account_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1687,7 +1688,7 @@ rakuten_account_l attrs cl size =
 
 
 {-| -}
-rakuten_registration_f : List (Attribute msg) -> Color -> Int -> Element msg
+rakuten_registration_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 rakuten_registration_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1697,7 +1698,7 @@ rakuten_registration_f attrs cl size =
 
 
 {-| -}
-rakuten_registration_l : List (Attribute msg) -> Color -> Int -> Element msg
+rakuten_registration_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 rakuten_registration_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1707,7 +1708,7 @@ rakuten_registration_l attrs cl size =
 
 
 {-| -}
-ranking_f : List (Attribute msg) -> Color -> Int -> Element msg
+ranking_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 ranking_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1717,7 +1718,7 @@ ranking_f attrs cl size =
 
 
 {-| -}
-ranking_l : List (Attribute msg) -> Color -> Int -> Element msg
+ranking_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 ranking_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1727,7 +1728,7 @@ ranking_l attrs cl size =
 
 
 {-| -}
-refresh : List (Attribute msg) -> Color -> Int -> Element msg
+refresh : List (AttributeC msg) -> Color -> Int -> ElementC msg
 refresh attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1737,7 +1738,7 @@ refresh attrs cl size =
 
 
 {-| -}
-review_comment_f : List (Attribute msg) -> Color -> Int -> Element msg
+review_comment_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 review_comment_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1747,7 +1748,7 @@ review_comment_f attrs cl size =
 
 
 {-| -}
-review_comment_l : List (Attribute msg) -> Color -> Int -> Element msg
+review_comment_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 review_comment_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1760,7 +1761,7 @@ review_comment_l attrs cl size =
 
 
 {-| -}
-review_edit_f : List (Attribute msg) -> Color -> Int -> Element msg
+review_edit_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 review_edit_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1770,7 +1771,7 @@ review_edit_f attrs cl size =
 
 
 {-| -}
-review_edit_l : List (Attribute msg) -> Color -> Int -> Element msg
+review_edit_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 review_edit_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1780,7 +1781,7 @@ review_edit_l attrs cl size =
 
 
 {-| -}
-rss_symbol_l : List (Attribute msg) -> Color -> Int -> Element msg
+rss_symbol_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 rss_symbol_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1794,7 +1795,7 @@ rss_symbol_l attrs cl size =
 
 
 {-| -}
-rss_text_f : List (Attribute msg) -> Color -> Int -> Element msg
+rss_text_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 rss_text_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1807,7 +1808,7 @@ rss_text_f attrs cl size =
 
 
 {-| -}
-rss_text_l : List (Attribute msg) -> Color -> Int -> Element msg
+rss_text_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 rss_text_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1822,7 +1823,7 @@ rss_text_l attrs cl size =
 
 
 {-| -}
-save_f : List (Attribute msg) -> Color -> Int -> Element msg
+save_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 save_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1832,7 +1833,7 @@ save_f attrs cl size =
 
 
 {-| -}
-save_l : List (Attribute msg) -> Color -> Int -> Element msg
+save_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 save_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1842,7 +1843,7 @@ save_l attrs cl size =
 
 
 {-| -}
-search_history_f : List (Attribute msg) -> Color -> Int -> Element msg
+search_history_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 search_history_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1855,7 +1856,7 @@ search_history_f attrs cl size =
 
 
 {-| -}
-search_history_l : List (Attribute msg) -> Color -> Int -> Element msg
+search_history_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 search_history_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1868,7 +1869,7 @@ search_history_l attrs cl size =
 
 
 {-| -}
-search : List (Attribute msg) -> Color -> Int -> Element msg
+search : List (AttributeC msg) -> Color -> Int -> ElementC msg
 search attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1878,7 +1879,7 @@ search attrs cl size =
 
 
 {-| -}
-security_f : List (Attribute msg) -> Color -> Int -> Element msg
+security_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 security_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1888,7 +1889,7 @@ security_f attrs cl size =
 
 
 {-| -}
-security_l : List (Attribute msg) -> Color -> Int -> Element msg
+security_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 security_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1901,7 +1902,7 @@ security_l attrs cl size =
 
 
 {-| -}
-server_f : List (Attribute msg) -> Color -> Int -> Element msg
+server_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 server_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1914,7 +1915,7 @@ server_f attrs cl size =
 
 
 {-| -}
-server_l : List (Attribute msg) -> Color -> Int -> Element msg
+server_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 server_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1924,7 +1925,7 @@ server_l attrs cl size =
 
 
 {-| -}
-settings_f : List (Attribute msg) -> Color -> Int -> Element msg
+settings_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 settings_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1934,7 +1935,7 @@ settings_f attrs cl size =
 
 
 {-| -}
-settings_l : List (Attribute msg) -> Color -> Int -> Element msg
+settings_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 settings_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1947,7 +1948,7 @@ settings_l attrs cl size =
 
 
 {-| -}
-share_f : List (Attribute msg) -> Color -> Int -> Element msg
+share_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 share_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1957,7 +1958,7 @@ share_f attrs cl size =
 
 
 {-| -}
-share_l : List (Attribute msg) -> Color -> Int -> Element msg
+share_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 share_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1967,7 +1968,7 @@ share_l attrs cl size =
 
 
 {-| -}
-shop_f : List (Attribute msg) -> Color -> Int -> Element msg
+shop_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 shop_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1980,7 +1981,7 @@ shop_f attrs cl size =
 
 
 {-| -}
-shop_l : List (Attribute msg) -> Color -> Int -> Element msg
+shop_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 shop_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -1993,7 +1994,7 @@ shop_l attrs cl size =
 
 
 {-| -}
-sign_ban_f : List (Attribute msg) -> Color -> Int -> Element msg
+sign_ban_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sign_ban_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2003,7 +2004,7 @@ sign_ban_f attrs cl size =
 
 
 {-| -}
-sign_ban_l : List (Attribute msg) -> Color -> Int -> Element msg
+sign_ban_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sign_ban_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2016,7 +2017,7 @@ sign_ban_l attrs cl size =
 
 
 {-| -}
-sign_help_f : List (Attribute msg) -> Color -> Int -> Element msg
+sign_help_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sign_help_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2026,7 +2027,7 @@ sign_help_f attrs cl size =
 
 
 {-| -}
-sign_help_l : List (Attribute msg) -> Color -> Int -> Element msg
+sign_help_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sign_help_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2040,7 +2041,7 @@ sign_help_l attrs cl size =
 
 
 {-| -}
-sign_info_f : List (Attribute msg) -> Color -> Int -> Element msg
+sign_info_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sign_info_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2050,7 +2051,7 @@ sign_info_f attrs cl size =
 
 
 {-| -}
-sign_info_l : List (Attribute msg) -> Color -> Int -> Element msg
+sign_info_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sign_info_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2067,7 +2068,7 @@ sign_info_l attrs cl size =
 
 
 {-| -}
-sign_warning_f : List (Attribute msg) -> Color -> Int -> Element msg
+sign_warning_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sign_warning_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2077,7 +2078,7 @@ sign_warning_f attrs cl size =
 
 
 {-| -}
-sign_warning_l : List (Attribute msg) -> Color -> Int -> Element msg
+sign_warning_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sign_warning_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2094,7 +2095,7 @@ sign_warning_l attrs cl size =
 
 
 {-| -}
-sliders_f : List (Attribute msg) -> Color -> Int -> Element msg
+sliders_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sliders_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2104,7 +2105,7 @@ sliders_f attrs cl size =
 
 
 {-| -}
-sliders_l : List (Attribute msg) -> Color -> Int -> Element msg
+sliders_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 sliders_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2114,7 +2115,7 @@ sliders_l attrs cl size =
 
 
 {-| -}
-smartphone_f : List (Attribute msg) -> Color -> Int -> Element msg
+smartphone_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 smartphone_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2124,7 +2125,7 @@ smartphone_f attrs cl size =
 
 
 {-| -}
-smartphone_l : List (Attribute msg) -> Color -> Int -> Element msg
+smartphone_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 smartphone_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2134,7 +2135,7 @@ smartphone_l attrs cl size =
 
 
 {-| -}
-survey_f : List (Attribute msg) -> Color -> Int -> Element msg
+survey_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 survey_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2147,7 +2148,7 @@ survey_f attrs cl size =
 
 
 {-| -}
-survey_l : List (Attribute msg) -> Color -> Int -> Element msg
+survey_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 survey_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2160,7 +2161,7 @@ survey_l attrs cl size =
 
 
 {-| -}
-switch_language_f : List (Attribute msg) -> Color -> Int -> Element msg
+switch_language_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 switch_language_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2171,7 +2172,7 @@ switch_language_f attrs cl size =
 
 
 {-| -}
-switch_language_l : List (Attribute msg) -> Color -> Int -> Element msg
+switch_language_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 switch_language_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2182,7 +2183,7 @@ switch_language_l attrs cl size =
 
 
 {-| -}
-tablet_f : List (Attribute msg) -> Color -> Int -> Element msg
+tablet_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 tablet_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2192,7 +2193,7 @@ tablet_f attrs cl size =
 
 
 {-| -}
-tablet_l : List (Attribute msg) -> Color -> Int -> Element msg
+tablet_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 tablet_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2205,7 +2206,7 @@ tablet_l attrs cl size =
 
 
 {-| -}
-tag_f : List (Attribute msg) -> Color -> Int -> Element msg
+tag_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 tag_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2216,7 +2217,7 @@ tag_f attrs cl size =
 
 
 {-| -}
-tag_l : List (Attribute msg) -> Color -> Int -> Element msg
+tag_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 tag_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2229,7 +2230,7 @@ tag_l attrs cl size =
 
 
 {-| -}
-time_f : List (Attribute msg) -> Color -> Int -> Element msg
+time_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 time_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2239,7 +2240,7 @@ time_f attrs cl size =
 
 
 {-| -}
-time_l : List (Attribute msg) -> Color -> Int -> Element msg
+time_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 time_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2252,7 +2253,7 @@ time_l attrs cl size =
 
 
 {-| -}
-train_f : List (Attribute msg) -> Color -> Int -> Element msg
+train_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 train_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2262,7 +2263,7 @@ train_f attrs cl size =
 
 
 {-| -}
-train_l : List (Attribute msg) -> Color -> Int -> Element msg
+train_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 train_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2281,7 +2282,7 @@ train_l attrs cl size =
 
 
 {-| -}
-upload_f : List (Attribute msg) -> Color -> Int -> Element msg
+upload_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 upload_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2294,7 +2295,7 @@ upload_f attrs cl size =
 
 
 {-| -}
-upload_l : List (Attribute msg) -> Color -> Int -> Element msg
+upload_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 upload_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2307,7 +2308,7 @@ upload_l attrs cl size =
 
 
 {-| -}
-voice_input_f : List (Attribute msg) -> Color -> Int -> Element msg
+voice_input_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 voice_input_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2320,7 +2321,7 @@ voice_input_f attrs cl size =
 
 
 {-| -}
-voice_input_l : List (Attribute msg) -> Color -> Int -> Element msg
+voice_input_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 voice_input_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2333,7 +2334,7 @@ voice_input_l attrs cl size =
 
 
 {-| -}
-walking_f : List (Attribute msg) -> Color -> Int -> Element msg
+walking_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 walking_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2347,7 +2348,7 @@ walking_f attrs cl size =
 
 
 {-| -}
-world_f : List (Attribute msg) -> Color -> Int -> Element msg
+world_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 world_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2360,7 +2361,7 @@ world_f attrs cl size =
 
 
 {-| -}
-world_l : List (Attribute msg) -> Color -> Int -> Element msg
+world_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 world_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2370,7 +2371,7 @@ world_l attrs cl size =
 
 
 {-| -}
-x : List (Attribute msg) -> Color -> Int -> Element msg
+x : List (AttributeC msg) -> Color -> Int -> ElementC msg
 x attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2380,7 +2381,7 @@ x attrs cl size =
 
 
 {-| -}
-zip_f : List (Attribute msg) -> Color -> Int -> Element msg
+zip_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 zip_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2393,7 +2394,7 @@ zip_f attrs cl size =
 
 
 {-| -}
-zip_l : List (Attribute msg) -> Color -> Int -> Element msg
+zip_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 zip_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2406,7 +2407,7 @@ zip_l attrs cl size =
 
 
 {-| -}
-zoom_in_f : List (Attribute msg) -> Color -> Int -> Element msg
+zoom_in_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 zoom_in_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2416,7 +2417,7 @@ zoom_in_f attrs cl size =
 
 
 {-| -}
-zoom_in_l : List (Attribute msg) -> Color -> Int -> Element msg
+zoom_in_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 zoom_in_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2429,7 +2430,7 @@ zoom_in_l attrs cl size =
 
 
 {-| -}
-zoom_out_f : List (Attribute msg) -> Color -> Int -> Element msg
+zoom_out_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
 zoom_out_f attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size
@@ -2439,7 +2440,7 @@ zoom_out_f attrs cl size =
 
 
 {-| -}
-zoom_out_l : List (Attribute msg) -> Color -> Int -> Element msg
+zoom_out_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
 zoom_out_l attrs cl size =
     R10.Svg.Utils.wrapper32 attrs
         size

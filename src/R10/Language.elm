@@ -1,4 +1,4 @@
-module R10.Language exposing (Language(..), LanguageType(..), Translations, decodeJsonString, decoder, default, defaultSupportedLanguageList, fromString, list, listStringTolistLanguagesRemovingUnsupported, preferredLanguage, select, toLongString, toString, toStringShort, urlParser)
+module R10.Language exposing (Language(..), LanguageType(..), Translations, decodeJsonString, decoder, default, defaultSupportedLanguageList, list, listStringTolistLanguagesRemovingUnsupported, preferredLanguage, select, toStringLong, toString, toStringShort, urlParser, fromStringWithSupportedLanguages)
 
 {-| Internationalization stuff
 
@@ -8,7 +8,7 @@ Also in Html these are called "[lang](https://developer.mozilla.org/en-US/docs/W
 
 So we consider British English and American English as two different languages rather than two different locales of the same language.
 
-@docs Language, LanguageType, Translations, decodeJsonString, decoder, default, defaultSupportedLanguageList, fromString, list, listStringTolistLanguagesRemovingUnsupported, preferredLanguage, select, toLongString, toString, toStringShort, urlParser
+@docs Language, LanguageType, Translations, decodeJsonString, decoder, default, defaultSupportedLanguageList, list, listStringTolistLanguagesRemovingUnsupported, preferredLanguage, select, toStringLong, toString, toStringShort, urlParser, fromStringWithSupportedLanguages
 
 -}
 
@@ -27,6 +27,7 @@ type alias Translations =
     , de_de : String
     , zh_cn : String
     , it_it : String
+    , uk_ua : String
     }
 
 
@@ -39,24 +40,7 @@ toStringShort language =
 {-| -}
 urlParser : Url.Parser.Parser (Language -> b) b
 urlParser =
-    Url.Parser.custom "LANGUAGE ROUTE PARSER" fromString2
-
-
-{-| -}
-fromString2 : String -> Maybe Language
-fromString2 string =
-    fromStringWithSupportedLanguages defaultSupportedLanguageList string
-
-
-{-| -}
-fromStringWithSupportedLanguages : List Language -> String -> Maybe Language
-fromStringWithSupportedLanguages supportedLanguageList string =
-    case decoder supportedLanguageList string of
-        Ok language ->
-            Just language
-
-        Err _ ->
-            Nothing
+    Url.Parser.custom "LANGUAGE ROUTE PARSER" fromStringUsingDefaultListOfSupportedLanguages
 
 
 {-| -}
@@ -82,6 +66,8 @@ type
     | DE_DE
       -- Italian
     | IT_IT
+      -- Ukrainian
+    | UK_UA
 
 
 {-| -}
@@ -95,6 +81,8 @@ list =
     , FR_FR
     , DE_DE
     , ES_ES
+    , IT_IT
+    , UK_UA
     ]
 
 
@@ -115,6 +103,7 @@ defaultSupportedLanguageList =
     , ES_ES
     , FR_FR
     , IT_IT
+    , UK_UA
     ]
 
 
@@ -178,6 +167,12 @@ decoderFourLettersLangauge string =
 
         "frfr" ->
             Ok FR_FR
+
+        "itit" ->
+            Ok IT_IT
+
+        "ukua" ->
+            Ok UK_UA
 
         _ ->
             Err <| string ++ " is not a valid language"
@@ -269,6 +264,12 @@ clean string =
         |> String.join ""
 
 
+{-| -}
+fromStringUsingDefaultListOfSupportedLanguages : String -> Maybe Language
+fromStringUsingDefaultListOfSupportedLanguages string =
+    fromStringWithSupportedLanguages defaultSupportedLanguageList string
+
+
 {-| Parse Language from string (IETF format). It's case insensitive.
 
 Parsing language from flags
@@ -280,8 +281,8 @@ Parsing language from flags
     Utils.I18n.Language.fromString "foo" ===> Nothing
 
 -}
-fromString : List Language -> String -> Maybe Language
-fromString supportedLanguageList string =
+fromStringWithSupportedLanguages : List Language -> String -> Maybe Language
+fromStringWithSupportedLanguages supportedLanguageList string =
     case decoder supportedLanguageList string of
         Ok language ->
             Just language
@@ -335,6 +336,9 @@ toString language =
         IT_IT ->
             "it-IT"
 
+        UK_UA ->
+            "uk-UA"
+
 
 {-| -}
 type LanguageType
@@ -346,13 +350,13 @@ type LanguageType
 
 Example to convert ZH\_TW to translation in English and Traditional Chinese
 
-    toLongString International ZH_TW ===> "Taiwanese"
+    toStringLong International ZH_TW ===> "Taiwanese"
 
-    toLongString Localization ZH_TW ===> "繁體中文"
+    toStringLong Localization ZH_TW ===> "繁體中文"
 
 -}
-toLongString : LanguageType -> Language -> String
-toLongString languageType language =
+toStringLong : LanguageType -> Language -> String
+toStringLong languageType language =
     case ( languageType, language ) of
         ( _, Key ) ->
             "Key"
@@ -408,6 +412,12 @@ toLongString languageType language =
         ( Localization, IT_IT ) ->
             "Italiano"
 
+        ( International, UK_UA ) ->
+            "Ukrainian"
+
+        ( Localization, UK_UA ) ->
+            "Українська"
+
 
 {-| -}
 select : Language -> Translations -> String
@@ -442,3 +452,6 @@ select language translation =
 
         IT_IT ->
             .it_it translation
+
+        UK_UA ->
+            .uk_ua translation

@@ -1,10 +1,12 @@
-module R10.Country exposing (Country(..), emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString)
+module R10.Country exposing (Country(..), emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate)
 
 {-|
 
-@docs Country, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString
+@docs Country, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate
 
 -}
+
+import String.Extra
 
 
 {-| -}
@@ -272,6 +274,45 @@ listHead =
 listTail : Country
 listTail =
     Zimbabwe
+
+
+{-| -}
+fromTelephoneAsString : String -> Maybe Country
+fromTelephoneAsString telephone =
+    --
+    -- Check also Flow.FormStateBeforeValidationFixer.cleanPhoneNumber for inspirations
+    --
+    -- Max length of prefix is 7, for Example: "+6189164"
+    telephone
+        -- Trim empty space on both sides
+        |> String.Extra.clean
+        -- Max length of prefix is 7, for Example: "+6189164"
+        |> String.left 8
+        -- Generate a list like ["+6","+61","+618","+6189","+61891","+618916","+6189164"]
+        |> generatePrefixes []
+        -- Generate a list like ["+6189164","+618916","+61891","+6189","+618","+61","+6"]
+        |> List.reverse
+        -- Search the phone
+        |> List.foldl
+            (\string acc ->
+                case acc of
+                    Just _ ->
+                        -- Short circuit
+                        acc
+
+                    Nothing ->
+                        fromCountryTelCode string
+            )
+            Nothing
+
+
+generatePrefixes : List String -> String -> List String
+generatePrefixes listPrefixes telephone =
+    if String.length telephone <= 1 then
+        listPrefixes
+
+    else
+        generatePrefixes (telephone :: listPrefixes) (String.dropRight 1 telephone)
 
 
 {-| -}
@@ -1734,6 +1775,18 @@ fromCountryTelCode code =
 
         _ ->
             Nothing
+
+
+{-| -}
+toPhoneTemplate : Country -> String
+toPhoneTemplate country =
+    case country of
+        -- From https://dev-cdn.rex.contents.rakuten.co.jp/rex-form/docs/components/form-sample2.html
+        Japan ->
+            "080-1234-567"
+
+        _ ->
+            ""
 
 
 {-| -}

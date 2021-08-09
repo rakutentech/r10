@@ -107,7 +107,7 @@ validateDependant key dependantKey formState validation =
     in
     result
         |> (\( newContextValue, newKey ) ->
-                validateValidationSpecs newKey newContextValue formState validation
+                validateValidationSpecs "validateDependant" newKey newContextValue formState validation
            )
 
 
@@ -132,7 +132,7 @@ validateNot key value formState validation =
     let
         outcome : Maybe R10.Form.Internal.FieldState.ValidationOutcome
         outcome =
-            validateValidationSpecs key value formState validation
+            validateValidationSpecs "validateNot" key value formState validation
     in
     case outcome of
         Just (R10.Form.Internal.FieldState.MessageOk a b) ->
@@ -150,7 +150,7 @@ validateAllOf key value formState validations =
     let
         messages : List R10.Form.Internal.FieldState.ValidationOutcome
         messages =
-            List.map (validateValidationSpecs key value formState) validations
+            List.map (validateValidationSpecs "validateAllOf" key value formState) validations
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
@@ -168,7 +168,7 @@ validateOneOf key value formState validations =
     let
         messages : List R10.Form.Internal.FieldState.ValidationOutcome
         messages =
-            List.map (validateValidationSpecs key value formState) validations
+            List.map (validateValidationSpecs "validateOneOf" key value formState) validations
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
@@ -186,7 +186,7 @@ validateWithMsg key value msg formState validation =
     let
         maybeMessage : Maybe R10.Form.Internal.FieldState.ValidationOutcome
         maybeMessage =
-            validateValidationSpecs key value formState validation
+            validateValidationSpecs "validateWithMsg" key value formState validation
     in
     case maybeMessage of
         Nothing ->
@@ -255,8 +255,19 @@ skipValidationIfEmpty value validationOutcome =
         Just validationOutcome
 
 
-validateValidationSpecs : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldConf.Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
-validateValidationSpecs key value formState validation =
+validateValidationSpecs : String -> R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldConf.Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
+validateValidationSpecs caller key value_ formState validation =
+    let
+        value =
+            -- Temporary fix for https://jira.rakuten-it.com/jira/browse/OMN-3277
+            -- Chrome is trimming this field in the browser, bot other
+            -- browsers don't do this
+            if R10.Form.Internal.Key.toString key == "email" then
+                String.trim value_
+
+            else
+                value_
+    in
     case validation of
         R10.Form.Internal.FieldConf.WithMsg msg validation_ ->
             validateWithMsg key value msg formState validation_
@@ -299,12 +310,77 @@ validateValidationSpecs key value formState validation =
             Nothing
 
 
-validate : R10.Form.Internal.Key.Key -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState
-validate key maybeValidationSpec formState state =
+f :
+    (String -> String -> String)
+    -> ( R10.Form.Internal.Key.KeyAsString, { b | value : String } )
+    -> ( R10.Form.Internal.Key.KeyAsString, { b | value : String } )
+f formStateBeforeValidationFixer ( keyAsString, rest ) =
     let
+        fieldIdAsString : String
+        fieldIdAsString =
+            keyAsString
+                |> R10.Form.Internal.Key.fromString
+                |> R10.Form.Internal.Key.headId
+
+        value =
+            formStateBeforeValidationFixer fieldIdAsString rest.value
+    in
+    ( keyAsString, { rest | value = value } )
+
+
+validate : (String -> String -> String) -> R10.Form.Internal.Key.Key -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState
+validate formStateBeforeValidationFixer key maybeValidationSpec formState fieldState =
+    --
+    -- "formStateBeforeValidationFixer" is a function used to fix the values of
+    -- fields before the validation is applied, but those values should be then
+    -- discarded. For example keeping only the numeric digits of a field before
+    -- a validation that require only digits.
+    --
+    -- This trick is necessary because the validation from the back-end is too
+    -- strict and doesn't allow the user to freely type stuff.
+    --
+    -- Ideally these hacks should be done in the validation from the server and
+    -- this function should became unnecessary.
+    --
+    -- This same function is used to change the values before submission.
+    --
+    -- QUESTION - Why do we have both formState and fieldState here?
+    --
+    -- QUESTION - Do we need to fix also fieldState?
+    --
+    -- TODO - Before running the validation, we should change the values (formState?)
+    -- Should it be part of the formConf? But it cannot be serialized
+    --
+    -- Flow.formStateBeforeValidationFixer.fix : { fieldIdAsString : String, value : String } -> String
+    --
+    let
+        newFormState =
+            --
+            -- I am not sure if this part is needed?
+            -- Maybe only for validation of fields based on other fields
+            -- like "Confirm your password"
+            --
+            -- let
+            --     fieldsState =
+            --         formState.fieldsState
+            --             |> Dict.toList
+            --             |> List.map (f formStateBeforeValidationFixer)
+            --             |> Dict.fromList
+            -- in
+            -- { formState | fieldsState = fieldsState }
+            --
+            formState
+
+        newFieldState =
+            { fieldState | value = formStateBeforeValidationFixer (R10.Form.Internal.Key.headId key) fieldState.value }
+
+        fieldIdAsString =
+            key
+                |> R10.Form.Internal.Key.headId
+
         isDisabled : Bool
         isDisabled =
-            R10.Form.Internal.Dict.get key formState.fieldsState
+            R10.Form.Internal.Dict.get key newFormState.fieldsState
                 |> Maybe.map .disabled
                 |> Maybe.withDefault False
 
@@ -318,27 +394,16 @@ validate key maybeValidationSpec formState state =
                     |> Maybe.map .validation
                     |> Maybe.withDefault [ R10.Form.Internal.FieldConf.NoValidation ]
     in
-    { state
+    { fieldState
         | validation =
             validationSpec
-                |> List.map (validateValidationSpecs key state.value formState)
+                |> List.map (validateValidationSpecs "validate" key newFieldState.value newFormState)
                 |> List.filterMap identity
                 |> R10.Form.Internal.FieldState.Validated
     }
 
 
 
---
--- validateOld : Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState
--- validateOld maybeValidationSpec formState state =
---     { state
---         | validation =
---             Form.FieldState.Validated <|
---                 validateValidationSpecs state.value
---                     formState
---                     (maybeValidationSpec |> Maybe.map .validation |> Maybe.withDefault NoValidation)
---
---     }
 -- ██████  ██    ██ ██      ███████ ███████
 -- ██   ██ ██    ██ ██      ██      ██
 -- ██████  ██    ██ ██      █████   ███████

@@ -6,8 +6,9 @@ module R10.Svg.Lists exposing (listIcons, listIconsExtra, listLogos, listLogosEx
 
 -}
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
 import R10.Color.Utils
+import R10.Context exposing (..)
 import R10.Svg.Icons
 import R10.Svg.IconsExtra
 import R10.Svg.Logos
@@ -20,7 +21,7 @@ import R10.Svg.Others
 
 
 {-| -}
-listOthers : Int -> Color -> List ( Element msg, String )
+listOthers : Int -> Color -> List ( ElementC msg, String )
 listOthers size cl =
     [ ( R10.Svg.Others.mountain [] size, "mountain" )
     , ( R10.Svg.Others.mobileWithPerson [] cl size, "mobileWithPerson" )
@@ -32,13 +33,13 @@ listOthers size cl =
     , ( R10.Svg.Others.errorLens [] size, "errorLens" )
     , ( R10.Svg.Others.errorTriangle [] size, "errorTriangle" )
     , ( R10.Svg.Others.paperPlane [] size, "paperPlane" )
-    , ( R10.Svg.Others.externalLink [] size, "externalLink" )
+    , ( R10.Svg.Others.externalLink [] cl size, "externalLink" )
     , ( R10.Svg.Others.spinnerRotation [] size (R10.Color.Utils.toCssRgba cl), "spinnerRotation" )
     ]
 
 
 {-| -}
-listLogosExtra : Int -> Color -> List ( Element msg, String )
+listLogosExtra : Int -> Color -> List ( ElementC msg, String )
 listLogosExtra size cl =
     [ ( R10.Svg.LogosExtra.elm [] size, "elm" )
     , ( R10.Svg.LogosExtra.elm_monochrome [] cl size, "elm_monochrome" )
@@ -66,12 +67,13 @@ listLogosExtra size cl =
 
 
 {-| -}
-listLogos : Int -> Color -> List ( Element msg, String )
+listLogos : Int -> Color -> List ( ElementC msg, String )
 listLogos size cl =
     [ ( R10.Svg.Logos.authenticator [] cl size, "authenticator" )
     , ( R10.Svg.Logos.authenticator_monochrome [] cl size, "authenticator_monochrome" )
     , ( R10.Svg.Logos.r [] cl size, "r" )
     , ( R10.Svg.Logos.rakuten [] cl size, "rakuten" )
+    , ( R10.Svg.Logos.barcelona [] size, "barcelona" )
     , ( R10.Svg.Logos.rakutenMarketing [] cl size, "rakutenMarketing" )
     , ( R10.Svg.Logos.rakutenRagri [] cl size, "rakutenRagri" )
     , ( R10.Svg.Logos.rakutenReady [] cl size, "rakutenReady" )
@@ -79,7 +81,7 @@ listLogos size cl =
 
 
 {-| -}
-listIconsExtra : Int -> Color -> List ( Element msg, String )
+listIconsExtra : Int -> Color -> List ( ElementC msg, String )
 listIconsExtra size cl =
     [ ( R10.Svg.IconsExtra.add [] cl size, "add" )
     , ( R10.Svg.IconsExtra.check_thick [] cl size, "checkThick" )
@@ -126,7 +128,7 @@ listIconsExtra size cl =
 
 
 {-| -}
-listIcons : Int -> Color -> List ( Element msg, String )
+listIcons : Int -> Color -> List ( ElementC msg, String )
 listIcons size cl =
     [ ( R10.Svg.Icons.arrow_down_l [] cl size, "arrow_down_l" )
     , ( R10.Svg.Icons.arrow_left_l [] cl size, "arrow_left_l" )

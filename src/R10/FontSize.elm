@@ -11,26 +11,27 @@ module R10.FontSize exposing
 
 -}
 
-import Element exposing (..)
-import Element.Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Font as Font
+import R10.Context exposing (..)
 
 
 {-| -}
-xlarge : Attr decorative msg
+xlarge : AttrC decorative msg
 xlarge =
-    Element.Font.size 24
+    Font.size 24
 
 
 {-| -}
-xxlarge : Attr decorative msg
+xxlarge : AttrC decorative msg
 xxlarge =
-    Element.Font.size 32
+    Font.size 32
 
 
 {-| -}
-large : Attr decorative msg
+large : AttrC decorative msg
 large =
-    Element.Font.size 20
+    Font.size 20
 
 
 {-| -}
@@ -40,24 +41,24 @@ normalAsInt =
 
 
 {-| -}
-normal : Attr decorative msg
+normal : AttrC decorative msg
 normal =
-    Element.Font.size normalAsInt
+    Font.size normalAsInt
 
 
 {-| -}
-small : Attr decorative msg
+small : AttrC decorative msg
 small =
-    Element.Font.size 14
+    Font.size 14
 
 
 {-| -}
-xsmall : Attr decorative msg
+xsmall : AttrC decorative msg
 xsmall =
-    Element.Font.size 13
+    Font.size 13
 
 
 {-| -}
-xxsmall : Attr decorative msg
+xxsmall : AttrC decorative msg
 xxsmall =
-    Element.Font.size 12
+    Font.size 12

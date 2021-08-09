@@ -1,7 +1,8 @@
 module R10.Table.Internal.Placeholder exposing (placeholderSvg, view)
 
-import Element exposing (..)
-import Element.Border as Border
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
+import Element.WithContext.Border as Border
 import Svg
 import Svg.Attributes as SA
 
@@ -40,7 +41,7 @@ toHex color =
         |> String.join ""
 
 
-placeholderSvg : Color -> Element msg
+placeholderSvg : Color -> ElementC msg
 placeholderSvg color =
     let
         stringColor =
@@ -117,7 +118,7 @@ placeholderSvg color =
             ]
 
 
-view : Element.Color -> List (Attribute msg) -> Element msg
+view : Color -> List (AttributeC msg) -> ElementC msg
 view color attrs =
     el ([ width fill, height <| px 16, Border.rounded 4, clip, alpha 0.6 ] ++ attrs) <|
         (placeholderSvg <| color)

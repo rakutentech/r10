@@ -7,12 +7,14 @@ module R10.FormComponents.Internal.Validations exposing
     , viewValidation
     )
 
-import Element exposing (..)
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Font as Font
 import Html.Attributes
+import R10.Context exposing (..)
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
+import R10.Transition
 
 
 isValid : ValidationForView -> Maybe Bool
@@ -71,12 +73,12 @@ extraCss =
     ".markdown p {margin: 0}"
 
 
-viewValidationIcon : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> { validIcon : Element msg, invalidIcon : Element msg }
+viewValidationIcon : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> { validIcon : ElementC msg, invalidIcon : ElementC msg }
 viewValidationIcon palette validationIcon =
     let
-        iconAttrs : List (Attribute msg)
+        iconAttrs : List (AttributeC msg)
         iconAttrs =
-            [ width <| px 16, height <| px 16 ]
+            [ width <| px 16, height <| px 16, alignTop ]
     in
     case validationIcon of
         R10.FormTypes.NoIcon ->
@@ -99,7 +101,7 @@ viewValidationIcon palette validationIcon =
 
         R10.FormTypes.ErrorOrCheck ->
             { invalidIcon =
-                R10.FormComponents.Internal.UI.icons.validation_error
+                R10.FormComponents.Internal.UI.icons.sign_warning_f
                     iconAttrs
                     (R10.FormComponents.Internal.UI.Color.error palette)
                     16
@@ -111,7 +113,7 @@ viewValidationIcon palette validationIcon =
             }
 
 
-viewValidationMessage : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> ValidationMessage -> Element msg
+viewValidationMessage : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> ValidationMessage -> ElementC msg
 viewValidationMessage palette validationIcon validationMessage =
     case validationMessage of
         MessageOk string ->
@@ -133,7 +135,7 @@ viewValidationMessage palette validationIcon validationMessage =
                 ]
 
 
-viewValidation : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> ValidationForView -> Element msg
+viewValidation : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> ValidationForView -> ElementC msg
 viewValidation palette validationIcon validation =
     case validation of
         PretendIsNotYetValidated ->
@@ -147,14 +149,14 @@ viewValidation palette validationIcon validation =
                 )
 
 
-animatedList : List (Element msg) -> Element msg
+animatedList : List (ElementC msg) -> ElementC msg
 animatedList elements =
     let
-        transition : Attribute msg
+        transition : AttributeC msg
         transition =
-            htmlAttribute <| Html.Attributes.style "transition" "all 0.15s ease-in, opacity 0.15s 0.2s ease-in"
+            R10.Transition.transition "all 0.15s ease-in, opacity 0.15s 0.2s ease-in"
 
-        wrappedLine : Element msg
+        wrappedLine : ElementC msg
         wrappedLine =
             el
                 [ padding 0
@@ -166,7 +168,7 @@ animatedList elements =
                 ]
                 none
 
-        expandedLine : Element msg -> Element msg
+        expandedLine : ElementC msg -> ElementC msg
         expandedLine =
             el
                 [ paddingEach { top = 6, right = 0, bottom = 0, left = 0 }

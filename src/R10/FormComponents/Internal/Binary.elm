@@ -1,17 +1,23 @@
 module R10.FormComponents.Internal.Binary exposing
     ( Args
+    , tagReplacer
     , view
     )
 
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Events as Events
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Events as Events
+import Element.WithContext.Font as Font
 import Html.Attributes
+import R10.Context exposing (..)
+import R10.FontSize
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
+import R10.I18n
+import R10.Paragraph
+import R10.Transition
 
 
 type alias Args msg =
@@ -23,6 +29,7 @@ type alias Args msg =
     , helperText : Maybe String
     , typeBinary : R10.FormTypes.TypeBinary
     , palette : R10.FormTypes.Palette
+    , clickableLabel : Bool
 
     -- Stuff that usually change
     -- during the life of the component
@@ -41,7 +48,7 @@ type alias Args msg =
     }
 
 
-viewBinarySwitch : List (Attribute msg) -> Args msg -> Element msg
+viewBinarySwitch : List (AttributeC msg) -> Args msg -> ElementC msg
 viewBinarySwitch attrs args =
     let
         { trackColor, thumbColor } =
@@ -55,7 +62,7 @@ viewBinarySwitch attrs args =
                 , thumbColor = R10.FormComponents.Internal.UI.Color.surface
                 }
 
-        track : Element msg
+        track : ElementC msg
         track =
             el
                 [ centerX
@@ -67,13 +74,13 @@ viewBinarySwitch attrs args =
                 ]
                 none
 
-        thumb : Element msg
+        thumb : ElementC msg
         thumb =
             el
                 [ height <| px 20
                 , width <| px 20
                 , Border.rounded 24
-                , htmlAttribute <| Html.Attributes.style "transition" "all 0.14s "
+                , R10.Transition.transition "all 0.14s "
                 , centerY
                 , centerX
                 , Background.color <| thumbColor args.palette
@@ -86,14 +93,14 @@ viewBinarySwitch attrs args =
                 ]
                 none
 
-        switch : Element msg
+        switch : ElementC msg
         switch =
             el
                 [ width <| px 56
                 , height <| px 40
                 , inFront <|
                     el
-                        [ htmlAttribute <| Html.Attributes.style "transition" "all 0.13s"
+                        [ R10.Transition.transition "all 0.13s"
                         , if args.value then
                             moveRight 16
 
@@ -130,48 +137,74 @@ viewBinarySwitch attrs args =
         ]
 
 
-viewBinaryCheckbox : List (Attribute msg) -> Args msg -> Element msg
+viewBinaryCheckbox : List (AttributeC msg) -> Args msg -> ElementC msg
 viewBinaryCheckbox attrs args =
-    row
-        ([ height <| px 20
-         , spacing 26
-         ]
+    let
+        elementThatReceiveClicks =
+            [ Events.onClick args.msgOnClick
+            , pointer
+            , htmlAttribute <| Html.Attributes.tabindex 0
+            , htmlAttribute <| R10.FormComponents.Internal.UI.onSelectKey args.msgOnClick
+            , Events.onFocus args.msgOnFocus
+            , Events.onLoseFocus args.msgOnLoseFocus
+            ]
+    in
+    el
+        ([ spacing 26 ]
             ++ (if args.disabled then
                     [ alpha 0.38 ]
 
+                else if args.clickableLabel then
+                    elementThatReceiveClicks
+
                 else
-                    [ Events.onClick args.msgOnClick
-                    , pointer
-                    , htmlAttribute <| Html.Attributes.tabindex 0
-                    , htmlAttribute <| R10.FormComponents.Internal.UI.onSelectKey args.msgOnClick
-                    , Events.onFocus args.msgOnFocus
-                    , Events.onLoseFocus args.msgOnLoseFocus
-                    ]
+                    []
                )
             ++ attrs
         )
-        [ row [ width fill ]
-            [ checkboxIcon args args.value
-            , paragraph
-                [ width fill
-                , paddingEach { top = 0, left = 12, bottom = 0, right = 0 }
-                , Font.size 14
-                , Font.color (R10.FormComponents.Internal.UI.Color.label args.palette)
-                , htmlAttribute <| Html.Attributes.id "ie-flex-fix"
-                ]
+        (row [ width fill ]
+            [ el
+                ([ moveUp 2, alignTop ]
+                    ++ (if args.clickableLabel then
+                            []
+
+                        else
+                            elementThatReceiveClicks
+                       )
+                )
               <|
-                [ text <| args.label ]
+                checkboxIcon args args.value
+            , R10.I18n.paragraphFromString
+                [ R10.FontSize.small
+                , paddingEach { top = 0, left = 12, bottom = 0, right = 0 }
+                ]
+                { renderingMode = R10.I18n.Normal
+                , tagReplacer = tagReplacer
+                , string = args.label
+                }
             ]
-        ]
+        )
 
 
-checkboxIcon : Args msg -> Bool -> Element msg
+tagReplacer : Context -> String -> String
+tagReplacer c string =
+    --
+    -- This is a minimal version of the other "tagReplacer". This is only
+    -- used for checkboxes (Newsletter subscribtion and Policies agreements.
+    --
+    string
+        |> String.replace "{privacy}" c.privacyPolicyLink
+        |> String.replace "{tac}" c.termsAndConditionsLink
+        |> String.replace "{cookie}" c.cookiePolicyLink
+
+
+checkboxIcon : Args msg -> Bool -> ElementC msg
 checkboxIcon args value =
     let
-        checkMark : Element msg
+        checkMark : ElementC msg
         checkMark =
             if value then
-                R10.FormComponents.Internal.UI.icons.checkBold
+                R10.FormComponents.Internal.UI.icons.check
                     [ centerX
                     , centerY
                     ]
@@ -181,10 +214,10 @@ checkboxIcon args value =
             else
                 none
 
-        boxBorderAndFill : Element msg
+        boxBorderAndFill : ElementC msg
         boxBorderAndFill =
             el
-                ([ htmlAttribute <| Html.Attributes.style "transition" "all 0.2s "
+                ([ R10.Transition.transition "all 0.2s "
                  , width <| px 24
                  , height <| px 24
                  , Border.rounded 3
@@ -205,7 +238,7 @@ checkboxIcon args value =
                             [ Background.color <| R10.FormComponents.Internal.UI.Color.transparent
                             , Border.innerShadow
                                 { offset = ( 0, 0 )
-                                , size = 1
+                                , size = 2
                                 , blur = 0
                                 , color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.25 args.palette
                                 }
@@ -214,15 +247,24 @@ checkboxIcon args value =
                 )
                 checkMark
     in
-    el [ moveLeft 4, alignTop ] <|
-        R10.FormComponents.Internal.UI.viewSelectShadowCustomSize
-            { palette = args.palette, focused = args.focused, disabled = args.disabled, size = { x = 32, y = 32 } }
-            boxBorderAndFill
+    R10.FormComponents.Internal.UI.viewSelectShadowCustomSize
+        { palette = args.palette
+        , focused = args.focused
+        , disabled = args.disabled
+        , value = value
+        , size = { x = 28, y = 28 }
+        , rounded = 4
+        }
+        boxBorderAndFill
 
 
-view : List (Attribute msg) -> Args msg -> Element msg
+view : List (AttributeC msg) -> Args msg -> ElementC msg
 view attrs args =
-    column [ width fill, centerY ] <|
+    column
+        [ width fill
+        , centerY
+        ]
+    <|
         [ case args.typeBinary of
             R10.FormTypes.BinarySwitch ->
                 viewBinarySwitch attrs args

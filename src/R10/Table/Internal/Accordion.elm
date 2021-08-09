@@ -1,12 +1,13 @@
 module R10.Table.Internal.Accordion exposing (getAttrs)
 
-import Element exposing (..)
+import Element.WithContext exposing (..)
+import R10.Context exposing (..)
 import Html
 import Html.Attributes
 import R10.Table.Internal.Style
 
 
-spinnerElementCss : Element msg
+spinnerElementCss : ElementC msg
 spinnerElementCss =
     Html.node "style"
         []
@@ -84,14 +85,14 @@ spinnerElementCss =
         |> html
 
 
-getAccordionContainer : Int -> Bool -> (Element msg -> Element msg)
+getAccordionContainer : Int -> Bool -> (ElementC msg -> ElementC msg)
 getAccordionContainer expandedHeight isExpanded =
     let
-        commonAttrs : List (Attribute msg)
+        commonAttrs : List (AttributeC msg)
         commonAttrs =
             [ width fill
             , alignBottom
-            , htmlAttribute <| Html.Attributes.style "transition" "all 0.3s ease-in-out"
+            , R10.Transition.transition "all 0.3s ease-in-out"
             , clipY
             ]
     in
@@ -102,7 +103,7 @@ getAccordionContainer expandedHeight isExpanded =
         el (commonAttrs ++ [ height <| px 0 ])
 
 
-spinnerOverlay : Int -> Element msg
+spinnerOverlay : Int -> ElementC msg
 spinnerOverlay expandedHeight =
     row
         [ width fill
@@ -121,7 +122,7 @@ spinnerOverlay expandedHeight =
         ]
 
 
-viewAccordionContainer : Int -> Bool -> (Element msg -> Element msg)
+viewAccordionContainer : Int -> Bool -> (ElementC msg -> ElementC msg)
 viewAccordionContainer expandedHeight isLoading =
     el
         ([ width fill
@@ -138,19 +139,19 @@ viewAccordionContainer expandedHeight isLoading =
         )
 
 
-getAttrs : (Maybe data -> Element msg) -> Int -> (Maybe data -> Bool) -> (Maybe data -> Bool) -> Maybe data -> List (Attribute msg)
+getAttrs : (Maybe data -> ElementC msg) -> Int -> (Maybe data -> Bool) -> (Maybe data -> Bool) -> Maybe data -> List (AttributeC msg)
 getAttrs viewContent expandedHeight getIsExpanded getIsLoading maybeData =
     let
-        container : Element msg -> Element msg
+        container : ElementC msg -> ElementC msg
         container =
             getAccordionContainer expandedHeight (getIsExpanded maybeData)
 
-        scrollableContainer : Element msg -> Element msg
+        scrollableContainer : ElementC msg -> ElementC msg
         scrollableContainer =
             viewAccordionContainer expandedHeight (getIsLoading maybeData)
     in
     R10.Table.Internal.Style.defaultRowAttrs
-        ++ [ htmlAttribute <| Html.Attributes.style "transition" "padding 0.3s ease-in-out"
+        ++ [ R10.Transition.transition "padding 0.3s ease-in-out"
            , behindContent <| container <| scrollableContainer <| viewContent maybeData
            ]
         ++ (if getIsExpanded maybeData then

@@ -28,6 +28,7 @@ import R10.Form.Internal.QtySubmitAttempted
 import R10.Form.Internal.Shared
 import R10.Form.Internal.State
 import R10.Form.Internal.Validation
+import R10.FormComponents.Internal.Phone.Update
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Single.Update
 import Set
@@ -80,8 +81,8 @@ isExistingFormFieldsValid form =
 
 {-| Validate the entire form
 -}
-validateEntireForm : R10.Form.Internal.Shared.Form -> R10.Form.Internal.State.State
-validateEntireForm form =
+validateEntireForm : (String -> String -> String) -> R10.Form.Internal.Shared.Form -> R10.Form.Internal.State.State
+validateEntireForm formStateBeforeValidationFixer form =
     let
         allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         allKeys =
@@ -89,7 +90,7 @@ validateEntireForm form =
 
         newFieldsState : Dict.Dict String R10.Form.Internal.FieldState.FieldState
         newFieldsState =
-            runAllValidations allKeys form.state form.state.fieldsState
+            runAllValidations formStateBeforeValidationFixer allKeys form.state form.state.fieldsState
 
         state : R10.Form.Internal.State.State
         state =
@@ -100,8 +101,8 @@ validateEntireForm form =
 
 {-| Validate the entire form
 -}
-validateDirtyFormFields : R10.Form.Internal.Shared.Form -> R10.Form.Internal.State.State
-validateDirtyFormFields form =
+validateDirtyFormFields : (String -> String -> String) -> R10.Form.Internal.Shared.Form -> R10.Form.Internal.State.State
+validateDirtyFormFields formStateBeforeValidationFixer form =
     let
         allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         allKeys =
@@ -109,7 +110,7 @@ validateDirtyFormFields form =
 
         newFieldsState : Dict.Dict String R10.Form.Internal.FieldState.FieldState
         newFieldsState =
-            runOnlyExistingValidations allKeys form.state form.state.fieldsState
+            runOnlyExistingValidations formStateBeforeValidationFixer allKeys form.state form.state.fieldsState
 
         state : R10.Form.Internal.State.State
         state =
@@ -189,12 +190,13 @@ helperLostFocus maybeFieldState =
 
 
 helperValidateCreatingFieldsState :
-    R10.Form.Internal.Key.Key
+    (String -> String -> String)
+    -> R10.Form.Internal.Key.Key
     -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs
     -> R10.Form.Internal.State.State
     -> Maybe R10.Form.Internal.FieldState.FieldState
     -> Maybe R10.Form.Internal.FieldState.FieldState
-helperValidateCreatingFieldsState key maybeValidationSpec formState maybeFieldState =
+helperValidateCreatingFieldsState formStateBeforeValidationFixer key maybeValidationSpec formState maybeFieldState =
     let
         fieldState : R10.Form.Internal.FieldState.FieldState
         fieldState =
@@ -202,25 +204,26 @@ helperValidateCreatingFieldsState key maybeValidationSpec formState maybeFieldSt
     in
     maybeFieldState
         |> Maybe.withDefault R10.Form.Internal.FieldState.init
-        |> R10.Form.Internal.Validation.validate key maybeValidationSpec formState
+        |> R10.Form.Internal.Validation.validate formStateBeforeValidationFixer key maybeValidationSpec formState
         |> Just
 
 
 helperValidateOnChangeValue :
-    R10.Form.Internal.Key.Key
+    (String -> String -> String)
+    -> R10.Form.Internal.Key.Key
     -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs
     -> R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted
     -> R10.Form.Internal.State.State
     -> Maybe R10.Form.Internal.FieldState.FieldState
     -> Maybe R10.Form.Internal.FieldState.FieldState
-helperValidateOnChangeValue key maybeValidationSpec qtySubmitAttempted formState maybeFieldState =
+helperValidateOnChangeValue formStateBeforeValidationFixer key maybeValidationSpec qtySubmitAttempted formState maybeFieldState =
     let
         fieldState : R10.Form.Internal.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
     if shouldValidationBeVisible qtySubmitAttempted fieldState then
-        helperValidateCreatingFieldsState key maybeValidationSpec formState maybeFieldState
+        helperValidateCreatingFieldsState formStateBeforeValidationFixer key maybeValidationSpec formState maybeFieldState
 
     else
         maybeFieldState
@@ -246,28 +249,30 @@ allValidationKeysMaker form =
 
 
 runAllValidations :
-    List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+    (String -> String -> String)
+    -> List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
     -> R10.Form.Internal.State.State
     -> Dict.Dict String R10.Form.Internal.FieldState.FieldState
     -> Dict.Dict String R10.Form.Internal.FieldState.FieldState
-runAllValidations allKeys formState fieldsState =
+runAllValidations formStateBeforeValidationFixer allKeys formState fieldsState =
     -- Validate the entire form, creating new `fieldState` if necessary,
     -- when such fields were not yet touched, for example.
     -- This is used when the form is submitted, for example.
     List.foldl
         (\( key, validationSpec ) acc ->
-            R10.Form.Internal.Dict.update key (helperValidateCreatingFieldsState key validationSpec formState) acc
+            R10.Form.Internal.Dict.update key (helperValidateCreatingFieldsState formStateBeforeValidationFixer key validationSpec formState) acc
         )
         fieldsState
         allKeys
 
 
 runOnlyExistingValidations :
-    List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+    (String -> String -> String)
+    -> List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
     -> R10.Form.Internal.State.State
     -> Dict.Dict String R10.Form.Internal.FieldState.FieldState
     -> Dict.Dict String R10.Form.Internal.FieldState.FieldState
-runOnlyExistingValidations allKeys formState fieldsState =
+runOnlyExistingValidations formStateBeforeValidationFixer allKeys formState fieldsState =
     -- Validate the entire form, without creating new `fieldState`
     --
     -- Validation should only run for fields that have been focused out or
@@ -289,7 +294,7 @@ runOnlyExistingValidations allKeys formState fieldsState =
                             -- ██ ███████        ██    ██   ██ ██ ███████     ██   ████ ███████ ███████ ██████  ███████ ██████    ██
                             -- if fieldState.lostFocusOneOrMoreTime then
                             fieldState
-                                |> R10.Form.Internal.Validation.validate key maybeValidationSpec formState
+                                |> R10.Form.Internal.Validation.validate formStateBeforeValidationFixer key maybeValidationSpec formState
                                 |> Just
                  -- else
                  --     maybeFieldState
@@ -420,13 +425,14 @@ isFormSubmittableAndSubmitted form formMsg =
 
 
 submit :
-    R10.Form.Internal.Shared.Form
+    (String -> String -> String)
+    -> R10.Form.Internal.Shared.Form
     -> R10.Form.Internal.State.State
-submit form =
+submit formStateBeforeValidationFixer form =
     let
         newFieldsState : R10.Form.Internal.State.State
         newFieldsState =
-            validateEntireForm form
+            validateEntireForm formStateBeforeValidationFixer form
 
         newQtySubmitAttempted : R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted
         newQtySubmitAttempted =
@@ -450,14 +456,14 @@ onGetFocus key formState =
     }
 
 
-onLoseFocus : R10.Form.Internal.Key.Key -> R10.Form.Internal.FieldConf.FieldConf -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
-onLoseFocus key fieldConf formState =
+onLoseFocus : (String -> String -> String) -> R10.Form.Internal.Key.Key -> R10.Form.Internal.FieldConf.FieldConf -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
+onLoseFocus formStateBeforeValidationFixer key fieldConf formState =
     { formState
         | focused = Nothing
         , fieldsState =
             formState.fieldsState
                 |> R10.Form.Internal.Dict.update key helperLostFocus
-                |> R10.Form.Internal.Dict.update key (helperValidateCreatingFieldsState key fieldConf.validationSpecs formState)
+                |> R10.Form.Internal.Dict.update key (helperValidateCreatingFieldsState formStateBeforeValidationFixer key fieldConf.validationSpecs formState)
     }
 
 
@@ -478,35 +484,15 @@ onScroll key scroll formState =
     { formState | fieldsState = formState.fieldsState |> R10.Form.Internal.Dict.update key (helperUpdateScroll scroll) }
 
 
-onChangeValue : R10.Form.Internal.Key.Key -> R10.Form.Internal.FieldConf.FieldConf -> R10.Form.Internal.Conf.Conf -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
-onChangeValue key fieldConf formConf string formState =
-    -- let
-    --     newFormState : R10.Form.Internal.State.State
-    --     newFormState =
-    --         { formState
-    --             | focused = Just (R10.Form.Internal.Key.toString key)
-    --             , fieldsState =
-    --                 formState.fieldsState
-    --                     |> R10.Form.Internal.Dict.update key (helperUpdateValue string)
-    --                     |> R10.Form.Internal.Dict.update key helperUpdateDirty
-    --                     |> R10.Form.Internal.Dict.update key (helperValidateOnChangeValue key fieldConf.validationSpecs formState.qtySubmitAttempted formState)
-    --         }
-    --
-    -- allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
-    -- allKeys =
-    --     allValidationKeysMaker { conf = formConf, state = newFormState }
-    -- in
-    -- { newFormState
-    --     | fieldsState =
-    --         runOnlyExistingValidations allKeys newFormState newFormState.fieldsState
-    -- }
+onChangeValue : (String -> String -> String) -> R10.Form.Internal.Key.Key -> R10.Form.Internal.FieldConf.FieldConf -> R10.Form.Internal.Conf.Conf -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
+onChangeValue formStateBeforeValidationFixer key fieldConf formConf string formState =
     { formState
         | focused = Just (R10.Form.Internal.Key.toString key)
         , fieldsState =
             formState.fieldsState
                 |> R10.Form.Internal.Dict.update key (helperUpdateValue string)
                 |> R10.Form.Internal.Dict.update key helperUpdateDirty
-                |> R10.Form.Internal.Dict.update key (helperValidateOnChangeValue key fieldConf.validationSpecs formState.qtySubmitAttempted formState)
+                |> R10.Form.Internal.Dict.update key (helperValidateOnChangeValue formStateBeforeValidationFixer key fieldConf.validationSpecs formState.qtySubmitAttempted formState)
     }
 
 
@@ -520,8 +506,8 @@ onChangeSelect key string formState =
     { formState | fieldsState = formState.fieldsState |> R10.Form.Internal.Dict.update key (helperUpdateSelect string) }
 
 
-update : R10.Form.Internal.Msg.Msg -> R10.Form.Internal.State.State -> ( R10.Form.Internal.State.State, Cmd R10.Form.Internal.Msg.Msg )
-update msg formStateBeforeHandleChangesSinceLastSubmissions =
+update : (String -> String -> String) -> R10.Form.Internal.Msg.Msg -> R10.Form.Internal.State.State -> ( R10.Form.Internal.State.State, Cmd R10.Form.Internal.Msg.Msg )
+update formStateBeforeValidationFixer msg formStateBeforeHandleChangesSinceLastSubmissions =
     let
         formState : R10.Form.Internal.State.State
         formState =
@@ -537,7 +523,7 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
             ( formState, Cmd.none )
 
         R10.Form.Internal.Msg.Submit formConf ->
-            ( submit { conf = formConf, state = formState }, Cmd.none )
+            ( submit formStateBeforeValidationFixer { conf = formConf, state = formState }, Cmd.none )
 
         R10.Form.Internal.Msg.GetFocus key ->
             ( onGetFocus key formState
@@ -545,7 +531,7 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
             )
 
         R10.Form.Internal.Msg.LoseFocus key fieldConf ->
-            ( onLoseFocus key fieldConf formState
+            ( onLoseFocus formStateBeforeValidationFixer key fieldConf formState
             , Cmd.none
             )
 
@@ -591,7 +577,7 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
             )
 
         R10.Form.Internal.Msg.ChangeValue key fieldConf formConf string ->
-            ( onChangeValue key fieldConf formConf string formState, Cmd.none )
+            ( onChangeValue formStateBeforeValidationFixer key fieldConf formConf string formState, Cmd.none )
 
         R10.Form.Internal.Msg.OnSingleMsg key fieldConf formConf singleMsg ->
             let
@@ -615,52 +601,113 @@ update msg formStateBeforeHandleChangesSinceLastSubmissions =
 
                 newFormState : R10.Form.Internal.State.State
                 newFormState =
-                    formState
-                        |> (if fieldState.value /= newSingleModel.value then
-                                onChangeValue key fieldConf formConf newSingleModel.value
-
-                            else
-                                identity
-                           )
-                        |> (if fieldState.search /= newSingleModel.search then
-                                onChangeSearch key newSingleModel.search
-
-                            else
-                                identity
-                           )
-                        |> (if fieldState.select /= newSingleModel.select then
-                                onChangeSelect key newSingleModel.select
-
-                            else
-                                identity
-                           )
-                        |> (if fieldState.scroll /= newSingleModel.scroll then
-                                onScroll key newSingleModel.scroll
-
-                            else
-                                identity
-                           )
-                        |> (if singleModel.focused /= newSingleModel.focused then
-                                if newSingleModel.focused then
-                                    onGetFocus key
-
-                                else
-                                    onLoseFocus key fieldConf
-
-                            else
-                                identity
-                           )
-                        |> (if singleModel.opened /= newSingleModel.opened then
-                                if newSingleModel.opened then
-                                    onActivate key
-
-                                else
-                                    onDeactivate
-
-                            else
-                                identity
-                           )
+                    copyComponentStateToFormState
+                        { formStateBeforeValidationFixer = formStateBeforeValidationFixer
+                        , fieldConf = fieldConf
+                        , fieldState = fieldState
+                        , formConf = formConf
+                        , formState = formState
+                        , key = key
+                        , newSingleModel = newSingleModel
+                        , singleModel = singleModel
+                        }
             in
             ( newFormState
             , Cmd.map (R10.Form.Internal.Msg.OnSingleMsg key fieldConf formConf) singleCmd
             )
+
+        R10.Form.Internal.Msg.OnPhoneMsg key fieldConf formConf phoneMsg ->
+            let
+                fieldState : R10.Form.Internal.FieldState.FieldState
+                fieldState =
+                    R10.Form.Internal.Dict.get key formState.fieldsState
+                        |> stateWithDefault
+
+                singleModel : R10.FormComponents.Internal.Single.Common.Model
+                singleModel =
+                    { value = fieldState.value
+                    , search = fieldState.search
+                    , select = fieldState.select
+                    , scroll = fieldState.scroll
+                    , focused = formState.focused == Just (R10.Form.Internal.Key.toString key)
+                    , opened = formState.active == Just (R10.Form.Internal.Key.toString key)
+                    }
+
+                ( newSingleModel, singleCmd ) =
+                    R10.FormComponents.Internal.Phone.Update.update phoneMsg singleModel
+
+                newFormState : R10.Form.Internal.State.State
+                newFormState =
+                    copyComponentStateToFormState
+                        { formStateBeforeValidationFixer = formStateBeforeValidationFixer
+                        , fieldConf = fieldConf
+                        , fieldState = fieldState
+                        , formConf = formConf
+                        , formState = formState
+                        , key = key
+                        , newSingleModel = newSingleModel
+                        , singleModel = singleModel
+                        }
+            in
+            ( newFormState
+            , Cmd.map (R10.Form.Internal.Msg.OnPhoneMsg key fieldConf formConf) singleCmd
+            )
+
+
+copyComponentStateToFormState :
+    { formStateBeforeValidationFixer : String -> String -> String
+    , fieldConf : R10.Form.Internal.FieldConf.FieldConf
+    , fieldState : R10.Form.Internal.FieldState.FieldState
+    , formConf : R10.Form.Internal.Conf.Conf
+    , formState : R10.Form.Internal.State.State
+    , key : R10.Form.Internal.Key.Key
+    , newSingleModel : R10.FormComponents.Internal.Single.Common.Model
+    , singleModel : R10.FormComponents.Internal.Single.Common.Model
+    }
+    -> R10.Form.Internal.State.State
+copyComponentStateToFormState { formStateBeforeValidationFixer, formState, key, fieldConf, formConf, fieldState, singleModel, newSingleModel } =
+    formState
+        |> (if fieldState.value /= newSingleModel.value then
+                onChangeValue formStateBeforeValidationFixer key fieldConf formConf newSingleModel.value
+
+            else
+                identity
+           )
+        |> (if fieldState.search /= newSingleModel.search then
+                onChangeSearch key newSingleModel.search
+
+            else
+                identity
+           )
+        |> (if fieldState.select /= newSingleModel.select then
+                onChangeSelect key newSingleModel.select
+
+            else
+                identity
+           )
+        |> (if fieldState.scroll /= newSingleModel.scroll then
+                onScroll key newSingleModel.scroll
+
+            else
+                identity
+           )
+        |> (if singleModel.focused /= newSingleModel.focused then
+                if newSingleModel.focused then
+                    onGetFocus key
+
+                else
+                    onLoseFocus formStateBeforeValidationFixer key fieldConf
+
+            else
+                identity
+           )
+        |> (if singleModel.opened /= newSingleModel.opened then
+                if newSingleModel.opened then
+                    onActivate key
+
+                else
+                    onDeactivate
+
+            else
+                identity
+           )

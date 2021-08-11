@@ -11,9 +11,7 @@
 * [R10 demo with documentation and examples](https://r10.netlify.app/)
 * [R10 in the Elm's package website](https://package.elm-lang.org/packages/rakutentech/r10/latest/)
 * [R10 in Github](https://github.com/rakutentech/r10)
-* [Ellie: R10 Simple View](https://ellie-app.com/c5SL2qqLZP2a1)
-* [Ellie: R10 Simple Form](https://ellie-app.com/c5SKjKvwnNRa1)
-* [Ellie: R10 Credit Card](https://ellie-app.com/c5SH5HxBXPHa1)
+* [Ellie: R10 Simple Form](https://ellie-app.com/dYydQR9MxNwa1)
 
 # How to use the R10 library
 
@@ -23,7 +21,7 @@ If you already have an existing Elm project, install the library with
 elm install rakutentech/r10
 ```
 
-See [this Ellie](https://ellie-app.com/c5SL2qqLZP2a1) or scroll down this page to see an usage code sample.
+See [this Ellie](https://ellie-app.com/dYydQR9MxNwa1) or scroll down this page to see an usage code sample.
 
 
                
@@ -115,7 +113,7 @@ theme =
 
 This is the source code for the example with two buttons.
 
-You can also find it at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simpleView/src/Main.elm) or in  [this Ellie](https://ellie-app.com/c5SL2qqLZP2a1).
+You can also find it at [github.com](https://github.com/rakutentech/r10/tree/master/examples/simpleView/src/Main.elm).
 
 ```elm
 module Main exposing (main)

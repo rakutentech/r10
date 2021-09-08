@@ -3,9 +3,9 @@ module Main exposing (main)
 import Browser
 import Color.Convert
 import Color.Manipulate
-import Element exposing (..)
-import Element.Border as Border
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Border as Border
+import Element.WithContext.Font as Font
 import Html
 import Html.Attributes
 import R10.Button
@@ -14,6 +14,7 @@ import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.Svg
 import R10.Color.Utils
+import R10.Context
 import R10.Form
 import R10.FormTypes
 import R10.Libu
@@ -35,31 +36,40 @@ init =
                 , idDom = Nothing
                 , type_ = R10.FormTypes.inputField.textWithPattern "____ ____ ____ ____"
                 , label = "Card Number"
+                , clickableLabel = False
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
                 , validationSpecs =
                     Just
-                        { showPassedValidationMessages = False
-                        , hidePassedValidationStyle = False
+                        { pretendIsNotValidatedIfValid = True
+                        , showAlsoPassedValidation = False
                         , validationIcon = R10.FormTypes.NoIcon
-                        , validation = [ R10.Form.validation.required ]
+                        , validation =
+                            [ R10.Form.validation.required ]
                         }
+                , minWidth = Nothing
+                , maxWidth = Nothing
+                , autocomplete = Nothing
                 }
             , R10.Form.entity.field
                 { id = "cardHolder"
                 , idDom = Nothing
                 , type_ = R10.FormTypes.inputField.textPlain
                 , label = "Card Holder"
+                , clickableLabel = False
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
                 , validationSpecs =
                     Just
-                        { showPassedValidationMessages = False
-                        , hidePassedValidationStyle = False
+                        { pretendIsNotValidatedIfValid = True
+                        , showAlsoPassedValidation = False
                         , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.validation.required ]
                         }
+                , minWidth = Nothing
+                , maxWidth = Nothing
+                , autocomplete = Nothing
                 }
             , R10.Form.entity.wrappable "wrappable"
                 [ R10.Form.entity.field
@@ -67,30 +77,40 @@ init =
                     , idDom = Nothing
                     , type_ = R10.FormTypes.inputField.textWithPattern "MM/YY"
                     , label = "Expires"
+                    , clickableLabel = False
                     , helperText = Nothing
                     , requiredLabel = requiredLabel
                     , validationSpecs =
                         Just
-                            { showPassedValidationMessages = False
-                            , hidePassedValidationStyle = False
+                            { pretendIsNotValidatedIfValid = True
+                            , showAlsoPassedValidation = False
                             , validationIcon = R10.FormTypes.NoIcon
-                            , validation = [ R10.Form.validation.required ]
+                            , validation =
+                                [ R10.Form.validation.required ]
                             }
+                    , minWidth = Nothing
+                    , maxWidth = Nothing
+                    , autocomplete = Nothing
                     }
                 , R10.Form.entity.field
                     { id = "cvv"
                     , idDom = Nothing
                     , type_ = R10.FormTypes.inputField.textWithPattern "___"
                     , label = "CVV"
+                    , clickableLabel = False
                     , helperText = Nothing
                     , requiredLabel = requiredLabel
                     , validationSpecs =
                         Just
-                            { showPassedValidationMessages = False
-                            , hidePassedValidationStyle = False
+                            { pretendIsNotValidatedIfValid = True
+                            , showAlsoPassedValidation = False
                             , validationIcon = R10.FormTypes.NoIcon
-                            , validation = [ R10.Form.validation.required ]
+                            , validation =
+                                [ R10.Form.validation.required ]
                             }
+                    , minWidth = Nothing
+                    , maxWidth = Nothing
+                    , autocomplete = Nothing
                     }
                 ]
             ]
@@ -117,14 +137,14 @@ update msg model =
                     { form
                         | state =
                             form.state
-                                |> R10.Form.update msgForm
+                                |> R10.Form.update (\_ a -> a) msgForm
                                 |> Tuple.first
                     }
             in
             { model | form = newForm }
 
 
-viewCreditCard : R10.Theme.Theme -> R10.Form.State -> Element msg
+viewCreditCard : R10.Theme.Theme -> R10.Form.State -> Element context msg
 viewCreditCard theme formState =
     let
         logo : { height : number, src : String }
@@ -185,9 +205,14 @@ viewCreditCard theme formState =
         ]
 
 
+context : R10.Context.Context
+context =
+    R10.Context.empty
+
+
 view : R10.Theme.Theme -> Model -> Html.Html Msg
 view theme model =
-    layoutWith
+    layoutWith { context | theme = theme }
         { options =
             [ focusStyle
                 { borderColor = Nothing
@@ -196,18 +221,17 @@ view theme model =
                 }
             ]
         }
-        [ R10.Color.AttrsBackground.background theme
+        [ R10.Color.AttrsBackground.background
         , padding 50
         ]
-    <|
-        column
+        (column
             (R10.Card.high theme
                 ++ [ centerX
                    , centerY
                    , width (fill |> maximum 460)
                    , height shrink
                    , spacing 30
-                   , R10.Color.AttrsBackground.surface2dp theme
+                   , R10.Color.AttrsBackground.surface2dp
                    ]
             )
             [ R10.Svg.LogosExtra.r10 [ centerX ] (R10.Color.Svg.logo theme) 32
@@ -220,13 +244,13 @@ view theme model =
                     , style = R10.Form.style.outlined
                     , palette = Just <| R10.Form.themeToPalette theme
                     }
-            , Element.map MsgForm <|
+            , Element.WithContext.map MsgForm <|
                 R10.Button.primary []
                     { label = text "Submit"
                     , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
-                    , theme = theme
                     }
             ]
+        )
 
 
 
@@ -260,7 +284,7 @@ requiredLabel =
     Nothing
 
 
-textCreditCard : List (Attribute msg) -> String -> Element msg
+textCreditCard : List (Attr context () msg) -> String -> Element context msg
 textCreditCard attrs string =
     el
         ([ Font.size 13
@@ -275,7 +299,7 @@ textCreditCard attrs string =
         text string
 
 
-textEmbossedCreditCard : List (Attribute msg) -> String -> Element msg
+textEmbossedCreditCard : List (Attribute context msg) -> String -> Element context msg
 textEmbossedCreditCard attrs string =
     let
         shadow : Int -> Int -> String -> String
@@ -311,7 +335,7 @@ textEmbossedCreditCard attrs string =
         (text string)
 
 
-embossedValue : R10.Form.State -> List (Attribute msg) -> R10.Form.KeyAsString -> String -> Element msg
+embossedValue : R10.Form.State -> List (Attribute context msg) -> R10.Form.KeyAsString -> String -> Element context msg
 embossedValue formState attrs id default =
     let
         defaultIfEmpty : String -> String

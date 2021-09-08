@@ -108,7 +108,7 @@ justUpdateForm formMsg filtersState =
         Just ( key, form ) ->
             let
                 ( newFormState_, formCmd ) =
-                    R10.Form.update formMsg form.state
+                    R10.Form.update (\_ a -> a) formMsg form.state
             in
             ( { filtersState
                 | filterEditor =

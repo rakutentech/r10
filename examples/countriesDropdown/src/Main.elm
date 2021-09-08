@@ -1,14 +1,13 @@
 module Main exposing (main)
 
 import Browser
-import Color
 import Countries
 import Dict
-import Element exposing (..)
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Font as Font
 import Html
-import Html.Attributes
 import R10.Color
+import R10.Context
 import R10.DropDown
 import R10.Form
 import R10.FormTypes
@@ -93,7 +92,7 @@ init flags =
 
 
 type Msg
-    = MsgMapperPhone R10.Form.PhoneMsg
+    = MsgMapperPhone R10.Form.MsgPhone
     | MsgMapperForm R10.Form.Msg
     | Change1 String
     | Change2 String
@@ -108,7 +107,7 @@ update msg model =
                     model.modelForm
 
                 ( newState, cmd ) =
-                    R10.Form.update msg3 modelForm.state
+                    R10.Form.update (\_ a -> a) msg3 modelForm.state
             in
             ( { model | modelForm = { modelForm | state = newState } }, Cmd.map MsgMapperForm cmd )
 
@@ -121,14 +120,19 @@ update msg model =
         MsgMapperPhone singleMsg ->
             let
                 ( selectState, selectCmd ) =
-                    R10.Form.phoneUpdate singleMsg model.modelPhone
+                    R10.Form.updatePhone singleMsg model.modelPhone
             in
             ( { model | modelPhone = selectState }, Cmd.map MsgMapperPhone selectCmd )
 
 
+context : R10.Context.Context
+context =
+    R10.Context.empty
+
+
 view : R10.Theme.Theme -> Model -> Html.Html Msg
 view theme model =
-    layoutWith
+    layoutWith { context | theme = theme }
         { options =
             [ focusStyle
                 { borderColor = Nothing
@@ -153,7 +157,7 @@ view theme model =
                 , R10.Form.phoneView
                     []
                     model.modelPhone
-                    { valid = model.valid
+                    { maybeValid = model.valid
                     , toMsg = MsgMapperPhone
                     , label = "Telephone"
                     , helperText = Nothing
@@ -177,6 +181,7 @@ view theme model =
                                 }
                             )
                             (fixCountries model.language Countries.all)
+                    , fontSize = 12
                     }
                 , R10.DropDown.viewBorderLess [ width fill ]
                     { colorBackground = rgba 0 0 0 0.03
@@ -191,6 +196,7 @@ view theme model =
                                 }
                             )
                             (List.sortBy .name Countries.all)
+                    , fontSize = 12
                     }
                 ]
             ]

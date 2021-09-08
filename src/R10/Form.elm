@@ -23,6 +23,7 @@ module R10.Form exposing
     , viewSingle, ArgsSingle, viewSingleCustom, ArgsSingleCustom
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationForView, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , fieldConfigConcatMap, fieldConfigMap
+    , MsgPhone, PhoneModel, phoneInit, phoneView, updatePhone
     )
 
 {-| Useful things to build a form.
@@ -1410,57 +1411,57 @@ entitiesValidationOutcomes =
 
 
 
---
--- -- ██████  ██   ██  ██████  ███    ██ ███████
--- -- ██   ██ ██   ██ ██    ██ ████   ██ ██
--- -- ██████  ███████ ██    ██ ██ ██  ██ █████
--- -- ██      ██   ██ ██    ██ ██  ██ ██ ██
--- -- ██      ██   ██  ██████  ██   ████ ███████
---
---
--- {-| -}
--- type alias PhoneModel =
---     R10.FormComponents.Internal.Phone.Common.Model
---
---
--- {-| -}
--- type alias MsgPhone =
---     R10.FormComponents.Internal.Phone.Common.Msg
---
---
--- {-| -}
--- phoneView :
---     List (AttributeC msg)
---     -> PhoneModel
---     ->
---         { maybeValid : Maybe Bool
---         , toMsg : MsgPhone -> msg
---         , label : String
---         , helperText : Maybe String
---         , disabled : Bool
---         , requiredLabel : Maybe String
---         , style : Style
---         , key : String
---         , palette : R10.FormTypes.Palette
---         , countryOptions : Maybe (List R10.Country.Country)
---         }
---     -> ElementC msg
--- phoneView =
---     R10.FormComponents.Internal.Phone.view
---
---
--- {-| -}
--- updatePhone : MsgPhone -> PhoneModel -> ( PhoneModel, Cmd MsgPhone )
--- updatePhone =
---     R10.FormComponents.Internal.Phone.Update.update
---
---
--- {-| -}
--- phoneInit : PhoneModel
--- phoneInit =
---     R10.FormComponents.Internal.Phone.Common.init
---
---
+-- ██████  ██   ██  ██████  ███    ██ ███████
+-- ██   ██ ██   ██ ██    ██ ████   ██ ██
+-- ██████  ███████ ██    ██ ██ ██  ██ █████
+-- ██      ██   ██ ██    ██ ██  ██ ██ ██
+-- ██      ██   ██  ██████  ██   ████ ███████
+
+
+{-| -}
+type alias PhoneModel =
+    R10.FormComponents.Internal.Phone.Common.Model
+
+
+{-| -}
+type alias MsgPhone =
+    R10.FormComponents.Internal.Phone.Common.Msg
+
+
+{-| -}
+phoneView :
+    List (AttributeC msg)
+    -> PhoneModel
+    ->
+        { maybeValid : Maybe Bool
+        , toMsg : MsgPhone -> msg
+        , label : String
+        , helperText : Maybe String
+        , disabled : Bool
+        , requiredLabel : Maybe String
+        , style : Style
+        , key : String
+        , palette : R10.FormTypes.Palette
+        , countryOptions : Maybe (List R10.Country.Country)
+        }
+    -> ElementC msg
+phoneView =
+    R10.FormComponents.Internal.Phone.view
+
+
+{-| -}
+updatePhone : MsgPhone -> PhoneModel -> ( PhoneModel, Cmd MsgPhone )
+updatePhone =
+    R10.FormComponents.Internal.Phone.Update.update
+
+
+{-| -}
+phoneInit : PhoneModel
+phoneInit =
+    R10.FormComponents.Internal.Phone.Common.init
+
+
+
 --████████ ███████ ██   ██ ████████
 --   ██    ██       ██ ██     ██
 --   ██    █████     ███      ██

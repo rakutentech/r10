@@ -1,10 +1,10 @@
 module Main3 exposing (main)
 
 import Browser
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Element.WithContext.Font as Font
 import Html
 import Html.Attributes
 import R10.Button
@@ -12,16 +12,13 @@ import R10.Card
 import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.Svg
+import R10.Context
 import R10.FontSize
 import R10.Form
-import R10.Form.Internal.Key
 import R10.FormTypes
-import R10.Language
 import R10.Libu
 import R10.Mode
-import R10.Paragraph
 import R10.Svg.Logos
-import R10.Svg.LogosExtra
 import R10.Theme
 
 
@@ -64,61 +61,80 @@ init =
                 , idDom = Nothing
                 , type_ = R10.FormTypes.TypeText (R10.FormTypes.TextWithPattern "____ ____ ____ ____")
                 , label = "Card Number"
+                , clickableLabel = False
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
                 , validationSpecs =
                     Just
-                        { showPassedValidationMessages = False
-                        , hidePassedValidationStyle = False
+                        { pretendIsNotValidatedIfValid = True
+                        , showAlsoPassedValidation = False
                         , validationIcon = R10.FormTypes.NoIcon
-                        , validation = [ R10.Form.validation.required ]
+                        , validation =
+                            [ R10.Form.validation.required ]
                         }
+                , minWidth = Nothing
+                , maxWidth = Nothing
+                , autocomplete = Nothing
                 }
             , R10.Form.entity.field
                 { id = "cardHolder"
                 , idDom = Nothing
                 , type_ = R10.FormTypes.TypeText R10.FormTypes.TextPlain
                 , label = "Card Holder"
+                , clickableLabel = False
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
                 , validationSpecs =
                     Just
-                        { showPassedValidationMessages = False
-                        , hidePassedValidationStyle = False
+                        { pretendIsNotValidatedIfValid = True
+                        , showAlsoPassedValidation = False
                         , validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.validation.required ]
                         }
+                , minWidth = Nothing
+                , maxWidth = Nothing
+                , autocomplete = Nothing
                 }
             , R10.Form.entity.field
                 { id = "expires"
                 , idDom = Nothing
                 , type_ = R10.FormTypes.TypeText (R10.FormTypes.TextWithPattern "MM/YY")
                 , label = "Expires (MM/YY)"
+                , clickableLabel = False
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
                 , validationSpecs =
                     Just
-                        { showPassedValidationMessages = False
-                        , hidePassedValidationStyle = False
+                        { pretendIsNotValidatedIfValid = True
+                        , showAlsoPassedValidation = False
                         , validationIcon = R10.FormTypes.NoIcon
-                        , validation = [ R10.Form.validation.required ]
+                        , validation =
+                            [ R10.Form.validation.required ]
                         }
+                , minWidth = Nothing
+                , maxWidth = Nothing
+                , autocomplete = Nothing
                 }
             , R10.Form.entity.field
                 { id = "cvv"
                 , idDom = Nothing
                 , type_ = R10.FormTypes.TypeText (R10.FormTypes.TextWithPattern "___")
                 , label = "CVV"
+                , clickableLabel = False
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
                 , validationSpecs =
                     Just
-                        { showPassedValidationMessages = False
-                        , hidePassedValidationStyle = False
+                        { pretendIsNotValidatedIfValid = True
+                        , showAlsoPassedValidation = False
                         , validationIcon = R10.FormTypes.NoIcon
-                        , validation = [ R10.Form.validation.required ]
+                        , validation =
+                            [ R10.Form.validation.required ]
                         }
+                , minWidth = Nothing
+                , maxWidth = Nothing
+                , autocomplete = Nothing
                 }
             ]
         , state = R10.Form.initState
@@ -140,14 +156,14 @@ update msg model =
                     { form
                         | state =
                             form.state
-                                |> R10.Form.update msgForm
+                                |> R10.Form.update (\_ a -> a) msgForm
                                 |> Tuple.first
                     }
             in
             { model | form = newForm }
 
 
-viewCreditCard : R10.Form.State -> Element msg
+viewCreditCard : R10.Form.State -> Element context msg
 viewCreditCard formState =
     let
         logo =
@@ -186,9 +202,20 @@ viewCreditCard formState =
         ]
 
 
+context : R10.Context.Context
+context =
+    R10.Context.empty
+
+
 view : Model -> Html.Html Msg
 view model =
     layoutWith
+        { context
+            | theme =
+                { mode = R10.Mode.Light
+                , primaryColor = R10.Color.primary.blueSky
+                }
+        }
         { options =
             [ focusStyle
                 { borderColor = Nothing
@@ -197,7 +224,7 @@ view model =
                 }
             ]
         }
-        [ R10.Color.AttrsBackground.background theme, padding 20, R10.FontSize.normal ]
+        [ R10.Color.AttrsBackground.background, padding 20, R10.FontSize.normal ]
         (column
             (R10.Card.high theme
                 ++ [ centerX
@@ -217,11 +244,10 @@ view model =
                     , style = R10.Form.style.filled
                     , palette = Just <| R10.Form.themeToPalette theme
                     }
-            , Element.map MsgForm <|
+            , Element.WithContext.map MsgForm <|
                 R10.Button.primary []
                     { label = text "Submit"
                     , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
-                    , theme = theme
                     }
             ]
         )
@@ -258,7 +284,7 @@ requiredLabel =
     Nothing
 
 
-textCreditCard : List (Attribute msg) -> String -> Element msg
+textCreditCard : List (Attribute context msg) -> String -> Element context msg
 textCreditCard attrs string =
     el
         ([ Font.size 13
@@ -272,7 +298,7 @@ textCreditCard attrs string =
         text string
 
 
-textEmbossedCreditCard : List (Attribute msg) -> String -> Element msg
+textEmbossedCreditCard : List (Attribute context msg) -> String -> Element context msg
 textEmbossedCreditCard attrs string =
     let
         shadow x y color =
@@ -310,7 +336,7 @@ textEmbossedCreditCard attrs string =
         (text string)
 
 
-embossedValue : R10.Form.State -> List (Attribute msg) -> R10.Form.KeyAsString -> String -> Element msg
+embossedValue : R10.Form.State -> List (Attribute context msg) -> R10.Form.KeyAsString -> String -> Element context msg
 embossedValue formState attrs id default =
     let
         defaultIfEmpty : String -> String

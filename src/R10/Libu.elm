@@ -43,9 +43,9 @@ type Type msg
 
 {-| -}
 view :
-    List (AttributeC msg)
-    -> { type_ : Type msg, label : ElementC msg }
-    -> ElementC msg
+    List (Attribute (R10.Context.ContextInternal z) msg)
+    -> { type_ : Type msg, label : Element (R10.Context.ContextInternal z) msg }
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs args =
     case args.type_ of
         Li url ->

@@ -113,12 +113,12 @@ decoder supportedLanguageList string =
     let
         decoderFromString : String -> Result String Language
         decoderFromString string_ =
-            case decoderFourLettersLangauge string_ of
+            case decoderFourLettersLanguage string_ of
                 Ok language ->
                     Ok language
 
                 Err _ ->
-                    case decoderTwoLettersLangauge string_ of
+                    case decoderTwoLettersLanguage string_ of
                         Ok language ->
                             Ok language
 
@@ -138,8 +138,8 @@ decoder supportedLanguageList string =
 
 
 {-| -}
-decoderFourLettersLangauge : String -> Result String Language
-decoderFourLettersLangauge string =
+decoderFourLettersLanguage : String -> Result String Language
+decoderFourLettersLanguage string =
     case clean string of
         "lollipop" ->
             Ok Lollipop
@@ -179,8 +179,8 @@ decoderFourLettersLangauge string =
 
 
 {-| -}
-decoderTwoLettersLangauge : String -> Result String Language
-decoderTwoLettersLangauge string =
+decoderTwoLettersLanguage : String -> Result String Language
+decoderTwoLettersLanguage string =
     case String.left 2 <| clean string of
         "en" ->
             Ok EN_US
@@ -188,10 +188,7 @@ decoderTwoLettersLangauge string =
         "ja" ->
             Ok JA_JP
 
-        "zht" ->
-            Ok ZH_TW
-
-        "zhc" ->
+        "zh" ->
             Ok ZH_CN
 
         "de" ->
@@ -202,6 +199,12 @@ decoderTwoLettersLangauge string =
 
         "fr" ->
             Ok FR_FR
+
+        "it" ->
+            Ok IT_IT
+
+        "uk" ->
+            Ok UK_UA
 
         _ ->
             Err <| string ++ " is not a valid language"
@@ -224,13 +227,17 @@ listStringTolistLanguagesRemovingUnsupported supportedLanguageList strings =
 
 
 {-| -}
-preferredLanguage : List Language -> List String -> Maybe Language
-preferredLanguage supportedLanguageList navigatorLanguages =
+preferredLanguage :
+    { supportedLanguages : List Language
+    , navigatorLanguages : List String
+    }
+    -> Maybe Language
+preferredLanguage { supportedLanguages, navigatorLanguages } =
     --
     -- "navigatorLanguages" contains the preferred languages of the user,
     -- ranked by preference.
     --
-    -- "supportedLanguageList" contains a list of supported languages for this
+    -- "supportedLanguages" contains a list of supported languages for this
     -- instance.
     --
     -- For each language in the preferred list we check if there is a
@@ -241,7 +248,7 @@ preferredLanguage supportedLanguageList navigatorLanguages =
         preferredLanguageList : List Language
         preferredLanguageList =
             listStringTolistLanguagesRemovingUnsupported
-                supportedLanguageList
+                supportedLanguages
                 navigatorLanguages
     in
     if preferredLanguageList == [] then

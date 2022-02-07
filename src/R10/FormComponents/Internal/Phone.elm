@@ -6,6 +6,7 @@ module R10.FormComponents.Internal.Phone exposing
     , viewOptionEl
     )
 
+import Dict
 import Element.WithContext exposing (..)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
@@ -15,6 +16,8 @@ import Element.WithContext.Input as Input
 import Html.Attributes
 import R10.Context exposing (..)
 import R10.Country
+import R10.Form.Internal.Helpers
+import R10.Form.Internal.Shared
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Phone.Combobox
 import R10.FormComponents.Internal.Phone.Common
@@ -23,10 +26,10 @@ import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
-import R10.FormTypes
+import R10.Palette
 import R10.SimpleMarkdown
 import R10.Transition
-import String.Extra
+import Url
 
 
 
@@ -42,7 +45,7 @@ extraCss =
     ""
 
 
-defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> ElementC msg
+defaultTrailingIcon : { a | opened : Bool, palette : R10.Palette.Palette } -> Element (R10.Context.ContextInternal z) msg
 defaultTrailingIcon { opened, palette } =
     R10.FormComponents.Internal.IconButton.view []
         { msgOnClick = Nothing
@@ -74,26 +77,45 @@ update =
     R10.FormComponents.Internal.Phone.Update.update
 
 
-getFlagIcon : Int -> Maybe R10.Country.Country -> ElementC msg
-getFlagIcon size maybeCountry =
-    el
-        [ Font.size size ]
-    <|
-        text
-            (case maybeCountry of
-                Just country ->
-                    R10.Country.toFlag country
+getFlagIcon : Maybe R10.Country.Country -> Element (R10.Context.ContextInternal z) msg
+getFlagIcon maybeCountry =
+    let
+        countryCode : String
+        countryCode =
+            Maybe.map R10.Country.toCountryCode maybeCountry
+                |> Maybe.withDefault ""
+
+        backgroundPosition : List (Attribute context msg)
+        backgroundPosition =
+            case Dict.get countryCode R10.Form.Internal.Shared.flagIconPositions of
+                Just ( x, y ) ->
+                    [ htmlAttribute <| Html.Attributes.style "background-position" (String.fromFloat (x - 1) ++ "px " ++ String.fromFloat (y - 2) ++ "px")
+                    , htmlAttribute <| Html.Attributes.style "background-size" "auto"
+                    ]
 
                 Nothing ->
-                    R10.Country.emptyFlag
-            )
+                    [ htmlAttribute <| Html.Attributes.style "background-size" "cover" ]
+    in
+    withContext
+        (\c ->
+            el
+                ([ width <| px 14
+                 , height <| px 11
+                 , Border.shadow { offset = ( 0, 0 ), size = 1, blur = 1, color = rgba 0 0 0 0.2 }
+                 , moveDown 1
+                 , Background.image c.contextR10.urlImageFlags
+                 ]
+                    ++ backgroundPosition
+                )
+            <|
+                none
+        )
 
 
 insertBold : List Int -> String -> String
 insertBold indexes string =
     string
         |> R10.FormComponents.Internal.Utils.stringInsertAtMulti "**" indexes
-        |> String.Extra.surround "**"
 
 
 viewOptionEl :
@@ -102,11 +124,11 @@ viewOptionEl :
         , msgOnSelect : R10.Country.Country -> msg
     }
     -> R10.Country.Country
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 viewOptionEl { search, msgOnSelect } country =
     let
         label =
-            R10.Country.toString country
+            R10.Country.toCountryNameWithAlias country
 
         insertPositions : List Int
         insertPositions =
@@ -134,14 +156,14 @@ viewOptionEl { search, msgOnSelect } country =
         , htmlAttribute <| Html.Attributes.style "mask-image" "linear-gradient(right, rgba(255,255,0,0), rgba(255,255,0, 1) 16px)"
         , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
         ]
-        [ getFlagIcon 24 <| Just country
+        [ getFlagIcon <| Just country
         , row [] (withBold |> R10.SimpleMarkdown.elementMarkdown)
         , el [ alpha 0.5 ] <| text ("(" ++ R10.Country.toCountryTelCode country ++ ")")
         ]
 
 
 getFlagButton :
-    { palette : R10.FormTypes.Palette
+    { palette : R10.Palette.Palette
     , disabled : Bool
     , toMsg : R10.FormComponents.Internal.Phone.Common.Msg -> msg
     , key : String
@@ -149,11 +171,10 @@ getFlagButton :
     , model : R10.FormComponents.Internal.Phone.Common.Model
     , style : R10.FormComponents.Internal.Style.Style
     }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 getFlagButton { palette, disabled, toMsg, key, filteredFieldOption, model, style } =
     Input.button
-        ([ mouseOver [ Background.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 palette ]
-         , R10.Transition.transition "all 0.2s"
+        ([ R10.Transition.transition "all 0.2s"
          , paddingXY 10 5
          , Border.rounded 10
          ]
@@ -167,6 +188,28 @@ getFlagButton { palette, disabled, toMsg, key, filteredFieldOption, model, style
                         [ moveDown 3
                         , moveRight 8
                         ]
+               )
+            ++ (if not disabled then
+                    [ mouseOver [ Background.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 palette ]
+                    , focused [ Background.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 palette ]
+                    , htmlAttribute <|
+                        R10.FormComponents.Internal.UI.onKeyPressBatch <|
+                            [ ( R10.FormComponents.Internal.UI.keyCode.space
+                              , toMsg <|
+                                    R10.FormComponents.Internal.Phone.Update.getMsgOnInputClick model
+                                        { key = key
+                                        , selectOptionHeight = 36
+                                        , maxDisplayCount = 5
+                                        }
+                                        filteredFieldOption
+                              )
+                            ]
+                    ]
+
+                else
+                    [ htmlAttribute <| Html.Attributes.style "cursor" "default"
+                    , htmlAttribute <| Html.Attributes.tabindex -1
+                    ]
                )
         )
         { onPress =
@@ -190,7 +233,7 @@ getFlagButton { palette, disabled, toMsg, key, filteredFieldOption, model, style
             in
             row
                 [ spacing 7 ]
-                [ el [] (getFlagIcon 24 maybeCountryValue)
+                [ el [] (getFlagIcon maybeCountryValue)
                 , text <| Maybe.withDefault "" (Maybe.map R10.Country.toCountryTelCode maybeCountryValue)
                 , el
                     [ Font.size 11
@@ -205,7 +248,12 @@ getFlagButton { palette, disabled, toMsg, key, filteredFieldOption, model, style
                         )
                     ]
                   <|
-                    text "▼"
+                    text <|
+                        if not disabled then
+                            "▼"
+
+                        else
+                            ""
                 ]
         }
 
@@ -216,7 +264,7 @@ countryOptions =
 
 
 view :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     -> R10.FormComponents.Internal.Phone.Common.Model
     ->
         { maybeValid : Maybe Bool
@@ -227,10 +275,11 @@ view :
         , requiredLabel : Maybe String
         , style : R10.FormComponents.Internal.Style.Style
         , key : String
-        , palette : R10.FormTypes.Palette
+        , palette : R10.Palette.Palette
         , countryOptions : Maybe (List R10.Country.Country)
+        , disabledCountryChange : Bool
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs model conf =
     let
         countryOptions_ : List R10.Country.Country
@@ -243,7 +292,7 @@ view attrs model conf =
             countryOptions_
                 |> R10.FormComponents.Internal.Phone.Common.filterBySearch model.search
 
-        args : R10.FormComponents.Internal.Phone.Common.Args msg
+        args : R10.FormComponents.Internal.Phone.Common.Args z msg
         args =
             { maybeValid = conf.maybeValid
             , toMsg = conf.toMsg
@@ -258,14 +307,14 @@ view attrs model conf =
             , toOptionEl =
                 viewOptionEl
                     { search = model.search
-                    , msgOnSelect = R10.FormComponents.Internal.Phone.Common.OnOptionSelect >> conf.toMsg
+                    , msgOnSelect = R10.FormComponents.Internal.Phone.Common.OnOptionSelect conf.key >> conf.toMsg
                     }
             , selectOptionHeight = 36
             , maxDisplayCount = 5
             , leadingIcon =
                 [ getFlagButton
                     { palette = conf.palette
-                    , disabled = conf.disabled
+                    , disabled = conf.disabled || conf.disabledCountryChange
                     , toMsg = conf.toMsg
                     , key = conf.key
                     , filteredFieldOption = filteredFieldOption

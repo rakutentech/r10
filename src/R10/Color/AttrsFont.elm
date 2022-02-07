@@ -15,56 +15,56 @@ import R10.Context exposing (..)
 
 
 {-| -}
-normal : AttributeC msg
+normal : Attribute (R10.Context.ContextInternal z) msg
 normal =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.FontHighEmphasis
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
 
 {-| -}
-inputFieldCheckboxOver : Decoration Context
+inputFieldCheckboxOver : Decoration (R10.Context.ContextInternal z)
 inputFieldCheckboxOver =
     withContextDecoration <|
         \c ->
             R10.Color.Internal.Derived.FontHighEmphasis
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
 
 {-| -}
-normalLighter : AttributeC msg
+normalLighter : Attribute (R10.Context.ContextInternal z) msg
 normalLighter =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.FontMediumEmphasis
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
 
 {-| -}
-link : AttributeC msg
+link : Attribute (R10.Context.ContextInternal z) msg
 link =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.FontLink
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
 
 {-| -}
-linkOver : Decoration Context
+linkOver : Decoration (R10.Context.ContextInternal z)
 linkOver =
     withContextDecoration <|
         \c ->
             R10.Color.Internal.Derived.FontLink
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> Color.Manipulate.scaleHsl
                     { saturationScale = 0.3
                     , lightnessScale = -0.2
@@ -75,23 +75,23 @@ linkOver =
 
 
 {-| -}
-error : AttributeC msg
+error : Attribute (R10.Context.ContextInternal z) msg
 error =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Error
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
 
 {-| -}
-valid : AttributeC msg
+valid : Attribute (R10.Context.ContextInternal z) msg
 valid =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Success
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
@@ -101,33 +101,33 @@ valid =
 
 
 {-| -}
-buttonPrimary : AttributeC msg
+buttonPrimary : Attribute (R10.Context.ContextInternal z) msg
 buttonPrimary =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.FontHighEmphasisWithMaximumContrast
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
 
 {-| -}
-buttonPrimaryDisabled : AttributeC msg
+buttonPrimaryDisabled : Attribute (R10.Context.ContextInternal z) msg
 buttonPrimaryDisabled =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.FontMediumEmphasisWithMaximumContrast
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
 
 {-| -}
-buttonPrimaryDisabledOver : Decoration Context
+buttonPrimaryDisabledOver : Decoration (R10.Context.ContextInternal z)
 buttonPrimaryDisabledOver =
     withContextDecoration <|
         \c ->
             R10.Color.Internal.Derived.FontMediumEmphasisWithMaximumContrast
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color

@@ -12,7 +12,7 @@ import Dict exposing (Dict)
 import Element.WithContext exposing (..)
 import Element.WithContext.Keyed as Keyed
 import R10.Context exposing (..)
-import R10.FormTypes
+import R10.Palette
 import R10.Table.Internal.Accordion
 import R10.Table.Internal.Cell
 import R10.Table.Internal.Config
@@ -183,9 +183,9 @@ See the [examples] to get a better feel for this!
 config :
     { toId : data -> String
     , toMsg : R10.Table.Internal.Msg.Msg -> msg
-    , columns : List (Column data msg)
+    , columns : List (Column data msg context)
     }
-    -> R10.Table.Internal.Config.Config data msg
+    -> R10.Table.Internal.Config.Config data msg context
 config { toId, toMsg, columns } =
     --Table.Config.Config
     { toId = toId
@@ -203,13 +203,13 @@ config { toId, toMsg, columns } =
 customConfig :
     { toId : data -> String
     , toMsg : R10.Table.Internal.Msg.Msg -> msg
-    , columns : List (Column data msg)
-    , bodyAttrs : List (AttributeC msg)
-    , rowAttrsBuilder : Maybe data -> List (AttributeC msg)
+    , columns : List (Column data msg context)
+    , bodyAttrs : List (Attribute (R10.Context.ContextInternal context) msg)
+    , rowAttrsBuilder : Maybe data -> List (Attribute (R10.Context.ContextInternal context) msg)
     , pagination : Maybe R10.Table.Internal.Config.PaginationConfig
     , filters : Maybe R10.Table.Internal.Config.FiltersConfig
     }
-    -> R10.Table.Internal.Config.Config data msg
+    -> R10.Table.Internal.Config.Config data msg context
 customConfig { toId, toMsg, columns, bodyAttrs, rowAttrsBuilder, pagination, filters } =
     --Table.Config.Config
     { toId = toId
@@ -224,12 +224,12 @@ customConfig { toId, toMsg, columns, bodyAttrs, rowAttrsBuilder, pagination, fil
 
 {-| -}
 configWithAccordionRow :
-    (Maybe data -> ElementC msg)
+    (Maybe data -> Element (R10.Context.ContextInternal context) msg)
     -> Int
     -> (Maybe data -> Bool)
     -> (Maybe data -> Bool)
-    -> R10.Table.Internal.Config.Config data msg
-    -> R10.Table.Internal.Config.Config data msg
+    -> R10.Table.Internal.Config.Config data msg context
+    -> R10.Table.Internal.Config.Config data msg context
 configWithAccordionRow viewContent expandedHeight getIsExpanded getIsLoading conf =
     { conf
         | rowAttrsBuilder =
@@ -243,12 +243,12 @@ configWithAccordionRow viewContent expandedHeight getIsExpanded getIsLoading con
 
 {-| Describes how to turn `data` into a column in your table.
 -}
-type Column data msg
-    = Column (R10.Table.Internal.Config.ColumnConf data msg)
+type Column data msg context
+    = Column (R10.Table.Internal.Config.ColumnConf data msg context)
 
 
 {-| -}
-columnSimple : { name : String, toStr : data -> String } -> Column data msg
+columnSimple : { name : String, toStr : data -> String } -> Column data msg context
 columnSimple { name, toStr } =
     Column
         { name = name
@@ -263,12 +263,19 @@ columnWithAttrs :
     { name : String
     , toStr : data -> String
     , maybeToCmp : Maybe (data -> comparable)
-    , maybeAttrs : Maybe { header : List (AttributeC msg), cell : List (AttributeC msg) }
+    , maybeAttrs :
+        Maybe
+            { header : List (Attribute (R10.Context.ContextInternal context) msg)
+            , cell : List (Attribute (R10.Context.ContextInternal context) msg)
+            }
     }
-    -> Column data msg
+    -> Column data msg context
 columnWithAttrs { name, toStr, maybeToCmp, maybeAttrs } =
     let
-        attrs : { header : List (AttributeC msg), cell : List (AttributeC msg) }
+        attrs :
+            { header : List (Attribute (R10.Context.ContextInternal context) msg)
+            , cell : List (Attribute (R10.Context.ContextInternal context) msg)
+            }
         attrs =
             maybeAttrs |> Maybe.withDefault { header = [], cell = [] }
     in
@@ -289,11 +296,17 @@ columnWithAttrs { name, toStr, maybeToCmp, maybeAttrs } =
 {-| -}
 columnWithViews :
     { name : String
-    , viewCell : R10.FormTypes.Palette -> Maybe data -> ElementC msg
-    , viewHeader : R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> ElementC msg
+    , viewCell :
+        R10.Palette.Palette
+        -> Maybe data
+        -> Element (R10.Context.ContextInternal context) msg
+    , viewHeader :
+        R10.Palette.Palette
+        -> R10.Table.Internal.Config.HeaderInfo msg
+        -> Element (R10.Context.ContextInternal context) msg
     , maybeToCmp : Maybe (data -> comparable)
     }
-    -> Column data msg
+    -> Column data msg context
 columnWithViews { name, viewCell, viewHeader, maybeToCmp } =
     Column
         { name = name
@@ -312,11 +325,11 @@ columnWithViews { name, viewCell, viewHeader, maybeToCmp } =
 {-| -}
 columnCustom :
     { name : String
-    , viewCell : R10.FormTypes.Palette -> Maybe data -> ElementC msg
-    , viewHeader : R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> ElementC msg
+    , viewCell : R10.Palette.Palette -> Maybe data -> Element (R10.Context.ContextInternal context) msg
+    , viewHeader : R10.Palette.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> Element (R10.Context.ContextInternal context) msg
     , sorter : R10.Table.Internal.Types.Sorter data
     }
-    -> Column data msg
+    -> Column data msg context
 columnCustom { name, viewCell, viewHeader, sorter } =
     Column
         { name = name
@@ -327,17 +340,32 @@ columnCustom { name, viewCell, viewHeader, sorter } =
 
 
 {-| -}
-viewHeaderRowHelp : R10.FormTypes.Palette -> R10.Table.Internal.State.State -> List (R10.Table.Internal.Config.ColumnConf data msg) -> (String -> Bool -> msg) -> ElementC msg
+viewHeaderRowHelp :
+    R10.Palette.Palette
+    -> R10.Table.Internal.State.State
+    -> List (R10.Table.Internal.Config.ColumnConf data msg context)
+    -> (String -> Bool -> msg)
+    -> Element (R10.Context.ContextInternal context) msg
 viewHeaderRowHelp palette state columns sortMsg =
     row [ width fill ] (List.map (viewHeaderRow_ palette state sortMsg) columns)
 
 
-viewHeaderRow_ : R10.FormTypes.Palette -> R10.Table.Internal.State.State -> (String -> Bool -> msg) -> R10.Table.Internal.Config.ColumnConf data msg -> ElementC msg
+viewHeaderRow_ :
+    R10.Palette.Palette
+    -> R10.Table.Internal.State.State
+    -> (String -> Bool -> msg)
+    -> R10.Table.Internal.Config.ColumnConf data msg context
+    -> Element (R10.Context.ContextInternal context) msg
 viewHeaderRow_ palette state sortMsg column =
     column.viewHeader palette (R10.Table.Internal.Header.toHeaderInfo state column sortMsg)
 
 
-viewRowHelp : R10.FormTypes.Palette -> List (R10.Table.Internal.Config.ColumnConf data msg) -> (Maybe data -> List (AttributeC msg)) -> Maybe data -> ElementC msg
+viewRowHelp :
+    R10.Palette.Palette
+    -> List (R10.Table.Internal.Config.ColumnConf data msg context)
+    -> (Maybe data -> List (Attribute (R10.Context.ContextInternal context) msg))
+    -> Maybe data
+    -> Element (R10.Context.ContextInternal context) msg
 viewRowHelp palette columns toRowAttrs maybeData =
     row
         (toRowAttrs maybeData)
@@ -345,11 +373,11 @@ viewRowHelp palette columns toRowAttrs maybeData =
 
 
 viewBody :
-    R10.FormTypes.Palette
-    -> R10.Table.Internal.Config.Config data msg
+    R10.Palette.Palette
+    -> R10.Table.Internal.Config.Config data msg context
     -> R10.Table.Internal.State.State
     -> List data
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal context) msg
 viewBody palette { toId, columns, bodyAttrs, rowAttrsBuilder } state data =
     let
         countTODO : number
@@ -379,7 +407,7 @@ viewBody palette { toId, columns, bodyAttrs, rowAttrsBuilder } state data =
                             Nothing ->
                                 String.fromInt idx
 
-                    el_ : ElementC msg
+                    el_ : Element (R10.Context.ContextInternal context) msg
                     el_ =
                         viewRowHelp palette columns rowAttrsBuilder maybeRowData
                 in
@@ -403,10 +431,15 @@ statically, and look for a different library if you need something crazier than
 that.
 
 -}
-view : R10.FormTypes.Palette -> R10.Table.Internal.Config.Config data msg -> R10.Table.Internal.State.State -> List data -> ElementC msg
+view :
+    R10.Palette.Palette
+    -> R10.Table.Internal.Config.Config data msg context
+    -> R10.Table.Internal.State.State
+    -> List data
+    -> Element (R10.Context.ContextInternal context) msg
 view palette conf state data =
     let
-        filters : ElementC R10.Table.Internal.Msg.Msg
+        filters : Element (ContextInternal context) R10.Table.Internal.Msg.Msg
         filters =
             case conf.maybeFiltersConfig of
                 Just filtersConfig ->
@@ -415,7 +448,7 @@ view palette conf state data =
                 Nothing ->
                     none
 
-        paginator : ElementC R10.Table.Internal.Msg.Msg
+        paginator : Element (ContextInternal context) R10.Table.Internal.Msg.Msg
         paginator =
             case ( conf.maybePaginationConfig, state ) of
                 ( Just paginationConfig, { pagination } ) ->
@@ -430,10 +463,10 @@ view palette conf state data =
     in
     column
         [ width fill, height fill ]
-        [ map conf.toMsg filters
+        [ Element.WithContext.map conf.toMsg filters
         , viewHeaderRowHelp palette state conf.columns sortMsg
         , viewBody palette conf state data
-        , map conf.toMsg paginator
+        , Element.WithContext.map conf.toMsg paginator
         ]
 
 

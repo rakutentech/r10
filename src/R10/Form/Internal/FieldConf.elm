@@ -79,6 +79,7 @@ type alias FieldConf =
 
     -- If autocomplete is Nothing, we just use the default value, set by elm-ui
     , autocomplete : Maybe String
+    , placeholder : Maybe String
     }
 
 
@@ -105,6 +106,7 @@ init =
     , type_ = R10.FormTypes.TypeText R10.FormTypes.TextPlain
     , label = ""
     , clickableLabel = True
+    , placeholder = Nothing
     , helperText = Nothing
     , requiredLabel = Nothing
     , validationSpecs = Just initValidationSpecs
@@ -194,12 +196,13 @@ decoderFieldConf =
                 (D.field "requiredLabel" (D.maybe D.string))
                 (D.field "validationSpecs" (D.maybe decoderValidationSpecs))
     in
-    D.map4
+    D.map5
         (<|)
         mainFields
         (D.field "minWidth" (D.maybe D.int))
         (D.field "maxWidth" (D.maybe D.int))
         (D.field "autocomplete" (D.maybe D.string))
+        (D.field "placeholder" (D.maybe D.string))
 
 
 encoderFieldType : R10.FormTypes.FieldType -> E.Value
@@ -216,8 +219,14 @@ encoderFieldType fieldType =
                 R10.FormTypes.TextEmailWithSuggestions listSuggestions ->
                     E.string <| "TextEmailWithSuggestions" ++ jsonSeparator ++ String.join "," listSuggestions
 
+                R10.FormTypes.TextMobileEmail ->
+                    E.string "TypeTextMobileEmail"
+
                 R10.FormTypes.TextUsername ->
                     E.string "TypeTextUsername"
+
+                R10.FormTypes.TextUsernameWithUseEmailCheckbox checkboxLabel ->
+                    E.string <| "TextUsernameWithUseEmailCheckbox" ++ jsonSeparator ++ checkboxLabel
 
                 R10.FormTypes.TextPasswordNew ->
                     E.string "TypeTextPasswordNew"
@@ -253,6 +262,9 @@ encoderFieldType fieldType =
                 R10.FormTypes.SingleCombobox ->
                     E.string "TypeSingleCombobox"
 
+                R10.FormTypes.SingleComboboxForCountry ->
+                    E.string "SingleComboboxForCountry"
+
                 R10.FormTypes.SingleSelect ->
                     E.string "TypeSingleSelect"
 
@@ -263,7 +275,7 @@ encoderFieldType fieldType =
 
         R10.FormTypes.TypeSpecial typeSpecial ->
             case typeSpecial of
-                R10.FormTypes.SpecialPhone ->
+                R10.FormTypes.SpecialPhone _ ->
                     E.string "TypeSpecialPhone"
 
 
@@ -281,6 +293,9 @@ decoderFieldType =
 
                     [ "TextEmailWithSuggestions", listSuggestions ] ->
                         D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextEmailWithSuggestions (String.split "," listSuggestions))
+
+                    [ "TypeTextMobileEmail" ] ->
+                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextMobileEmail)
 
                     [ "TypeTextUsername" ] ->
                         D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextUsername)
@@ -322,7 +337,7 @@ decoderFieldType =
                         D.succeed (R10.FormTypes.TypeMulti R10.FormTypes.MultiCombobox [])
 
                     [ "TypeSpecial" ] ->
-                        D.succeed (R10.FormTypes.TypeSpecial R10.FormTypes.SpecialPhone)
+                        D.succeed (R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone False))
 
                     somethingElse ->
                         D.fail <| "Unknown FieldType: " ++ List.foldl (++) "" somethingElse ++ ". It should be something like TypeTextPlain, TypeTextEmail, TypeTextUsername, TypeTextPasswordNew, TypeTextPasswordCurrent, TypeCheckbox, TypeRadio, TypeDate, TypePhoneNumber, TypeBirthday or TypeCombobox."

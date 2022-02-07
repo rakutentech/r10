@@ -18,7 +18,7 @@ import R10.Theme
 import R10.Transition
 
 
-shadow : Float -> AttrC decorative msg
+shadow : Float -> Attr (R10.Context.ContextInternal z) decorative msg
 shadow level =
     Border.shadow
         { offset = ( 0, level )
@@ -28,7 +28,7 @@ shadow level =
         }
 
 
-base : R10.Theme.Theme -> List (AttributeC msg)
+base : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
 base theme =
     [ R10.Color.AttrsBackground.surface
     , R10.Color.AttrsBorder.normal
@@ -51,7 +51,7 @@ base theme =
 
 {-| Card with an high shadow
 -}
-high : R10.Theme.Theme -> List (AttributeC msg)
+high : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
 high theme =
     --https://material.io/design/environment/elevation.html#elevation-in-material-design
     base theme ++ [ shadow 8 ]
@@ -59,7 +59,7 @@ high theme =
 
 {-| Card with a normal shadow
 -}
-normal : R10.Theme.Theme -> List (AttributeC msg)
+normal : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
 normal theme =
     -- base theme ++ [ shadow 2, mouseOver [ shadow 8 ] ]
     base theme ++ [ shadow 4 ]
@@ -67,13 +67,13 @@ normal theme =
 
 {-| Card with a low shadow
 -}
-low : R10.Theme.Theme -> List (AttributeC msg)
+low : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
 low theme =
     base theme ++ [ shadow 2 ]
 
 
 {-| Card without a shadow
 -}
-noShadow : R10.Theme.Theme -> List (AttributeC msg)
+noShadow : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
 noShadow theme =
     base theme

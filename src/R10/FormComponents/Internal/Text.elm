@@ -1,6 +1,7 @@
 module R10.FormComponents.Internal.Text exposing
     ( Args
     , extraCss
+    , processValue
     , view
     , viewInput
     )
@@ -14,12 +15,7 @@ import Element.WithContext.Input as Input
 import Html.Attributes
 import Html.Events
 import Json.Decode
-import R10.Color.AttrsBackground
-import R10.Color.AttrsBorder
-import R10.Color.AttrsFont
 import R10.Context exposing (..)
-import R10.Device
-import R10.FontSize
 import R10.FormComponents.Internal.EmailAutoSuggest
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Style
@@ -28,27 +24,28 @@ import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.UI.Const
 import R10.FormTypes
+import R10.Palette
 import R10.Svg.Icons
 import R10.Transition
 import Regex
 
 
-textWithPatternLargeAttrs : List (AttributeC msg)
+textWithPatternLargeAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
 textWithPatternLargeAttrs =
-    [ withContextAttribute <| \c -> Font.size c.inputFieldWithLargePattern_fontSize
+    [ withContextAttribute <| \c -> Font.size c.contextR10.inputFieldWithLargePattern_fontSize
     , Font.family [ Font.monospace ]
-    , withContextAttribute <| \c -> htmlAttribute <| Html.Attributes.style "letter-spacing" (String.fromInt c.inputFieldWithLargePattern_letterSpacing ++ "px")
+    , withContextAttribute <| \c -> htmlAttribute <| Html.Attributes.style "letter-spacing" (String.fromInt c.contextR10.inputFieldWithLargePattern_letterSpacing ++ "px")
     ]
 
 
-textWithPatternLargeAttrsExtra : List (AttributeC msg)
+textWithPatternLargeAttrsExtra : List (Attribute (R10.Context.ContextInternal z) msg)
 textWithPatternLargeAttrsExtra =
     [ centerX
-    , withContextAttribute <| \c -> width <| px c.inputFieldWithLargePattern_width
+    , withContextAttribute <| \c -> width <| px c.contextR10.inputFieldWithLargePattern_width
     ]
 
 
-textWithPatternAttrs : List (AttributeC msg)
+textWithPatternAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
 textWithPatternAttrs =
     --
     -- Regular input field with patter, like brithday
@@ -61,10 +58,10 @@ textWithPatternAttrs =
     ]
 
 
-viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : R10.FormTypes.Palette } -> ElementC msg
+viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : R10.Palette.Palette } -> Element (R10.Context.ContextInternal z) msg
 viewShowHidePasswordButton { msgOnTogglePasswordShow, showPassword, palette } =
     let
-        icon : ElementC msg
+        icon : Element (R10.Context.ContextInternal z) msg
         icon =
             if showPassword then
                 R10.Svg.Icons.eye_ban_l [] (R10.FormComponents.Internal.UI.Color.label palette) 24
@@ -85,7 +82,7 @@ needShowHideIcon fieldType =
     fieldType == R10.FormTypes.TextPasswordCurrent || fieldType == R10.FormTypes.TextPasswordNew
 
 
-type alias Args msg =
+type alias Args z msg =
     { -- Stuff that change during
       -- the life of the component
       --
@@ -94,8 +91,8 @@ type alias Args msg =
     , maybeValid : Maybe Bool
     , disabled : Bool
     , showPassword : Bool
-    , leadingIcon : List (ElementC msg)
-    , trailingIcon : List (ElementC msg)
+    , leadingIcon : List (Element (R10.Context.ContextInternal z) msg)
+    , trailingIcon : List (Element (R10.Context.ContextInternal z) msg)
 
     -- Messages
     , msgOnChange : String -> msg
@@ -103,6 +100,7 @@ type alias Args msg =
     , msgOnLoseFocus : Maybe msg
     , msgOnTogglePasswordShow : Maybe msg
     , msgOnEnter : Maybe msg
+    , msgOnKeyDown : Maybe (Int -> msg)
 
     -- Stuff that doesn't change during
     -- the life of the component
@@ -112,13 +110,14 @@ type alias Args msg =
     , requiredLabel : Maybe String
     , idDom : Maybe String
     , style : R10.FormComponents.Internal.Style.Style
-    , palette : R10.FormTypes.Palette
+    , palette : R10.Palette.Palette
     , autocomplete : Maybe String
     , floatingLabelAlwaysUp : Bool
     , placeholder : Maybe String
 
     -- Specific
     , textType : R10.FormTypes.TypeText
+    , fieldType : Maybe R10.FormTypes.FieldType
     }
 
 
@@ -126,13 +125,13 @@ getBorder :
     { a
         | focused : Bool
         , style : R10.FormComponents.Internal.Style.Style
-        , palette : R10.FormTypes.Palette
+        , palette : R10.Palette.Palette
         , maybeValid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
         , disabled : Bool
     }
-    -> AttrC decorative msg
+    -> Attr (R10.Context.ContextInternal z) decorative msg
 getBorder args =
     let
         { offset, size } =
@@ -151,11 +150,12 @@ viewBehindPattern2 :
         | floatingLabelAlwaysUp : Bool
         , focused : Bool
         , msgOnChange : String -> msg
+        , style : R10.FormComponents.Internal.Style.Style
         , textType : R10.FormTypes.TypeText
         , value : String
     }
     -> String
-    -> List (AttributeC msg)
+    -> List (Attribute (R10.Context.ContextInternal z) msg)
 viewBehindPattern2 args pattern =
     let
         valueWithTrailingPattern : String
@@ -182,8 +182,6 @@ viewBehindPattern2 args pattern =
             ([ alpha 0.4
              , Border.color <| rgba 0 0 0 0
              , Background.color <| rgba 0 0 0 0
-             , moveDown 7
-             , moveRight 3
              , htmlAttribute <| Html.Attributes.attribute "disabled" "true"
              ]
                 ++ (case args.textType of
@@ -196,6 +194,17 @@ viewBehindPattern2 args pattern =
                         _ ->
                             []
                    )
+                ++ (case args.style of
+                        R10.FormComponents.Internal.Style.Filled ->
+                            [ moveDown 10
+                            , moveLeft 13
+                            ]
+
+                        R10.FormComponents.Internal.Style.Outlined ->
+                            [ moveDown 7
+                            , moveRight 3
+                            ]
+                   )
             )
             { label = Input.labelHidden ""
             , onChange = args.msgOnChange
@@ -205,7 +214,7 @@ viewBehindPattern2 args pattern =
     ]
 
 
-viewBehindPattern : Args msg -> List (AttributeC msg)
+viewBehindPattern : Args z msg -> List (Attribute (R10.Context.ContextInternal z) msg)
 viewBehindPattern args =
     case args.textType of
         R10.FormTypes.TextWithPattern pattern ->
@@ -277,6 +286,51 @@ onlyDigit str =
     Regex.replace regexNotDigit (\_ -> "") str
 
 
+processValue : { b | pattern : String, previousValue : String, value : String } -> String
+processValue { value, previousValue, pattern } =
+    let
+        removeLastCharacter =
+            String.slice 0 -1
+
+        lastCharacter =
+            String.right 1
+
+        removeNonDigits =
+            Regex.replace regexNotDigit (\_ -> "")
+
+        previousValueLessLastCharacter =
+            removeLastCharacter previousValue
+
+        previousValueLastCHaracter =
+            lastCharacter previousValue
+
+        previousValueLastCHaracterIsDigit =
+            String.length (removeNonDigits previousValueLastCHaracter) == 1
+
+        lastCharacterWasDeleted =
+            value == previousValueLessLastCharacter
+
+        onlyDigits =
+            removeNonDigits value
+
+        removeOneDigitIfLastCharacterWasDeleted =
+            if lastCharacterWasDeleted && not previousValueLastCHaracterIsDigit then
+                removeLastCharacter onlyDigits
+
+            else
+                onlyDigits
+
+        withPattern =
+            formatResult pattern removeOneDigitIfLastCharacterWasDeleted
+    in
+    withPattern
+
+
+formatResult : String -> String -> String
+formatResult template string =
+    format (parse '0' template) string
+
+
 type Token
     = InputValue
     | Other Char
@@ -339,17 +393,17 @@ append tokens input formatted =
 
 
 view :
-    List (AttributeC msg)
-    -> List (AttributeC msg)
-    -> Args msg
-    -> ElementC msg
+    List (Attribute (R10.Context.ContextInternal z) msg)
+    -> List (Attribute (R10.Context.ContextInternal z) msg)
+    -> Args z msg
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs extraInputAttrs args =
     let
         displayValidation : Bool
         displayValidation =
             args.maybeValid /= Nothing
 
-        newArgs : Args msg
+        newArgs : Args z msg
         newArgs =
             -- Adding extra icons to the arguments:
             --
@@ -397,11 +451,11 @@ view attrs extraInputAttrs args =
             , focused : Bool
             , isMouseOver : Bool
             , label : String
-            , leadingIcon : List (ElementC msg)
-            , palette : R10.FormTypes.Palette
+            , leadingIcon : List (Element (R10.Context.ContextInternal z) msg)
+            , palette : R10.Palette.Palette
             , requiredLabel : Maybe String
             , style : R10.FormComponents.Internal.Style.Style
-            , trailingIcon : List (ElementC msg)
+            , trailingIcon : List (Element (R10.Context.ContextInternal z) msg)
             , maybeValid : Maybe Bool
             , value : String
             , floatingLabelAlwaysUp : Bool
@@ -454,7 +508,7 @@ view attrs extraInputAttrs args =
                                     200
 
                                 R10.FormTypes.TextWithPatternLarge _ ->
-                                    c.inputFieldWithLargePattern_height
+                                    c.contextR10.inputFieldWithLargePattern_height
 
                                 _ ->
                                     R10.FormComponents.Internal.UI.Const.inputTextHeight
@@ -479,14 +533,14 @@ view attrs extraInputAttrs args =
         ]
 
 
-viewInput : List (AttributeC msg) -> Args msg -> ElementC msg
+viewInput : List (Attribute (R10.Context.ContextInternal z) msg) -> Args z msg -> Element (R10.Context.ContextInternal z) msg
 viewInput extraAttr args =
     let
-        inputDisabledAttrs : List (AttributeC msg)
+        inputDisabledAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
         inputDisabledAttrs =
             [ htmlAttribute <| Html.Attributes.attribute "disabled" "true" ]
 
-        iconCommonAttrs : List (AttrC () msg)
+        iconCommonAttrs : List (Attr (R10.Context.ContextInternal z) () msg)
         iconCommonAttrs =
             [ -- in order to icon to be aligned with the input, move icon down
               moveDown <|
@@ -509,11 +563,17 @@ viewInput extraAttr args =
                 R10.FormTypes.TextUsername ->
                     "username"
 
+                R10.FormTypes.TextUsernameWithUseEmailCheckbox _ ->
+                    "username"
+
                 R10.FormTypes.TextEmail ->
                     "email"
 
                 R10.FormTypes.TextEmailWithSuggestions _ ->
                     "email"
+
+                R10.FormTypes.TextMobileEmail ->
+                    ""
 
                 R10.FormTypes.TextPasswordCurrent ->
                     "password"
@@ -533,7 +593,7 @@ viewInput extraAttr args =
                 R10.FormTypes.TextWithPatternLarge _ ->
                     ""
 
-        inputAttrs : List (AttributeC msg)
+        inputAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
         inputAttrs =
             [ -- IOS fix that remove autocorrect, autocapitalize and spellcheck
               htmlAttribute <| Html.Attributes.attribute "spellcheck" "false"
@@ -554,7 +614,7 @@ viewInput extraAttr args =
                 { top =
                     case args.style of
                         R10.FormComponents.Internal.Style.Filled ->
-                            23
+                            27
 
                         R10.FormComponents.Internal.Style.Outlined ->
                             20
@@ -562,10 +622,10 @@ viewInput extraAttr args =
                 , bottom =
                     case args.style of
                         R10.FormComponents.Internal.Style.Filled ->
-                            2
+                            5
 
                         R10.FormComponents.Internal.Style.Outlined ->
-                            5
+                            8
                 , left =
                     case args.style of
                         R10.FormComponents.Internal.Style.Filled ->
@@ -613,6 +673,13 @@ viewInput extraAttr args =
                     else
                         []
                    )
+                ++ (case args.style of
+                        R10.FormComponents.Internal.Style.Filled ->
+                            [ moveUp 4 ]
+
+                        R10.FormComponents.Internal.Style.Outlined ->
+                            []
+                   )
                 ++ viewBehindPattern args
                 ++ extraAttr
 
@@ -623,14 +690,42 @@ viewInput extraAttr args =
             , text : String
             }
         behavioursText =
+            let
+                placeholderArgs : List (Attribute context msg)
+                placeholderArgs =
+                    []
+                        ++ (case args.style of
+                                R10.FormComponents.Internal.Style.Filled ->
+                                    [ moveUp 4 ]
+
+                                R10.FormComponents.Internal.Style.Outlined ->
+                                    []
+                           )
+            in
             { onChange = args.msgOnChange
             , placeholder =
-                case args.placeholder of
-                    Just string ->
-                        Just <| Input.placeholder [] (text string)
+                case ( String.length args.value /= 0, args.placeholder, args.fieldType ) of
+                    ( False, Just string, Just (R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone _)) ) ->
+                        Just <| Input.placeholder ([ alpha 1 ] ++ placeholderArgs) <| text string
 
-                    Nothing ->
-                        Nothing
+                    ( False, Just string, _ ) ->
+                        Just <|
+                            Input.placeholder
+                                ([ alpha <|
+                                    if args.focused then
+                                        1
+
+                                    else
+                                        0
+                                 ]
+                                    ++ placeholderArgs
+                                )
+                            <|
+                                text string
+
+                    _ ->
+                        -- Don't use Nothing, the input will lost focus on first change.
+                        Just <| Input.placeholder [] none
             , text = args.value
             , label = Input.labelHidden args.label
             }
@@ -653,12 +748,27 @@ viewInput extraAttr args =
         maybeEmailSuggestion : List String -> Maybe String
         maybeEmailSuggestion listSuggestions =
             if args.focused then
-                R10.FormComponents.Internal.EmailAutoSuggest.emailDomainAutocomplete listSuggestions args.value
+                case args.textType of
+                    R10.FormTypes.TextEmailWithSuggestions _ ->
+                        R10.FormComponents.Internal.EmailAutoSuggest.emailDomainAutocomplete listSuggestions args.value
+
+                    R10.FormTypes.TextMobileEmail ->
+                        R10.FormComponents.Internal.EmailAutoSuggest.emailDomainAutocomplete
+                            (List.map
+                                (\domain ->
+                                    String.replace "@" "" domain
+                                )
+                                listSuggestions
+                            )
+                            args.value
+
+                    _ ->
+                        Nothing
 
             else
                 Nothing
 
-        rightKeyDownDetection : List String -> List (AttributeC msg)
+        rightKeyDownDetection : List String -> List (Attribute (R10.Context.ContextInternal z) msg)
         rightKeyDownDetection listSuggestions =
             case maybeEmailSuggestion listSuggestions of
                 Nothing ->
@@ -733,11 +843,11 @@ viewInput extraAttr args =
             , focused : Bool
             , isMouseOver : Bool
             , label : String
-            , palette : R10.FormTypes.Palette
+            , palette : R10.Palette.Palette
             , requiredLabel : Maybe String
             , style : R10.FormComponents.Internal.Style.Style
-            , leadingIcon : List (ElementC msg)
-            , trailingIcon : List (ElementC msg)
+            , leadingIcon : List (Element (R10.Context.ContextInternal z) msg)
+            , trailingIcon : List (Element (R10.Context.ContextInternal z) msg)
             , maybeValid : Maybe Bool
             , value : String
             }
@@ -759,6 +869,29 @@ viewInput extraAttr args =
         displayValidation : Bool
         displayValidation =
             args.maybeValid /= Nothing
+
+        listenKeyDownAttr : List (Attribute (R10.Context.ContextInternal z) msg)
+        listenKeyDownAttr =
+            case args.msgOnKeyDown of
+                Just onKeyDown ->
+                    [ htmlAttribute <| Html.Events.stopPropagationOn "keydown" <| Json.Decode.map (\x -> ( x, True )) (Json.Decode.map onKeyDown Html.Events.keyCode) ]
+
+                Nothing ->
+                    []
+
+        topInputWhenSuggestionAttr : List (Attribute (R10.Context.ContextInternal z) msg)
+        topInputWhenSuggestionAttr =
+            --
+            -- https://jira.rakuten-it.com/jira/browse/OMN-4832
+            -- Need to upper the zIndex to make the Input at the top of the Label
+            -- to display the suggestion value that provide by browser
+            -- for UserName and Email fields
+            --
+            if not args.focused && String.isEmpty args.value then
+                [ htmlAttribute <| Html.Attributes.style "z-index" "1" ]
+
+            else
+                []
     in
     row
         [ case args.style of
@@ -780,10 +913,13 @@ viewInput extraAttr args =
             ++ List.map (\icon -> el iconCommonAttrs icon) args.leadingIcon
             ++ [ case args.textType of
                     R10.FormTypes.TextUsername ->
-                        Input.username inputAttrs behavioursText
+                        Input.username (inputAttrs ++ topInputWhenSuggestionAttr) behavioursText
+
+                    R10.FormTypes.TextUsernameWithUseEmailCheckbox _ ->
+                        Input.username (inputAttrs ++ topInputWhenSuggestionAttr) behavioursText
 
                     R10.FormTypes.TextEmail ->
-                        Input.email inputAttrs behavioursText
+                        Input.email (inputAttrs ++ topInputWhenSuggestionAttr) behavioursText
 
                     R10.FormTypes.TextEmailWithSuggestions listSuggestions ->
                         el
@@ -800,11 +936,31 @@ viewInput extraAttr args =
                             (withContext <|
                                 \c ->
                                     let
-                                        autoSuggestionsAttrs : List (AttributeC msg)
+                                        autoSuggestionsAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
                                         autoSuggestionsAttrs =
                                             R10.FormComponents.Internal.EmailAutoSuggest.autoSuggestionsAttrs
-                                                { userAgent = c.userAgent
-                                                , maybeEmailSuggestion = maybeEmailSuggestion c.emailDomainList
+                                                { userAgent = c.contextR10.userAgent
+                                                , style = args.style
+                                                , maybeEmailSuggestion = maybeEmailSuggestion c.contextR10.emailDomainList
+                                                , msgOnChange = args.msgOnChange
+                                                , value = args.value
+                                                }
+                                    in
+                                    Input.email (autoSuggestionsAttrs ++ inputAttrs ++ topInputWhenSuggestionAttr) behavioursTextEmailWithSuggestions
+                            )
+
+                    R10.FormTypes.TextMobileEmail ->
+                        el
+                            ([ width fill ] ++ rightKeyDownDetection R10.FormComponents.Internal.EmailAutoSuggest.mobileEmailSupportDomainList)
+                            (withContext <|
+                                \c ->
+                                    let
+                                        autoSuggestionsAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
+                                        autoSuggestionsAttrs =
+                                            R10.FormComponents.Internal.EmailAutoSuggest.autoSuggestionsAttrs
+                                                { userAgent = c.contextR10.userAgent
+                                                , style = args.style
+                                                , maybeEmailSuggestion = maybeEmailSuggestion R10.FormComponents.Internal.EmailAutoSuggest.mobileEmailSupportDomainList
                                                 , msgOnChange = args.msgOnChange
                                                 , value = args.value
                                                 }
@@ -825,9 +981,9 @@ viewInput extraAttr args =
                         Input.multiline inputAttrs behavioursMultiline
 
                     R10.FormTypes.TextWithPattern pattern ->
-                        Input.text inputAttrs <| behavioursTextWithPattern pattern
+                        Input.text (inputAttrs ++ listenKeyDownAttr) <| behavioursTextWithPattern pattern
 
                     R10.FormTypes.TextWithPatternLarge pattern ->
-                        Input.text (textWithPatternLargeAttrsExtra ++ inputAttrs) <| behavioursTextWithPattern pattern
+                        Input.text (textWithPatternLargeAttrsExtra ++ inputAttrs ++ listenKeyDownAttr) <| behavioursTextWithPattern pattern
                ]
             ++ List.map (\icon -> el iconCommonAttrs icon) args.trailingIcon

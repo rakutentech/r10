@@ -21,13 +21,14 @@ import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormComponents.Internal.Utils.FocusOut
 import R10.FormTypes
+import R10.Palette
 import R10.Svg.Icons
 
 
 viewSearchBox :
     R10.FormComponents.Internal.Single.Common.Model
-    -> R10.FormComponents.Internal.Single.Common.Args msg
-    -> ElementC msg
+    -> R10.FormComponents.Internal.Single.Common.Args z msg
+    -> Element (R10.Context.ContextInternal z) msg
 viewSearchBox model args =
     --
     -- This function is similar to R10.FormComponents.Internal.Phone.Combobox.viewSearchBox
@@ -50,7 +51,7 @@ viewSearchBox model args =
                         { onChange = \string -> args.toMsg (R10.FormComponents.Internal.Single.Update.getMsgOnSearch args string)
                         , text = model.search
                         , placeholder = Nothing
-                        , label = Input.labelLeft [ moveDown 3 ] <| R10.Svg.Icons.search [] (R10.Color.Svg.fontHighEmphasis c.theme) 18
+                        , label = Input.labelLeft [ moveDown 3 ] <| R10.Svg.Icons.search [] (R10.Color.Svg.fontHighEmphasis c.contextR10.theme) 18
                         }
             ]
 
@@ -72,7 +73,7 @@ optionsLabelOrSearchValue value allFieldOptions =
         |> Maybe.withDefault ""
 
 
-getMsgOnInputClick : R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> List R10.FormComponents.Internal.Single.Common.FieldOption -> R10.FormComponents.Internal.Single.Common.Msg
+getMsgOnInputClick : R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args z msg -> List R10.FormComponents.Internal.Single.Common.FieldOption -> R10.FormComponents.Internal.Single.Common.Msg
 getMsgOnInputClick model args filteredOptions =
     let
         selectedOptionIndex : Int
@@ -87,7 +88,7 @@ getMsgOnInputClick model args filteredOptions =
     R10.FormComponents.Internal.Single.Common.OnInputClick { key = args.key, selectedY = selectedY }
 
 
-viewComboboxDropdown : R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> Bool -> List R10.FormComponents.Internal.Single.Common.FieldOption -> ElementC msg
+viewComboboxDropdown : R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args z msg -> Bool -> List R10.FormComponents.Internal.Single.Common.FieldOption -> Element (R10.Context.ContextInternal z) msg
 viewComboboxDropdown model args opened filteredOptions =
     let
         elementsScrolledFromTop : Int
@@ -111,7 +112,7 @@ viewComboboxDropdown model args opened filteredOptions =
         visibleMoveDown =
             toFloat (R10.FormComponents.Internal.Single.Update.dropdownHingeHeight + max 0 visibleFrom * args.selectOptionHeight)
 
-        visibleOptions : List ( String, ElementC msg )
+        visibleOptions : List ( String, Element (R10.Context.ContextInternal z) msg )
         visibleOptions =
             if List.length filteredOptions > 0 then
                 filteredOptions
@@ -161,6 +162,10 @@ viewComboboxDropdown model args opened filteredOptions =
             , el
                 [ width fill
                 , height <| px <| R10.FormComponents.Internal.Single.Update.getDropdownHeight args optionsCount
+
+                -- Fixed the content box displayed height is fit to content bug in Safari
+                --
+                , htmlAttribute <| Html.Attributes.style "min-height" "unset"
                 , htmlAttribute <| Html.Attributes.style "overscroll-behavior" "contain"
                 , htmlAttribute <| R10.FormComponents.Internal.UI.onScroll <| (args.toMsg << R10.FormComponents.Internal.Single.Common.OnScroll)
                 , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
@@ -174,7 +179,7 @@ viewComboboxDropdown model args opened filteredOptions =
             ]
 
 
-comboboxOptionNoResults : { a | palette : R10.FormTypes.Palette, selectOptionHeight : Int } -> ElementC msg
+comboboxOptionNoResults : { a | palette : R10.Palette.Palette, selectOptionHeight : Int } -> Element (R10.Context.ContextInternal z) msg
 comboboxOptionNoResults { palette, selectOptionHeight } =
     el
         [ width fill
@@ -187,7 +192,7 @@ comboboxOptionNoResults { palette, selectOptionHeight } =
             text "No results"
 
 
-viewComboboxOption : String -> String -> R10.FormComponents.Internal.Single.Common.Args msg -> R10.FormComponents.Internal.Single.Common.FieldOption -> ElementC msg
+viewComboboxOption : String -> String -> R10.FormComponents.Internal.Single.Common.Args z msg -> R10.FormComponents.Internal.Single.Common.FieldOption -> Element (R10.Context.ContextInternal z) msg
 viewComboboxOption value select args opt =
     let
         isActiveValue : Bool
@@ -232,10 +237,10 @@ viewComboboxOption value select args opt =
 
 
 view :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     -> R10.FormComponents.Internal.Single.Common.Model
-    -> R10.FormComponents.Internal.Single.Common.Args msg
-    -> ElementC msg
+    -> R10.FormComponents.Internal.Single.Common.Args z msg
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs model args =
     let
         filteredFieldOption : List R10.FormComponents.Internal.Single.Common.FieldOption
@@ -250,7 +255,7 @@ view attrs model args =
         focusOnSearchBox =
             model.opened && args.searchable
 
-        textArgs : R10.FormComponents.Internal.Text.Args msg
+        textArgs : R10.FormComponents.Internal.Text.Args z msg
         textArgs =
             { disabled = args.disabled
             , maybeValid = args.maybeValid
@@ -260,11 +265,13 @@ view attrs model args =
             , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus model.value
             , msgOnLoseFocus = Nothing
             , msgOnEnter = Nothing
+            , msgOnKeyDown = Nothing
             , msgOnTogglePasswordShow = Nothing
             , palette = args.palette
             , style = args.style
             , showPassword = False
             , textType = R10.FormTypes.TextPlain
+            , fieldType = Nothing
             , leadingIcon = args.leadingIcon
             , trailingIcon = args.trailingIcon
             , value = displayValue
@@ -276,7 +283,7 @@ view attrs model args =
             , placeholder = Nothing
             }
 
-        inputAttrs : List (AttributeC msg)
+        inputAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
         inputAttrs =
             [ Events.onClick <| args.toMsg <| getMsgOnInputClick model args filteredFieldOption
             , htmlAttribute <| Html.Attributes.attribute "readonly" "true"

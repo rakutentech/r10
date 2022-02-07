@@ -21,7 +21,7 @@ fieldConfToMaybeFieldState maybeCountry fieldConf =
     case fieldConf.type_ of
         R10.FormTypes.TypeSpecial typeSpecial ->
             case typeSpecial of
-                R10.FormTypes.SpecialPhone ->
+                R10.FormTypes.SpecialPhone _ ->
                     let
                         initState =
                             R10.Form.Internal.FieldState.init
@@ -55,6 +55,34 @@ initWithDefaults formConf maybeCountry =
                         ( R10.Form.Internal.Key.toString key_, Maybe.withDefault R10.Form.Internal.FieldState.init maybeFieldState )
                     )
                 |> Dict.fromList
+                |> withCopyEmailIntoUsernameField
+
+        hasUsernameAndEmailField : Bool
+        hasUsernameAndEmailField =
+            case
+                ( R10.Form.Internal.Conf.getFieldConfByFieldId R10.Form.Internal.Shared.defaultUsernameFieldKeyString formConf
+                , R10.Form.Internal.Conf.getFieldConfByFieldId R10.Form.Internal.Shared.defaultEmailFieldKeyString formConf
+                )
+            of
+                ( Just _, Just _ ) ->
+                    True
+
+                _ ->
+                    False
+
+        defaultCopyEmailIntoUsernameCheckboxFieldState : R10.Form.Internal.FieldState.FieldState
+        defaultCopyEmailIntoUsernameCheckboxFieldState =
+            R10.Form.Internal.FieldState.init
+                |> (\fieldState -> { fieldState | value = "True" })
+
+        withCopyEmailIntoUsernameField : Dict.Dict String R10.Form.Internal.FieldState.FieldState -> Dict.Dict String R10.Form.Internal.FieldState.FieldState
+        withCopyEmailIntoUsernameField fieldsState_ =
+            if hasUsernameAndEmailField then
+                fieldsState_
+                    |> Dict.insert (R10.Form.Internal.Key.toString R10.Form.Internal.Shared.copyEmailIntoUsernameCheckboxKey) defaultCopyEmailIntoUsernameCheckboxFieldState
+
+            else
+                fieldsState_
     in
     { init | fieldsState = fieldsState }
 

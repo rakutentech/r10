@@ -7,9 +7,11 @@ import Dict
 import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
+import R10.Form.Internal.Helpers
 import R10.Form.Internal.Key
 import R10.Form.Internal.State
 import R10.Form.Internal.Translator
+import R10.FormTypes
 import Regex
 
 
@@ -62,12 +64,13 @@ toMessageErr outcome =
 
 
 validateDependant :
-    R10.Form.Internal.Key.Key
+    Bool
+    -> R10.Form.Internal.Key.Key
     -> R10.Form.Internal.Key.KeyAsString
     -> R10.Form.Internal.State.State
     -> R10.Form.Internal.FieldConf.Validation
     -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
-validateDependant key dependantKey formState validation =
+validateDependant showAlsoPassedValidation key dependantKey formState validation =
     let
         newLeafKey : R10.Form.Internal.Key.Key
         newLeafKey =
@@ -107,7 +110,7 @@ validateDependant key dependantKey formState validation =
     in
     result
         |> (\( newContextValue, newKey ) ->
-                validateValidationSpecs "validateDependant" newKey newContextValue formState validation
+                validateValidationSpecs "validateDependant" showAlsoPassedValidation newKey newContextValue formState validation
            )
 
 
@@ -127,12 +130,12 @@ validateEqual value dependantKey formState =
         R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.equalInvalid []
 
 
-validateNot : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldConf.Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
-validateNot key value formState validation =
+validateNot : Bool -> R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldConf.Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
+validateNot showAlsoPassedValidation key value formState validation =
     let
         outcome : Maybe R10.Form.Internal.FieldState.ValidationOutcome
         outcome =
-            validateValidationSpecs "validateNot" key value formState validation
+            validateValidationSpecs "validateNot" showAlsoPassedValidation key value formState validation
     in
     case outcome of
         Just (R10.Form.Internal.FieldState.MessageOk a b) ->
@@ -145,12 +148,12 @@ validateNot key value formState validation =
             Nothing
 
 
-validateAllOf : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> List R10.Form.Internal.FieldConf.Validation -> R10.Form.Internal.FieldState.ValidationOutcome
-validateAllOf key value formState validations =
+validateAllOf : Bool -> R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> List R10.Form.Internal.FieldConf.Validation -> R10.Form.Internal.FieldState.ValidationOutcome
+validateAllOf showAlsoPassedValidation key value formState validations =
     let
         messages : List R10.Form.Internal.FieldState.ValidationOutcome
         messages =
-            List.map (validateValidationSpecs "validateAllOf" key value formState) validations
+            List.map (validateValidationSpecs "validateAllOf" showAlsoPassedValidation key value formState) validations
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
@@ -163,12 +166,12 @@ validateAllOf key value formState validations =
         R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.allOf []
 
 
-validateOneOf : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> List R10.Form.Internal.FieldConf.Validation -> R10.Form.Internal.FieldState.ValidationOutcome
-validateOneOf key value formState validations =
+validateOneOf : Bool -> R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> List R10.Form.Internal.FieldConf.Validation -> R10.Form.Internal.FieldState.ValidationOutcome
+validateOneOf showAlsoPassedValidation key value formState validations =
     let
         messages : List R10.Form.Internal.FieldState.ValidationOutcome
         messages =
-            List.map (validateValidationSpecs "validateOneOf" key value formState) validations
+            List.map (validateValidationSpecs "validateOneOf" showAlsoPassedValidation key value formState) validations
                 |> List.filterMap identity
     in
     if List.isEmpty messages then
@@ -181,12 +184,12 @@ validateOneOf key value formState validations =
         R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.oneOf []
 
 
-validateWithMsg : R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.FieldConf.ValidationMessage -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldConf.Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
-validateWithMsg key value msg formState validation =
+validateWithMsg : Bool -> R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.FieldConf.ValidationMessage -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldConf.Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
+validateWithMsg showAlsoPassedValidation key value msg formState validation =
     let
         maybeMessage : Maybe R10.Form.Internal.FieldState.ValidationOutcome
         maybeMessage =
-            validateValidationSpecs "validateWithMsg" key value formState validation
+            validateValidationSpecs "validateWithMsg" showAlsoPassedValidation key value formState validation
     in
     case maybeMessage of
         Nothing ->
@@ -246,17 +249,35 @@ validateRegex value regex =
             R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.formatInvalid []
 
 
-skipValidationIfEmpty : String -> R10.Form.Internal.FieldState.ValidationOutcome -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
-skipValidationIfEmpty value validationOutcome =
-    if String.isEmpty value then
+skipValidationIfEmpty :
+    String
+    -> Bool
+    -> R10.Form.Internal.FieldState.ValidationOutcome
+    -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
+skipValidationIfEmpty value showAlsoPassedValidation validationOutcome =
+    if showAlsoPassedValidation then
+        -- Password field is probably the only field that have
+        -- showAlsoPassedValidation set to True.
+        -- In this case we don't hide the validations also if the value
+        -- is empty
+        Just validationOutcome
+
+    else if String.isEmpty value then
         Nothing
 
     else
         Just validationOutcome
 
 
-validateValidationSpecs : String -> R10.Form.Internal.Key.Key -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldConf.Validation -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
-validateValidationSpecs caller key value_ formState validation =
+validateValidationSpecs :
+    String
+    -> Bool
+    -> R10.Form.Internal.Key.Key
+    -> String
+    -> R10.Form.Internal.State.State
+    -> R10.Form.Internal.FieldConf.Validation
+    -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
+validateValidationSpecs caller showAlsoPassedValidation key value_ formState validation =
     let
         value =
             -- Temporary fix for https://jira.rakuten-it.com/jira/browse/OMN-3277
@@ -270,41 +291,47 @@ validateValidationSpecs caller key value_ formState validation =
     in
     case validation of
         R10.Form.Internal.FieldConf.WithMsg msg validation_ ->
-            validateWithMsg key value msg formState validation_
+            validateWithMsg showAlsoPassedValidation key value msg formState validation_
 
         R10.Form.Internal.FieldConf.Dependant dependantKey validation_ ->
-            validateDependant key dependantKey formState validation_
+            validateDependant showAlsoPassedValidation key dependantKey formState validation_
 
         R10.Form.Internal.FieldConf.OneOf validations ->
-            Just <| validateOneOf key value formState validations
+            Just <| validateOneOf showAlsoPassedValidation key value formState validations
 
         R10.Form.Internal.FieldConf.AllOf validations ->
-            Just <| validateAllOf key value formState validations
+            Just <| validateAllOf showAlsoPassedValidation key value formState validations
 
         R10.Form.Internal.FieldConf.Required ->
-            Just <| validateRequired value
+            if showAlsoPassedValidation then
+                -- Hiding the "Required" validation in case it is a password
+                -- field
+                Nothing
+
+            else
+                Just <| validateRequired value
 
         R10.Form.Internal.FieldConf.Empty ->
             Just <| validateEmpty value
 
         R10.Form.Internal.FieldConf.Regex regex ->
-            skipValidationIfEmpty value <|
+            skipValidationIfEmpty value showAlsoPassedValidation <|
                 validateRegex value regex
 
         R10.Form.Internal.FieldConf.MinLength length ->
-            skipValidationIfEmpty value <|
+            skipValidationIfEmpty value showAlsoPassedValidation <|
                 validateMinLength value length
 
         R10.Form.Internal.FieldConf.MaxLength length ->
-            skipValidationIfEmpty value <|
+            skipValidationIfEmpty value showAlsoPassedValidation <|
                 validateMaxLength value length
 
         R10.Form.Internal.FieldConf.Equal dependantKey ->
-            skipValidationIfEmpty value <|
+            skipValidationIfEmpty value showAlsoPassedValidation <|
                 validateEqual value dependantKey formState
 
         R10.Form.Internal.FieldConf.Not validation_ ->
-            validateNot key value formState validation_
+            validateNot showAlsoPassedValidation key value formState validation_
 
         R10.Form.Internal.FieldConf.NoValidation ->
             Nothing
@@ -328,8 +355,16 @@ f formStateBeforeValidationFixer ( keyAsString, rest ) =
     ( keyAsString, { rest | value = value } )
 
 
-validate : (String -> String -> String) -> R10.Form.Internal.Key.Key -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs -> R10.Form.Internal.State.State -> R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState
-validate formStateBeforeValidationFixer key maybeValidationSpec formState fieldState =
+validate :
+    (String -> String -> String)
+    -> Bool
+    -> R10.Form.Internal.Key.Key
+    -> R10.FormTypes.FieldType
+    -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+    -> R10.Form.Internal.State.State
+    -> R10.Form.Internal.FieldState.FieldState
+    -> R10.Form.Internal.FieldState.FieldState
+validate formStateBeforeValidationFixer showAlsoPassedValidation key fieldType maybeValidationSpec formState fieldState =
     --
     -- "formStateBeforeValidationFixer" is a function used to fix the values of
     -- fields before the validation is applied, but those values should be then
@@ -371,12 +406,35 @@ validate formStateBeforeValidationFixer key maybeValidationSpec formState fieldS
             --
             formState
 
-        newFieldState =
-            { fieldState | value = formStateBeforeValidationFixer (R10.Form.Internal.Key.headId key) fieldState.value }
+        punydecodeIfEmail : String -> String
+        punydecodeIfEmail value =
+            case fieldType of
+                R10.FormTypes.TypeText R10.FormTypes.TextEmail ->
+                    R10.Form.Internal.Helpers.punyDecode value
 
-        fieldIdAsString =
-            key
-                |> R10.Form.Internal.Key.headId
+                R10.FormTypes.TypeText (R10.FormTypes.TextEmailWithSuggestions _) ->
+                    R10.Form.Internal.Helpers.punyDecode value
+
+                _ ->
+                    value
+
+        cleanPhoneNumber : String -> String
+        cleanPhoneNumber value =
+            case fieldType of
+                R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone _) ->
+                    R10.Form.Internal.Helpers.cleanPhoneNumber value
+
+                _ ->
+                    value
+
+        newFieldState =
+            { fieldState
+                | value =
+                    fieldState.value
+                        |> punydecodeIfEmail
+                        |> cleanPhoneNumber
+                        |> formStateBeforeValidationFixer (R10.Form.Internal.Key.headId key)
+            }
 
         isDisabled : Bool
         isDisabled =
@@ -397,7 +455,7 @@ validate formStateBeforeValidationFixer key maybeValidationSpec formState fieldS
     { fieldState
         | validation =
             validationSpec
-                |> List.map (validateValidationSpecs "validate" key newFieldState.value newFormState)
+                |> List.map (validateValidationSpecs "validate" showAlsoPassedValidation key newFieldState.value newFormState)
                 |> List.filterMap identity
                 |> R10.Form.Internal.FieldState.Validated
     }

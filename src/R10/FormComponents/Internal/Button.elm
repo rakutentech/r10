@@ -14,7 +14,7 @@ import R10.Context exposing (..)
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
-import R10.FormTypes
+import R10.Palette
 
 
 
@@ -44,7 +44,7 @@ borderWidth =
     1
 
 
-getIconSize : Args msg -> Int
+getIconSize : Args z msg -> Int
 getIconSize args =
     case args.type_ of
         Icon ->
@@ -54,7 +54,7 @@ getIconSize args =
             16 + (iconPadding * 2)
 
 
-getRightPadding : Args msg -> Int
+getRightPadding : Args z msg -> Int
 getRightPadding args =
     -- https://material.io/components/buttons#specs
     case args.type_ of
@@ -68,7 +68,7 @@ getRightPadding args =
             16
 
 
-getLeftPadding : Args msg -> Int
+getLeftPadding : Args z msg -> Int
 getLeftPadding args =
     -- https://material.io/components/buttons#specs
     if args.icon == Nothing then
@@ -86,7 +86,7 @@ getLeftPadding args =
                 12
 
 
-viewIcon : Args msg -> ElementC msg -> ElementC msg
+viewIcon : Args z msg -> Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
 viewIcon args icon =
     el
         [ width <| px (getIconSize args)
@@ -98,7 +98,7 @@ viewIcon args icon =
         none
 
 
-getHeight : Args msg -> Int
+getHeight : Args z msg -> Int
 getHeight args =
     case args.type_ of
         Icon ->
@@ -111,7 +111,7 @@ getHeight args =
             36 - (borderWidth * 2)
 
 
-getBorderRadius : Args msg -> number
+getBorderRadius : Args z msg -> number
 getBorderRadius args =
     case args.style of
         R10.FormComponents.Internal.Style.Filled ->
@@ -126,7 +126,7 @@ getBorderRadius args =
                     4
 
 
-getBackgroundColor : Args msg -> Color
+getBackgroundColor : Args z msg -> Color
 getBackgroundColor args =
     case args.type_ of
         Contained ->
@@ -146,7 +146,7 @@ getBackgroundColor args =
             R10.FormComponents.Internal.UI.Color.surface args.palette
 
 
-getFontColor : Args msg -> Color
+getFontColor : Args z msg -> Color
 getFontColor args =
     case args.type_ of
         Contained ->
@@ -174,7 +174,7 @@ getFontColor args =
             R10.FormComponents.Internal.UI.Color.font args.palette
 
 
-getBorderColor : Args msg -> Color
+getBorderColor : Args z msg -> Color
 getBorderColor args =
     case args.type_ of
         Contained ->
@@ -194,7 +194,7 @@ getBorderColor args =
             R10.FormComponents.Internal.UI.Color.background args.palette
 
 
-getAccentColor : Args msg -> Bool -> Bool -> Color
+getAccentColor : Args z msg -> Bool -> Bool -> Color
 getAccentColor args isHovered isFocused =
     let
         opacity : Float
@@ -222,7 +222,7 @@ getAccentColor args isHovered isFocused =
             R10.FormComponents.Internal.UI.Color.onSurfaceA (0.04 * opacity) args.palette
 
 
-getRippleCls : Args msg -> String
+getRippleCls : Args z msg -> String
 getRippleCls args =
     case args.type_ of
         Contained ->
@@ -238,20 +238,20 @@ getRippleCls args =
             "ripple"
 
 
-type alias Args msg =
+type alias Args z msg =
     { type_ : Button
 
     --  icon should be 18px, for Icon button 24px https://material.io/components/buttons#specs
-    , icon : Maybe (ElementC msg)
+    , icon : Maybe (Element (R10.Context.ContextInternal z) msg)
     , text : String
     , onClick : msg
-    , palette : R10.FormTypes.Palette
+    , palette : R10.Palette.Palette
     , style : R10.FormComponents.Internal.Style.Style
     , disabled : Bool
     }
 
 
-view : List (AttributeC msg) -> Args msg -> ElementC msg
+view : List (Attribute (R10.Context.ContextInternal z) msg) -> Args z msg -> Element (R10.Context.ContextInternal z) msg
 view attrs args =
     row
         ([ Background.color <| getBackgroundColor args

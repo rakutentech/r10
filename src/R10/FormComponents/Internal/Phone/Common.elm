@@ -8,6 +8,7 @@ module R10.FormComponents.Internal.Phone.Common exposing
     , dropdownSearchBoxId
     , filterBySearch
     , init
+    , inputPhoneElementId
     , normalizeString
     )
 
@@ -16,7 +17,7 @@ import R10.Context exposing (..)
 import R10.Country
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Style
-import R10.FormTypes
+import R10.Palette
 
 
 
@@ -28,15 +29,16 @@ type Msg
     | OnFocus String
     | OnLoseFocus String
     | OnScroll Float
-    | OnEsc
+    | OnEsc String Bool
       --
     | OnInputClick { key : String, selectedY : Float }
-    | OnOptionSelect R10.Country.Country
+    | OnOptionSelect String R10.Country.Country
     | OnSearch { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List R10.Country.Country } String
     | OnArrowUp { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List R10.Country.Country }
     | OnArrowDown { key : String, selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List R10.Country.Country }
       --
     | OnValueChange String { selectOptionHeight : Int, maxDisplayCount : Int, filteredFieldOption : List R10.Country.Country } String
+    | OnSimpleValueChange Bool String
 
 
 init : Model
@@ -52,7 +54,7 @@ type alias FieldOption =
     R10.FormComponents.Internal.Single.Common.FieldOption
 
 
-type alias Args msg =
+type alias Args z msg =
     -- Stuff that change
     { maybeValid : Maybe Bool
 
@@ -66,15 +68,15 @@ type alias Args msg =
     , requiredLabel : Maybe String
     , style : R10.FormComponents.Internal.Style.Style
     , key : String
-    , palette : R10.FormTypes.Palette
+    , palette : R10.Palette.Palette
 
     -- Specific
     , countryOptions : List R10.Country.Country
-    , toOptionEl : R10.Country.Country -> ElementC msg
+    , toOptionEl : R10.Country.Country -> Element (R10.Context.ContextInternal z) msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : List (ElementC msg)
-    , trailingIcon : List (ElementC msg)
+    , leadingIcon : List (Element (R10.Context.ContextInternal z) msg)
+    , trailingIcon : List (Element (R10.Context.ContextInternal z) msg)
     }
 
 
@@ -88,16 +90,12 @@ searchFn : String -> R10.Country.Country -> Bool
 searchFn search country =
     String.contains
         (search |> normalizeString)
-        (country |> R10.Country.toString |> normalizeString)
+        (country |> R10.Country.toCountryNameWithAlias |> normalizeString)
 
 
 filterBySearch : String -> List R10.Country.Country -> List R10.Country.Country
 filterBySearch search fieldOptions =
-    if
-        String.isEmpty search
-            --|| isAnyOptionLabelMatched { value = search, fieldOptions = fieldOptions }
-            || (fieldOptions |> List.map R10.Country.toString |> List.any ((==) search))
-    then
+    if String.isEmpty search then
         fieldOptions
 
     else
@@ -118,3 +116,8 @@ dropdownContentId key =
 dropdownSearchBoxId : String -> String
 dropdownSearchBoxId key =
     "dropdown-search-" ++ key
+
+
+inputPhoneElementId : String -> String
+inputPhoneElementId key =
+    "input-phone-" ++ key

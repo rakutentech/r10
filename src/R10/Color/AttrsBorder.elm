@@ -10,7 +10,7 @@ import Element.WithContext exposing (..)
 import Element.WithContext.Border as Border
 import R10.Color.Internal.Derived
 import R10.Color.Utils
-import R10.Context exposing (..)
+import R10.Context
 
 
 
@@ -18,12 +18,12 @@ import R10.Context exposing (..)
 
 
 {-| -}
-normal : AttributeC msg
+normal : Attribute (R10.Context.ContextInternal z) msg
 normal =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Border
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
 
@@ -33,12 +33,12 @@ normal =
 
 
 {-| -}
-shadow : { offset : ( Float, Float ), size : Float, blur : Float } -> AttributeC msg
+shadow : { offset : ( Float, Float ), size : Float, blur : Float } -> Attribute (R10.Context.ContextInternal z) msg
 shadow { offset, size, blur } =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Border
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> (\color -> { offset = offset, size = size, blur = blur, color = color })
                 |> Border.shadow
@@ -49,12 +49,12 @@ shadow { offset, size, blur } =
 
 
 {-| -}
-buttonSecondary : AttributeC msg
+buttonSecondary : Attribute (R10.Context.ContextInternal z) msg
 buttonSecondary =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Border
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
 
@@ -64,45 +64,45 @@ buttonSecondary =
 
 
 {-| -}
-inputFieldNormal : AttributeC msg
+inputFieldNormal : Attribute (R10.Context.ContextInternal z) msg
 inputFieldNormal =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Border
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
 
 
 {-| -}
-inputFieldFocused : AttributeC msg
+inputFieldFocused : Attribute (R10.Context.ContextInternal z) msg
 inputFieldFocused =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Primary
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
 
 
 {-| -}
-inputFieldError : AttributeC msg
+inputFieldError : Attribute (R10.Context.ContextInternal z) msg
 inputFieldError =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Error
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
 
 
 {-| -}
-inputFieldSuccess : AttributeC msg
+inputFieldSuccess : Attribute (R10.Context.ContextInternal z) msg
 inputFieldSuccess =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Success
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
 
@@ -112,33 +112,33 @@ inputFieldSuccess =
 
 
 {-| -}
-inputFieldCheckboxNormal : AttributeC msg
+inputFieldCheckboxNormal : Attribute (R10.Context.ContextInternal z) msg
 inputFieldCheckboxNormal =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Border
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
 
 
 {-| -}
-inputFieldCheckboxSelected : AttributeC msg
+inputFieldCheckboxSelected : Attribute (R10.Context.ContextInternal z) msg
 inputFieldCheckboxSelected =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Primary
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
 
 
 {-| -}
-inputFieldCheckboxOver : Decoration Context
+inputFieldCheckboxOver : Decoration (R10.Context.ContextInternal z)
 inputFieldCheckboxOver =
     withContextDecoration <|
         \c ->
             R10.Color.Internal.Derived.Primary
-                |> R10.Color.Internal.Derived.toColor c.theme
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color

@@ -8,7 +8,7 @@ import Html
 import Html.Attributes
 import Html.Events
 import R10.Context exposing (..)
-import R10.FormTypes
+import R10.Palette
 import R10.Table.Internal.Config
 import R10.Table.Internal.Msg
 import R10.Table.Internal.State
@@ -17,7 +17,7 @@ import R10.Transition
 import Svg
 
 
-buttonStyle : List (AttributeC msg)
+buttonStyle : List (Attribute (R10.Context.ContextInternal context) msg)
 buttonStyle =
     [ padding 9
     , alignRight
@@ -37,7 +37,8 @@ intToOption v =
 numberOfRowsSelector :
     R10.Table.Internal.Config.PaginationConfig
     -> R10.Table.Internal.State.PaginationStateRecord
-    -> ElementC R10.Table.Internal.Msg.Msg
+    -- -> Element R10.Table.Internal.Msg.Msg context
+    -> Element (ContextInternal context) R10.Table.Internal.Msg.Msg
 numberOfRowsSelector paginationConfig state =
     row
         [ alignRight
@@ -62,7 +63,7 @@ viewPaginationButton :
     R10.Table.Internal.Msg.Msg
     -> (String -> Int -> Svg.Svg R10.Table.Internal.Msg.Msg)
     -> R10.Table.Internal.State.PaginationButtonState
-    -> ElementC R10.Table.Internal.Msg.Msg
+    -> Element (ContextInternal context) R10.Table.Internal.Msg.Msg
 viewPaginationButton msg icon state =
     el
         (buttonStyle
@@ -81,10 +82,10 @@ viewPaginationButton msg icon state =
 
 
 view :
-    R10.FormTypes.Palette
+    R10.Palette.Palette
     -> R10.Table.Internal.Config.PaginationConfig
     -> R10.Table.Internal.State.PaginationState
-    -> ElementC R10.Table.Internal.Msg.Msg
+    -> Element (ContextInternal context) R10.Table.Internal.Msg.Msg
 view _ paginationConfig paginationState =
     case paginationState of
         -- todo refactor it so pagination would work with default state initially,

@@ -47,16 +47,26 @@ textTypeMetaData textType =
 
         R10.FormTypes.TextWithPattern pattern ->
             { string = "R10.FormTypes.TextWithPattern " ++ pattern
-            , next = R10.FormTypes.TextEmailWithSuggestions [ "aaa.com", "bbb.com", "ccc.com" ]
+            , next = R10.FormTypes.TextEmailWithSuggestions [ "google.com", "hotmail.com", "yahoo.com" ]
             }
 
-        R10.FormTypes.TextEmailWithSuggestions pattern ->
-            { string = "R10.FormTypes.TextEmailWithSuggestions " ++ String.join ", " pattern
-            , next = R10.FormTypes.TextWithPatternLarge "YY/MMMM"
+        R10.FormTypes.TextEmailWithSuggestions suggestions ->
+            { string = "R10.FormTypes.TextEmailWithSuggestions [ " ++ String.join ", " suggestions ++ " ]"
+            , next = R10.FormTypes.TextMobileEmail
             }
 
-        R10.FormTypes.TextWithPatternLarge pattern ->
-            { string = "R10.FormTypes.TextWithPatternLarge " ++ pattern
+        R10.FormTypes.TextMobileEmail ->
+            { string = "R10.FormTypes.TextMobileEmail"
+            , next = R10.FormTypes.TextUsernameWithUseEmailCheckbox ""
+            }
+
+        R10.FormTypes.TextUsernameWithUseEmailCheckbox data ->
+            { string = "R10.FormTypes.TextUsernameWithUseEmailCheckbox " ++ data
+            , next = R10.FormTypes.TextWithPatternLarge ""
+            }
+
+        R10.FormTypes.TextWithPatternLarge data ->
+            { string = "R10.FormTypes.TextWithPatternLarge " ++ data
             , next = R10.FormTypes.TextPasswordNew
             }
 
@@ -101,5 +111,10 @@ singleTypeMetaData singleType =
 
         R10.FormTypes.SingleSelect ->
             { string = "R10.FormTypes.SingleSelect"
+            , next = R10.FormTypes.SingleComboboxForCountry
+            }
+
+        R10.FormTypes.SingleComboboxForCountry ->
+            { string = "R10.FormTypes.SingleComboboxForCountry"
             , next = R10.FormTypes.SingleRadio
             }

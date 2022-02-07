@@ -9,19 +9,19 @@ import Json.Decode
 import R10.Context exposing (..)
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
-import R10.FormTypes
+import R10.Palette
 import R10.Transition
 
 
 view :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
         { msgOnClick : Maybe msg
-        , icon : ElementC msg
-        , palette : R10.FormTypes.Palette
+        , icon : Element (R10.Context.ContextInternal z) msg
+        , palette : R10.Palette.Palette
         , size : Int
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 view args { msgOnClick, icon, palette, size } =
     let
         padding_ : Int
@@ -40,7 +40,7 @@ view args { msgOnClick, icon, palette, size } =
         moveUp_ =
             toFloat (iconHitboxSize - containerSize) / 2
 
-        attrsCommon : List (AttrC () msg)
+        attrsCommon : List (Attr (R10.Context.ContextInternal z) () msg)
         attrsCommon =
             [ Background.color <| R10.FormComponents.Internal.UI.Color.onSurfaceA 0 palette
             , padding padding_
@@ -50,7 +50,7 @@ view args { msgOnClick, icon, palette, size } =
             , htmlAttribute <| Html.Attributes.style "margin-top" ("-" ++ String.fromFloat moveUp_ ++ "px")
             ]
 
-        attrsClickable : List (AttrC () msg)
+        attrsClickable : List (Attr (R10.Context.ContextInternal z) () msg)
         attrsClickable =
             case msgOnClick of
                 Just msgOnClick_ ->

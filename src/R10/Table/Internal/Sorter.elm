@@ -13,7 +13,11 @@ import R10.Table.Internal.Types
 -- SORTING
 
 
-sort : R10.Table.Internal.State.State -> List (R10.Table.Internal.Config.ColumnConf data msg) -> List data -> List data
+sort :
+    R10.Table.Internal.State.State
+    -> List (R10.Table.Internal.Config.ColumnConf data msg context)
+    -> List data
+    -> List data
 sort state columnData data =
     case findSorter state.sort.name columnData of
         Nothing ->
@@ -50,7 +54,10 @@ applySorter isReversed sorter data =
                 List.reverse (sort_ data)
 
 
-findSorter : String -> List (R10.Table.Internal.Config.ColumnConf data msg) -> Maybe (R10.Table.Internal.Types.Sorter data)
+findSorter :
+    String
+    -> List (R10.Table.Internal.Config.ColumnConf data msg context)
+    -> Maybe (R10.Table.Internal.Types.Sorter data)
 findSorter selectedColumn columnData =
     case columnData of
         [] ->

@@ -8,8 +8,10 @@ module R10.FormComponents.Internal.Phone.Update exposing
 
 import Browser.Dom
 import List.Extra
+import Process
 import R10.Country
 import R10.FormComponents.Internal.Phone.Common
+import Regex
 import Task
 
 
@@ -268,6 +270,29 @@ getNewSelectAndY_ step defaultIndex defaultCountry model args =
     ( newSelect, newY )
 
 
+userReplace : String -> (Regex.Match -> String) -> String -> String
+userReplace userRegex replacer string =
+    case Regex.fromString userRegex of
+        Nothing ->
+            string
+
+        Just regex ->
+            Regex.replace regex replacer string
+
+
+cleanPhoneNumber : String -> String
+cleanPhoneNumber phone =
+    userReplace "[^0-9 \\-\\(\\).]" (\_ -> "") phone
+
+
+helperFocusField : String -> Cmd R10.FormComponents.Internal.Phone.Common.Msg
+helperFocusField id =
+    Task.attempt (\_ -> R10.FormComponents.Internal.Phone.Common.NoOp)
+        (Process.sleep 500
+            |> Task.andThen (\_ -> Browser.Dom.focus id)
+        )
+
+
 update : R10.FormComponents.Internal.Phone.Common.Msg -> R10.FormComponents.Internal.Phone.Common.Model -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
 update msg model =
     case msg of
@@ -275,7 +300,7 @@ update msg model =
             ( model, Cmd.none )
 
         R10.FormComponents.Internal.Phone.Common.OnFocus value ->
-            ( { model | focused = True, value = value }, Cmd.none )
+            ( { model | focused = True, value = value, opened = False }, Cmd.none )
 
         R10.FormComponents.Internal.Phone.Common.OnLoseFocus value ->
             ( { model | focused = False, opened = False, value = value, select = "", search = "" }, Cmd.none )
@@ -283,8 +308,14 @@ update msg model =
         R10.FormComponents.Internal.Phone.Common.OnScroll scroll ->
             ( { model | scroll = scroll }, Cmd.none )
 
-        R10.FormComponents.Internal.Phone.Common.OnEsc ->
-            ( { model | search = "", opened = False }, Cmd.none )
+        R10.FormComponents.Internal.Phone.Common.OnEsc key needFocusToInput ->
+            ( { model | search = "", opened = False }
+            , if needFocusToInput then
+                helperFocusField <| R10.FormComponents.Internal.Phone.Common.inputPhoneElementId key
+
+              else
+                Cmd.none
+            )
 
         --
         --
@@ -303,7 +334,7 @@ update msg model =
                     maybeCountryValue
                         |> Maybe.map R10.Country.toCountryTelCode
                         |> Maybe.withDefault ""
-                        |> (\v -> v ++ newValue_)
+                        |> (\v -> v ++ cleanPhoneNumber newValue_)
 
                 hasCurrentCountryCode : Bool
                 hasCurrentCountryCode =
@@ -402,7 +433,7 @@ update msg model =
                 ]
             )
 
-        R10.FormComponents.Internal.Phone.Common.OnOptionSelect newCountry ->
+        R10.FormComponents.Internal.Phone.Common.OnOptionSelect key newCountry ->
             let
                 newCode : String
                 newCode =
@@ -436,7 +467,7 @@ update msg model =
                 , select = ""
                 , search = ""
               }
-            , Cmd.none
+            , helperFocusField <| R10.FormComponents.Internal.Phone.Common.inputPhoneElementId key
             )
 
         R10.FormComponents.Internal.Phone.Common.OnInputClick args ->
@@ -464,3 +495,25 @@ update msg model =
 
             else
                 onOpenHelper model args.key model.scroll
+                    |> focusSearchBoxCmd args.key
+
+        R10.FormComponents.Internal.Phone.Common.OnSimpleValueChange disabledChangeCountry value ->
+            let
+                maybeCountryValue : Maybe R10.Country.Country
+                maybeCountryValue =
+                    R10.Country.fromTelephoneAsString model.value
+
+                countryTelCode : String
+                countryTelCode =
+                    Maybe.map R10.Country.toCountryTelCode maybeCountryValue
+                        |> Maybe.withDefault ""
+
+                newValue : String
+                newValue =
+                    if disabledChangeCountry && model.value == countryTelCode && (String.length model.value > String.length value) then
+                        model.value
+
+                    else
+                        "+" ++ cleanPhoneNumber value
+            in
+            ( { model | value = newValue }, Cmd.none )

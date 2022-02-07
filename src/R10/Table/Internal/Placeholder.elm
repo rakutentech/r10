@@ -41,7 +41,7 @@ toHex color =
         |> String.join ""
 
 
-placeholderSvg : Color -> ElementC msg
+placeholderSvg : Color -> Element (R10.Context.ContextInternal z) msg
 placeholderSvg color =
     let
         stringColor =
@@ -53,7 +53,7 @@ placeholderSvg color =
         speed =
             "2s"
     in
-    html <|
+    Element.WithContext.html <|
         Svg.svg
             [ SA.xmlSpace "http://www.w3.org/2000/svg"
             , SA.width "auto"
@@ -118,7 +118,7 @@ placeholderSvg color =
             ]
 
 
-view : Color -> List (AttributeC msg) -> ElementC msg
+view : Color -> List (Attribute (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 view color attrs =
     el ([ width fill, height <| px 16, Border.rounded 4, clip, alpha 0.6 ] ++ attrs) <|
         (placeholderSvg <| color)

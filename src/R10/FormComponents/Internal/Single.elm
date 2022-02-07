@@ -11,10 +11,15 @@ module R10.FormComponents.Internal.Single exposing
     , viewCustom
     )
 
+import Dict
 import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
 import Element.WithContext.Events as Events
 import Html.Attributes
 import R10.Context exposing (..)
+import R10.Form.Internal.Helpers
+import R10.Form.Internal.Shared
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Single.Combobox
 import R10.FormComponents.Internal.Single.Common
@@ -25,8 +30,10 @@ import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormTypes
+import R10.Palette
 import R10.SimpleMarkdown
 import R10.Transition
+import Url
 
 
 
@@ -49,7 +56,7 @@ defaultSearchFn search opt =
         (opt.label |> normalizeString)
 
 
-defaultViewOptionEl : { a | search : String, msgOnSelect : String -> msg } -> R10.FormComponents.Internal.Single.Common.FieldOption -> ElementC msg
+defaultViewOptionEl : { a | search : String, msgOnSelect : String -> msg } -> R10.FormComponents.Internal.Single.Common.FieldOption -> Element (R10.Context.ContextInternal z) msg
 defaultViewOptionEl { search, msgOnSelect } { label, value } =
     let
         insertPositions : List Int
@@ -80,7 +87,7 @@ defaultViewOptionEl { search, msgOnSelect } { label, value } =
         (withBold |> R10.SimpleMarkdown.elementMarkdown)
 
 
-defaultTrailingIcon : { a | opened : Bool, palette : R10.FormTypes.Palette } -> ElementC msg
+defaultTrailingIcon : { a | opened : Bool, palette : R10.Palette.Palette } -> Element (R10.Context.ContextInternal z) msg
 defaultTrailingIcon { opened, palette } =
     R10.FormComponents.Internal.IconButton.view
         [ pointer
@@ -103,6 +110,70 @@ defaultTrailingIcon { opened, palette } =
         , palette = palette
         , size = 24
         }
+
+
+getFlagIcon : String -> Element (R10.Context.ContextInternal z) msg
+getFlagIcon countryCode =
+    let
+        backgroundPosition : List (Attribute context msg)
+        backgroundPosition =
+            case Dict.get countryCode R10.Form.Internal.Shared.flagIconPositions of
+                Just ( x, y ) ->
+                    [ htmlAttribute <| Html.Attributes.style "background-position" (String.fromFloat (x - 1) ++ "px " ++ String.fromFloat (y - 2) ++ "px")
+                    , htmlAttribute <| Html.Attributes.style "background-size" "auto"
+                    ]
+
+                Nothing ->
+                    [ htmlAttribute <| Html.Attributes.style "background-size" "cover"
+                    ]
+    in
+    withContext
+        (\c ->
+            el
+                ([ width <| px 14
+                 , height <| px 11
+                 , Border.shadow { offset = ( 0, 0 ), size = 1, blur = 1, color = rgba 0 0 0 0.2 }
+                 , moveDown 1
+                 , Background.image c.contextR10.urlImageFlags
+                 ]
+                    ++ backgroundPosition
+                )
+            <|
+                none
+        )
+
+
+viewOptionElForCountry : { a | search : String, msgOnSelect : String -> msg } -> R10.FormComponents.Internal.Single.Common.FieldOption -> Element (R10.Context.ContextInternal z) msg
+viewOptionElForCountry { search, msgOnSelect } { label, value } =
+    let
+        insertPositions : List Int
+        insertPositions =
+            String.indexes (search |> normalizeString) (label |> normalizeString)
+                |> List.concatMap (\idx -> [ idx, idx + String.length search ])
+
+        withBold : String
+        withBold =
+            if List.isEmpty insertPositions then
+                label
+
+            else
+                insertBold insertPositions label
+    in
+    row
+        [ width fill
+        , height fill
+        , htmlAttribute <| Html.Attributes.style "z-index" "0"
+        , Events.onClick <| msgOnSelect value
+        , pointer
+        , paddingXY 12 0
+
+        -- gradient for label overflow
+        , htmlAttribute <| Html.Attributes.style "mask-image" "linear-gradient(right, rgba(255,255,0,0), rgba(255,255,0, 1) 16px)"
+        , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
+        ]
+        [ getFlagIcon value
+        , row [ moveRight 10 ] (withBold |> R10.SimpleMarkdown.elementMarkdown)
+        ]
 
 
 
@@ -133,7 +204,7 @@ type alias Args msg =
     , requiredLabel : Maybe String
     , key : String
     , style : R10.FormComponents.Internal.Style.Style
-    , palette : R10.FormTypes.Palette
+    , palette : R10.Palette.Palette
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List R10.FormComponents.Internal.Single.Common.FieldOption
     , maybeValid : Maybe Bool
@@ -142,13 +213,13 @@ type alias Args msg =
 
 
 view :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     -> R10.FormComponents.Internal.Single.Common.Model
     -> Args msg
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs model conf =
     let
-        args : R10.FormComponents.Internal.Single.Common.Args msg
+        args : R10.FormComponents.Internal.Single.Common.Args z msg
         args =
             { maybeValid = conf.maybeValid
             , toMsg = conf.toMsg
@@ -176,10 +247,60 @@ view attrs model conf =
             , trailingIcon = []
             , autocomplete = Nothing
             }
+
+        argsForCountryPicker : R10.FormComponents.Internal.Single.Common.Args z msg
+        argsForCountryPicker =
+            { args
+                | searchable = True
+                , leadingIcon =
+                    if String.isEmpty model.value then
+                        []
+
+                    else
+                        [ el
+                            (case args.style of
+                                R10.FormComponents.Internal.Style.Filled ->
+                                    [ moveRight 12
+                                    , moveDown -2
+                                    ]
+
+                                R10.FormComponents.Internal.Style.Outlined ->
+                                    [ moveRight 19
+                                    , moveDown 3
+                                    ]
+                            )
+                          <|
+                            getFlagIcon model.value
+                        ]
+                , viewOptionEl =
+                    viewOptionElForCountry
+                        { search = model.search
+                        , msgOnSelect = R10.FormComponents.Internal.Single.Common.OnOptionSelect >> conf.toMsg
+                        }
+            }
+
+        attrsForCountryPicker : List (Attribute (R10.Context.ContextInternal z) msg)
+        attrsForCountryPicker =
+            attrs
+                ++ (case args.style of
+                        R10.FormComponents.Internal.Style.Filled ->
+                            [ moveRight 20
+                            ]
+
+                        R10.FormComponents.Internal.Style.Outlined ->
+                            [ moveRight 10
+                            ]
+                   )
     in
     case args.singleType of
         R10.FormTypes.SingleCombobox ->
             R10.FormComponents.Internal.Single.Combobox.view attrs model { args | searchable = True }
+
+        R10.FormTypes.SingleComboboxForCountry ->
+            R10.FormComponents.Internal.Single.Combobox.view
+                attrsForCountryPicker
+                model
+                argsForCountryPicker
 
         R10.FormTypes.SingleSelect ->
             R10.FormComponents.Internal.Single.Combobox.view attrs model { args | searchable = False }
@@ -191,35 +312,35 @@ view attrs model conf =
             R10.FormComponents.Internal.Single.Radio.viewRow attrs model args
 
 
-type alias ArgsCustom msg =
+type alias ArgsCustom z msg =
     { label : String
     , helperText : Maybe String
     , requiredLabel : Maybe String
     , disabled : Bool
     , key : String
     , style : R10.FormComponents.Internal.Style.Style
-    , palette : R10.FormTypes.Palette
+    , palette : R10.Palette.Palette
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List R10.FormComponents.Internal.Single.Common.FieldOption
     , maybeValid : Maybe Bool
     , toMsg : R10.FormComponents.Internal.Single.Common.Msg -> msg
     , searchFn : String -> R10.FormComponents.Internal.Single.Common.FieldOption -> Bool
-    , viewOptionEl : R10.FormComponents.Internal.Single.Common.FieldOption -> ElementC msg
+    , viewOptionEl : R10.FormComponents.Internal.Single.Common.FieldOption -> Element (R10.Context.ContextInternal z) msg
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : List (ElementC msg)
-    , trailingIcon : List (ElementC msg)
+    , leadingIcon : List (Element (R10.Context.ContextInternal z) msg)
+    , trailingIcon : List (Element (R10.Context.ContextInternal z) msg)
     }
 
 
 viewCustom :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     -> R10.FormComponents.Internal.Single.Common.Model
-    -> ArgsCustom msg
-    -> ElementC msg
+    -> ArgsCustom z msg
+    -> Element (R10.Context.ContextInternal z) msg
 viewCustom attrs model args =
     let
-        args_ : R10.FormComponents.Internal.Single.Common.Args msg
+        args_ : R10.FormComponents.Internal.Single.Common.Args z msg
         args_ =
             { maybeValid = args.maybeValid
             , toMsg = args.toMsg
@@ -244,6 +365,9 @@ viewCustom attrs model args =
     in
     case args.singleType of
         R10.FormTypes.SingleCombobox ->
+            R10.FormComponents.Internal.Single.Combobox.view attrs model { args_ | searchable = True }
+
+        R10.FormTypes.SingleComboboxForCountry ->
             R10.FormComponents.Internal.Single.Combobox.view attrs model { args_ | searchable = True }
 
         R10.FormTypes.SingleSelect ->

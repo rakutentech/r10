@@ -85,9 +85,9 @@ type alias Header =
 
 
 {-| -}
-type alias ViewArgs msg route =
-    { extraContent : List (ElementC msg)
-    , extraContentRightSide : List (ElementC msg)
+type alias ViewArgs z msg route =
+    { extraContent : List (Element (R10.Context.ContextInternal z) msg)
+    , extraContentRightSide : List (Element (R10.Context.ContextInternal z) msg)
     , from : String
     , msgMapper : Msg -> msg
     , isTop : Bool
@@ -95,8 +95,8 @@ type alias ViewArgs msg route =
     , onClick : String -> msg
     , urlTop : String
     , languageSystem : LanguageSystem route
-    , logoOnDark : ElementC msg
-    , logoOnLight : ElementC msg
+    , logoOnDark : Element (R10.Context.ContextInternal z) msg
+    , logoOnLight : Element (R10.Context.ContextInternal z) msg
     , darkHeader : Bool
     , theme : R10.Theme.Theme
     }
@@ -249,7 +249,7 @@ update msg model =
 
 
 {-| -}
-menuTitle : List (ElementC msg) -> ElementC msg
+menuTitle : List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 menuTitle elements =
     paragraph
         [ width fill
@@ -265,7 +265,7 @@ menuTitle elements =
 
 
 {-| -}
-menuSeparator : List (ElementC msg)
+menuSeparator : List (Element (R10.Context.ContextInternal z) msg)
 menuSeparator =
     [ el
         [ width fill
@@ -421,7 +421,7 @@ fontColorHeader args =
 
 
 {-| -}
-view : Header -> ViewArgs msg route -> ElementC msg
+view : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) msg
 view model args =
     el
         [ padding 0
@@ -465,7 +465,7 @@ view model args =
 
 
 {-| -}
-header : Header -> ViewArgs msg route -> ElementC msg
+header : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) msg
 header model args =
     el
         [ width fill
@@ -509,7 +509,7 @@ header model args =
 
 
 {-| -}
-userSection : Header -> ViewArgs msg route -> List (ElementC msg)
+userSection : Header -> ViewArgs z msg route -> List (Element (R10.Context.ContextInternal z) msg)
 userSection model args =
     [ el
         [ R10.Transition.transition "transform 0.2s"
@@ -563,7 +563,7 @@ userSection model args =
 
 
 {-| -}
-rightArea : Header -> ViewArgs msg route -> ElementC Msg -> ElementC msg
+rightArea : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) Msg -> Element (R10.Context.ContextInternal z) msg
 rightArea model args loginButtonElement =
     map args.msgMapper <|
         Input.button
@@ -581,7 +581,7 @@ rightArea model args loginButtonElement =
 
 
 {-| -}
-rightMenuButton : Bool -> R10.Theme.Theme -> ElementC msg
+rightMenuButton : Bool -> R10.Theme.Theme -> Element (R10.Context.ContextInternal z) msg
 rightMenuButton darkHeader theme =
     el
         [ Font.size 26
@@ -607,7 +607,7 @@ userMenuButtonId =
 
 
 {-| -}
-dontBreakOut : List (AttributeC msg)
+dontBreakOut : List (Attribute (R10.Context.ContextInternal z) msg)
 dontBreakOut =
     --
     -- From https://css-tricks.com/snippets/css/prevent-long-urls-from-breaking-out-of-container/
@@ -632,7 +632,7 @@ dontBreakOut =
 
 
 {-| -}
-userMenu : Header -> ViewArgs msg route -> ElementC msg
+userMenu : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) msg
 userMenu model args =
     let
         loginArea =
@@ -724,7 +724,7 @@ userMenu model args =
 
 
 {-| -}
-logoutLink : Header -> ViewArgs msg route -> ElementC Msg
+logoutLink : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) Msg
 logoutLink model args =
     if model.debuggingMode then
         Input.button
@@ -732,7 +732,7 @@ logoutLink model args =
             { label =
                 R10.I18n.paragraph []
                     { renderingMode = R10.I18n.Normal
-                    , tagReplacer = \c s -> s
+                    , tagReplacer = \_ string -> string
                     , translation = R10.Translations.signOut
                     }
             , onPress = Just Logout
@@ -744,7 +744,7 @@ logoutLink model args =
             { label =
                 R10.I18n.paragraph []
                     { renderingMode = R10.I18n.Normal
-                    , tagReplacer = \c s -> s
+                    , tagReplacer = \_ string -> string
                     , translation = R10.Translations.signOut
                     }
             , url = model.urlLogout ++ "?from=" ++ args.from
@@ -752,7 +752,7 @@ logoutLink model args =
 
 
 {-| -}
-loginLink : Header -> ViewArgs msg route -> ElementC Msg
+loginLink : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) Msg
 loginLink model args =
     if model.debuggingMode then
         Input.button
@@ -760,7 +760,7 @@ loginLink model args =
             { label =
                 R10.I18n.paragraph []
                     { renderingMode = R10.I18n.Normal
-                    , tagReplacer = \c s -> s
+                    , tagReplacer = \_ string -> string
                     , translation = R10.Translations.signIn
                     }
             , onPress = Just Login
@@ -772,7 +772,7 @@ loginLink model args =
             { label =
                 R10.I18n.paragraph []
                     { renderingMode = R10.I18n.Normal
-                    , tagReplacer = \c s -> s
+                    , tagReplacer = \_ string -> string
                     , translation = R10.Translations.signIn
                     }
             , url = loginUrl model args
@@ -780,20 +780,20 @@ loginLink model args =
 
 
 {-| -}
-loginUrl : Header -> ViewArgs msg route -> String
+loginUrl : Header -> ViewArgs z msg route -> String
 loginUrl model args =
     model.urlLogin ++ "?from=" ++ args.from
 
 
 {-| -}
-loginButton : Header -> ViewArgs msg route -> ElementC Msg
+loginButton : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) Msg
 loginButton model args =
     if model.debuggingMode then
         Input.button (attrsButton ++ [ alignRight ])
             { label =
                 R10.I18n.paragraph []
                     { renderingMode = R10.I18n.Normal
-                    , tagReplacer = \c s -> s
+                    , tagReplacer = \_ string -> string
                     , translation = R10.Translations.signIn
                     }
             , onPress = Just Login
@@ -804,7 +804,7 @@ loginButton model args =
             { label =
                 R10.I18n.paragraph []
                     { renderingMode = R10.I18n.Normal
-                    , tagReplacer = \c s -> s
+                    , tagReplacer = \_ string -> string
                     , translation = R10.Translations.signIn
                     }
             , url = loginUrl model args
@@ -812,7 +812,7 @@ loginButton model args =
 
 
 {-| -}
-attrsLink : List (AttributeC msg)
+attrsLink : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsLink =
     [ mouseOver [ Background.color <| rgba 0 0 0 0.05 ]
     , R10.Transition.transition "background 0.2s"
@@ -822,7 +822,7 @@ attrsLink =
 
 
 {-| -}
-attrsButton : List (AttributeC msg)
+attrsButton : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsButton =
     attrsLink
         ++ [ Border.width 1
@@ -866,7 +866,7 @@ logoColor darkHeader theme =
 
 
 {-| -}
-humbergAndLogo : Header -> ViewArgs msg route -> ElementC msg
+humbergAndLogo : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) msg
 humbergAndLogo model args =
     row
         [ paddingXY 10 0
@@ -900,7 +900,7 @@ humbergAndLogo model args =
         ]
 
 
-hamburger : Bool -> ElementC Msg
+hamburger : Bool -> Element (R10.Context.ContextInternal z) Msg
 hamburger sideMenuOpen =
     -- From https://jonsuh.com/hamburgers/
     Input.button
@@ -925,7 +925,7 @@ hamburger sideMenuOpen =
 
 
 {-| -}
-logo : ElementC msg -> ElementC msg
+logo : Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
 logo elementLogo =
     el
         [ spacing 20
@@ -936,7 +936,7 @@ logo elementLogo =
 
 
 {-| -}
-cover : { a | sideMenuOpen : Bool } -> { b | msgMapper : Msg -> msg } -> ElementC msg
+cover : { a | sideMenuOpen : Bool } -> { b | msgMapper : Msg -> msg } -> Element (R10.Context.ContextInternal z) msg
 cover model args =
     map args.msgMapper <|
         el
@@ -962,7 +962,7 @@ cover model args =
 
 
 {-| -}
-argsToLanguage : ViewArgs msg route -> R10.Language.Language
+argsToLanguage : ViewArgs z msg route -> R10.Language.Language
 argsToLanguage args =
     case args.languageSystem of
         LanguageInRoute languageInRoute ->
@@ -974,7 +974,7 @@ argsToLanguage args =
 
 
 {-| -}
-sideMenu : Header -> ViewArgs msg route -> ElementC msg
+sideMenu : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) msg
 sideMenu model args =
     column
         [ R10.Color.AttrsBackground.surface2dp
@@ -999,7 +999,7 @@ sideMenu model args =
             ++ [ menuTitle
                     [ R10.I18n.paragraph []
                         { renderingMode = R10.I18n.Normal
-                        , tagReplacer = \c s -> s
+                        , tagReplacer = \_ string -> string
                         , translation = R10.Translations.language
                         }
                     ]
@@ -1026,7 +1026,7 @@ sideMenu model args =
 
 
 {-| -}
-languageMenu : Header -> ViewArgs msg route -> List (ElementC msg)
+languageMenu : Header -> ViewArgs z msg route -> List (Element (R10.Context.ContextInternal z) msg)
 languageMenu model args =
     List.map
         (\language ->

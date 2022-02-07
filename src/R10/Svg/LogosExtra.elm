@@ -7,16 +7,17 @@ module R10.Svg.LogosExtra exposing (apple, apple_monochrome, elm, elm_monochrome
 -}
 
 import Element.WithContext exposing (..)
+import R10.Context exposing (..)
+import R10.Context exposing (..)
 import Html.Attributes
 import R10.Color.Utils
-import R10.Context exposing (..)
 import R10.Svg.Utils
 import Svg
 import Svg.Attributes as SA
 
 
 {-| -}
-r10_2 : List (AttributeC msg) -> Color -> Int -> ElementC msg
+r10_2 : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 r10_2 attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 637 234"
@@ -33,13 +34,13 @@ r10_2 attrs cl size =
 
 
 {-| -}
-r10_monochrome_1 : List (AttributeC msg) -> Color -> Int -> ElementC msg
+r10_monochrome_1 : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 r10_monochrome_1 attrs cl size =
     r10_ attrs cl cl cl cl size
 
 
 {-| -}
-r10 : List (AttributeC msg) -> Color -> Int -> ElementC msg
+r10 : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 r10 attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 2370 672"
@@ -49,7 +50,7 @@ r10 attrs cl size =
 
 
 {-| -}
-r10_ : List (AttributeC msg) -> Color -> Color -> Color -> Color -> Int -> ElementC msg
+r10_ : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Color -> Color -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 r10_ attrs cl1 cl2 cl3 cl4 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 658 234"
@@ -65,7 +66,7 @@ r10_ attrs cl1 cl2 cl3 cl4 size =
 
 
 {-| -}
-r10_3 : List (AttributeC msg) -> Color -> Int -> ElementC msg
+r10_3 : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 r10_3 attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 637 234"
@@ -81,13 +82,13 @@ r10_3 attrs cl size =
 
 
 {-| -}
-elm : List (AttributeC msg) -> Int -> ElementC msg
+elm : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 elm attrs size =
     elm_monochrome attrs (R10.Color.Utils.fromHex "#1293d8") size
 
 
 {-| -}
-elm_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+elm_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 elm_monochrome attrs cl size =
     let
         data =
@@ -137,7 +138,7 @@ poly color points ( translateX, translateY, rotation ) =
 
 
 {-| -}
-microsoft_ : List (AttributeC msg) -> Color -> Color -> Color -> Color -> Int -> ElementC msg
+microsoft_ : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Color -> Color -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 microsoft_ attrs cl1 cl2 cl3 cl4 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 21 21"
@@ -150,7 +151,7 @@ microsoft_ attrs cl1 cl2 cl3 cl4 size =
 
 
 {-| -}
-microsoft : List (AttributeC msg) -> Int -> ElementC msg
+microsoft : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 microsoft attrs size =
     microsoft_ attrs
         (R10.Color.Utils.fromHex "#f25022")
@@ -161,7 +162,7 @@ microsoft attrs size =
 
 
 {-| -}
-microsoft_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+microsoft_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 microsoft_monochrome attrs cl size =
     microsoft_ attrs
         cl
@@ -172,7 +173,7 @@ microsoft_monochrome attrs cl size =
 
 
 {-| -}
-google_ : List (AttributeC msg) -> Color -> Color -> Color -> Color -> Int -> ElementC msg
+google_ : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Color -> Color -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 google_ attrs cl1 cl2 cl3 cl4 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "4 4 17 17"
@@ -185,7 +186,7 @@ google_ attrs cl1 cl2 cl3 cl4 size =
 
 
 {-| -}
-google : List (AttributeC msg) -> Int -> ElementC msg
+google : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 google attrs size =
     google_ attrs
         (R10.Color.Utils.fromHex "#4285F4")
@@ -196,7 +197,7 @@ google attrs size =
 
 
 {-| -}
-google_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+google_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 google_monochrome attrs cl size =
     google_ attrs
         cl
@@ -207,13 +208,13 @@ google_monochrome attrs cl size =
 
 
 {-| -}
-facebook : List (AttributeC msg) -> Int -> ElementC msg
+facebook : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 facebook attrs size =
     facebook_monochrome attrs (R10.Color.Utils.fromHex "#3b5998") size
 
 
 {-| -}
-facebook_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+facebook_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 facebook_monochrome attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "4 4 17 17"
@@ -223,13 +224,13 @@ facebook_monochrome attrs cl size =
 
 
 {-| -}
-apple : List (AttributeC msg) -> Int -> ElementC msg
+apple : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 apple attrs size =
     apple_monochrome attrs (R10.Color.Utils.fromHex "#555") size
 
 
 {-| -}
-apple_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+apple_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 apple_monochrome attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "-80 0 1187.2 1187.2"
@@ -239,7 +240,7 @@ apple_monochrome attrs cl size =
 
 
 {-| -}
-pcHome24hours : List (AttributeC msg) -> Int -> ElementC msg
+pcHome24hours : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 pcHome24hours attrs size =
     pcHome24hours_ attrs
         False
@@ -250,7 +251,7 @@ pcHome24hours attrs size =
 
 
 {-| -}
-pcHome24hours_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+pcHome24hours_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 pcHome24hours_monochrome attrs cl size =
     pcHome24hours_ attrs
         True
@@ -261,7 +262,7 @@ pcHome24hours_monochrome attrs cl size =
 
 
 {-| -}
-pcHome24hours_ : List (AttributeC msg) -> Bool -> Color -> Color -> Color -> Int -> ElementC msg
+pcHome24hours_ : List (Attribute (R10.Context.ContextInternal z) msg) -> Bool -> Color -> Color -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 pcHome24hours_ attrs isMonochrome cl1 cl2 cl3 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 430.9 430.9"
@@ -287,7 +288,7 @@ pcHome24hours_ attrs isMonochrome cl1 cl2 cl3 size =
 
 
 {-| -}
-github : List (AttributeC msg) -> Color -> Int -> ElementC msg
+github : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 github attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "4.5 4.5 44 44"
@@ -298,19 +299,19 @@ github attrs cl size =
 
 
 {-| -}
-visa : List (AttributeC msg) -> Int -> ElementC msg
+visa : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 visa attrs size =
     visa_ attrs (R10.Color.Utils.fromHex "#00579f") (R10.Color.Utils.fromHex "#faa61a") size
 
 
 {-| -}
-visa_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+visa_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 visa_monochrome attrs cl size =
     visa_ attrs cl cl size
 
 
 {-| -}
-visa_ : List (AttributeC msg) -> Color -> Color -> Int -> ElementC msg
+visa_ : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 visa_ attrs cl1 cl2 size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 1000 323.7"
@@ -321,19 +322,19 @@ visa_ attrs cl1 cl2 size =
 
 
 {-| -}
-americanExpress : List (AttributeC msg) -> Int -> ElementC msg
+americanExpress : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 americanExpress attrs size =
     americanExpress_ attrs (R10.Color.Utils.fromHex "#007fff") size
 
 
 {-| -}
-americanExpress_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+americanExpress_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 americanExpress_monochrome attrs cl size =
     americanExpress_ attrs cl size
 
 
 {-| -}
-americanExpress_ : List (AttributeC msg) -> Color -> Int -> ElementC msg
+americanExpress_ : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 americanExpress_ attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 440 154"
@@ -352,7 +353,7 @@ americanExpress_ attrs cl size =
 
 
 {-| -}
-cardVisa : List (AttributeC msg) -> Int -> ElementC msg
+cardVisa : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 cardVisa attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
     cardVisa_ attrs
@@ -363,7 +364,7 @@ cardVisa attrs size =
 
 
 {-| -}
-cardVisa_ : List (AttributeC msg) -> Color -> Color -> Color -> Int -> ElementC msg
+cardVisa_ : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Color -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 cardVisa_ attrs cl1 cl2 cl3 size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -376,7 +377,7 @@ cardVisa_ attrs cl1 cl2 cl3 size =
 
 
 {-| -}
-cardMasterCard : List (AttributeC msg) -> Int -> ElementC msg
+cardMasterCard : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 cardMasterCard attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -394,7 +395,7 @@ cardMasterCard attrs size =
 
 
 {-| -}
-cardDiscover : List (AttributeC msg) -> Int -> ElementC msg
+cardDiscover : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 cardDiscover attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -407,7 +408,7 @@ cardDiscover attrs size =
 
 
 {-| -}
-cardJCB : List (AttributeC msg) -> Int -> ElementC msg
+cardJCB : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 cardJCB attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -434,7 +435,7 @@ cardJCB attrs size =
 
 
 {-| -}
-cardAmericanExpress : List (AttributeC msg) -> Int -> ElementC msg
+cardAmericanExpress : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 cardAmericanExpress attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -446,7 +447,7 @@ cardAmericanExpress attrs size =
 
 
 {-| -}
-cardDiners : List (AttributeC msg) -> Int -> ElementC msg
+cardDiners : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 cardDiners attrs size =
     -- From https://github.com/aaronfagan/svg-credit-card-payment-icons
     R10.Svg.Utils.wrapperWithViewbox attrs

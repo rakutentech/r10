@@ -15,6 +15,7 @@ import Element.WithContext exposing (..)
 import R10.Context exposing (..)
 import R10.FormComponents.Internal.Style
 import R10.FormTypes
+import R10.Palette
 
 
 
@@ -64,7 +65,7 @@ type alias FieldOption =
     }
 
 
-type alias Args msg =
+type alias Args z msg =
     { ---- Messages
       toMsg : Msg -> msg
 
@@ -76,19 +77,19 @@ type alias Args msg =
     , requiredLabel : Maybe String
     , style : R10.FormComponents.Internal.Style.Style
     , key : String
-    , palette : R10.FormTypes.Palette
+    , palette : R10.Palette.Palette
     , searchable : Bool
     , autocomplete : Maybe String
 
     -- Specific
     , singleType : R10.FormTypes.TypeSingle
     , fieldOptions : List FieldOption
-    , viewOptionEl : FieldOption -> ElementC msg
+    , viewOptionEl : FieldOption -> Element (R10.Context.ContextInternal z) msg
     , searchFn : String -> FieldOption -> Bool
     , selectOptionHeight : Int
     , maxDisplayCount : Int
-    , leadingIcon : List (ElementC msg)
-    , trailingIcon : List (ElementC msg)
+    , leadingIcon : List (Element (R10.Context.ContextInternal z) msg)
+    , trailingIcon : List (Element (R10.Context.ContextInternal z) msg)
     }
 
 

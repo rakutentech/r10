@@ -7,12 +7,13 @@ import Element.WithContext.Events as Events
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
 import Html.Attributes
+import R10.Color.AttrsFont
 import R10.Context exposing (..)
-import R10.Form.Internal.Helpers
+import R10.Device
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
-import R10.FormTypes
+import R10.Palette
 import R10.Paragraph
 import R10.Transition
 
@@ -33,13 +34,13 @@ isSelected optionState =
 viewRadioOption :
     { a
         | disabled : Bool
-        , palette : R10.FormTypes.Palette
+        , palette : R10.Palette.Palette
         , focused : Bool
         , label : String
         , value : Bool
     }
     -> Input.OptionState
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 viewRadioOption { disabled, palette, focused, label, value } optionState =
     let
         { innerCircleSize, innerCircleColor, outerCircleColor } =
@@ -68,7 +69,7 @@ viewRadioOption { disabled, palette, focused, label, value } optionState =
                     , outerCircleColor = R10.FormComponents.Internal.UI.Color.containerA 1 palette
                     }
 
-        innerCircle : ElementC msg
+        innerCircle : Element (R10.Context.ContextInternal z) msg
         innerCircle =
             el
                 [ R10.Transition.transition "all 0.13s"
@@ -81,8 +82,12 @@ viewRadioOption { disabled, palette, focused, label, value } optionState =
                 ]
                 none
 
-        selector : ElementC msg
-        selector =
+        isSPDevice : R10.Context.ContextR10 -> Bool
+        isSPDevice contextR10 =
+            R10.Device.isMobileOS contextR10.userAgent
+
+        selector : R10.Context.ContextR10 -> Element (R10.Context.ContextInternal z) msg
+        selector c =
             el
                 [ R10.Transition.transition "all 0.13s"
                 , width <| px 24
@@ -99,42 +104,49 @@ viewRadioOption { disabled, palette, focused, label, value } optionState =
                     }
                 , Border.rounded 20
                 , inFront <|
-                    el [ moveUp 2, moveLeft 2 ] <|
-                        R10.FormComponents.Internal.UI.viewSelectShadowCustomSize
-                            { palette = palette
-                            , focused = focused && isSelected optionState
-                            , disabled = disabled
-                            , value = value
-                            , size = { x = 28, y = 28 }
-                            , rounded = 50
-                            }
-                            none
+                    if isSPDevice c then
+                        none
+
+                    else
+                        el [ moveUp 2, moveLeft 2 ] <|
+                            R10.FormComponents.Internal.UI.viewSelectShadowCustomSize
+                                { palette = palette
+                                , focused = focused && isSelected optionState
+                                , disabled = disabled
+                                , value = value
+                                , size = { x = 28, y = 28 }
+                                , rounded = 50
+                                }
+                                none
                 ]
                 none
     in
-    row
-        ([ spacing 17
-         , width fill
-         , height fill
-         ]
-            ++ (if disabled then
-                    [ htmlAttribute <| Html.Attributes.style "cursor" "auto" ]
+    withContext
+        (\c ->
+            row
+                ([ spacing 17
+                 , width fill
+                 , height fill
+                 ]
+                    ++ (if disabled then
+                            [ htmlAttribute <| Html.Attributes.style "cursor" "auto" ]
 
-                else
-                    []
-               )
+                        else
+                            []
+                       )
+                )
+                [ selector c.contextR10
+                , paragraph [ R10.Color.AttrsFont.normalLighter ] [ text label ]
+                ]
         )
-        [ selector
-        , paragraph [] [ text label ]
-        ]
 
 
 viewRadioOptions :
     String
-    -> R10.FormComponents.Internal.Single.Common.Args msg
+    -> R10.FormComponents.Internal.Single.Common.Args z msg
     -> Bool
     -> R10.FormComponents.Internal.Single.Common.FieldOption
-    -> Input.Option R10.Context.Context String msg
+    -> Input.Option (R10.Context.ContextInternal z) String msg
 viewRadioOptions selected args focused fieldOption =
     Input.optionWith
         fieldOption.value
@@ -148,8 +160,8 @@ viewRadioOptions selected args focused fieldOption =
         )
 
 
-viewRadioLabel : R10.FormTypes.Palette -> String -> Maybe String -> ElementC msg
-viewRadioLabel palette label helperText =
+viewRadioLabel : R10.Palette.Palette -> String -> Maybe String -> Maybe String -> Element (R10.Context.ContextInternal z) msg
+viewRadioLabel palette label helperText requiredLabel =
     if label == "" then
         none
 
@@ -158,7 +170,10 @@ viewRadioLabel palette label helperText =
             [ paddingEach { top = 10, right = 0, bottom = 24, left = 0 }
             , spacing R10.FormComponents.Internal.UI.genericSpacing
             ]
-            [ R10.Paragraph.normal [] [ text label ]
+            [ R10.Paragraph.normal []
+                [ text label
+                , el [ R10.Color.AttrsFont.normalLighter, paddingXY 6 0 ] <| text <| Maybe.withDefault "" requiredLabel
+                ]
             , R10.FormComponents.Internal.UI.viewHelperText
                 palette
                 [ Font.size 14
@@ -169,7 +184,7 @@ viewRadioLabel palette label helperText =
             ]
 
 
-viewRow : List (AttributeC msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> ElementC msg
+viewRow : List (Attribute (R10.Context.ContextInternal z) msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args z msg -> Element (R10.Context.ContextInternal z) msg
 viewRow attrs model args =
     let
         fixedValue : String
@@ -229,7 +244,7 @@ viewRow attrs model args =
         ]
 
 
-view : List (AttributeC msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args msg -> ElementC msg
+view : List (Attribute (R10.Context.ContextInternal z) msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args z msg -> Element (R10.Context.ContextInternal z) msg
 view attrs model args =
     let
         fixedValue : String
@@ -250,6 +265,15 @@ view attrs model args =
         ([ alignTop
          , width fill
          , height fill
+         , inFront <|
+            el [ alignRight, moveDown 5 ]
+                (R10.FormComponents.Internal.UI.showValidationIcon_
+                    { maybeValid = args.maybeValid
+                    , displayValidation = args.maybeValid == Just False
+                    , palette = args.palette
+                    , style = args.style
+                    }
+                )
          ]
             ++ attrs
         )
@@ -276,5 +300,5 @@ view attrs model args =
                     args.toMsg << R10.FormComponents.Internal.Single.Common.OnOptionSelect
             , options = List.map (viewRadioOptions fixedValue args model.focused) args.fieldOptions
             , selected = Just fixedValue
-            , label = Input.labelAbove [] <| viewRadioLabel args.palette args.label args.helperText
+            , label = Input.labelAbove [] <| viewRadioLabel args.palette args.label args.helperText args.requiredLabel
             }

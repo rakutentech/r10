@@ -12,10 +12,10 @@ module R10.Paragraph exposing
 -}
 
 import Element.WithContext exposing (..)
-import R10.Context exposing (..)
 import R10.FontSize
 import R10.Link
 import R10.SimpleMarkdown
+import R10.Context exposing (..)
 
 
 spacingNormal : Int
@@ -23,31 +23,31 @@ spacingNormal =
     10
 
 
-paragraphSpacing : AttributeC msg
+paragraphSpacing : Attribute (R10.Context.ContextInternal z) msg
 paragraphSpacing =
     spacing spacingNormal
 
 
 {-| -}
-xxlarge : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+xxlarge : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 xxlarge attrs children =
     paragraph ([ R10.FontSize.xxlarge, spacing <| spacingNormal ] ++ attrs) children
 
 
 {-| -}
-xlarge : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+xlarge : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 xlarge attrs children =
     paragraph ([ R10.FontSize.xlarge, spacing <| spacingNormal ] ++ attrs) children
 
 
 {-| -}
-large : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+large : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 large attrs children =
     paragraph ([ R10.FontSize.large, spacing <| spacingNormal ] ++ attrs) children
 
 
 {-| -}
-normalMarkdown : List (AttributeC msg) -> String -> ElementC msg
+normalMarkdown : List (Attribute (R10.Context.ContextInternal z) msg) -> String -> Element (R10.Context.ContextInternal z) msg
 normalMarkdown attrs string =
     normal attrs
         (R10.SimpleMarkdown.elementMarkdownAdvanced
@@ -57,24 +57,24 @@ normalMarkdown attrs string =
 
 
 {-| -}
-normal : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+normal : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 normal attrs children =
     paragraph ([ R10.FontSize.normal, spacing <| spacingNormal ] ++ attrs) children
 
 
 {-| -}
-small : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+small : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 small attrs children =
     paragraph ([ R10.FontSize.small, spacing <| spacingNormal - 3 ] ++ attrs) children
 
 
 {-| -}
-xsmall : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+xsmall : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 xsmall attrs children =
     paragraph ([ R10.FontSize.xsmall, spacing <| spacingNormal - 6 ] ++ attrs) children
 
 
 {-| -}
-xxsmall : List (AttributeC msg) -> List (ElementC msg) -> ElementC msg
+xxsmall : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 xxsmall attrs children =
     paragraph ([ R10.FontSize.xsmall, spacing <| spacingNormal - 9 ] ++ attrs) children

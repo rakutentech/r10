@@ -15,7 +15,7 @@ import R10.Transition
 
 {-| Attributes for links, useful if you need to make some text to render as if it was a link.
 -}
-attrs : List (AttrC () msg)
+attrs : List (Attr (R10.Context.ContextInternal z) () msg)
 attrs =
     [ R10.Color.AttrsFont.link
     , mouseOver [ R10.Color.AttrsFont.linkOver ]
@@ -23,6 +23,6 @@ attrs =
     ]
 
 
-transition : AttributeC msg
+transition : Attribute (R10.Context.ContextInternal z) msg
 transition =
     R10.Transition.transition "color .2s ease-out, background-color .2s ease-out"

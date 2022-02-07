@@ -18,6 +18,7 @@ import R10.Form.Internal.Shared
 import R10.Form.Internal.Translator
 import R10.Form.Internal.Update
 import R10.FormComponents.Internal.Validations
+import R10.FormTypes
 import String.Extra
 
 
@@ -58,32 +59,32 @@ listSlice from to list =
 
 errorsList :
     R10.Form.Internal.Shared.Form
-    -> List ( R10.Form.Internal.Key.Key, spec )
-    -> List ( R10.Form.Internal.Key.Key, spec, R10.Form.Internal.FieldState.FieldState )
+    -> List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, spec )
+    -> List ( ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, spec ), R10.Form.Internal.FieldState.FieldState )
 errorsList form entitiesWithErrors_ =
     entitiesWithErrors_
-        |> List.map (\( key, spec ) -> ( key, spec, R10.Form.Internal.Dict.get key form.state.fieldsState ))
+        |> List.map (\( key, fieldType, spec ) -> ( ( key, fieldType, spec ), R10.Form.Internal.Dict.get key form.state.fieldsState ))
         |> List.filterMap
-            (\( key, spec, maybeFieldState ) ->
+            (\( ( key, fieldType, spec ), maybeFieldState ) ->
                 case maybeFieldState of
                     Nothing ->
                         Nothing
 
                     Just fieldState ->
-                        Just ( key, spec, fieldState )
+                        Just ( ( key, fieldType, spec ), fieldState )
             )
 
 
 entitiesWithErrors :
     R10.Form.Internal.Shared.Form
-    -> List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+    -> List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
 entitiesWithErrors form =
     let
-        allKeys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+        allKeys : List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         allKeys =
             R10.Form.Internal.Update.allValidationKeysMaker form
 
-        fieldsWithErrors_ : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+        fieldsWithErrors_ : List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         fieldsWithErrors_ =
             R10.Form.Internal.Update.entitiesWithErrors allKeys form.state.fieldsState
     in
@@ -93,14 +94,14 @@ entitiesWithErrors form =
 entitiesValidationOutcomes :
     R10.Form.Internal.Shared.Form
     -> Maybe R10.Form.Internal.Translator.Translator
-    -> List ( R10.Form.Internal.Key.Key, R10.FormComponents.Internal.Validations.ValidationForView )
+    -> List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, R10.FormComponents.Internal.Validations.ValidationForView )
 entitiesValidationOutcomes form maybeTranslator =
     let
         translator : R10.Form.Internal.Translator.Translator
         translator =
             Maybe.withDefault R10.Form.Internal.Translator.translator maybeTranslator
 
-        keys : List ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+        keys : List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
         keys =
             R10.Form.Internal.Update.allValidationKeysMaker form
     in
@@ -108,8 +109,9 @@ entitiesValidationOutcomes form maybeTranslator =
         |> R10.Form.Internal.Update.entitiesWithErrors keys
         |> errorsList form
         |> List.map
-            (\( key, validationSpec, fieldState ) ->
+            (\( ( key, fieldType, validationSpec ), fieldState ) ->
                 ( key
+                , fieldType
                 , R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
                     validationSpec
                     fieldState.validation

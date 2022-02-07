@@ -14,6 +14,7 @@ import R10.Context exposing (..)
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
+import R10.Palette
 import R10.Transition
 
 
@@ -73,12 +74,12 @@ extraCss =
     ".markdown p {margin: 0}"
 
 
-viewValidationIcon : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> { validIcon : ElementC msg, invalidIcon : ElementC msg }
+viewValidationIcon : R10.Palette.Palette -> R10.FormTypes.ValidationIcon -> { validIcon : Element (R10.Context.ContextInternal z) msg, invalidIcon : Element (R10.Context.ContextInternal z) msg }
 viewValidationIcon palette validationIcon =
     let
-        iconAttrs : List (AttributeC msg)
+        iconAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
         iconAttrs =
-            [ width <| px 16, height <| px 16, alignTop ]
+            [ width <| px 16, height <| px 16, alignTop, moveDown 2 ]
     in
     case validationIcon of
         R10.FormTypes.NoIcon ->
@@ -113,11 +114,11 @@ viewValidationIcon palette validationIcon =
             }
 
 
-viewValidationMessage : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> ValidationMessage -> ElementC msg
+viewValidationMessage : R10.Palette.Palette -> R10.FormTypes.ValidationIcon -> ValidationMessage -> Element (R10.Context.ContextInternal z) msg
 viewValidationMessage palette validationIcon validationMessage =
     case validationMessage of
         MessageOk string ->
-            row [ width fill, height fill, spacing 4 ]
+            row [ width fill, height fill, spacing 6 ]
                 [ .validIcon <| viewValidationIcon palette validationIcon
                 , R10.FormComponents.Internal.UI.viewHelperText
                     palette
@@ -126,7 +127,7 @@ viewValidationMessage palette validationIcon validationMessage =
                 ]
 
         MessageErr string ->
-            row [ width fill, height fill, spacing 4 ]
+            row [ width fill, height fill, spacing 6 ]
                 [ .invalidIcon <| viewValidationIcon palette validationIcon
                 , R10.FormComponents.Internal.UI.viewHelperText
                     palette
@@ -135,7 +136,7 @@ viewValidationMessage palette validationIcon validationMessage =
                 ]
 
 
-viewValidation : R10.FormTypes.Palette -> R10.FormTypes.ValidationIcon -> ValidationForView -> ElementC msg
+viewValidation : R10.Palette.Palette -> R10.FormTypes.ValidationIcon -> ValidationForView -> Element (R10.Context.ContextInternal z) msg
 viewValidation palette validationIcon validation =
     case validation of
         PretendIsNotYetValidated ->
@@ -149,14 +150,14 @@ viewValidation palette validationIcon validation =
                 )
 
 
-animatedList : List (ElementC msg) -> ElementC msg
+animatedList : List (Element (R10.Context.ContextInternal z) msg) -> Element (R10.Context.ContextInternal z) msg
 animatedList elements =
     let
-        transition : AttributeC msg
+        transition : Attribute (R10.Context.ContextInternal z) msg
         transition =
             R10.Transition.transition "all 0.15s ease-in, opacity 0.15s 0.2s ease-in"
 
-        wrappedLine : ElementC msg
+        wrappedLine : Element (R10.Context.ContextInternal z) msg
         wrappedLine =
             el
                 [ padding 0
@@ -168,7 +169,7 @@ animatedList elements =
                 ]
                 none
 
-        expandedLine : ElementC msg -> ElementC msg
+        expandedLine : Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
         expandedLine =
             el
                 [ paddingEach { top = 6, right = 0, bottom = 0, left = 0 }
@@ -178,6 +179,7 @@ animatedList elements =
                 , htmlAttribute <| Html.Attributes.style "max-height" "64px"
                 , transition
                 , clipY
+                , htmlAttribute <| Html.Attributes.tabindex -1
                 ]
     in
     column

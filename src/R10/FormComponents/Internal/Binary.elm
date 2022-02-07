@@ -10,13 +10,19 @@ import Element.WithContext.Border as Border
 import Element.WithContext.Events as Events
 import Element.WithContext.Font as Font
 import Html.Attributes
+import R10.Color.AttrsFont
 import R10.Context exposing (..)
+import R10.Device
 import R10.FontSize
+import R10.Form.Internal.FieldConf
+import R10.Form.Internal.Key
+import R10.Form.Internal.Shared
+import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormTypes
 import R10.I18n
-import R10.Paragraph
+import R10.Palette
 import R10.Transition
 
 
@@ -28,8 +34,9 @@ type alias Args msg =
     { label : String
     , helperText : Maybe String
     , typeBinary : R10.FormTypes.TypeBinary
-    , palette : R10.FormTypes.Palette
+    , palette : R10.Palette.Palette
     , clickableLabel : Bool
+    , style : R10.FormComponents.Internal.Style.Style
 
     -- Stuff that usually change
     -- during the life of the component
@@ -38,6 +45,7 @@ type alias Args msg =
     , focused : Bool
     , maybeValid : Maybe Bool
     , disabled : Bool
+    , fieldConf : R10.Form.Internal.FieldConf.FieldConf
 
     -- Messages
     --
@@ -45,10 +53,11 @@ type alias Args msg =
     , msgOnFocus : msg
     , msgOnLoseFocus : msg
     , msgOnClick : msg
+    , msgNoOp : msg
     }
 
 
-viewBinarySwitch : List (AttributeC msg) -> Args msg -> ElementC msg
+viewBinarySwitch : List (Attribute (R10.Context.ContextInternal z) msg) -> Args msg -> Element (R10.Context.ContextInternal z) msg
 viewBinarySwitch attrs args =
     let
         { trackColor, thumbColor } =
@@ -62,7 +71,7 @@ viewBinarySwitch attrs args =
                 , thumbColor = R10.FormComponents.Internal.UI.Color.surface
                 }
 
-        track : ElementC msg
+        track : Element (R10.Context.ContextInternal z) msg
         track =
             el
                 [ centerX
@@ -74,7 +83,7 @@ viewBinarySwitch attrs args =
                 ]
                 none
 
-        thumb : ElementC msg
+        thumb : Element (R10.Context.ContextInternal z) msg
         thumb =
             el
                 [ height <| px 20
@@ -93,7 +102,7 @@ viewBinarySwitch attrs args =
                 ]
                 none
 
-        switch : ElementC msg
+        switch : Element (R10.Context.ContextInternal z) msg
         switch =
             el
                 [ width <| px 56
@@ -137,7 +146,7 @@ viewBinarySwitch attrs args =
         ]
 
 
-viewBinaryCheckbox : List (AttributeC msg) -> Args msg -> ElementC msg
+viewBinaryCheckbox : List (Attribute (R10.Context.ContextInternal z) msg) -> Args msg -> Element (R10.Context.ContextInternal z) msg
 viewBinaryCheckbox attrs args =
     let
         elementThatReceiveClicks =
@@ -148,60 +157,106 @@ viewBinaryCheckbox attrs args =
             , Events.onFocus args.msgOnFocus
             , Events.onLoseFocus args.msgOnLoseFocus
             ]
+
+        label : String
+        label =
+            args.label
+                ++ Maybe.withDefault "" args.fieldConf.requiredLabel
+
+        withFillForIE : R10.Context.ContextR10 -> List (Attribute (R10.Context.ContextInternal z) msg)
+        withFillForIE c =
+            if R10.Device.isInternetExplorer c.userAgent then
+                -- Fixcan not break line for IE
+                -- The `width fill` will generate the `flex-grow` style in some case.
+                -- So using the way to set width
+                [ htmlAttribute <| Html.Attributes.style "width" "calc(100% - 16px)" ]
+
+            else
+                []
     in
-    el
-        ([ spacing 26 ]
-            ++ (if args.disabled then
-                    [ alpha 0.38 ]
+    withContext
+        (\c ->
+            el
+                ([ spacing 26 ]
+                    ++ (if args.disabled then
+                            [ alpha 0.38 ]
 
-                else if args.clickableLabel then
-                    elementThatReceiveClicks
-
-                else
-                    []
-               )
-            ++ attrs
-        )
-        (row [ width fill ]
-            [ el
-                ([ moveUp 2, alignTop ]
-                    ++ (if args.clickableLabel then
-                            []
+                        else if args.clickableLabel then
+                            elementThatReceiveClicks
 
                         else
-                            elementThatReceiveClicks
+                            []
                        )
+                    ++ attrs
+                    ++ withFillForIE c.contextR10
                 )
-              <|
-                checkboxIcon args args.value
-            , R10.I18n.paragraphFromString
-                [ R10.FontSize.small
-                , paddingEach { top = 0, left = 12, bottom = 0, right = 0 }
-                ]
-                { renderingMode = R10.I18n.Normal
-                , tagReplacer = tagReplacer
-                , string = args.label
-                }
-            ]
+                (row
+                    ([ width fill ]
+                        ++ (if args.fieldConf.id /= R10.Form.Internal.Key.toString R10.Form.Internal.Shared.copyEmailIntoUsernameCheckboxKey then
+                                [ htmlAttribute <| Html.Attributes.attribute "role" "checkbox"
+                                , htmlAttribute <|
+                                    Html.Attributes.attribute "aria-checked" <|
+                                        if args.value then
+                                            "true"
+
+                                        else
+                                            "false"
+                                ]
+
+                            else
+                                []
+                           )
+                    )
+                    [ el
+                        ([ moveUp 2, alignTop ]
+                            ++ (if args.clickableLabel then
+                                    []
+
+                                else
+                                    elementThatReceiveClicks
+                               )
+                        )
+                      <|
+                        checkboxIcon args args.value
+                    , R10.I18n.paragraphFromString
+                        ([ R10.FontSize.small
+                         , R10.Color.AttrsFont.normalLighter
+                         , paddingEach { top = 0, left = 12, bottom = 0, right = 0 }
+                         ]
+                            ++ withFillForIE c.contextR10
+                        )
+                        { renderingMode = R10.I18n.Normal
+                        , tagReplacer = tagReplacer
+                        , string = label
+                        , msgNoOp = Just args.msgNoOp
+                        }
+                    , R10.FormComponents.Internal.UI.showValidationIcon_
+                        { maybeValid = Just False -- Only display on not valid, so always passed False, otherwise the checked-icon will flashed.
+                        , displayValidation = args.maybeValid == Just False
+                        , palette = args.palette
+                        , style = args.style
+                        }
+                    ]
+                )
         )
 
 
-tagReplacer : Context -> String -> String
+tagReplacer : R10.Context.ContextInternal z -> String -> String
 tagReplacer c string =
     --
     -- This is a minimal version of the other "tagReplacer". This is only
     -- used for checkboxes (Newsletter subscribtion and Policies agreements.
     --
     string
-        |> String.replace "{privacy}" c.privacyPolicyLink
-        |> String.replace "{tac}" c.termsAndConditionsLink
-        |> String.replace "{cookie}" c.cookiePolicyLink
+        |> String.replace "{privacy}" c.contextR10.privacyPolicyLink
+        |> String.replace "{tac}" c.contextR10.termsAndConditionsLink
+        |> String.replace "{cookie}" c.contextR10.cookiePolicyLink
 
 
-checkboxIcon : Args msg -> Bool -> ElementC msg
+checkboxIcon : Args msg -> Bool -> Element (R10.Context.ContextInternal z) msg
 checkboxIcon args value =
     let
-        checkMark : ElementC msg
+        checkMark : Element (R10.Context.ContextInternal z) msg
         checkMark =
             if value then
                 R10.FormComponents.Internal.UI.icons.check
@@ -214,7 +269,7 @@ checkboxIcon args value =
             else
                 none
 
-        boxBorderAndFill : ElementC msg
+        boxBorderAndFill : Element (R10.Context.ContextInternal z) msg
         boxBorderAndFill =
             el
                 ([ R10.Transition.transition "all 0.2s "
@@ -246,19 +301,30 @@ checkboxIcon args value =
                        )
                 )
                 checkMark
+
+        isSPDevice : R10.Context.ContextR10 -> Bool
+        isSPDevice contextR10 =
+            R10.Device.isMobileOS contextR10.userAgent
     in
-    R10.FormComponents.Internal.UI.viewSelectShadowCustomSize
-        { palette = args.palette
-        , focused = args.focused
-        , disabled = args.disabled
-        , value = value
-        , size = { x = 28, y = 28 }
-        , rounded = 4
-        }
-        boxBorderAndFill
+    withContext
+        (\c ->
+            if isSPDevice c.contextR10 then
+                boxBorderAndFill
+
+            else
+                R10.FormComponents.Internal.UI.viewSelectShadowCustomSize
+                    { palette = args.palette
+                    , focused = args.focused
+                    , disabled = args.disabled
+                    , value = value
+                    , size = { x = 28, y = 28 }
+                    , rounded = 4
+                    }
+                    boxBorderAndFill
+        )
 
 
-view : List (AttributeC msg) -> Args msg -> ElementC msg
+view : List (Attribute (R10.Context.ContextInternal z) msg) -> Args msg -> Element (R10.Context.ContextInternal z) msg
 view attrs args =
     column
         [ width fill

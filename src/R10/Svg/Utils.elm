@@ -68,12 +68,12 @@ wrapperWithViewbox_ viewbox ySize listSvg =
 
 
 {-| -}
-wrapperWithViewbox : List (AttributeC msg) -> String -> Int -> List (Svg.Svg msg) -> ElementC msg
+wrapperWithViewbox : List (Attribute (R10.Context.ContextInternal z) msg) -> String -> Int -> List (Svg.Svg msg) -> Element (R10.Context.ContextInternal z) msg
 wrapperWithViewbox attrs viewbox size listSvg =
     el attrs <| html <| wrapperWithViewbox_ viewbox size listSvg
 
 
 {-| -}
-wrapper32 : List (AttributeC msg) -> Int -> List (Svg.Svg msg) -> ElementC msg
+wrapper32 : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> List (Svg.Svg msg) -> Element (R10.Context.ContextInternal z) msg
 wrapper32 attrs size listSvg =
     wrapperWithViewbox attrs "0 0 32 32" size listSvg

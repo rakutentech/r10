@@ -12,7 +12,7 @@ module R10.Form exposing
     , updateField, getField, getFieldValue, getFieldValueIgnoringPath, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
     , setFieldValue, setActiveTab, setMultiplicableQuantities, setFieldDisabled
     , stringToBool, boolToString
-    , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, TextArgs, ArgsText, viewBinary, ArgsBinary
+    , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, processValue, TextArgs, ArgsText, viewBinary, ArgsBinary
     , Style, style, defaultStyle, styleToString, stringToStyle
     , Button, button
     , themeToPalette, label, extraCssComponents, extraCss, colorToCssString
@@ -121,7 +121,7 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 # Form Components
 
-@docs viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, TextArgs, ArgsText, viewBinary, ArgsBinary
+@docs viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, processValue, TextArgs, ArgsText, viewBinary, ArgsBinary
 
 
 # Style
@@ -226,11 +226,11 @@ import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
-import R10.FormComponents.Internal.UI.Palette
 import R10.FormComponents.Internal.Utils
 import R10.FormComponents.Internal.Utils.FocusOut
 import R10.FormComponents.Internal.Validations
 import R10.FormTypes
+import R10.Palette
 import R10.SimpleMarkdown
 import R10.Theme
 
@@ -294,7 +294,7 @@ type alias Form =
 Note that the form of this example is not active because it is just rendering the view but it is not wired to The Elm Architecture. If interested, look at the code of an [active form example](https://github.com/rakutentech/r10/blob/master/examples/simpleForm/src/Main.elm).
 
 -}
-view : Form -> MsgMapper msg -> List (ElementC msg)
+view : Form -> MsgMapper msg -> List (Element (R10.Context.ContextInternal z) msg)
 view form msgMapper =
     viewWithOptions form
         msgMapper
@@ -307,7 +307,7 @@ view form msgMapper =
 
 {-| Use this version if you have a specific palette that you want to use.
 -}
-viewWithPalette : Form -> MsgMapper msg -> R10.FormTypes.Palette -> List (ElementC msg)
+viewWithPalette : Form -> MsgMapper msg -> R10.Palette.Palette -> List (Element (R10.Context.ContextInternal z) msg)
 viewWithPalette form msgMapper palette =
     viewWithOptions form
         msgMapper
@@ -320,7 +320,7 @@ viewWithPalette form msgMapper palette =
 
 {-| Use this version if you have `R10.Theme.Theme`.
 -}
-viewWithTheme : Form -> MsgMapper msg -> R10.Theme.Theme -> List (ElementC msg)
+viewWithTheme : Form -> MsgMapper msg -> R10.Theme.Theme -> List (Element (R10.Context.ContextInternal z) msg)
 viewWithTheme form msgMapper theme =
     let
         palette =
@@ -337,13 +337,13 @@ viewWithTheme form msgMapper theme =
 
 {-| Use this version for full control.
 -}
-viewWithOptions : Form -> MsgMapper msg -> Options -> List (ElementC msg)
+viewWithOptions : Form -> MsgMapper msg -> Options z -> List (Element (R10.Context.ContextInternal z) msg)
 viewWithOptions form msgMapper args =
     let
         maker_ :
             R10.Form.Internal.MakerForView.MakerArgs
             -> Conf
-            -> List R10.Form.Internal.MakerForView.Outcome
+            -> List (R10.Form.Internal.MakerForView.Outcome z)
         maker_ =
             Maybe.withDefault R10.Form.Internal.MakerForView.maker
                 args.maker
@@ -359,7 +359,7 @@ viewWithOptions form msgMapper args =
             , formState = form.state
             , translator = Maybe.withDefault defaultTranslator args.translator
             , style = args.style
-            , palette = Maybe.withDefault R10.FormComponents.Internal.UI.Palette.light args.palette
+            , palette = Maybe.withDefault R10.Palette.light args.palette
             }
             form.conf
         )
@@ -367,21 +367,21 @@ viewWithOptions form msgMapper args =
 
 {-| These are the options that you can use with `viewWithOptions`.
 -}
-type alias Options =
+type alias Options z =
     { maker :
         Maybe
             ({ key : Key
              , formState : State
              , translator : Translator
              , style : Style
-             , palette : R10.FormTypes.Palette
+             , palette : R10.Palette.Palette
              }
              -> Conf
-             -> List (ElementC Msg)
+             -> List (Element (R10.Context.ContextInternal z) Msg)
             )
     , translator : Maybe Translator
     , style : Style
-    , palette : Maybe R10.FormTypes.Palette
+    , palette : Maybe R10.Palette.Palette
     }
 
 
@@ -436,7 +436,7 @@ isFormSubmittableAndSubmitted =
 {-| -}
 msg :
     { submit : Conf -> Msg
-    , getFocus : Key -> Msg
+    , getFocus : Key -> FieldConf -> Msg
     }
 msg =
     { submit = R10.Form.Internal.Msg.Submit
@@ -854,44 +854,44 @@ boolToString =
 
 
 {-| -}
-viewIconButton : List (AttributeC msg) -> ArgsIconButton msg -> ElementC msg
+viewIconButton : List (Attribute (R10.Context.ContextInternal z) msg) -> ArgsIconButton z msg -> Element (R10.Context.ContextInternal z) msg
 viewIconButton =
     R10.FormComponents.Internal.IconButton.view
 
 
 {-| -}
-type alias ArgsIconButton msg =
-    { icon : ElementC msg
+type alias ArgsIconButton z msg =
+    { icon : Element (R10.Context.ContextInternal z) msg
     , msgOnClick : Maybe msg
-    , palette : R10.FormTypes.Palette
+    , palette : R10.Palette.Palette
     , size : Int
     }
 
 
 {-| -}
-viewButton : List (AttributeC msg) -> ArgsButton msg -> ElementC msg
+viewButton : List (Attribute (R10.Context.ContextInternal z) msg) -> ArgsButton z msg -> Element (R10.Context.ContextInternal z) msg
 viewButton =
     R10.FormComponents.Internal.Button.view
 
 
 {-| -}
-type alias ArgsButton msg =
-    R10.FormComponents.Internal.Button.Args msg
+type alias ArgsButton z msg =
+    R10.FormComponents.Internal.Button.Args z msg
 
 
 {-| -}
-viewText : List (AttributeC msg) -> List (AttributeC msg) -> ArgsText msg -> ElementC msg
+viewText : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Attribute (R10.Context.ContextInternal z) msg) -> ArgsText z msg -> Element (R10.Context.ContextInternal z) msg
 viewText =
     R10.FormComponents.Internal.Text.view
 
 
 {-| -}
-type alias ArgsText msg =
-    R10.FormComponents.Internal.Text.Args msg
+type alias ArgsText z msg =
+    R10.FormComponents.Internal.Text.Args z msg
 
 
 {-| -}
-viewBinary : List (AttributeC msg) -> ArgsBinary msg -> ElementC msg
+viewBinary : List (Attribute (R10.Context.ContextInternal z) msg) -> ArgsBinary msg -> Element (R10.Context.ContextInternal z) msg
 viewBinary =
     R10.FormComponents.Internal.Binary.view
 
@@ -979,25 +979,25 @@ button =
 
 
 {-| -}
-themeToPalette : R10.Theme.Theme -> R10.FormTypes.Palette
+themeToPalette : R10.Theme.Theme -> R10.Palette.Palette
 themeToPalette =
-    R10.FormComponents.Internal.UI.Palette.fromTheme
+    R10.Palette.fromTheme
 
 
 {-| -}
-label : R10.FormTypes.Palette -> Color
+label : R10.Palette.Palette -> Color
 label =
     R10.FormComponents.Internal.UI.Color.label
 
 
 {-| -}
-extraCssComponents : R10.FormTypes.Palette -> String
+extraCssComponents : R10.Palette.Palette -> String
 extraCssComponents =
     R10.FormComponents.Internal.ExtraCss.extraCss
 
 
 {-| -}
-extraCss : Maybe R10.FormTypes.Palette -> String
+extraCss : Maybe R10.Palette.Palette -> String
 extraCss =
     R10.Form.Internal.MakerForView.extraCss
 
@@ -1017,7 +1017,7 @@ colorToCssString =
 
 
 {-| -}
-onClickWithStopPropagation : msg -> AttributeC msg
+onClickWithStopPropagation : msg -> Attribute (R10.Context.ContextInternal z) msg
 onClickWithStopPropagation =
     R10.FormComponents.Internal.UI.onClickWithStopPropagation
 
@@ -1055,7 +1055,7 @@ onOptionSelect =
 
 
 {-| -}
-elementMarkdown : String -> List (ElementC msg)
+elementMarkdown : String -> List (Element (R10.Context.ContextInternal z) msg)
 elementMarkdown =
     R10.SimpleMarkdown.elementMarkdown
 
@@ -1094,6 +1094,7 @@ validationCodes :
     , jsonFormatInvalid : ValidationCode
     , lengthTooLargeInvalid : ValidationCode
     , lengthTooSmallInvalid : ValidationCode
+    , lengthValid : ValidationCode
     , required : ValidationCode
     , empty : ValidationCode
     , requiredField : ValidationCode
@@ -1101,6 +1102,8 @@ validationCodes :
     , valueInvalid : ValidationCode
     , allOf : ValidationCode
     , oneOf : ValidationCode
+    , mobileEmailFormatInvalid : ValidationCode
+    , mobileEmailDomainInvalid : ValidationCode
     }
 validationCodes =
     R10.Form.Internal.Translator.validationCodes
@@ -1157,15 +1160,15 @@ insertBold =
 defaultToOptionEl :
     { a | msgOnSelect : String -> msg, search : String }
     -> SingleFieldOption
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 defaultToOptionEl =
     R10.FormComponents.Internal.Single.defaultViewOptionEl
 
 
 {-| -}
 defaultTrailingIcon :
-    { a | opened : Bool, palette : R10.FormTypes.Palette }
-    -> ElementC msg
+    { a | opened : Bool, palette : R10.Palette.Palette }
+    -> Element (R10.Context.ContextInternal z) msg
 defaultTrailingIcon =
     R10.FormComponents.Internal.Single.defaultTrailingIcon
 
@@ -1187,7 +1190,7 @@ updateSingle =
 
 
 {-| -}
-viewSingle : List (AttributeC msg) -> SingleModel -> ArgsSingle msg -> ElementC msg
+viewSingle : List (Attribute (R10.Context.ContextInternal z) msg) -> SingleModel -> ArgsSingle msg -> Element (R10.Context.ContextInternal z) msg
 viewSingle =
     R10.FormComponents.Internal.Single.view
 
@@ -1198,14 +1201,14 @@ type alias ArgsSingle msg =
 
 
 {-| -}
-viewSingleCustom : List (AttributeC msg) -> SingleModel -> ArgsSingleCustom msg -> ElementC msg
+viewSingleCustom : List (Attribute (R10.Context.ContextInternal z) msg) -> SingleModel -> ArgsSingleCustom z msg -> Element (R10.Context.ContextInternal z) msg
 viewSingleCustom =
     R10.FormComponents.Internal.Single.viewCustom
 
 
 {-| -}
-type alias ArgsSingleCustom msg =
-    R10.FormComponents.Internal.Single.ArgsCustom msg
+type alias ArgsSingleCustom z msg =
+    R10.FormComponents.Internal.Single.ArgsCustom z msg
 
 
 
@@ -1351,7 +1354,7 @@ setFieldValidationError =
 
 
 {-| -}
-validate : (String -> String -> String) -> Key -> Maybe ValidationSpecs -> State -> FieldState -> FieldState
+validate : (String -> String -> String) -> Bool -> Key -> R10.FormTypes.FieldType -> Maybe ValidationSpecs -> State -> FieldState -> FieldState
 validate =
     R10.Form.Internal.Validation.validate
 
@@ -1359,7 +1362,7 @@ validate =
 {-| -}
 runOnlyExistingValidations :
     (String -> String -> String)
-    -> List ( Key, Maybe ValidationSpecs )
+    -> List ( Key, R10.FormTypes.FieldType, Maybe ValidationSpecs )
     -> State
     -> Dict.Dict KeyAsString FieldState
     -> Dict.Dict KeyAsString FieldState
@@ -1374,7 +1377,7 @@ shouldShowTheValidationOverview =
 
 
 {-| -}
-allValidationKeysMaker : Form -> List ( Key, Maybe ValidationSpecs )
+allValidationKeysMaker : Form -> List ( Key, R10.FormTypes.FieldType, Maybe ValidationSpecs )
 allValidationKeysMaker =
     R10.Form.Internal.Update.allValidationKeysMaker
 
@@ -1398,13 +1401,13 @@ isExistingFormFieldsValid =
 
 
 {-| -}
-entitiesWithErrors : Form -> List ( Key, Maybe ValidationSpecs )
+entitiesWithErrors : Form -> List ( Key, R10.FormTypes.FieldType, Maybe ValidationSpecs )
 entitiesWithErrors =
     R10.FormComponents.Internal.Utils.entitiesWithErrors
 
 
 {-| -}
-entitiesValidationOutcomes : Form -> Maybe Translator -> List ( Key, ValidationForView )
+entitiesValidationOutcomes : Form -> Maybe Translator -> List ( Key, R10.FormTypes.FieldType, ValidationForView )
 entitiesValidationOutcomes =
     R10.FormComponents.Internal.Utils.entitiesValidationOutcomes
 
@@ -1430,7 +1433,7 @@ entitiesValidationOutcomes =
 --
 -- {-| -}
 -- phoneView :
---     List (AttributeC msg)
+--     List (Attribute (R10.Context.ContextInternal z) msg)
 --     -> PhoneModel
 --     ->
 --         { maybeValid : Maybe Bool
@@ -1441,10 +1444,10 @@ entitiesValidationOutcomes =
 --         , requiredLabel : Maybe String
 --         , style : Style
 --         , key : String
---         , palette : R10.FormTypes.Palette
+--         , palette : R10.Palette.Palette
 --         , countryOptions : Maybe (List R10.Country.Country)
 --         }
---     -> ElementC msg
+--     -> Element (R10.Context.ContextInternal z) msg
 -- phoneView =
 --     R10.FormComponents.Internal.Phone.view
 --
@@ -1469,18 +1472,24 @@ entitiesValidationOutcomes =
 
 
 {-| -}
-type alias TextArgs msg =
-    R10.FormComponents.Internal.Text.Args msg
+type alias TextArgs z msg =
+    R10.FormComponents.Internal.Text.Args z msg
 
 
 {-| -}
 textView :
-    List (AttributeC msg)
-    -> List (AttributeC msg)
-    -> R10.FormComponents.Internal.Text.Args msg
-    -> ElementC msg
+    List (Attribute (R10.Context.ContextInternal z) msg)
+    -> List (Attribute (R10.Context.ContextInternal z) msg)
+    -> R10.FormComponents.Internal.Text.Args z msg
+    -> Element (R10.Context.ContextInternal z) msg
 textView =
     R10.FormComponents.Internal.Text.view
+
+
+{-| -}
+processValue : { pattern : String, previousValue : String, value : String } -> String
+processValue =
+    R10.FormComponents.Internal.Text.processValue
 
 
 

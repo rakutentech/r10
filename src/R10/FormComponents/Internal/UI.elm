@@ -34,14 +34,14 @@ import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.TextColors
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.UI.Const
-import R10.FormTypes
+import R10.Palette
 import R10.SimpleMarkdown
 import R10.Svg.Icons
 import R10.Svg.IconsExtra
 import R10.Transition
 
 
-borderEntityWithBorder : R10.FormTypes.Palette -> List (AttributeC msg)
+borderEntityWithBorder : R10.Palette.Palette -> List (Attribute (R10.Context.ContextInternal z) msg)
 borderEntityWithBorder palette =
     [ Border.width 1
     , Border.color <| R10.FormComponents.Internal.UI.Color.container palette
@@ -49,12 +49,12 @@ borderEntityWithBorder palette =
     ]
 
 
-fontSizeSubTitle : AttrC decorative msg
+fontSizeSubTitle : Attr (R10.Context.ContextInternal z) decorative msg
 fontSizeSubTitle =
     Font.size 18
 
 
-fontSizeTitle : AttrC decorative msg
+fontSizeTitle : Attr (R10.Context.ContextInternal z) decorative msg
 fontSizeTitle =
     Font.size 24
 
@@ -64,7 +64,7 @@ genericSpacing =
     8
 
 
-viewHelperText : R10.FormTypes.Palette -> List (AttrC () msg) -> Maybe String -> ElementC msg
+viewHelperText : R10.Palette.Palette -> List (Attr (R10.Context.ContextInternal z) () msg) -> Maybe String -> Element (R10.Context.ContextInternal z) msg
 viewHelperText palette attrs maybeHelperText =
     case maybeHelperText of
         Just helperText ->
@@ -117,19 +117,19 @@ getTextfieldPaddingEach args =
 
 
 icons :
-    { check : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , checkBold : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , combobox_arrow : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , eye_ban_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , eye_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , grid : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , notice_generic_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , search : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , sign_warning_f : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , sign_warning_l : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , validation_check : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , validation_clear : List (AttributeC msg) -> Color -> Int -> ElementC msg
-    , validation_error : List (AttributeC msg) -> Color -> Int -> ElementC msg
+    { check : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , checkBold : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , combobox_arrow : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , eye_ban_l : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , eye_l : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , grid : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , notice_generic_l : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , search : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , sign_warning_f : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , sign_warning_l : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , validation_check : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , validation_clear : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
+    , validation_error : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
     }
 icons =
     { check = R10.Svg.Icons.check
@@ -171,7 +171,7 @@ getTextfieldBorderSizeOffset { focused, style, maybeValid, displayValidation } =
             { size = 1, offset = ( 0, 0 ) }
 
 
-getSelectShadowColor : R10.FormTypes.Palette -> Bool -> Bool -> Color
+getSelectShadowColor : R10.Palette.Palette -> Bool -> Bool -> Color
 getSelectShadowColor palette focused mouseOver =
     let
         alpha : Float
@@ -194,15 +194,15 @@ getSelectShadowColor palette focused mouseOver =
 
 viewSelectShadowCustomSize :
     { a
-        | palette : R10.FormTypes.Palette
+        | palette : R10.Palette.Palette
         , focused : Bool
         , disabled : Bool
         , size : { x : Int, y : Int }
         , rounded : Int
         , value : Bool
     }
-    -> ElementC msg
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
+    -> Element (R10.Context.ContextInternal z) msg
 viewSelectShadowCustomSize { palette, focused, disabled, size, value, rounded } element =
     el
         ([]
@@ -241,7 +241,7 @@ viewSelectShadowCustomSize { palette, focused, disabled, size, value, rounded } 
         element
 
 
-viewSelectShadow : { a | palette : R10.FormTypes.Palette, focused : Bool, disabled : Bool, value : Bool } -> ElementC msg -> ElementC msg
+viewSelectShadow : { a | palette : R10.Palette.Palette, focused : Bool, disabled : Bool, value : Bool } -> Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
 viewSelectShadow { palette, focused, disabled, value } =
     viewSelectShadowCustomSize
         { palette = palette
@@ -253,7 +253,7 @@ viewSelectShadow { palette, focused, disabled, value } =
         }
 
 
-onClickWithStopPropagation : msg -> AttributeC msg
+onClickWithStopPropagation : msg -> Attribute (R10.Context.ContextInternal z) msg
 onClickWithStopPropagation message =
     htmlAttribute <| Html.Events.stopPropagationOn "click" (Json.Decode.succeed ( message, True ))
 
@@ -315,15 +315,15 @@ floatingLabel :
         , focused : Bool
         , requiredLabel : Maybe String
 
-        -- , leadingIcon : Maybe (ElementC msg)
-        -- , trailingIcon : Maybe (ElementC msg)
+        -- , leadingIcon : Maybe (Element (R10.Context.ContextInternal z) msg)
+        -- , trailingIcon : Maybe (Element (R10.Context.ContextInternal z) msg)
         , maybeValid : Maybe Bool
         , displayValidation : Bool
         , style : R10.FormComponents.Internal.Style.Style
-        , palette : R10.FormTypes.Palette
+        , palette : R10.Palette.Palette
         , floatingLabelAlwaysUp : Bool
     }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 floatingLabel args =
     let
         labelIsAbove : Bool
@@ -339,7 +339,7 @@ floatingLabel args =
                 R10.FormComponents.Internal.Style.Outlined ->
                     6
 
-        labelAboveAttrs : List (AttributeC msg)
+        labelAboveAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
         labelAboveAttrs =
             if labelIsAbove then
                 case args.style of
@@ -356,7 +356,7 @@ floatingLabel args =
                 , Font.size R10.FormComponents.Internal.UI.Const.inputTextFontSize
                 ]
 
-        requiredEl : ElementC msg
+        requiredEl : Element (R10.Context.ContextInternal z) msg
         requiredEl =
             case args.requiredLabel of
                 Just required ->
@@ -365,7 +365,7 @@ floatingLabel args =
                 Nothing ->
                     none
 
-        labelEl : ElementC msg
+        labelEl : Element (R10.Context.ContextInternal z) msg
         labelEl =
             -- If the label is too long, it doesn't wrap. I tried adding a
             -- paragraph here, but then the label overlap with the
@@ -418,10 +418,10 @@ showValidationIcon_ :
     { a
         | maybeValid : Maybe Bool
         , displayValidation : Bool
-        , palette : R10.FormTypes.Palette
+        , palette : R10.Palette.Palette
         , style : R10.FormComponents.Internal.Style.Style
     }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 showValidationIcon_ args =
     let
         iconSize : Int

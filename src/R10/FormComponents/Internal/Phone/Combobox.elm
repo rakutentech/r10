@@ -11,6 +11,7 @@ import Html.Events
 import R10.Color.Svg
 import R10.Context exposing (..)
 import R10.Country
+import R10.Form.Internal.Shared
 import R10.FormComponents.Internal.Phone.Common
 import R10.FormComponents.Internal.Phone.Update
 import R10.FormComponents.Internal.Single.Common
@@ -22,14 +23,15 @@ import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Utils
 import R10.FormComponents.Internal.Utils.FocusOut
 import R10.FormTypes
+import R10.Palette
 import R10.Svg.Icons
 import R10.Transition
 
 
 viewSearchBox :
     R10.FormComponents.Internal.Phone.Common.Model
-    -> R10.FormComponents.Internal.Phone.Common.Args msg
-    -> ElementC msg
+    -> R10.FormComponents.Internal.Phone.Common.Args z msg
+    -> Element (R10.Context.ContextInternal z) msg
 viewSearchBox model args =
     --
     -- This function is similar to R10.FormComponents.Internal.Single.Combobox.viewSearchBox
@@ -47,11 +49,21 @@ viewSearchBox model args =
                     , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
                     , paddingEach { top = 16, bottom = 16, left = 8, right = 16 }
                     , Border.width 0
+                    , htmlAttribute <|
+                        R10.FormComponents.Internal.UI.onKeyPressBatch <|
+                            [ ( R10.FormComponents.Internal.UI.keyCode.enter
+                              , if String.isEmpty model.search then
+                                    R10.FormComponents.Internal.Phone.Common.OnEsc args.key True |> args.toMsg
+
+                                else
+                                    R10.FormComponents.Internal.Phone.Common.NoOp |> args.toMsg
+                              )
+                            ]
                     ]
                     { onChange = \string -> args.toMsg (R10.FormComponents.Internal.Phone.Update.getMsgOnSearch args string)
                     , text = model.search
                     , placeholder = Nothing
-                    , label = Input.labelLeft [ moveDown 3, moveRight 5 ] <| R10.Svg.Icons.search [] (R10.Color.Svg.fontHighEmphasis c.theme) 18
+                    , label = Input.labelLeft [ moveDown 3, moveRight 5 ] <| R10.Svg.Icons.search [] (R10.Color.Svg.fontHighEmphasis c.contextR10.theme) 18
                     }
         , Input.button
             [ mouseOver [ Background.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 args.palette ]
@@ -59,11 +71,11 @@ viewSearchBox model args =
             , padding 6
             , Border.rounded 20
             ]
-            { onPress = Just <| args.toMsg R10.FormComponents.Internal.Phone.Common.OnEsc, label = withContext <| \c -> R10.Svg.Icons.x [] (R10.Color.Svg.fontHighEmphasis c.theme) 18 }
+            { onPress = Just <| args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnEsc args.key False, label = withContext <| \c -> R10.Svg.Icons.x [] (R10.Color.Svg.fontHighEmphasis c.contextR10.theme) 18 }
         ]
 
 
-viewComboboxDropdown : R10.FormComponents.Internal.Phone.Common.Model -> R10.FormComponents.Internal.Phone.Common.Args msg -> Bool -> List R10.Country.Country -> ElementC msg
+viewComboboxDropdown : R10.FormComponents.Internal.Phone.Common.Model -> R10.FormComponents.Internal.Phone.Common.Args z msg -> Bool -> List R10.Country.Country -> Element (R10.Context.ContextInternal z) msg
 viewComboboxDropdown model args opened filteredFieldOption =
     let
         elementsScrolledFromTop : Int
@@ -91,7 +103,7 @@ viewComboboxDropdown model args opened filteredFieldOption =
         optionsCount =
             List.length filteredFieldOption
 
-        visibleOptions : List ( String, ElementC msg )
+        visibleOptions : List ( String, Element (R10.Context.ContextInternal z) msg )
         visibleOptions =
             if optionsCount > 0 then
                 let
@@ -103,7 +115,7 @@ viewComboboxDropdown model args opened filteredFieldOption =
                     |> R10.FormComponents.Internal.Utils.listSlice visibleFrom visibleTo
                     |> List.map
                         (\country ->
-                            ( R10.Country.toString country
+                            ( R10.Country.toCountryNameWithAlias country
                             , viewComboboxOption maybeCountryValue model.select args country
                             )
                         )
@@ -142,6 +154,12 @@ viewComboboxDropdown model args opened filteredFieldOption =
                 , blur = 10
                 , size = 3
                 }
+            , htmlAttribute <|
+                Html.Events.on "focusout"
+                    (R10.FormComponents.Internal.Utils.FocusOut.onFocusOut (R10.FormComponents.Internal.Phone.Common.dropdownContainerId args.key) <|
+                        args.toMsg <|
+                            R10.FormComponents.Internal.Phone.Common.OnEsc args.key False
+                    )
             ]
             [ viewSearchBox model args
             , el
@@ -152,14 +170,20 @@ viewComboboxDropdown model args opened filteredFieldOption =
                 , Font.color <| R10.FormComponents.Internal.UI.Color.font args.palette
                 , htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Phone.Common.dropdownContentId <| args.key
                 , scrollbarX
-                , inFront <| Keyed.column [ width <| fill, moveDown visibleMoveDown ] visibleOptions
+                , inFront <|
+                    Keyed.column
+                        [ width <| shrink
+                        , moveDown visibleMoveDown
+                        , htmlAttribute <| Html.Attributes.style "min-width" "100%"
+                        ]
+                        visibleOptions
                 ]
               <|
                 el [ height <| px contentHeight, width fill ] none
             ]
 
 
-comboboxOptionNoResults : { a | palette : R10.FormTypes.Palette, selectOptionHeight : Int } -> ElementC msg
+comboboxOptionNoResults : { a | palette : R10.Palette.Palette, selectOptionHeight : Int } -> Element (R10.Context.ContextInternal z) msg
 comboboxOptionNoResults { palette, selectOptionHeight } =
     el
         [ width fill
@@ -172,7 +196,7 @@ comboboxOptionNoResults { palette, selectOptionHeight } =
             text "No results"
 
 
-viewComboboxOption : Maybe R10.Country.Country -> String -> R10.FormComponents.Internal.Phone.Common.Args msg -> R10.Country.Country -> ElementC msg
+viewComboboxOption : Maybe R10.Country.Country -> String -> R10.FormComponents.Internal.Phone.Common.Args z msg -> R10.Country.Country -> Element (R10.Context.ContextInternal z) msg
 viewComboboxOption countryValue select args country =
     let
         isActiveValue : Bool
@@ -217,10 +241,10 @@ viewComboboxOption countryValue select args country =
 
 
 view :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     -> R10.FormComponents.Internal.Phone.Common.Model
-    -> R10.FormComponents.Internal.Phone.Common.Args msg
-    -> ElementC msg
+    -> R10.FormComponents.Internal.Phone.Common.Args z msg
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs model args =
     -- todo add selected validation
     let
@@ -244,7 +268,7 @@ view attrs model args =
         valueToShowOnTheScreen =
             String.replace maybeTelCode "" model.value
 
-        textArgs : R10.FormComponents.Internal.Text.Args msg
+        textArgs : R10.FormComponents.Internal.Text.Args z msg
         textArgs =
             { disabled = args.disabled
             , focused = model.focused
@@ -259,11 +283,13 @@ view attrs model args =
             , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnFocus model.value
             , msgOnLoseFocus = Nothing
             , msgOnEnter = Nothing
+            , msgOnKeyDown = Nothing
             , msgOnTogglePasswordShow = Nothing --todo
             , palette = args.palette
             , style = args.style
             , showPassword = False
             , textType = R10.FormTypes.TextPlain
+            , fieldType = Just <| R10.FormTypes.TypeSpecial <| R10.FormTypes.SpecialPhone False
             , leadingIcon = args.leadingIcon
             , trailingIcon = args.trailingIcon
             , value = valueToShowOnTheScreen
@@ -274,26 +300,47 @@ view attrs model args =
             , autocomplete = Nothing
             , floatingLabelAlwaysUp = True
             , placeholder =
-                maybeCountry
-                    |> Maybe.map R10.Country.toPhoneTemplate
-                    |> Maybe.map ((++) " ")
+                if args.key == R10.Form.Internal.Shared.defaultMobilePhoneFieldKeyString then
+                    maybeCountry
+                        |> Maybe.map R10.Country.toPhoneTemplate
+
+                else
+                    Nothing
             }
 
-        inputAttrs : List (AttributeC msg)
+        inputAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
         inputAttrs =
-            [ htmlAttribute <| Html.Attributes.type_ "tel" ]
-    in
-    column [ width fill, spacing 50 ]
-        [ paragraph [ Background.color <| rgb 1 1 0 ] [ text <| model.value ]
-        , R10.FormComponents.Internal.Text.view
-            [ htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Phone.Common.dropdownContainerId <| args.key
-            , htmlAttribute <| Html.Attributes.tabindex -1
+            [ htmlAttribute <| Html.Attributes.type_ "tel"
+            , htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Phone.Common.inputPhoneElementId args.key
+
+            --
+            -- Move focusout listener from wrapper to input component.
+            -- Otherwiss when country changed and auto focus to input, it will be triggered, and display validate errors.
+            --
             , htmlAttribute <|
                 Html.Events.on "focusout"
                     (R10.FormComponents.Internal.Utils.FocusOut.onFocusOut (R10.FormComponents.Internal.Phone.Common.dropdownContainerId args.key) <|
                         args.toMsg <|
                             R10.FormComponents.Internal.Phone.Common.OnLoseFocus model.value
                     )
+            , htmlAttribute <|
+                R10.FormComponents.Internal.UI.onKeyPressBatch <|
+                    [ ( R10.FormComponents.Internal.UI.keyCode.enter
+                      , args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnEsc args.key False
+                      )
+                    ]
+            ]
+                ++ (if args.style == R10.FormComponents.Internal.Style.Filled then
+                        [ moveUp 4 ]
+
+                    else
+                        []
+                   )
+    in
+    column [ width fill, spacing 50, paddingEach { top = 15, right = 0, bottom = 0, left = 0 } ]
+        [ R10.FormComponents.Internal.Text.view
+            [ htmlAttribute <| Html.Attributes.id <| R10.FormComponents.Internal.Phone.Common.dropdownContainerId <| args.key
+            , htmlAttribute <| Html.Attributes.tabindex -1
             , htmlAttribute <|
                 R10.FormComponents.Internal.UI.onKeyPressBatch <|
                     [ ( R10.FormComponents.Internal.UI.keyCode.down
@@ -317,13 +364,13 @@ view attrs model args =
                     ]
                         ++ (if model.opened then
                                 [ ( R10.FormComponents.Internal.UI.keyCode.esc
-                                  , args.toMsg R10.FormComponents.Internal.Phone.Common.OnEsc
+                                  , args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnEsc args.key False
                                   )
                                 ]
                                     ++ (case R10.Country.fromString model.select of
                                             Just country ->
                                                 [ ( R10.FormComponents.Internal.UI.keyCode.enter
-                                                  , args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnOptionSelect country
+                                                  , args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnOptionSelect args.key country
                                                   )
                                                 ]
 

@@ -15,7 +15,7 @@ import Svg.Attributes as SA
 
 
 {-| -}
-spinnerRotation : List (AttributeC msg) -> Int -> String -> ElementC msg
+spinnerRotation : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> String -> Element (R10.Context.ContextInternal z) msg
 spinnerRotation attrs size colorString =
     let
         idElement =
@@ -73,7 +73,7 @@ spinnerRotation attrs size colorString =
 
 
 {-| -}
-mobileWithPerson : List (AttributeC msg) -> Color -> Int -> ElementC msg
+mobileWithPerson : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 mobileWithPerson attrs cl size =
     let
         clHex =
@@ -116,7 +116,7 @@ mobileWithPerson attrs cl size =
 
 
 {-| -}
-mountain : List (AttributeC msg) -> Int -> ElementC msg
+mountain : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 mountain attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 152 148"
@@ -155,7 +155,7 @@ mountain attrs size =
 
 
 {-| -}
-greenCheck : List (AttributeC msg) -> Int -> ElementC msg
+greenCheck : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 greenCheck attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 131 130"
@@ -167,7 +167,7 @@ greenCheck attrs size =
 
 
 {-| -}
-errorTriangle : List (AttributeC msg) -> Int -> ElementC msg
+errorTriangle : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 errorTriangle attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 183 141"
@@ -198,7 +198,7 @@ errorTriangle attrs size =
 
 
 {-| -}
-errorLens : List (AttributeC msg) -> Int -> ElementC msg
+errorLens : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 errorLens attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 179 149"
@@ -231,7 +231,7 @@ errorLens attrs size =
 
 
 {-| -}
-letterClosed : List (AttributeC msg) -> Int -> ElementC msg
+letterClosed : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 letterClosed attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 237 135"
@@ -255,7 +255,7 @@ letterClosed attrs size =
 
 
 {-| -}
-letterOpen : List (AttributeC msg) -> Int -> ElementC msg
+letterOpen : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 letterOpen attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 208 161"
@@ -292,7 +292,7 @@ letterOpen attrs size =
 
 
 {-| -}
-checkMark : List (AttributeC msg) -> Int -> ElementC msg
+checkMark : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 checkMark attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 183 141"
@@ -322,7 +322,7 @@ checkMark attrs size =
 
 
 {-| -}
-rocket : List (AttributeC msg) -> Int -> ElementC msg
+rocket : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 rocket attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 159 149"
@@ -359,7 +359,7 @@ rocket attrs size =
 
 
 {-| -}
-paperPlane : List (AttributeC msg) -> Int -> ElementC msg
+paperPlane : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 paperPlane attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 381 200"
@@ -379,7 +379,7 @@ paperPlane attrs size =
 
 
 {-| -}
-externalLink : List (AttributeC msg) -> Color -> Int -> ElementC msg
+externalLink : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 externalLink attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 16 16"

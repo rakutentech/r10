@@ -18,7 +18,7 @@ import R10.Transition
 
 borderColor : Color
 borderColor =
-    rgba 0 0 0 0.2
+    Element.WithContext.rgba 0 0 0 0.2
 
 
 
@@ -82,7 +82,7 @@ columnPadding =
 -}
 
 
-defaultHeadRowAttrs : List (AttributeC msg)
+defaultHeadRowAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
 defaultHeadRowAttrs =
     [ width fill
     , height fill
@@ -91,7 +91,7 @@ defaultHeadRowAttrs =
     ]
 
 
-defaultHeaderAttrs : List (AttributeC msg)
+defaultHeaderAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
 defaultHeaderAttrs =
     [ paddingXY columnPadding 0
     , spacing columnPadding
@@ -105,7 +105,7 @@ defaultHeaderAttrs =
     ]
 
 
-defaultRowAttrs : List (AttributeC msg)
+defaultRowAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
 defaultRowAttrs =
     [ width fill
     , height fill
@@ -114,7 +114,7 @@ defaultRowAttrs =
     ]
 
 
-defaultCellAttrs : List (AttributeC msg)
+defaultCellAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
 defaultCellAttrs =
     [ width (fill |> minimum 120)
     , R10.Transition.transition "all 0.25s ease-out"

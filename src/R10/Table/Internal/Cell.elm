@@ -4,12 +4,12 @@ import Element.WithContext exposing (..)
 import Element.WithContext.Font as Font
 import R10.Context exposing (..)
 import R10.FormComponents.Internal.UI.Color
-import R10.FormTypes
+import R10.Palette
 import R10.Table.Internal.Placeholder
 import R10.Table.Internal.Style
 
 
-simpleCell : List (AttributeC msg) -> (Maybe data -> Maybe String) -> R10.FormTypes.Palette -> Maybe data -> ElementC msg
+simpleCell : List (Attribute (R10.Context.ContextInternal z) msg) -> (Maybe data -> Maybe String) -> R10.Palette.Palette -> Maybe data -> Element (R10.Context.ContextInternal z) msg
 simpleCell attrs toStr palette maybeData =
     row
         (R10.Table.Internal.Style.defaultCellAttrs ++ attrs)

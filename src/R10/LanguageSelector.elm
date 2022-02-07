@@ -19,7 +19,7 @@ import R10.Svg.Icons
 
 {-| -}
 view :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
         { changeMsg : Result String R10.Language.Language -> msg
         , colorBackground : Color
@@ -28,7 +28,7 @@ view :
         , supportedLanguages : List R10.Language.Language
         , fontSize : Int
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs args =
     let
         handleInputChange : String -> msg
@@ -81,7 +81,7 @@ getBorderAttr width colorHex =
     String.join " " [ String.fromInt width ++ "px", "solid", colorHex ]
 
 
-triangle : Color -> ElementC msg
+triangle : Color -> Element (R10.Context.ContextInternal z) msg
 triangle colorFont =
     el
         (List.map htmlAttribute <|

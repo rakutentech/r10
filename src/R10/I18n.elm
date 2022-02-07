@@ -11,6 +11,8 @@ import Element.WithContext exposing (..)
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Html.Attributes
+import Html.Events
+import Json.Decode
 import List.Extra
 import R10.Color.AttrsBackground
 import R10.Color.AttrsFont
@@ -52,13 +54,13 @@ import Url
 
 {-| -}
 paragraph :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
         { renderingMode : RenderingMode
-        , tagReplacer : Context -> String -> String
+        , tagReplacer : R10.Context.ContextInternal z -> String -> String
         , translation : R10.Language.Translations
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 paragraph attrs { renderingMode, tagReplacer, translation } =
     withContext <|
         \c ->
@@ -66,20 +68,22 @@ paragraph attrs { renderingMode, tagReplacer, translation } =
                 attrs
                 { renderingMode = renderingMode
                 , tagReplacer = tagReplacer
-                , string = t c.language translation
+                , string = t c.contextR10.language translation
+                , msgNoOp = Nothing
                 }
 
 
 {-| -}
 paragraphFromString :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
         { renderingMode : RenderingMode
-        , tagReplacer : Context -> String -> String
+        , tagReplacer : R10.Context.ContextInternal z -> String -> String
         , string : String
+        , msgNoOp : Maybe msg
         }
-    -> ElementC msg
-paragraphFromString attrs { renderingMode, tagReplacer, string } =
+    -> Element (R10.Context.ContextInternal z) msg
+paragraphFromString attrs { renderingMode, tagReplacer, string, msgNoOp } =
     withContext <|
         \c ->
             case renderingMode of
@@ -91,6 +95,7 @@ paragraphFromString attrs { renderingMode, tagReplacer, string } =
                                 { tagReplacer = tagReplacer
                                 , context = c
                                 , renderingMode = renderingMode
+                                , msgNoOp = msgNoOp
                                 }
                         )
 
@@ -106,24 +111,27 @@ paragraphFromString attrs { renderingMode, tagReplacer, string } =
                                 { tagReplacer = tagReplacer
                                 , context = c
                                 , renderingMode = renderingMode
+                                , msgNoOp = msgNoOp
                                 }
                         )
 
 
 applySubstitutions :
     { a
-        | context : Context
+        | context : R10.Context.ContextInternal z
         , renderingMode : RenderingMode
-        , tagReplacer : Context -> String -> String
+        , tagReplacer : R10.Context.ContextInternal z -> String -> String
+        , msgNoOp : Maybe msg
     }
     -> String
-    -> List (ElementC msg)
-applySubstitutions { tagReplacer, context, renderingMode } translationAsString =
+    -> List (Element (R10.Context.ContextInternal z) msg)
+applySubstitutions { tagReplacer, context, renderingMode, msgNoOp } translationAsString =
     translationAsString
         |> tagReplacer context
         |> specialMarkdown
             { tagReplacer = tagReplacer
             , renderingMode = renderingMode
+            , msgNoOp = msgNoOp
             }
 
 
@@ -142,25 +150,26 @@ replaceStartOver tagReplacer c string =
 specialMarkdown :
     { a
         | renderingMode : RenderingMode
-        , tagReplacer : Context -> String -> String
+        , tagReplacer : R10.Context.ContextInternal z -> String -> String
+        , msgNoOp : Maybe msg
     }
     -> String
-    -> List (ElementC msg)
-specialMarkdown { tagReplacer, renderingMode } translationAsString =
+    -> List (Element (R10.Context.ContextInternal z) msg)
+specialMarkdown { tagReplacer, renderingMode, msgNoOp } translationAsString =
     let
-        boldGenerator : String -> ElementC msg
+        boldGenerator : String -> Element (R10.Context.ContextInternal z) msg
         boldGenerator string_ =
             el [ Font.bold ] <| Element.WithContext.text string_
 
-        textGenerator : String -> ElementC msg
+        textGenerator : String -> Element (R10.Context.ContextInternal z) msg
         textGenerator string_ =
             Element.WithContext.text string_
 
-        elementLabelGenerator : String -> ElementC msg
+        elementLabelGenerator : String -> Element (R10.Context.ContextInternal z) msg
         elementLabelGenerator string_ =
             Element.WithContext.text string_
 
-        linkGenerator : String -> String -> ElementC msg
+        linkGenerator : String -> String -> Element (R10.Context.ContextInternal z) msg
         linkGenerator label tag =
             withContext <|
                 \c ->
@@ -178,7 +187,7 @@ specialMarkdown { tagReplacer, renderingMode } translationAsString =
                                             tag_
                                    )
 
-                        focusedOrOver : List DecorationC
+                        focusedOrOver : List (Decoration (R10.Context.ContextInternal z))
                         focusedOrOver =
                             case renderingMode of
                                 Normal ->
@@ -188,7 +197,7 @@ specialMarkdown { tagReplacer, renderingMode } translationAsString =
                                     []
 
                         isInternal =
-                            isInternalLink c.currentUrl newTag
+                            isInternalLink c.contextR10.currentUrl newTag
                     in
                     if tag == "fake_link" then
                         case renderingMode of
@@ -200,7 +209,15 @@ specialMarkdown { tagReplacer, renderingMode } translationAsString =
 
                     else
                         row
-                            [ spacing 5 ]
+                            ([ spacing 5 ]
+                                ++ (case msgNoOp of
+                                        Just msg ->
+                                            [ htmlAttribute <| Html.Events.stopPropagationOn "click" <| Json.Decode.map (\a -> ( a, True )) (Json.Decode.succeed msg) ]
+
+                                        Nothing ->
+                                            []
+                                   )
+                            )
                             ([ (if isInternal then
                                     link
 
@@ -245,7 +262,7 @@ specialMarkdown { tagReplacer, renderingMode } translationAsString =
                                                 Error ->
                                                     R10.Color.Svg.error
                                              )
-                                                c.theme
+                                                c.contextR10.theme
                                             )
                                             16
                                         ]
@@ -359,9 +376,9 @@ t language translation =
 
 {-| Shorthand to transform a translation into an `Element.text`
 -}
-text : R10.Language.Translations -> ElementC msg
+text : R10.Language.Translations -> Element (R10.Context.ContextInternal z) msg
 text translation =
-    withContext <| \c -> Element.WithContext.text <| t c.language translation
+    withContext <| \c -> Element.WithContext.text <| t c.contextR10.language translation
 
 
 {-| Utility for variable replacement in translation.

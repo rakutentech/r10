@@ -6,7 +6,7 @@ module R10.FormComponents.Internal.TextColors exposing
 import Element.WithContext exposing (..)
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI.Color
-import R10.FormTypes
+import R10.Palette
 
 
 getBorderColor :
@@ -17,7 +17,7 @@ getBorderColor :
         , maybeValid : Maybe Bool
         , displayValidation : Bool
         , isMouseOver : Bool
-        , palette : R10.FormTypes.Palette
+        , palette : R10.Palette.Palette
     }
     -> Color
 getBorderColor { disabled, focused, style, maybeValid, displayValidation, isMouseOver, palette } =
@@ -70,7 +70,7 @@ getLabelColor :
         , style : R10.FormComponents.Internal.Style.Style
         , maybeValid : Maybe Bool
         , displayValidation : Bool
-        , palette : R10.FormTypes.Palette
+        , palette : R10.Palette.Palette
     }
     -> Color
 getLabelColor { focused, style, maybeValid, displayValidation, palette } =

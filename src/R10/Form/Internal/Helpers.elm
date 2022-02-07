@@ -1,6 +1,8 @@
 module R10.Form.Internal.Helpers exposing
     ( boolToString
+    , cleanPhoneNumber
     , clearFieldValidation
+    , flagImageUrl
     , getActiveTab
     , getField
     , getFieldIgnoringPath
@@ -8,6 +10,7 @@ module R10.Form.Internal.Helpers exposing
     , getFieldValueAsBool
     , getFieldValueIgnoringPath
     , getMultiActiveKeys
+    , punyDecode
     , setActiveTab
     , setFieldDisabled
     , setFieldValidationError
@@ -15,14 +18,32 @@ module R10.Form.Internal.Helpers exposing
     , setMultiplicableQuantities
     , stringToBool
     , updateField
+    , userReplace
     )
 
 import Dict
+import Punycode
+import R10.Context
+import R10.Country
 import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldState
 import R10.Form.Internal.Key
+import R10.Form.Internal.Shared
 import R10.Form.Internal.State
+import Regex
 import Set
+import String.Extra
+import Url
+
+
+userReplace : String -> (Regex.Match -> String) -> String -> String
+userReplace userRegex replacer string =
+    case Regex.fromString userRegex of
+        Nothing ->
+            string
+
+        Just regex ->
+            Regex.replace regex replacer string
 
 
 stringToBool : String -> Bool
@@ -138,6 +159,7 @@ setFieldDisabled key disabled formState =
 setFieldValue : R10.Form.Internal.Key.KeyAsString -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
 setFieldValue key value formState =
     updateField key (\fieldState -> { fieldState | value = value }) formState
+        |> copyEmailIntoUserName key value
 
 
 setMultiplicableQuantities : R10.Form.Internal.Key.KeyAsString -> Int -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
@@ -166,7 +188,7 @@ setFieldValidationError key value formState =
                     R10.Form.Internal.FieldState.Validated [ newError ]
 
                 R10.Form.Internal.FieldState.Validated listValidationOutcome ->
-                    R10.Form.Internal.FieldState.Validated <| newError :: listValidationOutcome
+                    R10.Form.Internal.FieldState.Validated <| listValidationOutcome ++ [ newError ]
 
         newFieldsState : Dict.Dict String R10.Form.Internal.FieldState.FieldState
         newFieldsState =
@@ -212,3 +234,95 @@ getMultiActiveKeys key formState =
     in
     R10.Form.Internal.Key.composeMultiKeys key quantity
         |> List.filter notRemoved
+
+
+punyDecode : String -> String
+punyDecode string =
+    string
+        |> String.split "@"
+        |> List.map Punycode.decodeIdn
+        |> String.join "@"
+
+
+cleanPhoneNumber : String -> String
+cleanPhoneNumber value =
+    let
+        cleanedValue : String
+        cleanedValue =
+            let
+                cleanedPhoneNumber : String
+                cleanedPhoneNumber =
+                    value
+                        |> String.Extra.clean
+                        |> userReplace "[^0-9 \\-\\(\\).]" (\_ -> "")
+                        |> userReplace "[^\\d]" (\_ -> "")
+            in
+            if String.length cleanedPhoneNumber > 0 then
+                "+" ++ cleanedPhoneNumber
+
+            else
+                ""
+
+        countryTelCode : String
+        countryTelCode =
+            cleanedValue
+                |> R10.Country.fromTelephoneAsString
+                |> Maybe.map R10.Country.toCountryTelCode
+                |> Maybe.withDefault ""
+
+        newValue : String
+        newValue =
+            if countryTelCode == cleanedValue then
+                ""
+
+            else
+                cleanedValue
+    in
+    newValue
+
+
+copyEmailIntoUserName : R10.Form.Internal.Key.KeyAsString -> String -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
+copyEmailIntoUserName key value formState =
+    let
+        needCopy : Maybe Bool
+        needCopy =
+            getFieldValueAsBool
+                (R10.Form.Internal.Key.toString R10.Form.Internal.Shared.copyEmailIntoUsernameCheckboxKey)
+                formState
+
+        isEmailChange : Bool
+        isEmailChange =
+            key == R10.Form.Internal.Shared.defaultEmailFieldKeyString
+    in
+    case ( isEmailChange, needCopy ) of
+        ( True, Just True ) ->
+            updateField R10.Form.Internal.Shared.defaultUsernameFieldKeyString (\fieldState -> { fieldState | value = value }) formState
+
+        _ ->
+            formState
+
+
+flagImageUrl : R10.Context.ContextR10 -> String
+flagImageUrl contextR10 =
+    --
+    -- Try to fetch the own resource of environment
+    -- If it is failed, will use PROD
+    -- (src/Utils/Shared.extraCss)
+    --
+    (case contextR10.currentUrl.protocol of
+        Url.Http ->
+            "http://"
+
+        Url.Https ->
+            "https://"
+    )
+        ++ contextR10.currentUrl.host
+        ++ (Maybe.withDefault "" <| Maybe.map (\p -> ":" ++ String.fromInt p) contextR10.currentUrl.port_)
+        ++ (case contextR10.currentUrl.host of
+                "localhost" ->
+                    "/"
+
+                _ ->
+                    "/widget/"
+           )
+        ++ "images/flags.png"

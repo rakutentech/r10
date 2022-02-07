@@ -8,14 +8,14 @@ module R10.Svg.IconsExtra exposing (more_vert, checkBold, copy, aToZ, check_thic
 
 import Element.WithContext exposing (..)
 import R10.Color.Utils
-import R10.Context exposing (..)
 import R10.Svg.Utils
+import R10.Context exposing (..)
 import Svg
 import Svg.Attributes as SA
 
 
 {-| -}
-brokenHeart : List (AttributeC msg) -> Color -> Int -> ElementC msg
+brokenHeart : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 brokenHeart attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 14 12"
@@ -25,7 +25,7 @@ brokenHeart attrs cl size =
 
 
 {-| -}
-check_thick : List (AttributeC msg) -> Color -> Int -> ElementC msg
+check_thick : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 check_thick attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 12 10"
@@ -35,7 +35,7 @@ check_thick attrs cl size =
 
 
 {-| -}
-copy : List (AttributeC msg) -> Color -> Int -> ElementC msg
+copy : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 copy attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -46,7 +46,7 @@ copy attrs cl size =
 
 
 {-| -}
-bug : List (AttributeC msg) -> Color -> Int -> ElementC msg
+bug : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 bug attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 412.8 412.8"
@@ -56,7 +56,7 @@ bug attrs cl size =
 
 
 {-| -}
-add : List (AttributeC msg) -> Color -> Int -> ElementC msg
+add : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 add attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -66,7 +66,7 @@ add attrs cl size =
 
 
 {-| -}
-arrowBack : List (AttributeC msg) -> Color -> Int -> ElementC msg
+arrowBack : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 arrowBack attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -76,7 +76,7 @@ arrowBack attrs cl size =
 
 
 {-| -}
-arrowForward : List (AttributeC msg) -> Color -> Int -> ElementC msg
+arrowForward : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 arrowForward attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -86,7 +86,7 @@ arrowForward attrs cl size =
 
 
 {-| -}
-grid : List (AttributeC msg) -> Color -> Int -> ElementC msg
+grid : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 grid attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -96,7 +96,7 @@ grid attrs cl size =
 
 
 {-| -}
-play : List (AttributeC msg) -> Color -> Int -> ElementC msg
+play : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 play attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 60 60"
@@ -107,7 +107,7 @@ play attrs cl size =
 
 
 {-| -}
-pause : List (AttributeC msg) -> Color -> Int -> ElementC msg
+pause : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 pause attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 60 60"
@@ -118,7 +118,7 @@ pause attrs cl size =
 
 
 {-| -}
-close : List (AttributeC msg) -> Color -> Int -> ElementC msg
+close : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 close attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -127,7 +127,7 @@ close attrs cl size =
 
 
 {-| -}
-clear : List (AttributeC msg) -> Color -> Int -> ElementC msg
+clear : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 clear attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -136,7 +136,7 @@ clear attrs cl size =
 
 
 {-| -}
-submit : List (AttributeC msg) -> Color -> Int -> ElementC msg
+submit : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 submit attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -145,7 +145,7 @@ submit attrs cl size =
 
 
 {-| -}
-love : List (AttributeC msg) -> Color -> Int -> ElementC msg
+love : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 love attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 52 52"
@@ -155,7 +155,7 @@ love attrs cl size =
 
 
 {-| -}
-respect : List (AttributeC msg) -> Color -> Int -> ElementC msg
+respect : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 respect attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -166,7 +166,7 @@ respect attrs cl size =
 
 
 {-| -}
-organize : List (AttributeC msg) -> Color -> Int -> ElementC msg
+organize : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 organize attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -178,7 +178,7 @@ organize attrs cl size =
 
 
 {-| -}
-customSupport : List (AttributeC msg) -> Color -> Int -> ElementC msg
+customSupport : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 customSupport attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 575 575"
@@ -190,7 +190,7 @@ customSupport attrs cl size =
 
 
 {-| -}
-card : List (AttributeC msg) -> Color -> Int -> ElementC msg
+card : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 card attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 -84 512 512"
@@ -202,7 +202,7 @@ card attrs cl size =
 
 
 {-| -}
-highFive : List (AttributeC msg) -> Color -> Int -> ElementC msg
+highFive : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 highFive attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -213,7 +213,7 @@ highFive attrs cl size =
 
 
 {-| -}
-moon : List (AttributeC msg) -> Color -> Int -> ElementC msg
+moon : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 moon attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 383.19 383.19"
@@ -224,7 +224,7 @@ moon attrs cl size =
 
 
 {-| -}
-paperPlane : List (AttributeC msg) -> Color -> Int -> ElementC msg
+paperPlane : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 paperPlane attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -235,7 +235,7 @@ paperPlane attrs cl size =
 
 
 {-| -}
-internet : List (AttributeC msg) -> Color -> Int -> ElementC msg
+internet : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 internet attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 58 58"
@@ -245,7 +245,7 @@ internet attrs cl size =
 
 
 {-| -}
-email : List (AttributeC msg) -> Color -> Int -> ElementC msg
+email : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 email attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -256,7 +256,7 @@ email attrs cl size =
 
 
 {-| -}
-waveHand : List (AttributeC msg) -> Color -> Int -> ElementC msg
+waveHand : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 waveHand attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 297.7 297.7"
@@ -268,7 +268,7 @@ waveHand attrs cl size =
 
 
 {-| -}
-training : List (AttributeC msg) -> Color -> Int -> ElementC msg
+training : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 training attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 500 500"
@@ -280,7 +280,7 @@ training attrs cl size =
 
 
 {-| -}
-startup : List (AttributeC msg) -> Color -> Int -> ElementC msg
+startup : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 startup attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -293,7 +293,7 @@ startup attrs cl size =
 
 
 {-| -}
-fireworks : List (AttributeC msg) -> Color -> Int -> ElementC msg
+fireworks : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 fireworks attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -303,7 +303,7 @@ fireworks attrs cl size =
 
 
 {-| -}
-alarmClock : List (AttributeC msg) -> Color -> Int -> ElementC msg
+alarmClock : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 alarmClock attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 58.15 58.15"
@@ -315,7 +315,7 @@ alarmClock attrs cl size =
 
 
 {-| -}
-conversation : List (AttributeC msg) -> Color -> Int -> ElementC msg
+conversation : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 conversation attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -327,7 +327,7 @@ conversation attrs cl size =
 
 
 {-| -}
-sun : List (AttributeC msg) -> Color -> Int -> ElementC msg
+sun : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 sun attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 397.4 397.4"
@@ -337,7 +337,7 @@ sun attrs cl size =
 
 
 {-| -}
-checkBold : List (AttributeC msg) -> Color -> Int -> ElementC msg
+checkBold : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 checkBold attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -347,7 +347,7 @@ checkBold attrs cl size =
 
 
 {-| -}
-keyboardArrowDown : List (AttributeC msg) -> Color -> Int -> ElementC msg
+keyboardArrowDown : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 keyboardArrowDown attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -357,7 +357,7 @@ keyboardArrowDown attrs cl size =
 
 
 {-| -}
-delete : List (AttributeC msg) -> Color -> Int -> ElementC msg
+delete : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 delete attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -367,7 +367,7 @@ delete attrs cl size =
 
 
 {-| -}
-restore : List (AttributeC msg) -> Color -> Int -> ElementC msg
+restore : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 restore attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -377,7 +377,7 @@ restore attrs cl size =
 
 
 {-| -}
-keyboardArrowUp : List (AttributeC msg) -> Color -> Int -> ElementC msg
+keyboardArrowUp : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 keyboardArrowUp attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -387,7 +387,7 @@ keyboardArrowUp attrs cl size =
 
 
 {-| -}
-search : List (AttributeC msg) -> Color -> Int -> ElementC msg
+search : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 search attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -397,7 +397,7 @@ search attrs cl size =
 
 
 {-| -}
-more_vert : List (AttributeC msg) -> Color -> Int -> ElementC msg
+more_vert : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 more_vert attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 48 48"
@@ -407,7 +407,7 @@ more_vert attrs cl size =
 
 
 {-| -}
-aToZ : List (AttributeC msg) -> Color -> Int -> ElementC msg
+aToZ : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 aToZ attrs _ size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 512 512"
@@ -424,7 +424,7 @@ aToZ attrs _ size =
 
 
 {-| -}
-darkLight : List (AttributeC msg) -> Color -> Int -> ElementC msg
+darkLight : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 darkLight attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 1024 1024"
@@ -434,7 +434,7 @@ darkLight attrs cl size =
 
 
 {-| -}
-validation_clear : List (AttributeC msg) -> Color -> Int -> ElementC msg
+validation_clear : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 validation_clear attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "2 2 20 20"
@@ -444,7 +444,7 @@ validation_clear attrs cl size =
 
 
 {-| -}
-validation_error : List (AttributeC msg) -> Color -> Int -> ElementC msg
+validation_error : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 validation_error attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"
@@ -454,7 +454,7 @@ validation_error attrs cl size =
 
 
 {-| -}
-validation_check : List (AttributeC msg) -> Color -> Int -> ElementC msg
+validation_check : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 validation_check attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 24 24"

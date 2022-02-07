@@ -21,7 +21,7 @@ import R10.Svg.Others
 
 
 {-| -}
-listOthers : Int -> Color -> List ( ElementC msg, String )
+listOthers : Int -> Color -> List ( Element (R10.Context.ContextInternal z) msg, String )
 listOthers size cl =
     [ ( R10.Svg.Others.mountain [] size, "mountain" )
     , ( R10.Svg.Others.mobileWithPerson [] cl size, "mobileWithPerson" )
@@ -39,7 +39,7 @@ listOthers size cl =
 
 
 {-| -}
-listLogosExtra : Int -> Color -> List ( ElementC msg, String )
+listLogosExtra : Int -> Color -> List ( Element (R10.Context.ContextInternal z) msg, String )
 listLogosExtra size cl =
     [ ( R10.Svg.LogosExtra.elm [] size, "elm" )
     , ( R10.Svg.LogosExtra.elm_monochrome [] cl size, "elm_monochrome" )
@@ -67,7 +67,7 @@ listLogosExtra size cl =
 
 
 {-| -}
-listLogos : Int -> Color -> List ( ElementC msg, String )
+listLogos : Int -> Color -> List ( Element (R10.Context.ContextInternal z) msg, String )
 listLogos size cl =
     [ ( R10.Svg.Logos.authenticator [] cl size, "authenticator" )
     , ( R10.Svg.Logos.authenticator_monochrome [] cl size, "authenticator_monochrome" )
@@ -81,7 +81,7 @@ listLogos size cl =
 
 
 {-| -}
-listIconsExtra : Int -> Color -> List ( ElementC msg, String )
+listIconsExtra : Int -> Color -> List ( Element (R10.Context.ContextInternal z) msg, String )
 listIconsExtra size cl =
     [ ( R10.Svg.IconsExtra.add [] cl size, "add" )
     , ( R10.Svg.IconsExtra.check_thick [] cl size, "checkThick" )
@@ -128,7 +128,7 @@ listIconsExtra size cl =
 
 
 {-| -}
-listIcons : Int -> Color -> List ( ElementC msg, String )
+listIcons : Int -> Color -> List ( Element (R10.Context.ContextInternal z) msg, String )
 listIcons size cl =
     [ ( R10.Svg.Icons.arrow_down_l [] cl size, "arrow_down_l" )
     , ( R10.Svg.Icons.arrow_left_l [] cl size, "arrow_left_l" )

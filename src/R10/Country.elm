@@ -1,8 +1,8 @@
-module R10.Country exposing (Country(..), emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate)
+module R10.Country exposing (Country(..), emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate, toCountryNameWithAlias)
 
 {-|
 
-@docs Country, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate
+@docs Country, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate, toCountryNameWithAlias
 
 -}
 
@@ -1783,7 +1783,7 @@ toPhoneTemplate country =
     case country of
         -- From https://dev-cdn.rex.contents.rakuten.co.jp/rex-form/docs/components/form-sample2.html
         Japan ->
-            "080-1234-567"
+            "08011112222"
 
         _ ->
             ""
@@ -5402,3 +5402,725 @@ fromCountryCode country =
 
         _ ->
             Nothing
+
+
+{-| -}
+toCountryNameWithAlias : Country -> String
+toCountryNameWithAlias country =
+    case country of
+        Afghanistan ->
+            "Afghanistan (\u{202B}افغانستان\u{202C}\u{200E})"
+
+        Albania ->
+            "Albania (Shqipëri)"
+
+        Algeria ->
+            "Algeria (\u{202B}الجزائر\u{202C}\u{200E})"
+
+        AmericanSamoa ->
+            "American Samoa"
+
+        Andorra ->
+            "Andorra"
+
+        Angola ->
+            "Angola"
+
+        Anguilla ->
+            "Anguilla"
+
+        Antarctica ->
+            "Antarctica"
+
+        AntiguaandBarbuda ->
+            "Antigua and Barbuda"
+
+        Argentina ->
+            "Argentina"
+
+        Armenia ->
+            "Armenia (Հայաստան)"
+
+        Aruba ->
+            "Aruba"
+
+        Australia ->
+            "Australia"
+
+        Austria ->
+            "Austria (Österreich)"
+
+        Azerbaijan ->
+            "Azerbaijan (Azərbaycan)"
+
+        Bahamas ->
+            "Bahamas"
+
+        Bahrain ->
+            "Bahrain (\u{202B}البحرين\u{202C}\u{200E})"
+
+        Bangladesh ->
+            "Bangladesh (বাংলাদেশ)"
+
+        Barbados ->
+            "Barbados"
+
+        Belarus ->
+            "Belarus (Беларусь)"
+
+        Belgium ->
+            "Belgium (België)"
+
+        Belize ->
+            "Belize"
+
+        Benin ->
+            "Benin (Bénin)"
+
+        Bermuda ->
+            "Bermuda"
+
+        Bhutan ->
+            "Bhutan (འབྲུག)"
+
+        Bolivia ->
+            "Bolivia"
+
+        BosniaandHerzegovina ->
+            "Bosnia and Herzegovina (Босна и Херцеговина)"
+
+        Botswana ->
+            "Botswana"
+
+        Brazil ->
+            "Brazil (Brasil)"
+
+        BritishIndianOceanTerritory ->
+            "British Indian Ocean Territory"
+
+        BritishVirginIslands ->
+            "British Virgin Islands"
+
+        Brunei ->
+            "Brunei"
+
+        Bulgaria ->
+            "Bulgaria (България)"
+
+        BurkinaFaso ->
+            "Burkina Faso"
+
+        Burundi ->
+            "Burundi (Uburundi)"
+
+        Cambodia ->
+            "Cambodia (កម្ពុជា)"
+
+        Cameroon ->
+            "Cameroon (Cameroun)"
+
+        Canada ->
+            "Canada"
+
+        CapeVerde ->
+            "Cape Verde (Kabu Verdi)"
+
+        CaymanIslands ->
+            "Cayman Islands"
+
+        CentralAfricanRepublic ->
+            "Central African Republic (République centrafricaine)"
+
+        Chad ->
+            "Chad (Tchad)"
+
+        Chile ->
+            "Chile"
+
+        China ->
+            "China (中国)"
+
+        ChristmasIsland ->
+            "Christmas Island"
+
+        CocosIslands ->
+            "Cocos (Keeling) Islands"
+
+        Colombia ->
+            "Colombia"
+
+        Comoros ->
+            "Comoros (\u{202B}جزر القمر\u{202C}\u{200E})"
+
+        CookIslands ->
+            "Cook Islands"
+
+        CostaRica ->
+            "Costa Rica"
+
+        Croatia ->
+            "Croatia (Hrvatska)"
+
+        Cuba ->
+            "Cuba"
+
+        Curacao ->
+            "Curaçao"
+
+        Cyprus ->
+            "Cyprus (Κύπρος)"
+
+        CzechRepublic ->
+            "Czech Republic (Česká republika)"
+
+        DemocraticRepublicoftheCongo ->
+            "Congo (DRC) (Jamhuri ya Kidemokrasia ya Kongo)"
+
+        Denmark ->
+            "Denmark (Danmark)"
+
+        Djibouti ->
+            "Djibouti"
+
+        Dominica ->
+            "Dominica"
+
+        DominicanRepublic ->
+            "Dominican Republic (República Dominicana)"
+
+        EastTimor ->
+            "Timor-Leste"
+
+        Ecuador ->
+            "Ecuador"
+
+        Egypt ->
+            "Egypt (\u{202B}مصر\u{202C}\u{200E})"
+
+        ElSalvador ->
+            "El Salvador"
+
+        EquatorialGuinea ->
+            "Equatorial Guinea (Guinea Ecuatorial)"
+
+        Eritrea ->
+            "Eritrea"
+
+        Estonia ->
+            "Estonia (Eesti)"
+
+        Ethiopia ->
+            "Ethiopia"
+
+        FalklandIslands ->
+            "Falkland Islands (Islas Malvinas)"
+
+        FaroeIslands ->
+            "Faroe Islands (Føroyar)"
+
+        Fiji ->
+            "Fiji"
+
+        Finland ->
+            "Finland (Suomi)"
+
+        France ->
+            "France"
+
+        FrenchPolynesia ->
+            "French Polynesia (Polynésie française)"
+
+        Gabon ->
+            "Gabon"
+
+        Gambia ->
+            "Gambia"
+
+        Georgia ->
+            "Georgia (საქართველო)"
+
+        Germany ->
+            "Germany (Deutschland)"
+
+        Ghana ->
+            "Ghana (Gaana)"
+
+        Gibraltar ->
+            "Gibraltar"
+
+        Greece ->
+            "Greece (Ελλάδα)"
+
+        Greenland ->
+            "Greenland (Kalaallit Nunaat)"
+
+        Grenada ->
+            "Grenada"
+
+        Guam ->
+            "Guam"
+
+        Guatemala ->
+            "Guatemala"
+
+        Guernsey ->
+            "Guernsey"
+
+        Guinea ->
+            "Guinea (Guinée)"
+
+        GuineaBissau ->
+            "Guinea-Bissau (Guiné Bissau)"
+
+        Guyana ->
+            "Guyana"
+
+        Haiti ->
+            "Haiti"
+
+        Honduras ->
+            "Honduras"
+
+        HongKong ->
+            "Hong Kong (香港)"
+
+        Hungary ->
+            "Hungary (Magyarország)"
+
+        Iceland ->
+            "Iceland (Ísland)"
+
+        India ->
+            "India (भारत)"
+
+        Indonesia ->
+            "Indonesia"
+
+        Iran ->
+            "Iran (\u{202B}ایران\u{202C}\u{200E})"
+
+        Iraq ->
+            "Iraq (\u{202B}العراق\u{202C}\u{200E})"
+
+        Ireland ->
+            "Ireland"
+
+        IsleofMan ->
+            "Isle of Man"
+
+        Israel ->
+            "Israel (\u{202B}ישראל\u{202C}\u{200E})"
+
+        Italy ->
+            "Italy (Italia)"
+
+        IvoryCoast ->
+            "Côte d’Ivoire"
+
+        Jamaica ->
+            "Jamaica"
+
+        Japan ->
+            "Japan (日本)"
+
+        Jersey ->
+            "Jersey"
+
+        Jordan ->
+            "Jordan (\u{202B}الأردن\u{202C}\u{200E})"
+
+        Kazakhstan ->
+            "Kazakhstan (Казахстан)"
+
+        Kenya ->
+            "Kenya"
+
+        Kiribati ->
+            "Kiribati"
+
+        Kosovo ->
+            "Kosovo"
+
+        Kuwait ->
+            "Kuwait (\u{202B}الكويت\u{202C}\u{200E})"
+
+        Kyrgyzstan ->
+            "Kyrgyzstan (Кыргызстан)"
+
+        Laos ->
+            "Laos (ລາວ)"
+
+        Latvia ->
+            "Latvia (Latvija)"
+
+        Lebanon ->
+            "Lebanon (\u{202B}لبنان\u{202C}\u{200E})"
+
+        Lesotho ->
+            "Lesotho"
+
+        Liberia ->
+            "Liberia"
+
+        Libya ->
+            "Libya (\u{202B}ليبيا\u{202C}\u{200E})"
+
+        Liechtenstein ->
+            "Liechtenstein"
+
+        Lithuania ->
+            "Lithuania (Lietuva)"
+
+        Luxembourg ->
+            "Luxembourg"
+
+        Macau ->
+            "Macau (澳門)"
+
+        Macedonia ->
+            "Macedonia (FYROM) (Македонија)"
+
+        Madagascar ->
+            "Madagascar (Madagasikara)"
+
+        Malawi ->
+            "Malawi"
+
+        Malaysia ->
+            "Malaysia"
+
+        Maldives ->
+            "Maldives"
+
+        Mali ->
+            "Mali"
+
+        Malta ->
+            "Malta"
+
+        MarshallIslands ->
+            "Marshall Islands"
+
+        Mauritania ->
+            "Mauritania (\u{202B}موريتانيا\u{202C}\u{200E})"
+
+        Mauritius ->
+            "Mauritius (Moris)"
+
+        Mayotte ->
+            "Mayotte"
+
+        Mexico ->
+            "Mexico (México)"
+
+        Micronesia ->
+            "Micronesia"
+
+        Moldova ->
+            "Moldova (Republica Moldova)"
+
+        Monaco ->
+            "Monaco"
+
+        Mongolia ->
+            "Mongolia (Монгол)"
+
+        Montenegro ->
+            "Montenegro (Crna Gora)"
+
+        Montserrat ->
+            "Montserrat"
+
+        Morocco ->
+            "Morocco (\u{202B}المغرب\u{202C}\u{200E})"
+
+        Mozambique ->
+            "Mozambique (Moçambique)"
+
+        Myanmar ->
+            "Myanmar (Burma) (မြန်မာ)"
+
+        Namibia ->
+            "Namibia (Namibië)"
+
+        Nauru ->
+            "Nauru"
+
+        Nepal ->
+            "Nepal (नेपाल)"
+
+        Netherlands ->
+            "Netherlands (Nederland)"
+
+        NewCaledonia ->
+            "New Caledonia (Nouvelle-Calédonie)"
+
+        NewZealand ->
+            "New Zealand"
+
+        Nicaragua ->
+            "Nicaragua"
+
+        Niger ->
+            "Niger (Nijar)"
+
+        Nigeria ->
+            "Nigeria"
+
+        Niue ->
+            "Niue"
+
+        NorthKorea ->
+            "North Korea (조선 민주주의 인민 공화국)"
+
+        NorthernMarianaIslands ->
+            "Northern Mariana Islands"
+
+        Norway ->
+            "Norway (Norge)"
+
+        Oman ->
+            "Oman (\u{202B}عُمان\u{202C}\u{200E})"
+
+        Pakistan ->
+            "Pakistan (\u{202B}پاکستان\u{202C}\u{200E})"
+
+        Palau ->
+            "Palau"
+
+        Palestine ->
+            "Palestine (\u{202B}فلسطين\u{202C}\u{200E})"
+
+        Panama ->
+            "Panama (Panamá)"
+
+        PapuaNewGuinea ->
+            "Papua New Guinea"
+
+        Paraguay ->
+            "Paraguay"
+
+        Peru ->
+            "Peru (Perú)"
+
+        Philippines ->
+            "Philippines"
+
+        Pitcairn ->
+            "Pitcairn"
+
+        Poland ->
+            "Poland (Polska)"
+
+        Portugal ->
+            "Portugal"
+
+        PuertoRico ->
+            "Puerto Rico"
+
+        Qatar ->
+            "Qatar (\u{202B}قطر\u{202C}\u{200E})"
+
+        RepublicoftheCongo ->
+            "Congo (Republic) (Congo-Brazzaville)"
+
+        Reunion ->
+            "Réunion (La Réunion)"
+
+        Romania ->
+            "Romania (România)"
+
+        Russia ->
+            "Russia (Россия)"
+
+        Rwanda ->
+            "Rwanda"
+
+        SaintBarthelemy ->
+            "Saint Barthélemy"
+
+        SaintHelena ->
+            "Saint Helena"
+
+        SaintKittsandNevis ->
+            "Saint Kitts and Nevis"
+
+        SaintLucia ->
+            "Saint Lucia"
+
+        SaintMartin ->
+            "Saint Martin (Saint-Martin (partie française))"
+
+        SaintPierreandMiquelon ->
+            "Saint Pierre and Miquelon (Saint-Pierre-et-Miquelon)"
+
+        SaintVincentandTheGrenadines ->
+            "Saint Vincent and the Grenadines"
+
+        Samoa ->
+            "Samoa"
+
+        SanMarino ->
+            "San Marino"
+
+        SaoTomeandPrincipe ->
+            "São Tomé and Príncipe (São Tomé e Príncipe)"
+
+        SaudiArabia ->
+            "Saudi Arabia (\u{202B}المملكة العربية السعودية\u{202C}\u{200E})"
+
+        Senegal ->
+            "Senegal (Sénégal)"
+
+        Serbia ->
+            "Serbia (Србија)"
+
+        Seychelles ->
+            "Seychelles"
+
+        SierraLeone ->
+            "Sierra Leone"
+
+        Singapore ->
+            "Singapore"
+
+        SintMaarten ->
+            "Sint Maarten"
+
+        Slovakia ->
+            "Slovakia (Slovensko)"
+
+        Slovenia ->
+            "Slovenia (Slovenija)"
+
+        SolomonIslands ->
+            "Solomon Islands"
+
+        Somalia ->
+            "Somalia (Soomaaliya)"
+
+        SouthAfrica ->
+            "South Africa"
+
+        SouthKorea ->
+            "South Korea (대한민국)"
+
+        SouthSudan ->
+            "South Sudan (\u{202B}جنوب السودان\u{202C}\u{200E})"
+
+        Spain ->
+            "Spain (España)"
+
+        SriLanka ->
+            "Sri Lanka (ශ්\u{200D}රී ලංකාව)"
+
+        Sudan ->
+            "Sudan (\u{202B}السودان\u{202C}\u{200E})"
+
+        Suriname ->
+            "Suriname"
+
+        SvalbardandJanMayen ->
+            "Svalbard and Jan Mayen"
+
+        Swaziland ->
+            "Swaziland"
+
+        Sweden ->
+            "Sweden (Sverige)"
+
+        Switzerland ->
+            "Switzerland (Schweiz)"
+
+        Syria ->
+            "Syria (\u{202B}سوريا\u{202C}\u{200E})"
+
+        Taiwan ->
+            "Taiwan (台灣)"
+
+        Tajikistan ->
+            "Tajikistan"
+
+        Tanzania ->
+            "Tanzania"
+
+        Thailand ->
+            "Thailand (ไทย)"
+
+        Togo ->
+            "Togo"
+
+        Tokelau ->
+            "Tokelau"
+
+        Tonga ->
+            "Tonga"
+
+        TrinidadandTobago ->
+            "Trinidad and Tobago"
+
+        Tunisia ->
+            "Tunisia (\u{202B}تونس\u{202C}\u{200E})"
+
+        Turkey ->
+            "Turkey (Türkiye)"
+
+        Turkmenistan ->
+            "Turkmenistan"
+
+        TurksandCaicosIslands ->
+            "Turks and Caicos Islands"
+
+        Tuvalu ->
+            "Tuvalu"
+
+        USVirginIslands ->
+            "U.S. Virgin Islands"
+
+        Uganda ->
+            "Uganda"
+
+        Ukraine ->
+            "Ukraine (Україна)"
+
+        UnitedArabEmirates ->
+            "United Arab Emirates (\u{202B}الإمارات العربية المتحدة\u{202C}\u{200E})"
+
+        UnitedKingdom ->
+            "United Kingdom"
+
+        UnitedStates ->
+            "United States"
+
+        Uruguay ->
+            "Uruguay"
+
+        Uzbekistan ->
+            "Uzbekistan (Oʻzbekiston)"
+
+        Vanuatu ->
+            "Vanuatu"
+
+        Vatican ->
+            "Vatican City (Città del Vaticano)"
+
+        Venezuela ->
+            "Venezuela"
+
+        Vietnam ->
+            "Vietnam (Việt Nam)"
+
+        WallisandFutuna ->
+            "Wallis and Futuna (Wallis-et-Futuna)"
+
+        WesternSahara ->
+            "Western Sahara (\u{202B}الصحراء الغربية\u{202C}\u{200E})"
+
+        Yemen ->
+            "Yemen (\u{202B}اليمن\u{202C}\u{200E})"
+
+        Zambia ->
+            "Zambia"
+
+        Zimbabwe ->
+            "Zimbabwe"

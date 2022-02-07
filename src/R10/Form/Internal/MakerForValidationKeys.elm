@@ -5,6 +5,7 @@ import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.Key
 import R10.Form.Internal.Shared
+import R10.FormTypes
 import Set
 
 
@@ -17,7 +18,7 @@ import Set
 
 
 type alias Outcome =
-    ( R10.Form.Internal.Key.Key, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+    ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
 
 
 
@@ -99,12 +100,12 @@ maker key form =
                         viewEntityMulti (R10.Form.Internal.Key.composeKey key entityId) { conf = entities, state = form.state }
 
                     R10.Form.Internal.Conf.EntityField fieldConf ->
-                        [ ( R10.Form.Internal.Key.composeKey key fieldConf.id, fieldConf.validationSpecs ) ]
+                        [ ( R10.Form.Internal.Key.composeKey key fieldConf.id, fieldConf.type_, fieldConf.validationSpecs ) ]
 
                     R10.Form.Internal.Conf.EntityTitle entityId textConf ->
-                        [ ( R10.Form.Internal.Key.composeKey key entityId, textConf.validationSpecs ) ]
+                        [ ( R10.Form.Internal.Key.composeKey key entityId, R10.FormTypes.TypeText R10.FormTypes.TextPlain, textConf.validationSpecs ) ]
 
                     R10.Form.Internal.Conf.EntitySubTitle entityId textConf ->
-                        [ ( R10.Form.Internal.Key.composeKey key entityId, textConf.validationSpecs ) ]
+                        [ ( R10.Form.Internal.Key.composeKey key entityId, R10.FormTypes.TypeText R10.FormTypes.TextPlain, textConf.validationSpecs ) ]
             )
             form.conf

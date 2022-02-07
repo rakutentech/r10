@@ -62,6 +62,7 @@
         "lucamug/elm-ui-with-context": "1.0.0 <= v < 2.0.0",
         "mdgriffith/elm-ui": "1.1.7 <= v < 2.0.0",
         "noahzgordon/elm-color-extra": "1.0.2 <= v < 2.0.0",
+        "tasuki/elm-punycode": "1.1.0 <= v < 2.0.0",
         "zwilias/json-decode-exploration": "6.0.0 <= v < 7.0.0"
     },
     "test-dependencies": {}

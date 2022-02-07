@@ -2,23 +2,22 @@ module R10.FormComponents.Internal.EmailAutoSuggest exposing
     ( addOnRightKeyDownEvent
     , autoSuggestionsAttrs
     , emailDomainAutocomplete
+    , mobileEmailSupportDomainList
     )
 
 import Element.WithContext exposing (..)
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
-import Element.WithContext.Input as Input
 import Html
 import Html.Attributes
 import Html.Events
 import Json.Decode
-import List.Extra
 import R10.Color.AttrsBackground
 import R10.Color.AttrsBorder
 import R10.Color.AttrsFont
 import R10.Context exposing (..)
 import R10.Device
-import R10.FontSize
+import R10.FormComponents.Internal.Style
 
 
 
@@ -32,11 +31,12 @@ import R10.FontSize
 
 autoSuggestionsAttrs :
     { userAgent : R10.Device.UserAgent
+    , style : R10.FormComponents.Internal.Style.Style
     , maybeEmailSuggestion : Maybe String
     , msgOnChange : String -> msg
     , value : String
     }
-    -> List (Attribute Context msg)
+    -> List (Attribute (R10.Context.ContextInternal z) msg)
 autoSuggestionsAttrs args =
     case ( args.maybeEmailSuggestion, R10.Device.isMobileOS args.userAgent ) of
         ( Just suggestion, True ) ->
@@ -49,27 +49,36 @@ autoSuggestionsAttrs args =
             -- key
             --
             [ above <|
-                withContext <|
-                    \c ->
-                        row
-                            [ moveDown 8
-                            , width fill
-                            , paddingXY 15 12
-                            , R10.Color.AttrsBackground.dropdown
-                            , R10.Color.AttrsBorder.shadow { offset = ( 0, 0 ), size = 0, blur = 2 }
-                            , Border.rounded 5
-                            , mouseDown [ R10.Color.AttrsBackground.dropdownSelected ]
-                            , mouseOver [ R10.Color.AttrsBackground.dropdownHover ]
-                            , htmlAttribute <| Html.Attributes.style "user-select" "none"
-                            , htmlAttribute <|
-                                Html.Events.preventDefaultOn "mouseup"
-                                    (Json.Decode.succeed ( args.msgOnChange (args.value ++ suggestion), True ))
-                            , -- Keep the same value on mousedown without loosing focus
-                              htmlAttribute <|
-                                Html.Events.preventDefaultOn "mousedown"
-                                    (Json.Decode.succeed ( args.msgOnChange args.value, True ))
-                            ]
-                            [ text (args.value ++ suggestion) ]
+                row
+                    [ moveDown 8
+                    , scrollbarX
+                    , width fill
+                    , paddingXY 15 12
+                    , R10.Color.AttrsBackground.dropdown
+                    , R10.Color.AttrsBorder.shadow { offset = ( 0, 0 ), size = 0, blur = 2 }
+                    , Border.rounded 5
+                    , mouseDown [ R10.Color.AttrsBackground.dropdownSelected ]
+                    , mouseOver [ R10.Color.AttrsBackground.dropdownHover ]
+                    , htmlAttribute <| Html.Attributes.style "user-select" "none"
+                    , htmlAttribute <|
+                        Html.Events.preventDefaultOn "mouseup"
+                            (Json.Decode.succeed ( args.msgOnChange (args.value ++ suggestion), True ))
+                    , -- Keep the same value on mousedown without loosing focus
+                      htmlAttribute <|
+                        Html.Events.preventDefaultOn "mousedown"
+                            (Json.Decode.succeed ( args.msgOnChange args.value, True ))
+                    , -- Show last chars first, like auto scroll to end
+                      htmlAttribute <| Html.Attributes.style "direction" "rtl"
+                    ]
+                    [ column
+                        --
+                        -- Strange issue when input '.' and '@' at front.
+                        -- showing like 'aol.com@.', should be '.@aol.com'
+                        -- add the direction style to fix
+                        --
+                        [ htmlAttribute <| Html.Attributes.style "direction" "ltr" ]
+                        [ text (args.value ++ suggestion) ]
+                    ]
             ]
 
         ( Nothing, True ) ->
@@ -83,16 +92,63 @@ autoSuggestionsAttrs args =
             -- We add, behind the input field, the suggestion. User will accept
             -- it pressing the "right arrow" key (see "addOnRightKeyDownEvent")
             --
+            let
+                positionAttrs =
+                    case args.style of
+                        R10.FormComponents.Internal.Style.Filled ->
+                            [ moveDown 23
+                            , moveRight 0
+                            ]
+
+                        R10.FormComponents.Internal.Style.Outlined ->
+                            [ moveDown 20
+                            , moveRight 16
+                            ]
+
+                suggestionViewWidth : String
+                suggestionViewWidth =
+                    String.length suggestion
+                        * 10
+                        |> String.fromInt
+
+                diffStaticSpaceWidth : String
+                diffStaticSpaceWidth =
+                    case args.style of
+                        R10.FormComponents.Internal.Style.Filled ->
+                            -- For this style, no padding, but has validation icon
+                            "15"
+
+                        R10.FormComponents.Internal.Style.Outlined ->
+                            -- For this style, has padding 16*2, the validation icon not use the space for line.
+                            "32"
+            in
             [ behindContent <|
                 row
-                    [ moveDown 21
-                    , moveRight 16
-                    , R10.Color.AttrsFont.normalLighter
-                    , alpha 0.5
-                    ]
-                    [ el [ Font.color <| rgba 0 0 0 0 ] (text args.value)
+                    ([ R10.Color.AttrsFont.normalLighter
+                     , alpha 0.5
+                     , width fill
+                     , clip
+                     ]
+                        ++ positionAttrs
+                    )
+                    [ el
+                        [ Font.color <| rgba 0 0 0 0
+                        , htmlAttribute <|
+                            Html.Attributes.style "max-width" <|
+                                "calc(100% - "
+                                    ++ diffStaticSpaceWidth
+                                    ++ "px - "
+                                    ++ suggestionViewWidth
+                                    ++ "px)"
+                        ]
+                        (text args.value)
                     , el [] (text suggestion)
                     ]
+            , htmlAttribute <|
+                Html.Attributes.style "max-width" <|
+                    "calc(100% - "
+                        ++ suggestionViewWidth
+                        ++ "px)"
             ]
 
         ( Nothing, False ) ->
@@ -118,29 +174,42 @@ emailDomainAutocomplete suggestions email =
     let
         maybeEmailDomain : Maybe String
         maybeEmailDomain =
-            List.Extra.getAt 1 <| String.split "@" email
+            if String.contains "@" email then
+                List.head <| List.reverse <| String.split "@" email
+
+            else
+                Nothing
 
         filterStartWith : List String -> String -> List String
         filterStartWith strings string_ =
             List.filter (String.startsWith string_) strings
-    in
-    --
-    -- If input = "ciao@g", maybeEmailDomain == Just "g"
-    --
-    case maybeEmailDomain of
-        Just emailDomain ->
-            emailDomain
-                -- output: "g"
-                |> filterStartWith suggestions
-                -- output: [ "google.com", "gmail.com" ]
-                |> List.head
-                -- output: Just "google.com"
-                |> Maybe.map (String.dropLeft (String.length emailDomain))
-                |> Maybe.andThen nothingWhenBlank
 
-        -- output: Just "oogle.com"
-        Nothing ->
-            Nothing
+        hasMultipleAtSymbol : Bool
+        hasMultipleAtSymbol =
+            String.indexes "@" email
+                |> List.length
+                |> (\len -> len > 1)
+    in
+    if hasMultipleAtSymbol then
+        Nothing
+
+    else
+        --
+        -- If input = "ciao@g", maybeEmailDomain == Just "g"
+        --
+        maybeEmailDomain
+            |> Maybe.andThen
+                (\emailDomain ->
+                    emailDomain
+                        -- output: "g"
+                        |> filterStartWith suggestions
+                        -- output: [ "google.com", "gmail.com" ]
+                        |> List.head
+                        -- output: Just "google.com"
+                        |> Maybe.map (String.dropLeft (String.length emailDomain))
+                        |> Maybe.andThen nothingWhenBlank
+                 -- output: Just "oogle.com"
+                )
 
 
 nothingWhenBlank : String -> Maybe String
@@ -177,3 +246,50 @@ addOnRightKeyDownEvent msg userInput suggestion =
                     )
             )
         |> Html.Events.on "keydown"
+
+
+mobileEmailSupportDomainList : List String
+mobileEmailSupportDomainList =
+    [ "@docomo.ne.jp"
+    , "@ezweb.ne.jp"
+    , "@au.com"
+    , "@softbank.ne.jp"
+    , "@rakuten.jp"
+    , "@rakuten.ml"
+    , "@t.vodafone.ne.jp"
+    , "@k.vodafone.ne.jp"
+    , "@c.vodafone.ne.jp"
+    , "@q.vodafone.ne.jp"
+    , "@h.vodafone.ne.jp"
+    , "@n.vodafone.ne.jp"
+    , "@disney.ne.jp"
+    , "@d.vodafone.ne.jp"
+    , "@r.vodafone.ne.jp"
+    , "@s.vodafone.ne.jp"
+    , "@jp-t.ne.jp"
+    , "@pdx.ne.jp"
+    , "@wm.pdx.ne.jp"
+    , "@jp-k.ne.jp"
+    , "@jp-c.ne.jp"
+    , "@dj.pdx.ne.jp"
+    , "@di.pdx.ne.jp"
+    , "@dk.pdx.ne.jp"
+    , "@jp-q.ne.jp"
+    , "@jp-n.ne.jp"
+    , "@jp-h.ne.jp"
+    , "@jp-d.ne.jp"
+    , "@jp-r.ne.jp"
+    , "@jp-s.ne.jp"
+    , "@pipopa.ne.jp"
+    , "@moco.ne.jp"
+    , "@sky.tkk.ne.jp"
+    , "@sky.tkc.ne.jp"
+    , "@i.pakeo.ne.jp"
+    , "@ido.ne.jp"
+    , "@tu-ka.ne.jp"
+
+    -- Not includes @, since some email can be @xx.domain.com, e.g. @a1.biz.au.com
+    -- Also do not suggestion them
+    , "biz.ezweb.ne.jp"
+    , "biz.au.com"
+    ]

@@ -9,15 +9,15 @@ Be aware that this component depends on the `Header` component for historical an
 -}
 
 import Element.WithContext exposing (..)
+import R10.Context exposing (..)
 import Element.WithContext.Background as Background
 import Element.WithContext.Font as Font
-import R10.Context exposing (..)
 import R10.FontSize
 import R10.Header
 
 
 {-| -}
-view : R10.Header.Header -> R10.Header.ViewArgs msg route -> ElementC msg
+view : R10.Header.Header -> R10.Header.ViewArgs z msg route -> Element (R10.Context.ContextInternal z) msg
 view model args =
     column
         [ width fill

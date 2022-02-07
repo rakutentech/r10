@@ -6,10 +6,10 @@ import R10.FormComponents.Internal.Single
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.Validations
-import R10.FormTypes
+import R10.Palette
 
 
-extraCss : R10.FormTypes.Palette -> String
+extraCss : R10.Palette.Palette -> String
 extraCss palette =
     R10.FormComponents.Internal.Text.extraCss
         ++ R10.FormComponents.Internal.Single.extraCss

@@ -17,19 +17,19 @@ import R10.Context exposing (..)
 
 
 {-| -}
-xlarge : AttrC decorative msg
+xlarge : Attr (R10.Context.ContextInternal z) decorative msg
 xlarge =
     Font.size 24
 
 
 {-| -}
-xxlarge : AttrC decorative msg
+xxlarge : Attr (R10.Context.ContextInternal z) decorative msg
 xxlarge =
     Font.size 32
 
 
 {-| -}
-large : AttrC decorative msg
+large : Attr (R10.Context.ContextInternal z) decorative msg
 large =
     Font.size 20
 
@@ -41,24 +41,24 @@ normalAsInt =
 
 
 {-| -}
-normal : AttrC decorative msg
+normal : Attr (R10.Context.ContextInternal z) decorative msg
 normal =
     Font.size normalAsInt
 
 
 {-| -}
-small : AttrC decorative msg
+small : Attr (R10.Context.ContextInternal z) decorative msg
 small =
     Font.size 14
 
 
 {-| -}
-xsmall : AttrC decorative msg
+xsmall : Attr (R10.Context.ContextInternal z) decorative msg
 xsmall =
     Font.size 13
 
 
 {-| -}
-xxsmall : AttrC decorative msg
+xxsmall : Attr (R10.Context.ContextInternal z) decorative msg
 xxsmall =
     Font.size 12

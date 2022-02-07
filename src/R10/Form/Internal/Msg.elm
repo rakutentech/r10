@@ -8,6 +8,7 @@ module R10.Form.Internal.Msg exposing
     , onValueChange
     )
 
+import R10.Context
 import R10.Form.Internal.Conf
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.Key
@@ -18,10 +19,11 @@ import R10.FormComponents.Internal.Single.Common
 {-| -}
 type Msg
     = NoOp
-    | GetFocus R10.Form.Internal.Key.Key
+    | GetFocus R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf
     | LoseFocus R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf
     | TogglePasswordShow R10.Form.Internal.Key.Key
-    | ChangeValue R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf R10.Form.Internal.Conf.Conf String
+    | KeyDown Int
+    | ChangeValue R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf R10.Form.Internal.Conf.Conf R10.Context.ContextR10 String
     | ChangeTab R10.Form.Internal.Key.Key String
     | AddEntity R10.Form.Internal.Key.Key
     | RemoveEntity R10.Form.Internal.Key.Key
@@ -63,7 +65,7 @@ handleChangesSinceLastSubmissions changesSinceLastSubmissions msg =
 isChangingValues : Msg -> Bool
 isChangingValues msg =
     case msg of
-        ChangeValue _ _ _ _ ->
+        ChangeValue _ _ _ _ _ ->
             True
 
         AddEntity _ ->
@@ -103,7 +105,7 @@ onValueChange :
     -> Maybe any
 onValueChange func msg_ =
     case msg_ of
-        ChangeValue key fieldConf formConf value ->
+        ChangeValue key fieldConf formConf _ value ->
             Just (func key fieldConf formConf value)
 
         _ ->

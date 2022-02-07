@@ -5,7 +5,7 @@ import Element.WithContext.Events as Events
 import Element.WithContext.Font as Font
 import Html.Attributes
 import R10.Context exposing (..)
-import R10.FormTypes
+import R10.Palette
 import R10.Table.Internal.Config
 import R10.Table.Internal.State
 import R10.Table.Internal.Style
@@ -40,7 +40,11 @@ toSortArrowInfo status =
             ( ArrowActive, isReversed )
 
 
-toHeaderInfo : R10.Table.Internal.State.State -> R10.Table.Internal.Config.ColumnConf data msg -> (String -> Bool -> msg) -> R10.Table.Internal.Config.HeaderInfo msg
+toHeaderInfo :
+    R10.Table.Internal.State.State
+    -> R10.Table.Internal.Config.ColumnConf data msg context
+    -> (String -> Bool -> msg)
+    -> R10.Table.Internal.Config.HeaderInfo msg
 toHeaderInfo state columnData sortMsg =
     let
         sortName : String
@@ -106,7 +110,7 @@ toHeaderInfo state columnData sortMsg =
                 }
 
 
-viewHeaderTitle : String -> ElementC msg
+viewHeaderTitle : String -> Element (R10.Context.ContextInternal z) msg
 viewHeaderTitle columnName =
     paragraph
         [ paddingEach { top = 0, right = 0, bottom = 0, left = 16 }
@@ -117,10 +121,10 @@ viewHeaderTitle columnName =
         [ text columnName ]
 
 
-viewHeaderSortArrow : ( ArrowType, Bool ) -> ElementC msg
+viewHeaderSortArrow : ( ArrowType, Bool ) -> Element (R10.Context.ContextInternal z) msg
 viewHeaderSortArrow ( buttonType, isReversed ) =
     let
-        buttonAttrs : List (AttrC () msg)
+        buttonAttrs : List (Attr (R10.Context.ContextInternal z) () msg)
         buttonAttrs =
             case buttonType of
                 ArrowActive ->
@@ -157,7 +161,7 @@ viewHeaderSortArrow ( buttonType, isReversed ) =
                 R10.Table.Internal.Svg.arrowDown "black" 18
 
 
-simpleHeader : List (AttributeC msg) -> R10.FormTypes.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> ElementC msg
+simpleHeader : List (Attribute (R10.Context.ContextInternal z) msg) -> R10.Palette.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> Element (R10.Context.ContextInternal z) msg
 simpleHeader attrs palette headerInfo =
     el
         (R10.Table.Internal.Style.defaultHeaderAttrs

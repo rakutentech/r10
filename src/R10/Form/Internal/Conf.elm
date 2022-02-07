@@ -8,6 +8,7 @@ module R10.Form.Internal.Conf exposing
     , fieldConfigMap
     , filter
     , fromString
+    , getFieldConfByFieldId
     , getId
     , init
     , toString
@@ -16,6 +17,7 @@ module R10.Form.Internal.Conf exposing
 import Json.Decode as D
 import Json.Encode as E
 import Json.Encode.Extra
+import List.Extra
 import R10.Form.Internal.FieldConf
 
 
@@ -117,6 +119,24 @@ getId entity =
 filter : EntityId -> List Entity -> List Entity
 filter entityId listEntities =
     List.filter (\entity -> entityId == getId entity) listEntities
+
+
+getFieldConfByFieldId : String -> Conf -> Maybe R10.Form.Internal.FieldConf.FieldConf
+getFieldConfByFieldId fieldId formConf =
+    List.Extra.findMap
+        (\entity ->
+            case entity of
+                EntityField fieldConf ->
+                    if fieldConf.id == fieldId then
+                        Just fieldConf
+
+                    else
+                        Nothing
+
+                _ ->
+                    Nothing
+        )
+        formConf
 
 
 

@@ -1,4 +1,4 @@
-module R10.FormComponents.Internal.UI.Palette exposing
+module R10.Palette exposing
     ( black
     , crimson
     , crimsonLight
@@ -22,18 +22,62 @@ module R10.FormComponents.Internal.UI.Palette exposing
     , warning
     , white
     , withOpacity
+    , Palette
     )
 
 import Color
 import R10.Color.Svg
 import R10.Color.Utils
-import R10.FormTypes
 import R10.Theme
 
 
-{-| get R10.FormTypes.Palette to use with R10.FormComponents lib
+{-|
+
+    type alias Palette =
+        { primary : Color
+        , primaryVariant : Color
+        , success : Color
+        , error : Color
+
+        -- Text Colors
+        --
+        , onSurface : Color
+        , onPrimary : Color
+
+        -- Background Colors
+        --
+        , surface : Color
+        , background : Color
+        }
+
+Note that these are `Color` from `elm-ui`.
+
+See <https://material.io/design/color/dark-theme.html#properties> for more details.
+
+If you want to use the default palette, just pass `Nothing`
+
 -}
-fromTheme : R10.Theme.Theme -> R10.FormTypes.Palette
+type alias Palette =
+    { -- Colors
+      primary : Color.Color
+    , primaryVariant : Color.Color
+    , success : Color.Color
+    , error : Color.Color
+    , border : Color.Color
+
+    -- Text Colors
+    , onSurface : Color.Color
+    , onPrimary : Color.Color
+
+    -- Background Colors
+    , surface : Color.Color -- Card, List background color https://material.io/design/color/dark-theme.html#properties
+    , background : Color.Color
+    }
+
+
+{-| get Palette to use with R10.FormComponents lib
+-}
+fromTheme : R10.Theme.Theme -> Palette
 fromTheme theme =
     { primary = R10.Color.Utils.toColorColor <| R10.Color.Svg.primary theme
     , onPrimary = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontHighEmphasisWithMaximumContrast theme
@@ -66,11 +110,11 @@ withOpacity opacity =
 
 
 {-
-   R10.FormTypes.Palette Colors Examples
+   Palette Colors Examples
 -}
 
 
-dark : R10.FormTypes.Palette
+dark : Palette
 dark =
     { primary = indigo
     , primaryVariant = indigoVariant
@@ -84,7 +128,7 @@ dark =
     }
 
 
-light : R10.FormTypes.Palette
+light : Palette
 light =
     { primary = pink
     , primaryVariant = pinkVariant

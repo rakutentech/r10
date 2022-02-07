@@ -38,6 +38,7 @@ type alias State =
     , removed : Set.Set R10.Form.Internal.Key.KeyAsString
     , qtySubmitAttempted : R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted
     , changesSinceLastSubmissions : Bool
+    , lastKeyDownIsProcess : Bool
     }
 
 
@@ -59,6 +60,7 @@ init =
     , removed = Set.empty
     , qtySubmitAttempted = R10.Form.Internal.QtySubmitAttempted.fromInt 0
     , changesSinceLastSubmissions = False
+    , lastKeyDownIsProcess = False
     }
 
 
@@ -90,6 +92,7 @@ encoder v =
         , ( "removed", E.list E.string (Set.toList v.removed) )
         , ( "qtySubmitAttempted", E.int (R10.Form.Internal.QtySubmitAttempted.toInt v.qtySubmitAttempted) )
         , ( "changesSinceLastSubmissions", E.bool v.changesSinceLastSubmissions )
+        , ( "lastKeyDownIsProcess", E.bool v.lastKeyDownIsProcess )
         ]
 
 
@@ -104,6 +107,7 @@ decoder =
         |> Json.Decode.Pipeline.required "removed" (Json.Decode.Extra.set D.string)
         |> Json.Decode.Pipeline.required "qtySubmitAttempted" (D.map R10.Form.Internal.QtySubmitAttempted.fromInt D.int)
         |> Json.Decode.Pipeline.required "changesSinceLastSubmissions" D.bool
+        |> Json.Decode.Pipeline.required "lastKeyDownIsProcess" D.bool
 
 
 toString : State -> String

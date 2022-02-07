@@ -66,7 +66,7 @@ getDropDownStyle ratio fontSize colorFont colorBackground dropDownType =
 {-| The dropdown.
 -}
 view :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
         { a
             | colorBackground : Color
@@ -77,7 +77,7 @@ view :
             , fontSize : Int
         }
     -> Type
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs args dropDownType =
     withContext <|
         \c ->
@@ -88,7 +88,7 @@ view attrs args dropDownType =
                         ([ Html.Events.on "change" (Json.Decode.map args.inputHandler Html.Events.targetValue)
                          , Html.Attributes.value args.currentValue
                          ]
-                            ++ getDropDownStyle c.debugger_transitionSpeed args.fontSize args.colorFont args.colorBackground dropDownType
+                            ++ getDropDownStyle c.contextR10.debugger_transitionSpeed args.fontSize args.colorFont args.colorBackground dropDownType
                         )
                         (List.map (renderHtmlOption args.currentValue) args.optionList)
                 )
@@ -102,7 +102,7 @@ view attrs args dropDownType =
 {-| Slightly different version of the dropdown that has no borders.
 -}
 viewBorderLess :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
         { a
             | colorBackground : Color
@@ -112,7 +112,7 @@ viewBorderLess :
             , optionList : List Option
             , fontSize : Int
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 viewBorderLess attrs args =
     view attrs args BorderLess
 

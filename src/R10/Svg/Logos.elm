@@ -15,7 +15,7 @@ import Svg.Attributes as SA
 
 
 {-| -}
-rakuten : List (AttributeC msg) -> Color -> Int -> ElementC msg
+rakuten : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 rakuten attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 166 50"
@@ -29,7 +29,7 @@ rakuten attrs cl size =
 
 
 {-| -}
-r : List (AttributeC msg) -> Color -> Int -> ElementC msg
+r : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 r attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "7 4.6 22 22"
@@ -39,7 +39,7 @@ r attrs cl size =
 
 
 {-| -}
-rakutenMarketing : List (AttributeC msg) -> Color -> Int -> ElementC msg
+rakutenMarketing : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 rakutenMarketing attrs cl size =
     -- Default color "#fff"
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -53,7 +53,7 @@ rakutenMarketing attrs cl size =
 
 
 {-| -}
-rakutenRagri : List (AttributeC msg) -> Color -> Int -> ElementC msg
+rakutenRagri : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 rakutenRagri attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 178 32"
@@ -65,7 +65,7 @@ rakutenRagri attrs cl size =
 
 
 {-| -}
-rakutenReady : List (AttributeC msg) -> Color -> Int -> ElementC msg
+rakutenReady : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 rakutenReady attrs cl size =
     -- Default color "#05B46E"
     R10.Svg.Utils.wrapperWithViewbox attrs
@@ -100,7 +100,7 @@ authenticator_shapeR =
 
 
 {-| -}
-authenticator : List (AttributeC msg) -> Color -> Int -> ElementC msg
+authenticator : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 authenticator attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 77 77"
@@ -112,7 +112,7 @@ authenticator attrs cl size =
 
 
 {-| -}
-authenticator_monochrome : List (AttributeC msg) -> Color -> Int -> ElementC msg
+authenticator_monochrome : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
 authenticator_monochrome attrs cl size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 77 77"
@@ -127,7 +127,7 @@ authenticator_monochrome attrs cl size =
 
 
 {-| -}
-barcelona : List (AttributeC msg) -> Int -> ElementC msg
+barcelona : List (Attribute (R10.Context.ContextInternal z) msg) -> Int -> Element (R10.Context.ContextInternal z) msg
 barcelona attrs size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 141 56"

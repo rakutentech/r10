@@ -9,7 +9,7 @@ module R10.Table.Internal.Config exposing
 
 import Element.WithContext exposing (..)
 import R10.Context exposing (..)
-import R10.FormTypes
+import R10.Palette
 import R10.Table.Internal.Msg
 import R10.Table.Internal.Types
 
@@ -24,10 +24,10 @@ or on particular rows in the body. All these customizations are available to you
 
 
 --type alias Customizations data msg =
---    { --columnHeaderView : List (HeaderData data msg) -> ElementC msg
+--    { --columnHeaderView : List (HeaderData data msg) -> Element (R10.Context.ContextInternal z) msg
 --      --,
---      bodyAttrs : List (AttributeC msg)
---    , rowAttrsBuilder : Maybe data -> List (AttributeC msg)
+--      bodyAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
+--    , rowAttrsBuilder : Maybe data -> List (Attribute (R10.Context.ContextInternal z) msg)
 --    }
 
 
@@ -52,21 +52,21 @@ It should only appear in `view` code.
 -- todo exposing `Config(..)` would be the same as using `type alias`?
 
 -}
-type alias Config data msg =
+type alias Config data msg context =
     { toId : data -> String
     , toMsg : R10.Table.Internal.Msg.Msg -> msg
-    , columns : List (ColumnConf data msg)
-    , bodyAttrs : List (AttributeC msg)
-    , rowAttrsBuilder : Maybe data -> List (AttributeC msg)
+    , columns : List (ColumnConf data msg context)
+    , bodyAttrs : List (Attribute (R10.Context.ContextInternal context) msg)
+    , rowAttrsBuilder : Maybe data -> List (Attribute (R10.Context.ContextInternal context) msg)
     , maybePaginationConfig : Maybe PaginationConfig
     , maybeFiltersConfig : Maybe FiltersConfig
     }
 
 
-type alias ColumnConf data msg =
+type alias ColumnConf data msg context =
     { name : String
-    , viewCell : R10.FormTypes.Palette -> Maybe data -> ElementC msg
-    , viewHeader : R10.FormTypes.Palette -> HeaderInfo msg -> ElementC msg
+    , viewCell : R10.Palette.Palette -> Maybe data -> Element (R10.Context.ContextInternal context) msg
+    , viewHeader : R10.Palette.Palette -> HeaderInfo msg -> Element (R10.Context.ContextInternal context) msg
     , sorter : R10.Table.Internal.Types.Sorter data
     }
 
@@ -78,7 +78,7 @@ type alias HeaderInfo msg =
     }
 
 
-type alias ColumnAttrs msg =
-    { header : List (AttributeC msg)
-    , cell : List (AttributeC msg)
+type alias ColumnAttrs msg context =
+    { header : List (Attribute (R10.Context.ContextInternal context) msg)
+    , cell : List (Attribute (R10.Context.ContextInternal context) msg)
     }

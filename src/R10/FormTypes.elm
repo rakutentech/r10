@@ -29,7 +29,9 @@ type TypeText
     = TextPlain
     | TextEmail
     | TextEmailWithSuggestions (List String)
+    | TextMobileEmail
     | TextUsername
+    | TextUsernameWithUseEmailCheckbox String
     | TextPasswordNew
     | TextPasswordCurrent
     | TextMultiline
@@ -43,6 +45,7 @@ type TypeSingle
     = SingleRadio
     | SingleRadioRow
     | SingleCombobox
+    | SingleComboboxForCountry
     | SingleSelect
 
 
@@ -62,7 +65,7 @@ type TypeMulti
 {-| Possible types of **Special** input fields
 -}
 type TypeSpecial
-    = SpecialPhone -- TODO
+    = SpecialPhone Bool -- Bool: Disabled country change.
 
 
 
@@ -112,18 +115,22 @@ inputField :
     , singleRadioRow : List FieldOption -> FieldType
     , textEmail : FieldType
     , textEmailWithSuggestions : List String -> FieldType
+    , textMobileEmail : FieldType
     , textMultiline : FieldType
     , textPasswordCurrent : FieldType
     , textPasswordNew : FieldType
     , textPlain : FieldType
     , textUsername : FieldType
+    , textUsernameWithUseEmailCheckbox : String -> FieldType
     , textWithPattern : String -> FieldType
     }
 inputField =
     { textPlain = TypeText TextPlain
     , textEmail = TypeText TextEmail
     , textEmailWithSuggestions = \listSuggestions -> TypeText (TextEmailWithSuggestions listSuggestions)
+    , textMobileEmail = TypeText TextMobileEmail
     , textUsername = TypeText TextUsername
+    , textUsernameWithUseEmailCheckbox = \checkboxLabel -> TypeText (TextUsernameWithUseEmailCheckbox checkboxLabel)
     , textPasswordNew = TypeText TextPasswordNew
     , textPasswordCurrent = TypeText TextPasswordCurrent
     , textMultiline = TypeText TextMultiline

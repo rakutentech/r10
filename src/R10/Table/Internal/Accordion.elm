@@ -8,7 +8,7 @@ import R10.Table.Internal.Style
 import R10.Transition
 
 
-spinnerElementCss : ElementC msg
+spinnerElementCss : Element (R10.Context.ContextInternal z) msg
 spinnerElementCss =
     Html.node "style"
         []
@@ -86,10 +86,10 @@ spinnerElementCss =
         |> html
 
 
-getAccordionContainer : Int -> Bool -> (ElementC msg -> ElementC msg)
+getAccordionContainer : Int -> Bool -> (Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg)
 getAccordionContainer expandedHeight isExpanded =
     let
-        commonAttrs : List (AttributeC msg)
+        commonAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
         commonAttrs =
             [ width fill
             , alignBottom
@@ -104,7 +104,7 @@ getAccordionContainer expandedHeight isExpanded =
         el (commonAttrs ++ [ height <| px 0 ])
 
 
-spinnerOverlay : Int -> ElementC msg
+spinnerOverlay : Int -> Element (R10.Context.ContextInternal z) msg
 spinnerOverlay expandedHeight =
     row
         [ width fill
@@ -123,7 +123,7 @@ spinnerOverlay expandedHeight =
         ]
 
 
-viewAccordionContainer : Int -> Bool -> (ElementC msg -> ElementC msg)
+viewAccordionContainer : Int -> Bool -> (Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg)
 viewAccordionContainer expandedHeight isLoading =
     el
         ([ width fill
@@ -140,14 +140,14 @@ viewAccordionContainer expandedHeight isLoading =
         )
 
 
-getAttrs : (Maybe data -> ElementC msg) -> Int -> (Maybe data -> Bool) -> (Maybe data -> Bool) -> Maybe data -> List (AttributeC msg)
+getAttrs : (Maybe data -> Element (R10.Context.ContextInternal z) msg) -> Int -> (Maybe data -> Bool) -> (Maybe data -> Bool) -> Maybe data -> List (Attribute (R10.Context.ContextInternal z) msg)
 getAttrs viewContent expandedHeight getIsExpanded getIsLoading maybeData =
     let
-        container : ElementC msg -> ElementC msg
+        container : Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
         container =
             getAccordionContainer expandedHeight (getIsExpanded maybeData)
 
-        scrollableContainer : ElementC msg -> ElementC msg
+        scrollableContainer : Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
         scrollableContainer =
             viewAccordionContainer expandedHeight (getIsLoading maybeData)
     in

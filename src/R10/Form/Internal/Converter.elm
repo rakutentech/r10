@@ -2,6 +2,7 @@ module R10.Form.Internal.Converter exposing (fromFieldStateValidationToComponent
 
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
+import R10.Form.Internal.Translator
 import R10.Form.Internal.ValidationCode
 import R10.FormComponents.Internal.Validations
 
@@ -33,6 +34,61 @@ fromFieldStateValidationToComponentValidation maybeValidationSpecs validation tr
 
         R10.Form.Internal.FieldState.Validated listValidationOutcome_ ->
             let
+                lengthValidationOk : Bool
+                lengthValidationOk =
+                    List.any
+                        (\validationOutcome ->
+                            case validationOutcome of
+                                R10.Form.Internal.FieldState.MessageOk validationCode _ ->
+                                    case validationCode of
+                                        "INVALID_LENGTH_TOO_SMALL" ->
+                                            True
+
+                                        _ ->
+                                            False
+
+                                R10.Form.Internal.FieldState.MessageErr _ _ ->
+                                    False
+                        )
+                        listValidationOutcome_
+                        && List.any
+                            (\validationOutcome ->
+                                case validationOutcome of
+                                    R10.Form.Internal.FieldState.MessageOk validationCode _ ->
+                                        case validationCode of
+                                            "INVALID_LENGTH_TOO_LARGE" ->
+                                                True
+
+                                            _ ->
+                                                False
+
+                                    R10.Form.Internal.FieldState.MessageErr _ _ ->
+                                        False
+                            )
+                            listValidationOutcome_
+
+                replaceLengthValidation : List R10.Form.Internal.FieldState.ValidationOutcome
+                replaceLengthValidation =
+                    if lengthValidationOk then
+                        List.map
+                            (\validationOutcome ->
+                                case validationOutcome of
+                                    R10.Form.Internal.FieldState.MessageOk validationCode a ->
+                                        case validationCode of
+                                            "INVALID_LENGTH_TOO_SMALL" ->
+                                                R10.Form.Internal.FieldState.MessageOk "CORRECT_LENGTH" a
+
+                                            _ ->
+                                                validationOutcome
+
+                                    R10.Form.Internal.FieldState.MessageErr _ _ ->
+                                        validationOutcome
+                            )
+                            listValidationOutcome_
+
+                    else
+                        listValidationOutcome_
+
                 listAllButTwoOkMessages : List R10.Form.Internal.FieldState.ValidationOutcome
                 listAllButTwoOkMessages =
                     -- 2021.04.04
@@ -51,6 +107,9 @@ fromFieldStateValidationToComponentValidation maybeValidationSpecs validation tr
                                         -- * Good, your data is short enough
                                         -- * Good, you typed something that was required
                                         --
+                                        "INVALID_LENGTH_TOO_SMALL" ->
+                                            False
+
                                         "INVALID_LENGTH_TOO_LARGE" ->
                                             False
 
@@ -63,7 +122,7 @@ fromFieldStateValidationToComponentValidation maybeValidationSpecs validation tr
                                 R10.Form.Internal.FieldState.MessageErr _ _ ->
                                     True
                         )
-                        listValidationOutcome_
+                        replaceLengthValidation
 
                 listOnlyErrors : List R10.Form.Internal.FieldState.ValidationOutcome
                 listOnlyErrors =

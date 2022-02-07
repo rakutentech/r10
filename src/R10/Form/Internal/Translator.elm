@@ -23,6 +23,7 @@ validationCodes :
     , jsonFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
     , lengthTooLargeInvalid : R10.Form.Internal.FieldConf.ValidationCode
     , lengthTooSmallInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , lengthValid : R10.Form.Internal.FieldConf.ValidationCode
     , required : R10.Form.Internal.FieldConf.ValidationCode
     , empty : R10.Form.Internal.FieldConf.ValidationCode
     , requiredField : R10.Form.Internal.FieldConf.ValidationCode
@@ -30,6 +31,8 @@ validationCodes :
     , valueInvalid : R10.Form.Internal.FieldConf.ValidationCode
     , allOf : R10.Form.Internal.FieldConf.ValidationCode
     , oneOf : R10.Form.Internal.FieldConf.ValidationCode
+    , mobileEmailFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , mobileEmailDomainInvalid : R10.Form.Internal.FieldConf.ValidationCode
     }
 validationCodes =
     { emailFormatInvalid = "INVALID_EMAIL_FORMAT"
@@ -45,6 +48,7 @@ validationCodes =
     , jsonFormatInvalid = "INVALID_JSON_FORMAT"
     , lengthTooLargeInvalid = "INVALID_LENGTH_TOO_LARGE"
     , lengthTooSmallInvalid = "INVALID_LENGTH_TOO_SMALL"
+    , lengthValid = "CORRECT_LENGTH"
     , required = "REQUIRED"
     , empty = "EMPTY"
     , requiredField = "REQUIRED_FIELD"
@@ -52,6 +56,8 @@ validationCodes =
     , valueInvalid = "INVALID_VALUE"
     , allOf = "ALL_OF"
     , oneOf = "ONE_OF"
+    , mobileEmailFormatInvalid = "MOBILE_EMAIL_INVALID_FORMAT"
+    , mobileEmailDomainInvalid = "MOBILE_EMAIL_INVALID_DOMAIN"
     }
 
 
@@ -98,6 +104,9 @@ translator _ validationCode =
         , ( validationCodes.lengthTooSmallInvalid
           , "Minimum allowed length is {0} characters"
           )
+        , ( validationCodes.lengthValid
+          , "Correct length"
+          )
         , ( validationCodes.required
           , "Required"
           )
@@ -121,6 +130,12 @@ translator _ validationCode =
           )
         , ( validationCodes.oneOf
           , "All of the validations have failed"
+          )
+        , ( validationCodes.mobileEmailFormatInvalid
+          , "Incorrect email address format"
+          )
+        , ( validationCodes.mobileEmailDomainInvalid
+          , "This domain name cannot be used"
           )
         ]
         |> Dict.get validationCode

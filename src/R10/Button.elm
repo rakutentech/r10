@@ -34,8 +34,8 @@ import R10.Transition
 
 {-| Type of data required by buttons
 -}
-type alias Data msg =
-    { label : ElementC msg
+type alias Data z msg =
+    { label : Element (R10.Context.ContextInternal z) msg
     , libu : R10.Libu.Type msg
     }
 
@@ -53,15 +53,15 @@ type alias Data msg =
 
 -}
 primary :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
-        { label : ElementC msg
+        { label : Element (R10.Context.ContextInternal z) msg
         , libu : R10.Libu.Type msg
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 primary attrsExtra data =
     let
-        attrs : List (AttributeC msg)
+        attrs : List (Attribute (R10.Context.ContextInternal z) msg)
         attrs =
             if data.libu == R10.Libu.Bu Nothing then
                 attrsPrimaryDisabled
@@ -77,7 +77,7 @@ primary attrsExtra data =
 
 
 {-| -}
-withId : String -> ElementC msg -> ElementC msg
+withId : String -> Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
 withId id button =
     button
 
@@ -85,15 +85,15 @@ withId id button =
 {-| Secondary Button
 -}
 secondary :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
-        { label : ElementC msg
+        { label : Element (R10.Context.ContextInternal z) msg
         , libu : R10.Libu.Type msg
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 secondary attrsExtra data =
     let
-        attrs : List (AttributeC msg)
+        attrs : List (Attribute (R10.Context.ContextInternal z) msg)
         attrs =
             if data.libu == R10.Libu.Bu Nothing then
                 attrsSecondaryDisabled
@@ -111,15 +111,15 @@ secondary attrsExtra data =
 {-| Tertiary Button
 -}
 tertiary :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
-        { label : ElementC msg
+        { label : Element (R10.Context.ContextInternal z) msg
         , libu : R10.Libu.Type msg
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 tertiary attrsExtra data =
     let
-        attrs : List (AttributeC msg)
+        attrs : List (Attribute (R10.Context.ContextInternal z) msg)
         attrs =
             if data.libu == R10.Libu.Bu Nothing then
                 attrsTertiaryDisabled
@@ -137,12 +137,12 @@ tertiary attrsExtra data =
 {-| Quaternary Button
 -}
 quaternary :
-    List (AttributeC msg)
+    List (Attribute (R10.Context.ContextInternal z) msg)
     ->
-        { label : ElementC msg
+        { label : Element (R10.Context.ContextInternal z) msg
         , libu : R10.Libu.Type msg
         }
-    -> ElementC msg
+    -> Element (R10.Context.ContextInternal z) msg
 quaternary attrsExtra data =
     R10.Libu.view
         (attrsQuaternary ++ attrsExtra)
@@ -168,19 +168,19 @@ numberPadding =
 
 {-| Attributes for buttons with limited width. By default buttons are `width fill`.
 -}
-withLimitedWidth : List (AttributeC msg)
+withLimitedWidth : List (Attribute (R10.Context.ContextInternal z) msg)
 withLimitedWidth =
     [ width (fill |> maximum 250)
     , centerX
     ]
 
 
-transition : AttributeC msg
+transition : Attribute (R10.Context.ContextInternal z) msg
 transition =
     R10.Transition.transition "color .2s ease-out, background-color .2s ease-out"
 
 
-attrsInCommon : List (AttributeC msg)
+attrsInCommon : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsInCommon =
     [ padding numberPadding
     , width fill
@@ -191,7 +191,7 @@ attrsInCommon =
     ]
 
 
-attrsPrimary : List (AttributeC msg)
+attrsPrimary : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsPrimary =
     attrsInCommon
         ++ [ R10.Color.AttrsBackground.buttonPrimary
@@ -201,7 +201,7 @@ attrsPrimary =
            ]
 
 
-attrsPrimaryDisabled : List (AttributeC msg)
+attrsPrimaryDisabled : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsPrimaryDisabled =
     attrsInCommon
         ++ [ R10.Color.AttrsBackground.buttonPrimaryDisabled
@@ -218,7 +218,7 @@ attrsPrimaryDisabled =
            ]
 
 
-attrsSecondary : List (AttributeC msg)
+attrsSecondary : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsSecondary =
     attrsInCommon
         ++ [ -- Font color is just "normal" so we omit
@@ -229,7 +229,7 @@ attrsSecondary =
            ]
 
 
-attrsSecondaryDisabled : List (AttributeC msg)
+attrsSecondaryDisabled : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsSecondaryDisabled =
     attrsInCommon
         ++ [ R10.Color.AttrsBackground.buttonPrimaryDisabled
@@ -241,7 +241,7 @@ attrsSecondaryDisabled =
            ]
 
 
-attrsTertiary : List (AttributeC msg)
+attrsTertiary : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsTertiary =
     [ padding numberPadding
     , width fill
@@ -254,7 +254,7 @@ attrsTertiary =
     ]
 
 
-attrsTertiaryDisabled : List (AttributeC msg)
+attrsTertiaryDisabled : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsTertiaryDisabled =
     attrsTertiary
         ++ [ mouseOver []
@@ -263,7 +263,7 @@ attrsTertiaryDisabled =
            ]
 
 
-attrsQuaternary : List (AttributeC msg)
+attrsQuaternary : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsQuaternary =
     [ paddingXY (numberPadding - 4) (numberPadding - 8)
     , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver ]

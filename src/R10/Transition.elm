@@ -5,7 +5,7 @@ module R10.Transition exposing
 
 import Element.WithContext exposing (..)
 import Html.Attributes
-import R10.Context exposing (..)
+import R10.Context
 import String.Extra
 
 
@@ -22,11 +22,13 @@ import String.Extra
 -- "color .2s ease-out, background-color .2s ease-out"
 -- "font-size 300ms 0ms ease-in, opacity 300ms 300ms ease-in"
 -- "0.2s"
+--
+--
 
 
-transition : String -> AttributeC msg
+transition : String -> Attribute (R10.Context.ContextInternal z) msg
 transition characteristics =
-    withContextAttribute <| \c -> htmlAttribute <| Html.Attributes.style "transition" (parseCharacteristics c.debugger_transitionSpeed characteristics)
+    withContextAttribute <| \c -> htmlAttribute <| Html.Attributes.style "transition" (parseCharacteristics c.contextR10.debugger_transitionSpeed characteristics)
 
 
 parseCharacteristics : Float -> String -> String

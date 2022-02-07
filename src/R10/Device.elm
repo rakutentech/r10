@@ -10,9 +10,12 @@ module R10.Device exposing
     , encoder
     , examples
     , isAndroid
+    , isChromeDesktop
     , isFirefoxAndroid
+    , isIOS
     , isInternetExplorer
     , isMobileOS
+    , isSafari
     )
 
 import Json.Decode
@@ -243,6 +246,22 @@ isMobileOS ( os, _ ) =
             False
 
 
+isIOS : UserAgent -> Bool
+isIOS ( os, _ ) =
+    case os of
+        Android ->
+            False
+
+        IOS ->
+            True
+
+        WindowsPhone ->
+            False
+
+        Other ->
+            False
+
+
 isAndroid : UserAgent -> Bool
 isAndroid ( os, _ ) =
     case os of
@@ -263,6 +282,26 @@ isFirefoxAndroid : UserAgent -> Bool
 isFirefoxAndroid userAgent =
     case userAgent of
         ( Android, Firefox ) ->
+            True
+
+        ( _, _ ) ->
+            False
+
+
+isChromeDesktop : UserAgent -> Bool
+isChromeDesktop userAgent =
+    case userAgent of
+        ( Other, Chrome ) ->
+            True
+
+        ( _, _ ) ->
+            False
+
+
+isSafari : UserAgent -> Bool
+isSafari userAgent =
+    case userAgent of
+        ( _, Safari ) ->
             True
 
         ( _, _ ) ->

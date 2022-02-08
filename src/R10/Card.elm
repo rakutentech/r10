@@ -28,20 +28,22 @@ shadow level =
         }
 
 
-base : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
-base theme =
+base : List (Attribute (R10.Context.ContextInternal context) msg)
+base =
     [ R10.Color.AttrsBackground.surface
     , R10.Color.AttrsBorder.normal
     , R10.Color.AttrsFont.normal
     , Border.rounded 10
     , Border.width 1
-    , Border.color <|
-        case theme.mode of
-            R10.Mode.Light ->
-                rgba 0 0 0 0.1
+    , withContextAttribute <|
+        \c ->
+            Border.color <|
+                case c.contextR10.theme.mode of
+                    R10.Mode.Light ->
+                        rgba 0 0 0 0.1
 
-            R10.Mode.Dark ->
-                rgba 1 1 1 0.08
+                    R10.Mode.Dark ->
+                        rgba 1 1 1 0.08
     , padding 30
     , width fill
     , height fill
@@ -51,29 +53,29 @@ base theme =
 
 {-| Card with an high shadow
 -}
-high : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
-high theme =
-    --https://material.io/design/environment/elevation.html#elevation-in-material-design
-    base theme ++ [ shadow 8 ]
+high : List (Attribute (R10.Context.ContextInternal context) msg)
+high =
+    -- https://material.io/design/environment/elevation.html#elevation-in-material-design
+    base ++ [ shadow 8 ]
 
 
 {-| Card with a normal shadow
 -}
-normal : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
-normal theme =
-    -- base theme ++ [ shadow 2, mouseOver [ shadow 8 ] ]
-    base theme ++ [ shadow 4 ]
+normal : List (Attribute (R10.Context.ContextInternal context) msg)
+normal =
+    -- base  ++ [ shadow 2, mouseOver [ shadow 8 ] ]
+    base ++ [ shadow 4 ]
 
 
 {-| Card with a low shadow
 -}
-low : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
-low theme =
-    base theme ++ [ shadow 2 ]
+low : List (Attribute (R10.Context.ContextInternal context) msg)
+low =
+    base ++ [ shadow 2 ]
 
 
 {-| Card without a shadow
 -}
-noShadow : R10.Theme.Theme -> List (Attribute (R10.Context.ContextInternal z) msg)
-noShadow theme =
-    base theme
+noShadow : List (Attribute (R10.Context.ContextInternal context) msg)
+noShadow =
+    base

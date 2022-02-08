@@ -4,6 +4,7 @@ module R10.Device exposing
     , UserAgent
     , constructor
     , decoder
+    , deviceBrowserFromString
     , deviceOSFromString
     , deviceOSToString
     , encodedValueToUserAgent

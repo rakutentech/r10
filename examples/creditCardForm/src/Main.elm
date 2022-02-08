@@ -3,9 +3,9 @@ module Main exposing (main)
 import Browser
 import Color.Convert
 import Color.Manipulate
-import Element exposing (..)
-import Element.Border as Border
-import Element.Font as Font
+import Element.WithContext exposing (..)
+import Element.WithContext.Border as Border
+import Element.WithContext.Font as Font
 import Html
 import Html.Attributes
 import R10.Button
@@ -14,6 +14,7 @@ import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.Svg
 import R10.Color.Utils
+import R10.Context
 import R10.Form
 import R10.FormTypes
 import R10.Libu
@@ -35,31 +36,41 @@ init =
                 , idDom = Nothing
                 , type_ = R10.FormTypes.inputField.textWithPattern "____ ____ ____ ____"
                 , label = "Card Number"
+                , clickableLabel = False
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
                 , validationSpecs =
                     Just
-                        { showPassedValidationMessages = False
-                        , hidePassedValidationStyle = False
-                        , validationIcon = R10.FormTypes.NoIcon
+                        { validationIcon = R10.FormTypes.NoIcon
                         , validation = [ R10.Form.validation.required ]
+                        , pretendIsNotValidatedIfValid = True
+                        , showAlsoPassedValidation = False
                         }
+                , minWidth = Nothing
+                , maxWidth = Nothing
+                , autocomplete = Nothing
+                , placeholder = Nothing
                 }
             , R10.Form.entity.field
                 { id = "cardHolder"
                 , idDom = Nothing
                 , type_ = R10.FormTypes.inputField.textPlain
                 , label = "Card Holder"
+                , clickableLabel = False
                 , helperText = Nothing
                 , requiredLabel = requiredLabel
                 , validationSpecs =
                     Just
-                        { showPassedValidationMessages = False
-                        , hidePassedValidationStyle = False
-                        , validationIcon = R10.FormTypes.NoIcon
+                        { validationIcon = R10.FormTypes.NoIcon
                         , validation =
                             [ R10.Form.validation.required ]
+                        , pretendIsNotValidatedIfValid = True
+                        , showAlsoPassedValidation = False
                         }
+                , minWidth = Nothing
+                , maxWidth = Nothing
+                , autocomplete = Nothing
+                , placeholder = Nothing
                 }
             , R10.Form.entity.wrappable "wrappable"
                 [ R10.Form.entity.field
@@ -67,30 +78,40 @@ init =
                     , idDom = Nothing
                     , type_ = R10.FormTypes.inputField.textWithPattern "MM/YY"
                     , label = "Expires"
+                    , clickableLabel = False
                     , helperText = Nothing
                     , requiredLabel = requiredLabel
                     , validationSpecs =
                         Just
-                            { showPassedValidationMessages = False
-                            , hidePassedValidationStyle = False
-                            , validationIcon = R10.FormTypes.NoIcon
+                            { validationIcon = R10.FormTypes.NoIcon
                             , validation = [ R10.Form.validation.required ]
+                            , pretendIsNotValidatedIfValid = True
+                            , showAlsoPassedValidation = False
                             }
+                    , minWidth = Nothing
+                    , maxWidth = Nothing
+                    , autocomplete = Nothing
+                    , placeholder = Nothing
                     }
                 , R10.Form.entity.field
                     { id = "cvv"
                     , idDom = Nothing
                     , type_ = R10.FormTypes.inputField.textWithPattern "___"
                     , label = "CVV"
+                    , clickableLabel = False
                     , helperText = Nothing
                     , requiredLabel = requiredLabel
                     , validationSpecs =
                         Just
-                            { showPassedValidationMessages = False
-                            , hidePassedValidationStyle = False
-                            , validationIcon = R10.FormTypes.NoIcon
+                            { validationIcon = R10.FormTypes.NoIcon
                             , validation = [ R10.Form.validation.required ]
+                            , pretendIsNotValidatedIfValid = True
+                            , showAlsoPassedValidation = False
                             }
+                    , minWidth = Nothing
+                    , maxWidth = Nothing
+                    , autocomplete = Nothing
+                    , placeholder = Nothing
                     }
                 ]
             ]
@@ -117,15 +138,15 @@ update msg model =
                     { form
                         | state =
                             form.state
-                                |> R10.Form.update msgForm
+                                |> R10.Form.update (\_ a -> a) msgForm
                                 |> Tuple.first
                     }
             in
             { model | form = newForm }
 
 
-viewCreditCard : R10.Theme.Theme -> R10.Form.State -> Element msg
-viewCreditCard theme formState =
+viewCreditCard : R10.Form.State -> Element (R10.Context.ContextInternal {}) msg
+viewCreditCard formState =
     let
         logo : { height : number, src : String }
         logo =
@@ -138,30 +159,32 @@ viewCreditCard theme formState =
         , spacing 30
         , Border.rounded 20
         , Border.shadow { offset = ( 0, 20 ), size = 0, blur = 40, color = rgba 0 0 0 0.2 }
-        , htmlAttribute <|
-            Html.Attributes.style "background"
-                ("radial-gradient(at 70% 30%, "
-                    ++ (R10.Color.Svg.primary theme
-                            |> R10.Color.Utils.toColorColor
-                            |> Color.Manipulate.scaleHsl
-                                { saturationScale = -0.2
-                                , lightnessScale = 0.4
-                                , alphaScale = 0
-                                }
-                            |> Color.Convert.colorToCssRgba
-                       )
-                    ++ ", "
-                    ++ (R10.Color.Svg.primary theme
-                            |> R10.Color.Utils.toColorColor
-                            |> Color.Manipulate.scaleHsl
-                                { saturationScale = -0.3
-                                , lightnessScale = 0
-                                , alphaScale = 0
-                                }
-                            |> Color.Convert.colorToCssRgba
-                       )
-                    ++ ")"
-                )
+        , withContextAttribute <|
+            \c ->
+                htmlAttribute <|
+                    Html.Attributes.style "background"
+                        ("radial-gradient(at 70% 30%, "
+                            ++ (R10.Color.Svg.primary c.contextR10.theme
+                                    |> R10.Color.Utils.toColorColor
+                                    |> Color.Manipulate.scaleHsl
+                                        { saturationScale = -0.2
+                                        , lightnessScale = 0.4
+                                        , alphaScale = 0
+                                        }
+                                    |> Color.Convert.colorToCssRgba
+                               )
+                            ++ ", "
+                            ++ (R10.Color.Svg.primary c.contextR10.theme
+                                    |> R10.Color.Utils.toColorColor
+                                    |> Color.Manipulate.scaleHsl
+                                        { saturationScale = -0.3
+                                        , lightnessScale = 0
+                                        , alphaScale = 0
+                                        }
+                                    |> Color.Convert.colorToCssRgba
+                               )
+                            ++ ")"
+                        )
         , clip
         ]
         [ row [ width fill ]
@@ -185,9 +208,10 @@ viewCreditCard theme formState =
         ]
 
 
-view : R10.Theme.Theme -> Model -> Html.Html Msg
-view theme model =
+view : Model -> Html.Html Msg
+view model =
     layoutWith
+        R10.Context.default
         { options =
             [ focusStyle
                 { borderColor = Nothing
@@ -196,35 +220,36 @@ view theme model =
                 }
             ]
         }
-        [ R10.Color.AttrsBackground.background theme
+        [ R10.Color.AttrsBackground.background
         , padding 50
         ]
     <|
         column
-            (R10.Card.high theme
+            (R10.Card.high
                 ++ [ centerX
                    , centerY
                    , width (fill |> maximum 460)
                    , height shrink
                    , spacing 30
-                   , R10.Color.AttrsBackground.surface2dp theme
+                   , R10.Color.AttrsBackground.surface2dp
                    ]
             )
-            [ R10.Svg.LogosExtra.r10 [ centerX ] (R10.Color.Svg.logo theme) 32
-            , viewCreditCard theme model.form.state
-            , column [ spacing 20, width fill ] <|
-                R10.Form.viewWithOptions model.form
-                    MsgForm
-                    { maker = Nothing
-                    , translator = Nothing
-                    , style = R10.Form.style.outlined
-                    , palette = Just <| R10.Form.themeToPalette theme
-                    }
-            , Element.map MsgForm <|
+            [ withContext <| \c -> R10.Svg.LogosExtra.r10 [ centerX ] (R10.Color.Svg.logo c.contextR10.theme) 32
+            , viewCreditCard model.form.state
+            , withContext <|
+                \c ->
+                    column [ spacing 20, width fill ] <|
+                        R10.Form.viewWithOptions model.form
+                            MsgForm
+                            { maker = Nothing
+                            , translator = Nothing
+                            , style = R10.Form.style.outlined
+                            , palette = Just <| R10.Form.themeToPalette c.contextR10.theme
+                            }
+            , map MsgForm <|
                 R10.Button.primary []
                     { label = text "Submit"
                     , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
-                    , theme = theme
                     }
             ]
 
@@ -260,7 +285,10 @@ requiredLabel =
     Nothing
 
 
-textCreditCard : List (Attribute msg) -> String -> Element msg
+textCreditCard :
+    List (Attribute msg context)
+    -> String
+    -> Element msg context
 textCreditCard attrs string =
     el
         ([ Font.size 13
@@ -275,7 +303,10 @@ textCreditCard attrs string =
         text string
 
 
-textEmbossedCreditCard : List (Attribute msg) -> String -> Element msg
+textEmbossedCreditCard :
+    List (Attribute msg context)
+    -> String
+    -> Element msg context
 textEmbossedCreditCard attrs string =
     let
         shadow : Int -> Int -> String -> String
@@ -311,7 +342,7 @@ textEmbossedCreditCard attrs string =
         (text string)
 
 
-embossedValue : R10.Form.State -> List (Attribute msg) -> R10.Form.KeyAsString -> String -> Element msg
+embossedValue : R10.Form.State -> List (Attribute msg context) -> R10.Form.KeyAsString -> String -> Element msg context
 embossedValue formState attrs id default =
     let
         defaultIfEmpty : String -> String
@@ -375,10 +406,6 @@ main : Program () Model Msg
 main =
     Browser.sandbox
         { init = init
-        , view =
-            view
-                { mode = R10.Mode.Light
-                , primaryColor = R10.Color.primary.blueSky
-                }
+        , view = view
         , update = update
         }

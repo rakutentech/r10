@@ -19,7 +19,7 @@ import R10.Context exposing (..)
 
 
 {-| -}
-background : Attribute (R10.Context.ContextInternal z) msg
+background : Attribute (R10.Context.ContextInternal context) msg
 background =
     withContextAttribute <|
         \c ->
@@ -34,7 +34,7 @@ background =
 
 
 {-| -}
-surface : Attribute (R10.Context.ContextInternal z) msg
+surface : Attribute (R10.Context.ContextInternal context) msg
 surface =
     withContextAttribute <|
         \c ->
@@ -45,7 +45,7 @@ surface =
 
 
 {-| -}
-surface2dp : Attribute (R10.Context.ContextInternal z) msg
+surface2dp : Attribute (R10.Context.ContextInternal context) msg
 surface2dp =
     withContextAttribute <|
         \c ->
@@ -60,7 +60,7 @@ surface2dp =
 
 
 {-| -}
-buttonPrimary : Attribute (R10.Context.ContextInternal z) msg
+buttonPrimary : Attribute (R10.Context.ContextInternal context) msg
 buttonPrimary =
     withContextAttribute <|
         \c ->
@@ -75,7 +75,7 @@ buttonPrimary =
 
 
 {-| -}
-buttonPrimaryOver : Decoration (R10.Context.ContextInternal z)
+buttonPrimaryOver : Decoration (R10.Context.ContextInternal context)
 buttonPrimaryOver =
     withContextDecoration <|
         \c ->
@@ -90,7 +90,7 @@ buttonPrimaryOver =
 
 
 {-| -}
-buttonPrimaryDisabled : Attribute (R10.Context.ContextInternal z) msg
+buttonPrimaryDisabled : Attribute (R10.Context.ContextInternal context) msg
 buttonPrimaryDisabled =
     withContextAttribute <|
         \c ->
@@ -105,7 +105,7 @@ buttonPrimaryDisabled =
 
 
 {-| -}
-buttonPrimaryDisabledOver : Decoration (R10.Context.ContextInternal z)
+buttonPrimaryDisabledOver : Decoration (R10.Context.ContextInternal context)
 buttonPrimaryDisabledOver =
     withContextDecoration <|
         \c ->
@@ -120,7 +120,7 @@ buttonPrimaryDisabledOver =
 
 
 {-| -}
-buttonMinorOver : Decoration (R10.Context.ContextInternal z)
+buttonMinorOver : Decoration (R10.Context.ContextInternal context)
 buttonMinorOver =
     withContextDecoration <|
         \c ->
@@ -135,7 +135,7 @@ buttonMinorOver =
 
 
 {-| -}
-dropdown : Attribute (R10.Context.ContextInternal z) msg
+dropdown : Attribute (R10.Context.ContextInternal context) msg
 dropdown =
     withContextAttribute <|
         \c ->
@@ -146,7 +146,7 @@ dropdown =
 
 
 {-| -}
-dropdownHover : Decoration (R10.Context.ContextInternal z)
+dropdownHover : Decoration (R10.Context.ContextInternal context)
 dropdownHover =
     withContextDecoration <|
         \c ->
@@ -158,7 +158,7 @@ dropdownHover =
 
 
 {-| -}
-dropdownSelected : Decoration (R10.Context.ContextInternal z)
+dropdownSelected : Decoration (R10.Context.ContextInternal context)
 dropdownSelected =
     withContextDecoration <|
         \c ->
@@ -174,7 +174,7 @@ dropdownSelected =
 
 
 {-| -}
-inputFieldCheckboxSelected : Attribute (R10.Context.ContextInternal z) msg
+inputFieldCheckboxSelected : Attribute (R10.Context.ContextInternal context) msg
 inputFieldCheckboxSelected =
     withContextAttribute <|
         \c ->
@@ -185,7 +185,7 @@ inputFieldCheckboxSelected =
 
 
 {-| -}
-inputFieldCheckboxOver : Decoration (R10.Context.ContextInternal z)
+inputFieldCheckboxOver : Decoration (R10.Context.ContextInternal context)
 inputFieldCheckboxOver =
     withContextDecoration <|
         \c ->
@@ -196,7 +196,7 @@ inputFieldCheckboxOver =
 
 
 {-| -}
-sameAsBorderNormal : Attribute (R10.Context.ContextInternal z) msg
+sameAsBorderNormal : Attribute (R10.Context.ContextInternal context) msg
 sameAsBorderNormal =
     withContextAttribute <|
         \c ->
@@ -211,7 +211,7 @@ sameAsBorderNormal =
 
 
 {-| -}
-debugger : Attribute (R10.Context.ContextInternal z) msg
+debugger : Attribute (R10.Context.ContextInternal context) msg
 debugger =
     withContextAttribute <|
         \c ->
@@ -222,7 +222,7 @@ debugger =
 
 
 {-| -}
-debuggerOver : Decoration (R10.Context.ContextInternal z)
+debuggerOver : Decoration (R10.Context.ContextInternal context)
 debuggerOver =
     withContextDecoration <|
         \c ->

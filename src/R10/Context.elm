@@ -1,13 +1,14 @@
-module R10.Context exposing (ContextInternal, ContextR10, builder, isShouldUseSimplePhoneInputWindowSize, isSmallScreen)
+module R10.Context exposing (ContextInternal, ContextR10, builder, isShouldUseSimplePhoneInputWindowSize, isSmallScreen, default)
 
 {-| Contains data that is automatically passed to all functions, based on `elm-ui-with-context`
 
-@docs ContextInternal, ContextR10, builder, isShouldUseSimplePhoneInputWindowSize, isSmallScreen
+@docs ContextInternal, ContextR10, builder, isShouldUseSimplePhoneInputWindowSize, isSmallScreen, default
 
 -}
 
 import Dict
 import Element.WithContext
+import R10.Color
 import R10.Color.Internal.Primary
 import R10.CountryCode
 import R10.Device
@@ -125,3 +126,41 @@ isSmallScreen width =
 isShouldUseSimplePhoneInputWindowSize : Int -> Bool
 isShouldUseSimplePhoneInputWindowSize width =
     width < 700
+
+
+{-| -}
+default : ContextInternal {}
+default =
+    { contextR10 =
+        builder
+            { model =
+                { flags =
+                    { mode = R10.Mode.Light
+                    , primaryColor = R10.Color.primary.blueSky
+                    , userAgent = ""
+                    , platform = ""
+                    , isOntouchendInDocument = False
+                    , emailDomainList = [ "google.com" ]
+                    , termsAndConditionsLink = ""
+                    , privacyPolicyLink = ""
+                    , cookiePolicyLink = ""
+                    , registrationLink = ""
+                    , loginLink = ""
+                    , debugger_transitionSpeed = 1
+                    , debugger_formStyleAsString = ""
+                    , displayPromoArea = False
+                    }
+                , language = R10.Language.EN_US
+                , url =
+                    { protocol = Url.Https
+                    , host = ""
+                    , port_ = Nothing
+                    , path = ""
+                    , query = Nothing
+                    , fragment = Nothing
+                    }
+                , windowSize = { width = 1200 }
+                , urlImageFlags = "https://example.com/flags.gif"
+                }
+            }
+    }

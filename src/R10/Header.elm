@@ -639,7 +639,7 @@ userMenu model args =
             [ map args.msgMapper <| el [ centerX, paddingXY 0 30 ] <| loginButton model args ]
     in
     el
-        (R10.Card.normal args.theme
+        (R10.Card.normal
             ++ [ height <| px 320
                , width <| px 280
                , moveDown 40

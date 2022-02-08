@@ -6,20 +6,15 @@ import Element.WithContext.Font as Font
 import Html
 import R10.Button
 import R10.Card
-import R10.Color
 import R10.Color.AttrsBackground
 import R10.Color.Svg
 import R10.Context
 import R10.FontSize
 import R10.Form
 import R10.FormTypes
-import R10.Language
 import R10.Libu
-import R10.Mode
 import R10.Paragraph
-import R10.Svg.Logos
 import R10.Svg.LogosExtra
-import R10.Theme
 
 
 main : Program () Model Msg

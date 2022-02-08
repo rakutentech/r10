@@ -1,29 +1,17 @@
-module R10.Device exposing
-    ( Browser
-    , OS
-    , UserAgent
-    , constructor
-    , decoder
-    , deviceBrowserFromString
-    , deviceOSFromString
-    , deviceOSToString
-    , encodedValueToUserAgent
-    , encoder
-    , examples
-    , isAndroid
-    , isChromeDesktop
-    , isFirefoxAndroid
-    , isIOS
-    , isInternetExplorer
-    , isMobileOS
-    , isSafari
-    )
+module R10.Device exposing (Browser, OS, UserAgent, constructor, decoder, deviceBrowserFromString, deviceOSFromString, deviceOSToString, encodedValueToUserAgent, encoder, examples, isAndroid, isChromeDesktop, isFirefoxAndroid, isIOS, isInternetExplorer, isMobileOS, isSafari)
+
+{-| Information related to the device.
+
+@docs Browser, OS, UserAgent, constructor, decoder, deviceBrowserFromString, deviceOSFromString, deviceOSToString, encodedValueToUserAgent, encoder, examples, isAndroid, isChromeDesktop, isFirefoxAndroid, isIOS, isInternetExplorer, isMobileOS, isSafari
+
+-}
 
 import Json.Decode
 import Json.Encode
 import Regex
 
 
+{-| -}
 type OS
     = Android
     | IOS
@@ -31,6 +19,7 @@ type OS
     | Other
 
 
+{-| -}
 type Browser
     = Opera
     | Chrome
@@ -40,22 +29,26 @@ type Browser
     | Unknown
 
 
+{-| -}
 type alias UserAgent =
     ( OS, Browser )
 
 
+{-| -}
 deviceOSDecoder : Json.Decode.Decoder OS
 deviceOSDecoder =
     Json.Decode.string
         |> Json.Decode.andThen (deviceOSFromString >> Json.Decode.succeed)
 
 
+{-| -}
 deviceBrowserDecoder : Json.Decode.Decoder Browser
 deviceBrowserDecoder =
     Json.Decode.string
         |> Json.Decode.andThen (deviceBrowserFromString >> Json.Decode.succeed)
 
 
+{-| -}
 decoder : Json.Decode.Decoder UserAgent
 decoder =
     Json.Decode.map2 Tuple.pair
@@ -63,21 +56,25 @@ decoder =
         (Json.Decode.index 1 deviceBrowserDecoder)
 
 
+{-| -}
 deviceOSEncoder : OS -> Json.Encode.Value
 deviceOSEncoder =
     deviceOSToString >> Json.Encode.string
 
 
+{-| -}
 deviceBrowserEncoder : Browser -> Json.Encode.Value
 deviceBrowserEncoder =
     deviceBrowserToString >> Json.Encode.string
 
 
+{-| -}
 encoder : UserAgent -> Json.Encode.Value
 encoder ( os, browser ) =
     Json.Encode.list identity [ deviceOSEncoder os, deviceBrowserEncoder browser ]
 
 
+{-| -}
 deviceOSFromString : String -> OS
 deviceOSFromString os =
     case os of
@@ -94,6 +91,7 @@ deviceOSFromString os =
             Other
 
 
+{-| -}
 deviceBrowserFromString : String -> Browser
 deviceBrowserFromString os =
     case os of
@@ -116,6 +114,7 @@ deviceBrowserFromString os =
             Unknown
 
 
+{-| -}
 deviceOSToString : OS -> String
 deviceOSToString browser =
     case browser of
@@ -132,6 +131,7 @@ deviceOSToString browser =
             "Other"
 
 
+{-| -}
 deviceBrowserToString : Browser -> String
 deviceBrowserToString browser =
     case browser of
@@ -154,6 +154,7 @@ deviceBrowserToString browser =
             "Unknown"
 
 
+{-| -}
 encodedValueToUserAgent : Json.Decode.Value -> UserAgent
 encodedValueToUserAgent device =
     Json.Decode.decodeValue decoder device
@@ -161,6 +162,7 @@ encodedValueToUserAgent device =
         |> Maybe.withDefault ( Other, Unknown )
 
 
+{-| -}
 constructor : String -> String -> Bool -> UserAgent
 constructor userAgent platform isOntouchendInDocument =
     let
@@ -221,6 +223,7 @@ constructor userAgent platform isOntouchendInDocument =
     ( os, browser )
 
 
+{-| -}
 isInternetExplorer : UserAgent -> Bool
 isInternetExplorer ( _, browser ) =
     case browser of
@@ -231,6 +234,7 @@ isInternetExplorer ( _, browser ) =
             False
 
 
+{-| -}
 isMobileOS : UserAgent -> Bool
 isMobileOS ( os, _ ) =
     case os of
@@ -247,6 +251,7 @@ isMobileOS ( os, _ ) =
             False
 
 
+{-| -}
 isIOS : UserAgent -> Bool
 isIOS ( os, _ ) =
     case os of
@@ -263,6 +268,7 @@ isIOS ( os, _ ) =
             False
 
 
+{-| -}
 isAndroid : UserAgent -> Bool
 isAndroid ( os, _ ) =
     case os of
@@ -279,6 +285,7 @@ isAndroid ( os, _ ) =
             False
 
 
+{-| -}
 isFirefoxAndroid : UserAgent -> Bool
 isFirefoxAndroid userAgent =
     case userAgent of
@@ -289,6 +296,7 @@ isFirefoxAndroid userAgent =
             False
 
 
+{-| -}
 isChromeDesktop : UserAgent -> Bool
 isChromeDesktop userAgent =
     case userAgent of
@@ -299,6 +307,7 @@ isChromeDesktop userAgent =
             False
 
 
+{-| -}
 isSafari : UserAgent -> Bool
 isSafari userAgent =
     case userAgent of
@@ -309,6 +318,7 @@ isSafari userAgent =
             False
 
 
+{-| -}
 examples :
     List
         { isOntouchendInDocument : Bool

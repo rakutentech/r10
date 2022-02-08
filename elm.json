@@ -11,6 +11,7 @@
         "R10.Context",
         "R10.Counter",
         "R10.Country",
+        "R10.Device",
         "R10.DropDown",
         "R10.FontSize",
         "R10.Footer",

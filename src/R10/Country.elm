@@ -2,7 +2,7 @@ module R10.Country exposing (Country(..), codeAndNameList, emptyFlag, fromCountr
 
 {-|
 
-@docs Country, codeAndNameList, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate, toCountryNameWithAlias
+@docs Country, codeAndNameList, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toCountryNameWithAlias
 
 -}
 
@@ -6115,11 +6115,11 @@ toCountryNameWithAlias country =
 
 
 {-| -}
-codeAndNameList : List { code: String, name : String }
+codeAndNameList : List { code : String, name : String }
 codeAndNameList =
     List.map
-        (\country -> 
-            { code = toCountryCode country 
+        (\country ->
+            { code = toCountryCode country
             , name = toString country
             }
         )

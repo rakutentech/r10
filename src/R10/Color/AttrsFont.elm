@@ -1,11 +1,8 @@
-module R10.Color.AttrsFont exposing
-    ( buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid
-    , fontAlertDanger, fontAlertInfo, fontAlertSuccess, fontAlertWarning
-    )
+module R10.Color.AttrsFont exposing (buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid, fontAlertDanger, fontAlertInfo, fontAlertSuccess, fontAlertWarning)
 
 {-| Font colors
 
-@docs buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid
+@docs buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid, fontAlertDanger, fontAlertInfo, fontAlertSuccess, fontAlertWarning
 
 -}
 

@@ -2,7 +2,7 @@ module R10.Device exposing (Browser, OS, Device, constructor, osToString, exampl
 
 {-| Information related to the device.
 
-@docs Browser, OS, Device, constructor, deviceBrowserFromString, deviceOSFromString, osToString, encodedValueToDevice, encoder, examples, isAndroid, isChromeDesktop, isChromeAndroid, isFirefoxAndroid, isIOS, isInternetExplorer, isMobileOS, isSafari, isSafari10OrIOS10, toString
+@docs Browser, OS, Device, constructor, osToString, examples, isAndroid, isChromeDesktop, isChromeAndroid, isFirefoxAndroid, isIOS, isInternetExplorer, isMobileOS, isSafari, isSafari10OrIOS10, toString
 
 -}
 
@@ -37,6 +37,7 @@ type alias Device =
     }
 
 
+{-| -}
 toString : Device -> String
 toString device =
     osToString device.os ++ " " ++ browserToString device.browser

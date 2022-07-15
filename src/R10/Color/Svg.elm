@@ -1,8 +1,7 @@
 module R10.Color.Svg exposing
     ( logo, primary, primaryVariant, border
-    , background, surface, surface2dp, backgroundButtonMinorOver, backgroundPhoneDropdown
-    , fontHighEmphasis, fontMediumEmphasis, fontHighEmphasisWithMaximumContrast, link
-    , backgroundAlertDanger, backgroundAlertInfo, backgroundAlertSuccess, backgroundAlertWarning, fontAlertDanger, fontAlertInfo, fontAlertSuccess, fontAlertWarning
+    , background, surface, surface2dp, backgroundButtonMinorOver, backgroundPhoneDropdown, backgroundAlertDanger, backgroundAlertInfo, backgroundAlertSuccess, backgroundAlertWarning
+    , fontHighEmphasis, fontMediumEmphasis, fontHighEmphasisWithMaximumContrast, link, fontAlertDanger, fontAlertInfo, fontAlertSuccess, fontAlertWarning
     )
 
 {-|
@@ -14,17 +13,17 @@ These are colors that can be used directly.
 
 In general is better to use colors from `R10.Color.Attrs...` modules.
 
-@docs logo, primary, error, success, primaryVariant, border
+@docs logo, primary, primaryVariant, border
 
 
 # Background
 
-@docs background, surface, surface2dp, backgroundButtonMinorOver, backgroundPhoneDropdown
+@docs background, surface, surface2dp, backgroundButtonMinorOver, backgroundPhoneDropdown, backgroundAlertDanger, backgroundAlertInfo, backgroundAlertSuccess, backgroundAlertWarning
 
 
 # Font
 
-@docs fontHighEmphasis, fontMediumEmphasis, fontHighEmphasisWithMaximumContrast, link
+@docs fontHighEmphasis, fontMediumEmphasis, fontHighEmphasisWithMaximumContrast, link, fontAlertDanger, fontAlertInfo, fontAlertSuccess, fontAlertWarning
 
 -}
 

@@ -1,11 +1,8 @@
-module R10.Link exposing
-    ( attrs
-    , attrsUnderline
-    )
+module R10.Link exposing (attrs, attrsUnderline)
 
 {-|
 
-@docs attrs
+@docs attrs, attrsUnderline
 
 -}
 
@@ -26,6 +23,7 @@ attrs =
     ]
 
 
+{-| -}
 attrsUnderline : List (Attr (R10.Context.ContextInternal z) () msg)
 attrsUnderline =
     [ Font.underline

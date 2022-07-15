@@ -11,7 +11,7 @@ module R10.Form exposing
     , Key, KeyAsString, keyToString, stringToKey, composeKey, listToKey, headId, emptyKey
     , updateField, getField, getFieldValue, getFieldValueIgnoringPath, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
     , setFieldValue, setActiveTab, setMultiplicableQuantities, setFieldDisabled
-    , stringToBool, boolToString
+    , stringToBool, boolToString, commonRegularExpression, msgToValue, stateToValue
     , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, processValue, TextArgs, ArgsText, viewBinary, ArgsBinary
     , Style, style, defaultStyle, styleToString, stringToStyle
     , Button, button
@@ -24,7 +24,6 @@ module R10.Form exposing
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationForView, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , fieldConfigConcatMap, fieldConfigMap
     , handleWithPatternChange, errorsFromApiToValidationForView, validationForViewToErrorMessages
-    , commonRegularExpression, msgToValue, stateToValue
     )
 
 {-| Useful things to build a form.
@@ -118,12 +117,12 @@ Singular fields, similarly to forms, have their own Configuration and State.
 
 **Others**
 
-@docs stringToBool, boolToString
+@docs stringToBool, boolToString, commonRegularExpression, msgToValue, stateToValue
 
 
 # Form Components
 
-@docs viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, processValue, TextArgs, ArgsText, viewBinary, ArgsBinary
+@docs viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, processValue, TextArgs, ArgsText, viewBinary, ArgsBinary
 
 
 # Style

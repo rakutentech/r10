@@ -71,9 +71,9 @@ npx -p elm@0.19.0-no-deps elm bump
 Commit and push your changes in a PR. Once it's approved and merged, then:
 
 ```
-git tag -a 5.10.0 -m "release version 5.10.0"
-git push origin 5.10.0
-elm publish
+git tag -a 6.1.0 -m "release version 6.1.0"
+git push origin 6.1.0
+npx -p elm@0.19.0-no-deps elm publish
 ```
 
 You can also add a tag in https://github.com/rakutentech/r10/releases/new if you want to add more detail.

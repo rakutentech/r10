@@ -100,20 +100,11 @@ getTextfieldPaddingEach args =
         paddingCenterY =
             ceiling <| (R10.FormComponents.Internal.UI.Const.inputTextHeight - toFloat R10.FormComponents.Internal.UI.Const.inputTextFontSize) / 2
     in
-    case args.style of
-        R10.FormComponents.Internal.Style.Filled ->
-            { top = paddingCenterY + R10.FormComponents.Internal.UI.Const.inputTextFilledDown
-            , right = 0
-            , bottom = paddingCenterY - R10.FormComponents.Internal.UI.Const.inputTextFilledDown
-            , left = 0 + iconWidth args.leadingIcon
-            }
-
-        R10.FormComponents.Internal.Style.Outlined ->
-            { top = paddingCenterY
-            , right = max 16 (iconWidth args.trailingIcon)
-            , bottom = paddingCenterY
-            , left = max 16 (iconWidth args.leadingIcon)
-            }
+    { top = paddingCenterY
+    , right = max 16 (iconWidth args.trailingIcon)
+    , bottom = paddingCenterY
+    , left = max 16 (iconWidth args.leadingIcon)
+    }
 
 
 icons :
@@ -151,45 +142,35 @@ icons =
 getTextfieldBorderSizeOffset :
     { a
         | focused : Bool
-        , style : R10.FormComponents.Internal.Style.Style
         , maybeValid : Maybe Bool
         , displayValidation : Bool
     }
     -> { size : Float, offset : ( Float, Float ) }
-getTextfieldBorderSizeOffset { focused, style, maybeValid, displayValidation } =
-    case ( focused, style ) of
-        ( True, R10.FormComponents.Internal.Style.Filled ) ->
-            { size = 0, offset = ( 0, -2.5 ) }
+getTextfieldBorderSizeOffset { focused } =
+    if focused then
+        { size = 2, offset = ( 0, 0 ) }
 
-        ( False, R10.FormComponents.Internal.Style.Filled ) ->
-            { size = 0, offset = ( 0, -1.5 ) }
-
-        ( True, R10.FormComponents.Internal.Style.Outlined ) ->
-            { size = 2, offset = ( 0, 0 ) }
-
-        ( False, R10.FormComponents.Internal.Style.Outlined ) ->
-            { size = 1, offset = ( 0, 0 ) }
+    else
+        { size = 1, offset = ( 0, 0 ) }
 
 
-getSelectShadowColor : R10.Palette.Palette -> Bool -> Bool -> Color
-getSelectShadowColor palette focused mouseOver =
-    let
-        alpha : Float
-        alpha =
-            case ( focused, mouseOver ) of
-                ( True, True ) ->
-                    0.21
+getSelectShadowColor : R10.Palette.Palette -> Bool -> Bool -> Bool -> Color
+getSelectShadowColor palette selected focused mouseOver =
+    case ( selected, focused, mouseOver ) of
+        ( True, _, _ ) ->
+            R10.FormComponents.Internal.UI.Color.primaryA 0.21 palette
 
-                ( True, False ) ->
-                    0.14
+        ( _, True, True ) ->
+            R10.FormComponents.Internal.UI.Color.primaryA 0.21 palette
 
-                ( False, True ) ->
-                    0.07
+        ( _, True, False ) ->
+            R10.FormComponents.Internal.UI.Color.primaryA 0.14 palette
 
-                ( False, False ) ->
-                    0
-    in
-    R10.FormComponents.Internal.UI.Color.primaryA alpha palette
+        ( _, False, True ) ->
+            R10.FormComponents.Internal.UI.Color.background palette
+
+        _ ->
+            R10.FormComponents.Internal.UI.Color.primaryA 0 palette
 
 
 viewSelectShadowCustomSize :
@@ -199,41 +180,43 @@ viewSelectShadowCustomSize :
         , disabled : Bool
         , size : { x : Int, y : Int }
         , rounded : Int
-        , value : Bool
+        , over : Bool
+        , selected : Bool
     }
     -> Element (R10.Context.ContextInternal z) msg
     -> Element (R10.Context.ContextInternal z) msg
-viewSelectShadowCustomSize { palette, focused, disabled, size, value, rounded } element =
+viewSelectShadowCustomSize { palette, focused, disabled, size, over, rounded, selected } element =
     el
-        ([]
-            ++ [ width <| px size.x
-               , height <| px size.y
-               , Border.rounded rounded
-               , R10.Transition.transition "all 0.15s"
-               ]
+        ([ width <| px size.x
+         , height <| px size.y
+         , Border.rounded rounded
+         , R10.Transition.transition "all 0.15s"
+         ]
             ++ (if disabled then
                     []
 
+                else if over then
+                    [ Background.color <| getSelectShadowColor palette selected focused True ]
+
                 else
                     [ htmlAttribute <| Html.Attributes.class "ripple-primary"
-                    , Background.color <| getSelectShadowColor palette focused False
+                    , Background.color <| getSelectShadowColor palette selected focused False
                     , mouseOver
-                        [ Background.color <| getSelectShadowColor palette focused True
+                        [ Background.color <| getSelectShadowColor palette selected focused True
 
                         -- XXX
-                        , Border.shadow
-                            { offset = ( 0, 0 )
-                            , size = 2
-                            , blur = 0
-                            , color =
-                                (if value then
-                                    R10.FormComponents.Internal.UI.Color.primary
-
-                                 else
-                                    R10.FormComponents.Internal.UI.Color.borderA 0.7
-                                )
-                                    palette
-                            }
+                        -- , Border.shadow
+                        --     { offset = ( 0, 0 )
+                        --     , size = 2
+                        --     , blur = 0
+                        --     , color =
+                        --         (if focused then
+                        --             R10.FormComponents.Internal.UI.Color.primary
+                        --          else
+                        --             R10.FormComponents.Internal.UI.Color.borderA 0.7
+                        --         )
+                        --             palette
+                        --     }
                         ]
                     ]
                )
@@ -241,15 +224,16 @@ viewSelectShadowCustomSize { palette, focused, disabled, size, value, rounded } 
         element
 
 
-viewSelectShadow : { a | palette : R10.Palette.Palette, focused : Bool, disabled : Bool, value : Bool } -> Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
-viewSelectShadow { palette, focused, disabled, value } =
+viewSelectShadow : { a | palette : R10.Palette.Palette, focused : Bool, disabled : Bool, over : Bool, value : Bool } -> Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
+viewSelectShadow { palette, focused, disabled, value, over } =
     viewSelectShadowCustomSize
         { palette = palette
         , focused = focused
         , disabled = disabled
         , size = { x = 40, y = 40 }
         , rounded = 40
-        , value = value
+        , selected = value
+        , over = over
         }
 
 
@@ -330,31 +314,24 @@ floatingLabel args =
         labelIsAbove =
             args.focused || String.length args.value > 0 || args.floatingLabelAlwaysUp
 
-        notchClearance : Int
-        notchClearance =
-            case args.style of
-                R10.FormComponents.Internal.Style.Filled ->
-                    0
-
-                R10.FormComponents.Internal.Style.Outlined ->
-                    6
-
         labelAboveAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
         labelAboveAttrs =
-            if labelIsAbove then
-                case args.style of
-                    R10.FormComponents.Internal.Style.Filled ->
-                        [ moveUp <| 28 - 16, moveRight 0 ]
+            case args.style of
+                R10.FormComponents.Internal.Style.FixedLabels ->
+                    [ paddingEach { top = 0, right = 16, bottom = 7, left = 16 } ]
 
-                    R10.FormComponents.Internal.Style.Outlined ->
-                        [ moveUp <| 23 - 16, Font.size 14, moveRight 0 ]
+                R10.FormComponents.Internal.Style.FloatingLabels ->
+                    if labelIsAbove then
+                        [ moveRight 8
+                        , moveUp <| 23 - 16
+                        , Font.size 14
+                        ]
 
-            else
-                [ moveUp <| 0 - 16
-
-                -- , moveRight labelBelowLeftPadding
-                , Font.size R10.FormComponents.Internal.UI.Const.inputTextFontSize
-                ]
+                    else
+                        [ moveRight 8
+                        , moveUp <| 0 - 16
+                        , Font.size R10.FormComponents.Internal.UI.Const.inputTextFontSize
+                        ]
 
         requiredEl : Element (R10.Context.ContextInternal z) msg
         requiredEl =
@@ -367,51 +344,62 @@ floatingLabel args =
 
         labelEl : Element (R10.Context.ContextInternal z) msg
         labelEl =
-            -- If the label is too long, it doesn't wrap. I tried adding a
-            -- paragraph here, but then the label overlap with the
-            -- input field.
-            row
+            (case args.style of
+                R10.FormComponents.Internal.Style.FixedLabels ->
+                    -- Due to issue with vertical alignement
+                    -- https://jira.rakuten-it.com/jira/browse/OMN-5507
+                    -- we bring back the `row` here, instead of the
+                    -- `paragraph`. In the future we can have `paragraph` for
+                    -- fields that don't need to stay on the same row. But
+                    -- for now we don't have such information.
+                    --
+                    -- 2022.06.21 - Trying with paragraph again, now that we
+                    --              changed the "magic" value for when fields
+                    --              should stay in two columns
+                    --              https://jira.rakuten-it.com/jira/browse/OMN-5844
+                    paragraph
+
+                R10.FormComponents.Internal.Style.FloatingLabels ->
+                    -- If the label is too long, it doesn't wrap. I tried adding a
+                    -- paragraph here, but then the label overlap with the
+                    -- input field.
+                    row
+            )
                 ([ R10.Transition.transition "all 0.15s"
                  , htmlAttribute <| Html.Attributes.style "pointer-events" "none"
-                 , spacing 6
+                 , Font.color <| R10.FormComponents.Internal.TextColors.getLabelColor args
                  , paddingXY 8 0
                  , centerY
                  ]
-                    ++ (if labelIsAbove then
-                            [ Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette ]
+                    ++ (case args.style of
+                            R10.FormComponents.Internal.Style.FixedLabels ->
+                                []
 
-                        else
-                            []
+                            R10.FormComponents.Internal.Style.FloatingLabels ->
+                                if labelIsAbove then
+                                    -- Need to cover the border underneath. Probably
+                                    -- this "surface" color is not always correct.
+                                    [ Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette ]
+
+                                else
+                                    []
                        )
                     ++ labelAboveAttrs
                 )
-                [ text args.label, requiredEl ]
+                -- 160 == &nbsp;
+                -- This is to add some extra space between the label and "(Required)"
+                [ text args.label, text <| String.fromList [ ' ', Char.fromCode 160, ' ' ], requiredEl ]
     in
     if String.isEmpty args.label && args.requiredLabel == Nothing then
         none
 
     else
-        el
-            [ height <| px 0
-            , Font.color <| R10.FormComponents.Internal.TextColors.getLabelColor args
-            , moveDown
-                (case args.style of
-                    R10.FormComponents.Internal.Style.Filled ->
-                        6
+        case args.style of
+            R10.FormComponents.Internal.Style.FixedLabels ->
+                labelEl
 
-                    R10.FormComponents.Internal.Style.Outlined ->
-                        0
-                )
-            , moveRight
-                (case args.style of
-                    R10.FormComponents.Internal.Style.Filled ->
-                        -8
-
-                    R10.FormComponents.Internal.Style.Outlined ->
-                        8
-                )
-            ]
-            labelEl
+            R10.FormComponents.Internal.Style.FloatingLabels ->
+                el [ height <| px 0 ] labelEl
 
 
 showValidationIcon_ :
@@ -435,13 +423,7 @@ showValidationIcon_ args =
                 -- the last on the right. This is to have it entering with
                 -- an animation
                 iconSize
-                    + (case args.style of
-                        R10.FormComponents.Internal.Style.Filled ->
-                            4
-
-                        R10.FormComponents.Internal.Style.Outlined ->
-                            16
-                      )
+                    + 16
 
             else
                 0

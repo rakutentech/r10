@@ -23,6 +23,7 @@ validationCodes :
     , jsonFormatInvalid : R10.Form.Internal.FieldConf.ValidationCode
     , lengthTooLargeInvalid : R10.Form.Internal.FieldConf.ValidationCode
     , lengthTooSmallInvalid : R10.Form.Internal.FieldConf.ValidationCode
+    , lengthExactInvalid : R10.Form.Internal.FieldConf.ValidationCode
     , lengthValid : R10.Form.Internal.FieldConf.ValidationCode
     , required : R10.Form.Internal.FieldConf.ValidationCode
     , empty : R10.Form.Internal.FieldConf.ValidationCode
@@ -48,6 +49,7 @@ validationCodes =
     , jsonFormatInvalid = "INVALID_JSON_FORMAT"
     , lengthTooLargeInvalid = "INVALID_LENGTH_TOO_LARGE"
     , lengthTooSmallInvalid = "INVALID_LENGTH_TOO_SMALL"
+    , lengthExactInvalid = "INVALID_LENGTH_EXACT"
     , lengthValid = "CORRECT_LENGTH"
     , required = "REQUIRED"
     , empty = "EMPTY"

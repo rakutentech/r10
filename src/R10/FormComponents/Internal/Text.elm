@@ -1,6 +1,7 @@
 module R10.FormComponents.Internal.Text exposing
     ( Args
     , extraCss
+    , handleWithPatternChange
     , processValue
     , view
     , viewInput
@@ -16,16 +17,17 @@ import Html.Attributes
 import Html.Events
 import Json.Decode
 import R10.Context exposing (..)
+import R10.Device
 import R10.FormComponents.Internal.EmailAutoSuggest
-import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.TextColors
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
 import R10.FormComponents.Internal.UI.Const
 import R10.FormTypes
+import R10.KatakanaConverter
 import R10.Palette
-import R10.Svg.Icons
+import R10.Paragraph
 import R10.Transition
 import Regex
 
@@ -45,6 +47,21 @@ textWithPatternLargeAttrsExtra =
     ]
 
 
+textWithPatternLargeWithoutLabelAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
+textWithPatternLargeWithoutLabelAttrs =
+    [ Font.size 52
+    , Font.family [ Font.monospace ]
+    , htmlAttribute <| Html.Attributes.style "letter-spacing" "10px"
+    ]
+
+
+textWithPatternLargeWithoutLabelAttrsExtra : List (Attribute (R10.Context.ContextInternal z) msg)
+textWithPatternLargeWithoutLabelAttrsExtra =
+    [ centerX
+    , width <| px 280
+    ]
+
+
 textWithPatternAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
 textWithPatternAttrs =
     --
@@ -56,30 +73,6 @@ textWithPatternAttrs =
     -- ]
     [ htmlAttribute <| Html.Attributes.style "letter-spacing" "2px"
     ]
-
-
-viewShowHidePasswordButton : { a | msgOnTogglePasswordShow : Maybe msg, showPassword : Bool, palette : R10.Palette.Palette } -> Element (R10.Context.ContextInternal z) msg
-viewShowHidePasswordButton { msgOnTogglePasswordShow, showPassword, palette } =
-    let
-        icon : Element (R10.Context.ContextInternal z) msg
-        icon =
-            if showPassword then
-                R10.Svg.Icons.eye_ban_l [] (R10.FormComponents.Internal.UI.Color.label palette) 24
-
-            else
-                R10.Svg.Icons.eye_l [] (R10.FormComponents.Internal.UI.Color.label palette) 24
-    in
-    case msgOnTogglePasswordShow of
-        Just msgOnTogglePasswordShow_ ->
-            R10.FormComponents.Internal.IconButton.view [] { palette = palette, icon = icon, msgOnClick = Just msgOnTogglePasswordShow_, size = 24 }
-
-        Nothing ->
-            none
-
-
-needShowHideIcon : R10.FormTypes.TypeText -> Bool
-needShowHideIcon fieldType =
-    fieldType == R10.FormTypes.TextPasswordCurrent || fieldType == R10.FormTypes.TextPasswordNew
 
 
 type alias Args z msg =
@@ -191,20 +184,13 @@ viewBehindPattern2 args pattern =
                         R10.FormTypes.TextWithPattern _ ->
                             textWithPatternAttrs
 
+                        R10.FormTypes.TextWithPatternLargeWithoutLabel _ ->
+                            textWithPatternLargeWithoutLabelAttrs ++ textWithPatternLargeWithoutLabelAttrsExtra
+
                         _ ->
                             []
                    )
-                ++ (case args.style of
-                        R10.FormComponents.Internal.Style.Filled ->
-                            [ moveDown 10
-                            , moveLeft 13
-                            ]
-
-                        R10.FormComponents.Internal.Style.Outlined ->
-                            [ moveDown 7
-                            , moveRight 3
-                            ]
-                   )
+                ++ [ moveDown 7, moveRight 3 ]
             )
             { label = Input.labelHidden ""
             , onChange = args.msgOnChange
@@ -223,13 +209,18 @@ viewBehindPattern args =
         R10.FormTypes.TextWithPatternLarge pattern ->
             viewBehindPattern2 args pattern
 
+        R10.FormTypes.TextWithPatternLargeWithoutLabel pattern ->
+            viewBehindPattern2 args pattern
+
         _ ->
             []
 
 
 extraCss : String
 extraCss =
-    ""
+    -- https://jira.rakuten-it.com/jira/browse/OMN-5167
+    -- https://dev-cdn.rex.contents.rakuten.co.jp/rex-form/v1.7.0/components/button.html
+    ".s.u:hover { text-decoration-thickness: 0.125rem !important }"
 
 
 
@@ -264,6 +255,11 @@ handleWithPatternChange args =
 regexNotDigit : Regex.Regex
 regexNotDigit =
     Maybe.withDefault Regex.never (Regex.fromString "[^0-9]")
+
+
+regexNotDigitOrDash : Regex.Regex
+regexNotDigitOrDash =
+    Maybe.withDefault Regex.never (Regex.fromString "[^0-9-]")
 
 
 regexNotDigitAtTheEnd : Regex.Regex
@@ -357,7 +353,7 @@ parse inputChar pattern =
 
 
 tokenize : Char -> Char -> Token
-tokenize inputChar pattern =
+tokenize _ pattern =
     if List.member pattern (String.toList "_MYD年月日AG0123456789") then
         InputValue
 
@@ -392,6 +388,37 @@ append tokens input formatted =
                     append (Maybe.withDefault [] <| List.tail tokens) input (formatted ++ String.fromChar char)
 
 
+toEmailInput :
+    List (Attribute (R10.Context.ContextInternal z) msg)
+    ->
+        { onChange : String -> msg
+        , text : String
+        , placeholder : Maybe (Input.Placeholder (R10.Context.ContextInternal z) msg)
+        , label : Input.Label (R10.Context.ContextInternal z) msg
+        }
+    -> Element (R10.Context.ContextInternal z) msg
+toEmailInput attrs args =
+    -- https://jira.rakuten-it.com/jira/browse/OMN-5778
+    -- https://jira.rakuten-it.com/jira/browse/OMN-5386
+    -- The Chrome on Desktop and on Andriod were auto convert punycode for the domain part of the value, but still displayed the origin characters.
+    -- For example aa@Ⅳ.com => aa@iv.com, aa@aa。com => aa@aa.com
+    -- In that case was hard to do validate and might made confus for users.
+    -- So for the Chrome, to use the Input.text instead of the Input.email.
+    -- And align the attributes from the Input.email to minimize the impact.
+    withContext
+        (\context ->
+            if R10.Device.isChromeDesktop context.contextR10.device || R10.Device.isChromeAndroid context.contextR10.device then
+                Input.text
+                    ((htmlAttribute <| Html.Attributes.attribute "autocomplete" "email")
+                        :: attrs
+                    )
+                    args
+
+            else
+                Input.email attrs args
+        )
+
+
 view :
     List (Attribute (R10.Context.ContextInternal z) msg)
     -> List (Attribute (R10.Context.ContextInternal z) msg)
@@ -407,31 +434,11 @@ view attrs extraInputAttrs args =
         newArgs =
             -- Adding extra icons to the arguments:
             --
-            -- * Password eye
             -- * Validation result
             --
             { args
                 | trailingIcon =
                     args.trailingIcon
-                        |> (\icons ->
-                                -- Adding the password eye if needed
-                                if needShowHideIcon args.textType then
-                                    (el
-                                        [ paddingEach
-                                            { top = 0
-                                            , right = 8
-                                            , bottom = 0
-                                            , left = 0
-                                            }
-                                        ]
-                                     <|
-                                        viewShowHidePasswordButton args
-                                    )
-                                        :: icons
-
-                                else
-                                    icons
-                           )
                         |> (\icons ->
                                 -- Adding the validation icon. Should not this be conditional?
                                 icons
@@ -444,6 +451,14 @@ view attrs extraInputAttrs args =
                                        ]
                            )
             }
+
+        ( label, requiredLabel ) =
+            case newArgs.textType of
+                R10.FormTypes.TextWithPatternLargeWithoutLabel _ ->
+                    ( "", Nothing )
+
+                _ ->
+                    ( newArgs.label, newArgs.requiredLabel )
 
         styleArgs :
             { disabled : Bool
@@ -461,11 +476,11 @@ view attrs extraInputAttrs args =
             , floatingLabelAlwaysUp : Bool
             }
         styleArgs =
-            { label = newArgs.label
+            { label = label
             , value = newArgs.value
             , focused = newArgs.focused
             , disabled = newArgs.disabled
-            , requiredLabel = newArgs.requiredLabel
+            , requiredLabel = requiredLabel
             , style = newArgs.style
             , palette = newArgs.palette
             , leadingIcon = newArgs.leadingIcon
@@ -482,8 +497,14 @@ view attrs extraInputAttrs args =
            -- If there is spacing and no error, it will appear as a double spacing.
            spacing 0
          , width (fill |> minimum 150)
-         , inFront <| R10.FormComponents.Internal.UI.floatingLabel styleArgs
          ]
+            ++ (case args.style of
+                    R10.FormComponents.Internal.Style.FixedLabels ->
+                        []
+
+                    R10.FormComponents.Internal.Style.FloatingLabels ->
+                        [ inFront <| R10.FormComponents.Internal.UI.floatingLabel styleArgs ]
+               )
             ++ (if newArgs.disabled then
                     [ alpha 0.6 ]
 
@@ -492,45 +513,81 @@ view attrs extraInputAttrs args =
                )
             ++ attrs
         )
-        [ viewInput
-            ([ case newArgs.style of
-                R10.FormComponents.Internal.Style.Filled ->
-                    Border.rounded 0
+        ([]
+            ++ (case args.style of
+                    R10.FormComponents.Internal.Style.FixedLabels ->
+                        [ R10.FormComponents.Internal.UI.floatingLabel styleArgs ]
 
-                R10.FormComponents.Internal.Style.Outlined ->
-                    Border.rounded 5
-             , withContextAttribute <|
-                \c ->
-                    height <|
-                        px <|
-                            case newArgs.textType of
-                                R10.FormTypes.TextMultiline ->
-                                    200
+                    R10.FormComponents.Internal.Style.FloatingLabels ->
+                        []
+               )
+            ++ [ viewInput
+                    ([ Border.rounded 5
+                     , withContextAttribute <|
+                        \c ->
+                            height <|
+                                px <|
+                                    case newArgs.textType of
+                                        R10.FormTypes.TextMultiline ->
+                                            200
 
-                                R10.FormTypes.TextWithPatternLarge _ ->
-                                    c.contextR10.inputFieldWithLargePattern_height
+                                        R10.FormTypes.TextWithPatternLarge _ ->
+                                            c.contextR10.inputFieldWithLargePattern_height
 
-                                _ ->
-                                    R10.FormComponents.Internal.UI.Const.inputTextHeight
-             ]
-                ++ (case args.idDom of
-                        Just id ->
-                            [ htmlAttribute <| Html.Attributes.id id ]
+                                        R10.FormTypes.TextWithPatternLargeWithoutLabel _ ->
+                                            c.contextR10.inputFieldWithLargePattern_height
 
-                        Nothing ->
-                            []
-                   )
-                ++ extraInputAttrs
-            )
-            newArgs
-        , R10.FormComponents.Internal.UI.viewHelperText newArgs.palette
-            [ spacing 2
-            , alpha 0.5
-            , Font.size 14
-            , paddingEach { top = R10.FormComponents.Internal.UI.genericSpacing, right = 0, bottom = 0, left = 0 }
-            ]
-            newArgs.helperText
-        ]
+                                        -- 70
+                                        _ ->
+                                            R10.FormComponents.Internal.UI.Const.inputTextHeight
+                     ]
+                        ++ (case args.idDom of
+                                Just id ->
+                                    [ htmlAttribute <| Html.Attributes.id id ]
+
+                                Nothing ->
+                                    []
+                           )
+                        ++ extraInputAttrs
+                    )
+                    newArgs
+               , R10.FormComponents.Internal.UI.viewHelperText newArgs.palette
+                    [ spacing 2
+                    , alpha 0.5
+                    , Font.size 14
+                    , paddingEach { top = R10.FormComponents.Internal.UI.genericSpacing, right = 16, bottom = 0, left = 16 }
+                    ]
+                    newArgs.helperText
+               ]
+            --
+            -- This is an hack due to https://jira.rakuten-it.com/jira/browse/OMN-5336
+            -- Instead that make this generic, that requires a lot of code,
+            -- we inject this here. This probably is going to be removed in the future
+            -- anyway and it is always required for Japanese.
+            --
+            ++ (if String.contains "フリガナ" args.label then
+                    let
+                        converted =
+                            R10.KatakanaConverter.halfWidthKatakanaAndHiraganaToFullWidthKatakana args.value
+
+                        equal =
+                            args.value == converted
+                    in
+                    if equal then
+                        []
+
+                    else
+                        [ R10.Paragraph.small [ paddingEach { top = 15, right = 0, bottom = 0, left = 0 } ]
+                            [ text "We will convert this to Full-width Katakana: "
+                            , el [ Font.bold ] <| text converted
+                            , text ". If not correct, use Full-width Katakana directly."
+                            ]
+                        ]
+
+                else
+                    []
+               )
+        )
 
 
 viewInput : List (Attribute (R10.Context.ContextInternal z) msg) -> Args z msg -> Element (R10.Context.ContextInternal z) msg
@@ -543,19 +600,13 @@ viewInput extraAttr args =
         iconCommonAttrs : List (Attr (R10.Context.ContextInternal z) () msg)
         iconCommonAttrs =
             [ -- in order to icon to be aligned with the input, move icon down
-              moveDown <|
-                case args.style of
-                    R10.FormComponents.Internal.Style.Filled ->
-                        8
-
-                    R10.FormComponents.Internal.Style.Outlined ->
-                        0
+              moveDown 0
             ]
 
         -- paddingValues : { top : Int, right : Int, bottom : Int, left : Int }
         -- paddingValues =
         --     R10.FormComponents.Internal.UI.getTextfieldPaddingEach args
-        paddingOffset =
+        _ =
             12
 
         name =
@@ -572,25 +623,13 @@ viewInput extraAttr args =
                 R10.FormTypes.TextEmailWithSuggestions _ ->
                     "email"
 
-                R10.FormTypes.TextMobileEmail ->
-                    ""
-
-                R10.FormTypes.TextPasswordCurrent ->
+                R10.FormTypes.TextPasswordCurrent _ ->
                     "password"
 
-                R10.FormTypes.TextPasswordNew ->
+                R10.FormTypes.TextPasswordNew _ ->
                     "password"
 
-                R10.FormTypes.TextPlain ->
-                    ""
-
-                R10.FormTypes.TextMultiline ->
-                    ""
-
-                R10.FormTypes.TextWithPattern _ ->
-                    ""
-
-                R10.FormTypes.TextWithPatternLarge _ ->
+                _ ->
                     ""
 
         inputAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
@@ -611,28 +650,10 @@ viewInput extraAttr args =
             -- This value also influence the light blue area of the Browsers's
             -- autocomplete feature.
             , paddingEach
-                { top =
-                    case args.style of
-                        R10.FormComponents.Internal.Style.Filled ->
-                            27
-
-                        R10.FormComponents.Internal.Style.Outlined ->
-                            20
+                { top = 20
                 , right = 16
-                , bottom =
-                    case args.style of
-                        R10.FormComponents.Internal.Style.Filled ->
-                            5
-
-                        R10.FormComponents.Internal.Style.Outlined ->
-                            8
-                , left =
-                    case args.style of
-                        R10.FormComponents.Internal.Style.Filled ->
-                            0
-
-                        R10.FormComponents.Internal.Style.Outlined ->
-                            16
+                , bottom = 8
+                , left = 16
                 }
             ]
                 ++ (case args.textType of
@@ -641,6 +662,9 @@ viewInput extraAttr args =
 
                         R10.FormTypes.TextWithPattern _ ->
                             textWithPatternAttrs
+
+                        R10.FormTypes.TextWithPatternLargeWithoutLabel _ ->
+                            textWithPatternLargeWithoutLabelAttrs
 
                         _ ->
                             []
@@ -673,13 +697,6 @@ viewInput extraAttr args =
                     else
                         []
                    )
-                ++ (case args.style of
-                        R10.FormComponents.Internal.Style.Filled ->
-                            [ moveUp 4 ]
-
-                        R10.FormComponents.Internal.Style.Outlined ->
-                            []
-                   )
                 ++ viewBehindPattern args
                 ++ extraAttr
 
@@ -690,36 +707,22 @@ viewInput extraAttr args =
             , text : String
             }
         behavioursText =
-            let
-                placeholderArgs : List (Attribute context msg)
-                placeholderArgs =
-                    []
-                        ++ (case args.style of
-                                R10.FormComponents.Internal.Style.Filled ->
-                                    [ moveUp 4 ]
-
-                                R10.FormComponents.Internal.Style.Outlined ->
-                                    []
-                           )
-            in
             { onChange = args.msgOnChange
             , placeholder =
                 case ( String.length args.value /= 0, args.placeholder, args.fieldType ) of
                     ( False, Just string, Just (R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone _)) ) ->
-                        Just <| Input.placeholder ([ alpha 1 ] ++ placeholderArgs) <| text string
+                        Just <| Input.placeholder [ alpha 1 ] <| text string
 
                     ( False, Just string, _ ) ->
                         Just <|
                             Input.placeholder
-                                ([ alpha <|
+                                [ alpha <|
                                     if args.focused then
-                                        1
+                                        0
 
                                     else
-                                        0
-                                 ]
-                                    ++ placeholderArgs
-                                )
+                                        1
+                                ]
                             <|
                                 text string
 
@@ -728,6 +731,19 @@ viewInput extraAttr args =
                         Just <| Input.placeholder [] none
             , text = args.value
             , label = Input.labelHidden args.label
+            }
+
+        behavioursTextOnlyDigitsOrDash :
+            { label : Input.Label context msg
+            , onChange : String -> msg
+            , placeholder : Maybe (Input.Placeholder context msg)
+            , text : String
+            }
+        behavioursTextOnlyDigitsOrDash =
+            { behavioursText
+                | onChange =
+                    \value ->
+                        args.msgOnChange <| Regex.replace regexNotDigitOrDash (\_ -> "") value
             }
 
         behavioursTextEmailWithSuggestions :
@@ -894,20 +910,24 @@ viewInput extraAttr args =
                 []
     in
     row
-        [ case args.style of
-            R10.FormComponents.Internal.Style.Filled ->
-                Border.rounded 0
+        ([ Border.rounded 5
+         , width fill
+         , padding 0
 
-            R10.FormComponents.Internal.Style.Outlined ->
-                Border.rounded 5
-        , getBorder styleArgs
-        , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
-        , width fill
-        , padding 0
+         -- Spacing must be 0 here, otherwise the animation of font (from 0px
+         -- size to the real size) doesn't work well
+         , spacing 0
+         ]
+            ++ (case args.textType of
+                    R10.FormTypes.TextWithPatternLargeWithoutLabel _ ->
+                        []
 
-        -- Spacing must be 0 here
-        , spacing 0
-        ]
+                    _ ->
+                        [ getBorder styleArgs
+                        , mouseOver [ getBorder { styleArgs | isMouseOver = True } ]
+                        ]
+               )
+        )
     <|
         []
             ++ List.map (\icon -> el iconCommonAttrs icon) args.leadingIcon
@@ -919,7 +939,7 @@ viewInput extraAttr args =
                         Input.username (inputAttrs ++ topInputWhenSuggestionAttr) behavioursText
 
                     R10.FormTypes.TextEmail ->
-                        Input.email (inputAttrs ++ topInputWhenSuggestionAttr) behavioursText
+                        toEmailInput (inputAttrs ++ topInputWhenSuggestionAttr) behavioursText
 
                     R10.FormTypes.TextEmailWithSuggestions listSuggestions ->
                         el
@@ -939,14 +959,14 @@ viewInput extraAttr args =
                                         autoSuggestionsAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
                                         autoSuggestionsAttrs =
                                             R10.FormComponents.Internal.EmailAutoSuggest.autoSuggestionsAttrs
-                                                { userAgent = c.contextR10.userAgent
+                                                { device = c.contextR10.device
                                                 , style = args.style
                                                 , maybeEmailSuggestion = maybeEmailSuggestion c.contextR10.emailDomainList
                                                 , msgOnChange = args.msgOnChange
                                                 , value = args.value
                                                 }
                                     in
-                                    Input.email (autoSuggestionsAttrs ++ inputAttrs ++ topInputWhenSuggestionAttr) behavioursTextEmailWithSuggestions
+                                    toEmailInput (autoSuggestionsAttrs ++ inputAttrs ++ topInputWhenSuggestionAttr) behavioursTextEmailWithSuggestions
                             )
 
                     R10.FormTypes.TextMobileEmail ->
@@ -958,20 +978,20 @@ viewInput extraAttr args =
                                         autoSuggestionsAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
                                         autoSuggestionsAttrs =
                                             R10.FormComponents.Internal.EmailAutoSuggest.autoSuggestionsAttrs
-                                                { userAgent = c.contextR10.userAgent
+                                                { device = c.contextR10.device
                                                 , style = args.style
                                                 , maybeEmailSuggestion = maybeEmailSuggestion R10.FormComponents.Internal.EmailAutoSuggest.mobileEmailSupportDomainList
                                                 , msgOnChange = args.msgOnChange
                                                 , value = args.value
                                                 }
                                     in
-                                    Input.email (autoSuggestionsAttrs ++ inputAttrs) behavioursTextEmailWithSuggestions
+                                    toEmailInput (autoSuggestionsAttrs ++ inputAttrs) behavioursTextEmailWithSuggestions
                             )
 
-                    R10.FormTypes.TextPasswordCurrent ->
+                    R10.FormTypes.TextPasswordCurrent _ ->
                         Input.currentPassword inputAttrs (behavioursPassword args.showPassword)
 
-                    R10.FormTypes.TextPasswordNew ->
+                    R10.FormTypes.TextPasswordNew _ ->
                         Input.newPassword inputAttrs (behavioursPassword args.showPassword)
 
                     R10.FormTypes.TextPlain ->
@@ -985,5 +1005,11 @@ viewInput extraAttr args =
 
                     R10.FormTypes.TextWithPatternLarge pattern ->
                         Input.text (textWithPatternLargeAttrsExtra ++ inputAttrs ++ listenKeyDownAttr) <| behavioursTextWithPattern pattern
+
+                    R10.FormTypes.TextWithPatternLargeWithoutLabel pattern ->
+                        Input.text (textWithPatternLargeWithoutLabelAttrsExtra ++ inputAttrs ++ listenKeyDownAttr) <| behavioursTextWithPattern pattern
+
+                    R10.FormTypes.TextOnlyDigitsOrDash ->
+                        Input.text inputAttrs behavioursTextOnlyDigitsOrDash
                ]
             ++ List.map (\icon -> el iconCommonAttrs icon) args.trailingIcon

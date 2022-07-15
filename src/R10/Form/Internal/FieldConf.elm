@@ -1,6 +1,7 @@
 module R10.Form.Internal.FieldConf exposing
     ( FieldConf
     , FieldId
+    , Range
     , Validation(..)
     , ValidationCode
     , ValidationMessage
@@ -42,6 +43,13 @@ type Validation
     | MinLength Int
     | MaxLength Int
     | Regex String
+    | DateRange Range
+
+
+type alias Range =
+    { max : Int
+    , min : Int
+    }
 
 
 
@@ -76,6 +84,7 @@ type alias FieldConf =
     , validationSpecs : Maybe ValidationSpecs
     , minWidth : Maybe Int
     , maxWidth : Maybe Int
+    , allowOverMaxLength : Bool
 
     -- If autocomplete is Nothing, we just use the default value, set by elm-ui
     , autocomplete : Maybe String
@@ -112,6 +121,7 @@ init =
     , validationSpecs = Just initValidationSpecs
     , minWidth = Nothing
     , maxWidth = Nothing
+    , allowOverMaxLength = True
     , autocomplete = Nothing
     }
 
@@ -196,11 +206,12 @@ decoderFieldConf =
                 (D.field "requiredLabel" (D.maybe D.string))
                 (D.field "validationSpecs" (D.maybe decoderValidationSpecs))
     in
-    D.map5
+    D.map6
         (<|)
         mainFields
         (D.field "minWidth" (D.maybe D.int))
         (D.field "maxWidth" (D.maybe D.int))
+        (D.field "allowOverMaxLength" D.bool)
         (D.field "autocomplete" (D.maybe D.string))
         (D.field "placeholder" (D.maybe D.string))
 
@@ -228,11 +239,11 @@ encoderFieldType fieldType =
                 R10.FormTypes.TextUsernameWithUseEmailCheckbox checkboxLabel ->
                     E.string <| "TextUsernameWithUseEmailCheckbox" ++ jsonSeparator ++ checkboxLabel
 
-                R10.FormTypes.TextPasswordNew ->
-                    E.string "TypeTextPasswordNew"
+                R10.FormTypes.TextPasswordNew checkboxLabel ->
+                    E.string <| "TypeTextPasswordNew" ++ jsonSeparator ++ checkboxLabel
 
-                R10.FormTypes.TextPasswordCurrent ->
-                    E.string "TypeTextPasswordCurrent"
+                R10.FormTypes.TextPasswordCurrent checkboxLabel ->
+                    E.string <| "TypeTextPasswordCurrent" ++ jsonSeparator ++ checkboxLabel
 
                 R10.FormTypes.TextMultiline ->
                     E.string "TypeTextMultiline"
@@ -242,6 +253,12 @@ encoderFieldType fieldType =
 
                 R10.FormTypes.TextWithPatternLarge pattern ->
                     E.string <| "TextWithPatternLarge" ++ jsonSeparator ++ pattern
+
+                R10.FormTypes.TextWithPatternLargeWithoutLabel pattern ->
+                    E.string <| "TextWithPatternLargeWithoutLabel" ++ jsonSeparator ++ pattern
+
+                R10.FormTypes.TextOnlyDigitsOrDash ->
+                    E.string <| "TextOnlyDigitsOrDash"
 
         R10.FormTypes.TypeBinary typeBinary ->
             case typeBinary of
@@ -301,10 +318,10 @@ decoderFieldType =
                         D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextUsername)
 
                     [ "TypeTextPasswordNew" ] ->
-                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextPasswordNew)
+                        D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextPasswordNew str)
 
                     [ "TypeTextPasswordCurrent" ] ->
-                        D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextPasswordCurrent)
+                        D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextPasswordCurrent str)
 
                     [ "TypeTextMultiline" ] ->
                         D.succeed (R10.FormTypes.TypeText R10.FormTypes.TextMultiline)
@@ -314,6 +331,9 @@ decoderFieldType =
 
                     [ "TextWithPatternLarge", pattern ] ->
                         D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextWithPatternLarge pattern)
+
+                    [ "TextWithPatternLargeWithoutLabel", pattern ] ->
+                        D.succeed (R10.FormTypes.TypeText <| R10.FormTypes.TextWithPatternLargeWithoutLabel pattern)
 
                     [ "TypeBinaryCheckbox" ] ->
                         D.succeed (R10.FormTypes.TypeBinary R10.FormTypes.BinaryCheckbox)
@@ -337,7 +357,7 @@ decoderFieldType =
                         D.succeed (R10.FormTypes.TypeMulti R10.FormTypes.MultiCombobox [])
 
                     [ "TypeSpecial" ] ->
-                        D.succeed (R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone False))
+                        D.succeed (R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone { disableInternationalPrefixPhoneChange = False, isJapanService = False }))
 
                     somethingElse ->
                         D.fail <| "Unknown FieldType: " ++ List.foldl (++) "" somethingElse ++ ". It should be something like TypeTextPlain, TypeTextEmail, TypeTextUsername, TypeTextPasswordNew, TypeTextPasswordCurrent, TypeCheckbox, TypeRadio, TypeDate, TypePhoneNumber, TypeBirthday or TypeCombobox."
@@ -410,6 +430,9 @@ encodeValidation validation =
         Empty ->
             E.string "empty"
 
+        DateRange range ->
+            encodeDateRange range
+
 
 encodeValidationIcon : R10.FormTypes.ValidationIcon -> E.Value
 encodeValidationIcon validationIcon =
@@ -437,6 +460,7 @@ decoderValidation =
         , decoderRegex
         , decoderEqual
         , decoderSimpleValidation
+        , decoderDateRange
         ]
 
 
@@ -646,3 +670,33 @@ decoderSimpleValidation =
                     somethingElse ->
                         D.fail <| "Unknown Validation: " ++ somethingElse ++ ". It should be something like NoValidation."
             )
+
+
+
+-- DateRange
+
+
+encodeDateRange : Range -> E.Value
+encodeDateRange range =
+    E.object [ ( "date_range", encodeRange range ) ]
+
+
+encodeRange : Range -> E.Value
+encodeRange range =
+    E.object
+        [ ( "max", E.int range.max )
+        , ( "min", E.int range.min )
+        ]
+
+
+decoderDateRange : D.Decoder Validation
+decoderDateRange =
+    D.map DateRange
+        (D.field "date_range" decoderRange)
+
+
+decoderRange : D.Decoder Range
+decoderRange =
+    D.map2 Range
+        (D.field "max" D.int)
+        (D.field "min" D.int)

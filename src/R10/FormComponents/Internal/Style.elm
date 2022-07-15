@@ -2,28 +2,28 @@ module R10.FormComponents.Internal.Style exposing (Style(..), default, fromStrin
 
 
 type Style
-    = Filled
-    | Outlined
+    = FloatingLabels
+    | FixedLabels
 
 
 toString : Style -> String
 toString style =
     case style of
-        Filled ->
-            "filled"
+        FloatingLabels ->
+            "floatingLabels"
 
-        Outlined ->
-            "outlined"
+        FixedLabels ->
+            "fixedLabels"
 
 
 fromString : String -> Style
 fromString string =
     case string of
-        "filled" ->
-            Filled
+        "floatingLabels" ->
+            FloatingLabels
 
-        "outlined" ->
-            Outlined
+        "fixedLabels" ->
+            FixedLabels
 
         _ ->
             default
@@ -31,4 +31,4 @@ fromString string =
 
 default : Style
 default =
-    Filled
+    FloatingLabels

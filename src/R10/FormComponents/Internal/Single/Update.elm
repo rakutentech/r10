@@ -205,8 +205,8 @@ update msg model =
         R10.FormComponents.Internal.Single.Common.NoOp ->
             ( model, Cmd.none )
 
-        R10.FormComponents.Internal.Single.Common.OnFocus value ->
-            ( { model | focused = True, value = value }, Cmd.none )
+        R10.FormComponents.Internal.Single.Common.OnFocus ->
+            ( { model | focused = True }, Cmd.none )
 
         R10.FormComponents.Internal.Single.Common.OnLoseFocus value ->
             ( { model | focused = False, opened = False, value = value, select = "", search = "" }, Cmd.none )
@@ -261,6 +261,9 @@ update msg model =
                     )
                 ]
             )
+
+        R10.FormComponents.Internal.Single.Common.Hover over ->
+            ( { model | over = over }, Cmd.none )
 
         R10.FormComponents.Internal.Single.Common.OnOptionSelect value ->
             ( { model | value = value, opened = False, select = "", search = "" }, Cmd.none )

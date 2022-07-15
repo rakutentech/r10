@@ -18,7 +18,6 @@ module R10.Form.Internal.Helpers exposing
     , setMultiplicableQuantities
     , stringToBool
     , updateField
-    , userReplace
     )
 
 import Dict
@@ -30,20 +29,10 @@ import R10.Form.Internal.FieldState
 import R10.Form.Internal.Key
 import R10.Form.Internal.Shared
 import R10.Form.Internal.State
-import Regex
+import R10.Utils
 import Set
 import String.Extra
 import Url
-
-
-userReplace : String -> (Regex.Match -> String) -> String -> String
-userReplace userRegex replacer string =
-    case Regex.fromString userRegex of
-        Nothing ->
-            string
-
-        Just regex ->
-            Regex.replace regex replacer string
 
 
 stringToBool : String -> Bool
@@ -254,8 +243,8 @@ cleanPhoneNumber value =
                 cleanedPhoneNumber =
                     value
                         |> String.Extra.clean
-                        |> userReplace "[^0-9 \\-\\(\\).]" (\_ -> "")
-                        |> userReplace "[^\\d]" (\_ -> "")
+                        |> R10.Utils.userReplace "[^0-9 \\-\\(\\).]" (\_ -> "")
+                        |> R10.Utils.userReplace "[^\\d]" (\_ -> "")
             in
             if String.length cleanedPhoneNumber > 0 then
                 "+" ++ cleanedPhoneNumber

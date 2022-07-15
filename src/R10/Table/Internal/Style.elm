@@ -27,37 +27,8 @@ borderColor =
    https://material.io/components/data-tables/#specs
 -}
 -- Table cell padding
-
-
-tableCellPaddingX : number
-tableCellPaddingX =
-    8
-
-
-tableCellPaddingY : number
-tableCellPaddingY =
-    6
-
-
-
 -- Corner radius
-
-
-cornerRadius : number
-cornerRadius =
-    4
-
-
-
 -- Container outline
-
-
-containerOutline : number
-containerOutline =
-    1
-
-
-
 -- Height and padding
 
 
@@ -66,29 +37,9 @@ headerRowHeight =
     56
 
 
-rowHeight : number
-rowHeight =
-    52
-
-
 columnPadding : number
 columnPadding =
     16
-
-
-
-{-
-   Default styles
--}
-
-
-defaultHeadRowAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
-defaultHeadRowAttrs =
-    [ width fill
-    , height fill
-    , Border.color borderColor
-    , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
-    ]
 
 
 defaultHeaderAttrs : List (Attribute (R10.Context.ContextInternal z) msg)

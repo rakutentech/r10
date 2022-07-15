@@ -2,6 +2,7 @@ module R10.FormComponents.Internal.Binary exposing
     ( Args
     , tagReplacer
     , view
+    , viewBinarySwitch
     )
 
 import Element.WithContext exposing (..)
@@ -45,6 +46,7 @@ type alias Args msg =
     , focused : Bool
     , maybeValid : Maybe Bool
     , disabled : Bool
+    , over : Maybe String
     , fieldConf : R10.Form.Internal.FieldConf.FieldConf
 
     -- Messages
@@ -54,6 +56,7 @@ type alias Args msg =
     , msgOnLoseFocus : msg
     , msgOnClick : msg
     , msgNoOp : msg
+    , msgHover : Maybe String -> msg
     }
 
 
@@ -117,7 +120,16 @@ viewBinarySwitch attrs args =
                             moveRight 0
                         ]
                     <|
-                        R10.FormComponents.Internal.UI.viewSelectShadow args thumb
+                        let
+                            args2 =
+                                { palette = args.palette
+                                , focused = args.focused
+                                , disabled = args.disabled
+                                , over = args |> .over |> Maybe.map (always True) |> Maybe.withDefault False
+                                , value = args.value
+                                }
+                        in
+                        R10.FormComponents.Internal.UI.viewSelectShadow args2 thumb
                 , behindContent <| track
                 ]
             <|
@@ -165,7 +177,7 @@ viewBinaryCheckbox attrs args =
 
         withFillForIE : R10.Context.ContextR10 -> List (Attribute (R10.Context.ContextInternal z) msg)
         withFillForIE c =
-            if R10.Device.isInternetExplorer c.userAgent then
+            if R10.Device.isInternetExplorer c.device then
                 -- Fixcan not break line for IE
                 -- The `width fill` will generate the `flex-grow` style in some case.
                 -- So using the way to set width
@@ -221,6 +233,8 @@ viewBinaryCheckbox attrs args =
                     , R10.I18n.paragraphFromString
                         ([ R10.FontSize.small
                          , R10.Color.AttrsFont.normalLighter
+                         , Events.onMouseEnter (args.msgHover (Just ""))
+                         , Events.onMouseLeave (args.msgHover Nothing)
                          , paddingEach { top = 0, left = 12, bottom = 0, right = 0 }
                          ]
                             ++ withFillForIE c.contextR10
@@ -248,9 +262,16 @@ tagReplacer c string =
     -- used for checkboxes (Newsletter subscribtion and Policies agreements.
     --
     string
-        |> String.replace "{privacy}" c.contextR10.privacyPolicyLink
-        |> String.replace "{tac}" c.contextR10.termsAndConditionsLink
-        |> String.replace "{cookie}" c.contextR10.cookiePolicyLink
+        |> String.replace "{privacy}" c.contextR10.urlPrivacyPolicy
+        |> String.replace "{tac}" c.contextR10.urlTermsAndConditions
+        |> String.replace "{cookie}" c.contextR10.urlCookiePolicy
+        |> String.replace "{referenceClientNameOrClientName}"
+            (if String.isEmpty c.contextR10.referenceExternalServiceName then
+                c.contextR10.clientName
+
+             else
+                c.contextR10.referenceExternalServiceName
+            )
 
 
 checkboxIcon : Args msg -> Bool -> Element (R10.Context.ContextInternal z) msg
@@ -304,7 +325,7 @@ checkboxIcon args value =
 
         isSPDevice : R10.Context.ContextR10 -> Bool
         isSPDevice contextR10 =
-            R10.Device.isMobileOS contextR10.userAgent
+            R10.Device.isMobileOS contextR10.device
     in
     withContext
         (\c ->
@@ -316,9 +337,10 @@ checkboxIcon args value =
                     { palette = args.palette
                     , focused = args.focused
                     , disabled = args.disabled
-                    , value = value
+                    , selected = value
                     , size = { x = 28, y = 28 }
                     , rounded = 4
+                    , over = args |> .over |> Maybe.map (always True) |> Maybe.withDefault False
                     }
                     boxBorderAndFill
         )

@@ -12,20 +12,15 @@ module R10.Paragraph exposing
 -}
 
 import Element.WithContext exposing (..)
+import R10.Context exposing (..)
 import R10.FontSize
 import R10.Link
 import R10.SimpleMarkdown
-import R10.Context exposing (..)
 
 
 spacingNormal : Int
 spacingNormal =
     10
-
-
-paragraphSpacing : Attribute (R10.Context.ContextInternal z) msg
-paragraphSpacing =
-    spacing spacingNormal
 
 
 {-| -}
@@ -51,7 +46,7 @@ normalMarkdown : List (Attribute (R10.Context.ContextInternal z) msg) -> String 
 normalMarkdown attrs string =
     normal attrs
         (R10.SimpleMarkdown.elementMarkdownAdvanced
-            { link = R10.Link.attrs }
+            { link = R10.Link.attrsUnderline }
             string
         )
 

@@ -8,6 +8,7 @@ import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
 import Html.Attributes
 import R10.Color.AttrsFont
+import R10.Color.Internal.Base exposing (Color(..))
 import R10.Context exposing (..)
 import R10.Device
 import R10.FormComponents.Internal.Single.Common
@@ -37,11 +38,14 @@ viewRadioOption :
         , palette : R10.Palette.Palette
         , focused : Bool
         , label : String
-        , value : Bool
+        , value : String
+        , over : Bool
+        , selected : Bool
+        , msgHover : Maybe String -> msg
     }
     -> Input.OptionState
     -> Element (R10.Context.ContextInternal z) msg
-viewRadioOption { disabled, palette, focused, label, value } optionState =
+viewRadioOption { disabled, palette, focused, label, value, selected, over, msgHover } optionState =
     let
         { innerCircleSize, innerCircleColor, outerCircleColor } =
             case ( isSelected optionState, disabled ) of
@@ -82,9 +86,35 @@ viewRadioOption { disabled, palette, focused, label, value } optionState =
                 ]
                 none
 
+        outerCircle : Element (R10.Context.ContextInternal z) msg
+        outerCircle =
+            el
+                [ R10.Transition.transition "all 0.13s"
+                , width <| px 28
+                , height <| px 28
+                , moveUp 2
+                , centerX
+                , centerY
+                , Border.rounded 20
+                , Border.shadow
+                    { offset = ( 0, 0 )
+                    , size = 2
+                    , blur = 0
+                    , color =
+                        (if selected then
+                            R10.FormComponents.Internal.UI.Color.primary
+
+                         else
+                            R10.FormComponents.Internal.UI.Color.borderA 0
+                        )
+                            palette
+                    }
+                ]
+                none
+
         isSPDevice : R10.Context.ContextR10 -> Bool
         isSPDevice contextR10 =
-            R10.Device.isMobileOS contextR10.userAgent
+            R10.Device.isMobileOS contextR10.device
 
         selector : R10.Context.ContextR10 -> Element (R10.Context.ContextInternal z) msg
         selector c =
@@ -96,6 +126,13 @@ viewRadioOption { disabled, palette, focused, label, value } optionState =
                 , centerX
                 , centerY
                 , behindContent <| innerCircle
+                , inFront
+                    (if over then
+                        outerCircle
+
+                     else
+                        none
+                    )
                 , Border.innerShadow
                     { offset = ( 0, 0 )
                     , size = 2
@@ -108,14 +145,15 @@ viewRadioOption { disabled, palette, focused, label, value } optionState =
                         none
 
                     else
-                        el [ moveUp 2, moveLeft 2 ] <|
+                        el [ moveUp -6, moveLeft -6 ] <|
                             R10.FormComponents.Internal.UI.viewSelectShadowCustomSize
                                 { palette = palette
                                 , focused = focused && isSelected optionState
                                 , disabled = disabled
-                                , value = value
-                                , size = { x = 28, y = 28 }
+                                , over = over
+                                , size = { x = 12, y = 12 }
                                 , rounded = 50
+                                , selected = isSelected optionState
                                 }
                                 none
                 ]
@@ -127,6 +165,8 @@ viewRadioOption { disabled, palette, focused, label, value } optionState =
                 ([ spacing 17
                  , width fill
                  , height fill
+                 , Events.onMouseEnter (msgHover (Just value))
+                 , Events.onMouseLeave (msgHover Nothing)
                  ]
                     ++ (if disabled then
                             [ htmlAttribute <| Html.Attributes.style "cursor" "auto" ]
@@ -136,7 +176,10 @@ viewRadioOption { disabled, palette, focused, label, value } optionState =
                        )
                 )
                 [ selector c.contextR10
-                , paragraph [ R10.Color.AttrsFont.normalLighter ] [ text label ]
+                , paragraph
+                    [ R10.Color.AttrsFont.normalLighter
+                    ]
+                    [ text label ]
                 ]
         )
 
@@ -145,17 +188,21 @@ viewRadioOptions :
     String
     -> R10.FormComponents.Internal.Single.Common.Args z msg
     -> Bool
+    -> Maybe String
     -> R10.FormComponents.Internal.Single.Common.FieldOption
     -> Input.Option (R10.Context.ContextInternal z) String msg
-viewRadioOptions selected args focused fieldOption =
+viewRadioOptions selected args focused over fieldOption =
     Input.optionWith
         fieldOption.value
         (viewRadioOption
             { disabled = args.disabled
             , palette = args.palette
             , focused = focused
-            , value = fieldOption.value == selected
+            , value = fieldOption.value
             , label = fieldOption.label
+            , selected = fieldOption.value == selected
+            , over = Just fieldOption.value == over
+            , msgHover = R10.FormComponents.Internal.Single.Common.Hover >> args.toMsg
             }
         )
 
@@ -211,8 +258,12 @@ viewRow attrs model args =
             ([ spacing 15
 
              --, alignTop
-             , Events.onFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus (R10.FormComponents.Internal.Single.Common.getSelectedOrFirst args.fieldOptions model.value model.select)
-             , Events.onLoseFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnLoseFocus model.value
+             , Events.onFocus <|
+                args.toMsg <|
+                    R10.FormComponents.Internal.Single.Common.OnFocus
+             , Events.onLoseFocus <|
+                args.toMsg <|
+                    R10.FormComponents.Internal.Single.Common.OnLoseFocus model.value
              , width fill
              , height <| px 20
              , centerY
@@ -230,7 +281,7 @@ viewRow attrs model args =
 
                 else
                     args.toMsg << R10.FormComponents.Internal.Single.Common.OnOptionSelect
-            , options = List.map (viewRadioOptions fixedValue args model.focused) args.fieldOptions
+            , options = List.map (viewRadioOptions fixedValue args model.focused model.over) args.fieldOptions
             , selected = Just fixedValue
             , label = Input.labelLeft [ width fill, centerY ] <| text args.label
             }
@@ -244,7 +295,11 @@ viewRow attrs model args =
         ]
 
 
-view : List (Attribute (R10.Context.ContextInternal z) msg) -> R10.FormComponents.Internal.Single.Common.Model -> R10.FormComponents.Internal.Single.Common.Args z msg -> Element (R10.Context.ContextInternal z) msg
+view :
+    List (Attribute (R10.Context.ContextInternal z) msg)
+    -> R10.FormComponents.Internal.Single.Common.Model
+    -> R10.FormComponents.Internal.Single.Common.Args z msg
+    -> Element (R10.Context.ContextInternal z) msg
 view attrs model args =
     let
         fixedValue : String
@@ -281,8 +336,13 @@ view attrs model args =
         Input.radio
             ([ spacing 16
              , alignTop
-             , Events.onFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus (R10.FormComponents.Internal.Single.Common.getSelectedOrFirst args.fieldOptions model.value model.select)
-             , Events.onLoseFocus <| args.toMsg <| R10.FormComponents.Internal.Single.Common.OnLoseFocus model.value
+             , Events.onFocus <|
+                args.toMsg <|
+                    R10.FormComponents.Internal.Single.Common.OnFocus
+             , Events.onLoseFocus <|
+                args.toMsg <|
+                    R10.FormComponents.Internal.Single.Common.OnLoseFocus
+                        model.value
              , width fill
              ]
                 ++ (if args.disabled then
@@ -298,7 +358,7 @@ view attrs model args =
 
                 else
                     args.toMsg << R10.FormComponents.Internal.Single.Common.OnOptionSelect
-            , options = List.map (viewRadioOptions fixedValue args model.focused) args.fieldOptions
+            , options = List.map (viewRadioOptions fixedValue args model.focused model.over) args.fieldOptions
             , selected = Just fixedValue
             , label = Input.labelAbove [] <| viewRadioLabel args.palette args.label args.helperText args.requiredLabel
             }

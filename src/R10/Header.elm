@@ -1,14 +1,13 @@
-module R10.Header exposing (view, Header, LanguageSystem(..), Msg(..), Session(..), SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample)
+module R10.Header exposing (view, Header, LanguageSystem(..), Msg(..), Session(..), SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, urlLogin, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample)
 
 {-| This create a generic header.
 
-@docs view, Header, LanguageSystem, Msg, Session, SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, loginLink, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample
+@docs view, Header, LanguageSystem, Msg, Session, SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, urlLogin, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample
 
 -}
 
 import Browser.Events
 import Color
-import Color.Convert
 import Element.WithContext exposing (..)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
@@ -115,14 +114,6 @@ init =
     , session = SessionNotRequested
     , debuggingMode = False
     , backgroundColor = Nothing
-    }
-
-
-{-| -}
-defaultTheme : R10.Theme.Theme
-defaultTheme =
-    { mode = R10.Mode.Light
-    , primaryColor = R10.Color.Internal.Primary.CrimsonRed
     }
 
 
@@ -564,7 +555,7 @@ userSection model args =
 
 {-| -}
 rightArea : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) Msg -> Element (R10.Context.ContextInternal z) msg
-rightArea model args loginButtonElement =
+rightArea _ args loginButtonElement =
     map args.msgMapper <|
         Input.button
             [ alignRight
@@ -752,8 +743,8 @@ logoutLink model args =
 
 
 {-| -}
-loginLink : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) Msg
-loginLink model args =
+urlLogin : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) Msg
+urlLogin model args =
     if model.debuggingMode then
         Input.button
             attrsLink
@@ -841,12 +832,6 @@ fromTop isTop =
 
     else
         0
-
-
-{-| -}
-logoColorAsString : Bool -> R10.Theme.Theme -> String
-logoColorAsString darkHeader theme =
-    Color.Convert.colorToCssRgba <| logoColorColor darkHeader theme
 
 
 {-| -}
@@ -1021,7 +1006,7 @@ sideMenu model args =
                         map args.msgMapper <| logoutLink model args
 
                     SessionError _ ->
-                        map args.msgMapper <| loginLink model args
+                        map args.msgMapper <| urlLogin model args
                ]
 
 

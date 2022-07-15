@@ -186,10 +186,10 @@ maker args key form =
                     R10.Form.Internal.Conf.EntityField fieldConf ->
                         [ ( R10.Form.Internal.Key.composeKey key fieldConf.id, fieldConfToMaybeFieldState args.maybeCountry fieldConf ) ]
 
-                    R10.Form.Internal.Conf.EntityTitle entityId textConf ->
+                    R10.Form.Internal.Conf.EntityTitle entityId _ ->
                         [ ( R10.Form.Internal.Key.composeKey key entityId, Nothing ) ]
 
-                    R10.Form.Internal.Conf.EntitySubTitle entityId textConf ->
+                    R10.Form.Internal.Conf.EntitySubTitle entityId _ ->
                         [ ( R10.Form.Internal.Key.composeKey key entityId, Nothing ) ]
             )
             form.conf

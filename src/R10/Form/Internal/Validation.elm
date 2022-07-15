@@ -1,17 +1,21 @@
 module R10.Form.Internal.Validation exposing
-    ( commonValidation
+    ( commonRegularExpression
+    , commonValidation
     , validate
     )
 
 import Dict
+import R10.Country
 import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldConf
 import R10.Form.Internal.FieldState
 import R10.Form.Internal.Helpers
 import R10.Form.Internal.Key
+import R10.Form.Internal.Shared
 import R10.Form.Internal.State
 import R10.Form.Internal.Translator
 import R10.FormTypes
+import R10.ValidationDate
 import Regex
 
 
@@ -41,26 +45,6 @@ isValid outcome =
 
         R10.Form.Internal.FieldState.MessageErr _ _ ->
             False
-
-
-toMessageOk : R10.Form.Internal.FieldState.ValidationOutcome -> R10.Form.Internal.FieldState.ValidationOutcome
-toMessageOk outcome =
-    case outcome of
-        R10.Form.Internal.FieldState.MessageOk _ _ ->
-            outcome
-
-        R10.Form.Internal.FieldState.MessageErr msg payload ->
-            R10.Form.Internal.FieldState.MessageOk msg payload
-
-
-toMessageErr : R10.Form.Internal.FieldState.ValidationOutcome -> R10.Form.Internal.FieldState.ValidationOutcome
-toMessageErr outcome =
-    case outcome of
-        R10.Form.Internal.FieldState.MessageOk msg payload ->
-            R10.Form.Internal.FieldState.MessageErr msg payload
-
-        R10.Form.Internal.FieldState.MessageErr _ _ ->
-            outcome
 
 
 validateDependant :
@@ -269,6 +253,60 @@ skipValidationIfEmpty value showAlsoPassedValidation validationOutcome =
         Just validationOutcome
 
 
+validateDateRange :
+    R10.ValidationDate.Range
+    -> String
+    -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
+validateDateRange range value =
+    let
+        v : Result R10.ValidationDate.RangeResult Int
+        v =
+            R10.ValidationDate.range range value
+    in
+    if String.isEmpty value then
+        Nothing
+
+    else
+        case v of
+            Ok _ ->
+                Just <| R10.Form.Internal.FieldState.MessageOk R10.Form.Internal.Translator.validationCodes.formatInvalid []
+
+            Err err ->
+                let
+                    invalid : Maybe R10.Form.Internal.FieldState.ValidationOutcome
+                    invalid =
+                        Just <| R10.Form.Internal.FieldState.MessageErr R10.Form.Internal.Translator.validationCodes.formatInvalid []
+                in
+                case err of
+                    R10.ValidationDate.TooOld ->
+                        -- Out of range
+                        invalid
+
+                    R10.ValidationDate.TooNew ->
+                        -- Out of range
+                        invalid
+
+                    R10.ValidationDate.MinRangeNotValid ->
+                        -- Should never happen
+                        invalid
+
+                    R10.ValidationDate.MaxRangeNotValid ->
+                        -- Should never happen
+                        invalid
+
+                    R10.ValidationDate.InvertedMinMax ->
+                        -- Should never happen
+                        invalid
+
+                    R10.ValidationDate.Need8Digits ->
+                        -- Not 8 digits
+                        invalid
+
+                    R10.ValidationDate.ParsingError _ ->
+                        -- Invalid
+                        invalid
+
+
 validateValidationSpecs :
     String
     -> Bool
@@ -277,7 +315,7 @@ validateValidationSpecs :
     -> R10.Form.Internal.State.State
     -> R10.Form.Internal.FieldConf.Validation
     -> Maybe R10.Form.Internal.FieldState.ValidationOutcome
-validateValidationSpecs caller showAlsoPassedValidation key value_ formState validation =
+validateValidationSpecs _ showAlsoPassedValidation key value_ formState validation =
     let
         value =
             -- Temporary fix for https://jira.rakuten-it.com/jira/browse/OMN-3277
@@ -336,35 +374,47 @@ validateValidationSpecs caller showAlsoPassedValidation key value_ formState val
         R10.Form.Internal.FieldConf.NoValidation ->
             Nothing
 
+        R10.Form.Internal.FieldConf.DateRange range ->
+            validateDateRange range value
 
-f :
-    (String -> String -> String)
-    -> ( R10.Form.Internal.Key.KeyAsString, { b | value : String } )
-    -> ( R10.Form.Internal.Key.KeyAsString, { b | value : String } )
-f formStateBeforeValidationFixer ( keyAsString, rest ) =
-    let
-        fieldIdAsString : String
-        fieldIdAsString =
-            keyAsString
-                |> R10.Form.Internal.Key.fromString
-                |> R10.Form.Internal.Key.headId
 
-        value =
-            formStateBeforeValidationFixer fieldIdAsString rest.value
-    in
-    ( keyAsString, { rest | value = value } )
+punydecodeIfEmail : R10.FormTypes.FieldType -> String -> String
+punydecodeIfEmail fieldType value =
+    case fieldType of
+        R10.FormTypes.TypeText R10.FormTypes.TextEmail ->
+            R10.Form.Internal.Helpers.punyDecode value
+
+        R10.FormTypes.TypeText R10.FormTypes.TextMobileEmail ->
+            R10.Form.Internal.Helpers.punyDecode value
+
+        R10.FormTypes.TypeText (R10.FormTypes.TextEmailWithSuggestions _) ->
+            R10.Form.Internal.Helpers.punyDecode value
+
+        _ ->
+            value
+
+
+cleanPhoneNumber : R10.FormTypes.FieldType -> String -> String
+cleanPhoneNumber fieldType value =
+    case fieldType of
+        R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone _) ->
+            R10.Form.Internal.Helpers.cleanPhoneNumber value
+
+        _ ->
+            value
 
 
 validate :
-    (String -> String -> String)
-    -> Bool
-    -> R10.Form.Internal.Key.Key
-    -> R10.FormTypes.FieldType
-    -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs
-    -> R10.Form.Internal.State.State
+    { formStateBeforeValidationFixer : String -> String -> String
+    , showAlsoPassedValidation : Bool
+    , key : R10.Form.Internal.Key.Key
+    , fieldType : R10.FormTypes.FieldType
+    , maybeValidationSpec : Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+    , formState : R10.Form.Internal.State.State
+    }
     -> R10.Form.Internal.FieldState.FieldState
     -> R10.Form.Internal.FieldState.FieldState
-validate formStateBeforeValidationFixer showAlsoPassedValidation key fieldType maybeValidationSpec formState fieldState =
+validate args fieldState =
     --
     -- "formStateBeforeValidationFixer" is a function used to fix the values of
     -- fields before the validation is applied, but those values should be then
@@ -389,6 +439,7 @@ validate formStateBeforeValidationFixer showAlsoPassedValidation key fieldType m
     -- Flow.formStateBeforeValidationFixer.fix : { fieldIdAsString : String, value : String } -> String
     --
     let
+        newFormState : R10.Form.Internal.State.State
         newFormState =
             --
             -- I am not sure if this part is needed?
@@ -404,58 +455,101 @@ validate formStateBeforeValidationFixer showAlsoPassedValidation key fieldType m
             -- in
             -- { formState | fieldsState = fieldsState }
             --
-            formState
+            args.formState
 
-        punydecodeIfEmail : String -> String
-        punydecodeIfEmail value =
-            case fieldType of
-                R10.FormTypes.TypeText R10.FormTypes.TextEmail ->
-                    R10.Form.Internal.Helpers.punyDecode value
-
-                R10.FormTypes.TypeText (R10.FormTypes.TextEmailWithSuggestions _) ->
-                    R10.Form.Internal.Helpers.punyDecode value
-
-                _ ->
-                    value
-
-        cleanPhoneNumber : String -> String
-        cleanPhoneNumber value =
-            case fieldType of
-                R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone _) ->
-                    R10.Form.Internal.Helpers.cleanPhoneNumber value
-
-                _ ->
-                    value
-
-        newFieldState =
-            { fieldState
-                | value =
-                    fieldState.value
-                        |> punydecodeIfEmail
-                        |> cleanPhoneNumber
-                        |> formStateBeforeValidationFixer (R10.Form.Internal.Key.headId key)
-            }
+        newValue : String
+        newValue =
+            fieldState.value
+                |> punydecodeIfEmail args.fieldType
+                |> cleanPhoneNumber args.fieldType
+                |> args.formStateBeforeValidationFixer (R10.Form.Internal.Key.headId args.key)
 
         isDisabled : Bool
         isDisabled =
-            R10.Form.Internal.Dict.get key newFormState.fieldsState
+            R10.Form.Internal.Dict.get args.key newFormState.fieldsState
                 |> Maybe.map .disabled
                 |> Maybe.withDefault False
 
+        skipValidateForUsername : Bool
+        skipValidateForUsername =
+            R10.Form.Internal.Key.toString args.key
+                == R10.Form.Internal.Shared.defaultUsernameFieldKeyString
+                && (R10.Form.Internal.Dict.get R10.Form.Internal.Shared.copyEmailIntoUsernameCheckboxKey newFormState.fieldsState
+                        |> Maybe.map (\fs -> R10.Form.Internal.Helpers.stringToBool fs.value)
+                        |> Maybe.withDefault False
+                   )
+
+        -- skipValidateIfFieldIsOptionalAndEmpty : Bool
+        -- skipValidateIfFieldIsOptionalAndEmpty =
+        --     let
+        --         _ =
+        --             Debug.log "xxx23" ( skip, args.key )
+        --
+        --         skip =
+        --             not (isRequired args.maybeValidationSpec) && String.isEmpty fieldState.value
+        --     in
+        --     skip
+        --
         validationSpec : List R10.Form.Internal.FieldConf.Validation
         validationSpec =
-            if isDisabled then
+            if
+                isDisabled
+                    || skipValidateForUsername
+                -- || skipValidateIfFieldIsOptionalAndEmpty
+            then
                 [ R10.Form.Internal.FieldConf.NoValidation ]
 
             else
-                maybeValidationSpec
+                args.maybeValidationSpec
                     |> Maybe.map .validation
                     |> Maybe.withDefault [ R10.Form.Internal.FieldConf.NoValidation ]
+
+        isJapanTelCode : Bool
+        isJapanTelCode =
+            newValue
+                |> R10.Country.fromTelephoneAsString
+                |> Maybe.map R10.Country.toCountryTelCode
+                |> Maybe.andThen R10.Country.fromCountryTelCode
+                |> Maybe.map (\country -> country == R10.Country.Japan)
+                |> Maybe.withDefault False
+
+        changeValidationSpecIfJapanPohone : List R10.Form.Internal.FieldConf.Validation -> List R10.Form.Internal.FieldConf.Validation
+        changeValidationSpecIfJapanPohone =
+            -- https://jira.rakuten-it.com/jira/browse/OMN-5708
+            -- use this to change fields minLength when selected Japan
+            case ( args.fieldType, isJapanTelCode ) of
+                ( R10.FormTypes.TypeSpecial (R10.FormTypes.SpecialPhone specialPhone), True ) ->
+                    -- https://jira.rakuten-it.com/jira/browse/OMN-5904
+                    -- change validation rule only for JapanService
+                    if specialPhone.isJapanService then
+                        List.map
+                            (\vi ->
+                                case vi of
+                                    R10.Form.Internal.FieldConf.MinLength _ ->
+                                        R10.Form.Internal.FieldConf.MinLength 13
+
+                                    _ ->
+                                        vi
+                            )
+
+                    else
+                        identity
+
+                _ ->
+                    identity
     in
     { fieldState
         | validation =
             validationSpec
-                |> List.map (validateValidationSpecs "validate" showAlsoPassedValidation key newFieldState.value newFormState)
+                |> changeValidationSpecIfJapanPohone
+                |> List.map
+                    (validateValidationSpecs
+                        "validate"
+                        args.showAlsoPassedValidation
+                        args.key
+                        newValue
+                        newFormState
+                    )
                 |> List.filterMap identity
                 |> R10.Form.Internal.FieldState.Validated
     }
@@ -488,7 +582,10 @@ commonRegularExpression =
     , alphaNumericDash = "^[A-Za-z0-9_.-]*$"
     , alphaNumericDashSpace = "^[A-Za-z0-9_.-\\s]*$"
     , phoneNumber = "^\\+?[1-9]\\d+$"
-    , email = "^[\\u0021\\u0023-\\u0027\\u002B\\u002D-\\u0039\\u003D\\u003F\\u0041-\\u005A\\u005E-\\u007E]+@[\\u002D\\u0030-\\u0039\\u0041-\\u005A\\u0061-\\u007A]+(\\.[\\u002D\\u0030-\\u0039\\u0041-\\u005A\\u0061-\\u007A]+)+$"
+
+    -- https://jira.rakuten-it.com/jira/browse/OMN-5432
+    -- https://jira.rakuten-it.com/jira/browse/OMN-5456
+    , email = "^(?!\\.)(?!.*\\.\\.)[~!#-&+\\--9=?A-Z^-z|]*(?!\\.)[~!#-&+\\--9=?A-Z^-z|]@[-0-9A-Za-z]+(\\.[-0-9A-Za-z]+)*(\\.[-0-9A-Za-z]{2,})$"
     , numeric = "^([0-9]+)$"
     , integer = "^\\d+$"
     , decimal = "^-?\\d*(\\.\\d+)?$"

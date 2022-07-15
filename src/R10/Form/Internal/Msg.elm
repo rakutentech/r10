@@ -6,6 +6,7 @@ module R10.Form.Internal.Msg exposing
     , onLoseFocus
     , onOptionSelect
     , onValueChange
+    , toValue
     )
 
 import R10.Context
@@ -16,11 +17,22 @@ import R10.FormComponents.Internal.Phone.Common
 import R10.FormComponents.Internal.Single.Common
 
 
+toValue : Msg -> Maybe String
+toValue msg =
+    case msg of
+        ChangeValue _ _ _ _ string ->
+            Just string
+
+        _ ->
+            Nothing
+
+
 {-| -}
 type Msg
     = NoOp
     | GetFocus R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf
     | LoseFocus R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf
+    | Hover R10.Form.Internal.Key.Key (Maybe String)
     | TogglePasswordShow R10.Form.Internal.Key.Key
     | KeyDown Int
     | ChangeValue R10.Form.Internal.Key.Key R10.Form.Internal.FieldConf.FieldConf R10.Form.Internal.Conf.Conf R10.Context.ContextR10 String

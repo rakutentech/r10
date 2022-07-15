@@ -14,7 +14,6 @@ import R10.Color.Svg
 import R10.Context exposing (..)
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Single.Update
-import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
@@ -143,14 +142,7 @@ viewComboboxDropdown model args opened filteredOptions =
             , Border.color <| R10.FormComponents.Internal.UI.Color.borderA 0.5 args.palette
             , Border.width 1
             , htmlAttribute <| Html.Attributes.style "z-index" "1"
-            , Border.rounded
-                (case args.style of
-                    R10.FormComponents.Internal.Style.Filled ->
-                        0
-
-                    R10.FormComponents.Internal.Style.Outlined ->
-                        8
-                )
+            , Border.rounded 8
             , Border.shadow
                 { color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.3 args.palette
                 , offset = ( 0, 0 )
@@ -206,13 +198,13 @@ viewComboboxOption value select args opt =
         getBackgroundColor : Color
         getBackgroundColor =
             if isActiveValue && isSelected_ then
-                R10.FormComponents.Internal.UI.Color.primaryVariantA 0.13 args.palette
+                R10.FormComponents.Internal.UI.Color.primaryVariantA 0.15 args.palette
 
             else if isActiveValue then
-                R10.FormComponents.Internal.UI.Color.primaryVariantA 0.07 args.palette
+                R10.FormComponents.Internal.UI.Color.primaryVariantA 0.09 args.palette
 
             else if isSelected_ then
-                R10.FormComponents.Internal.UI.Color.onSurfaceA 0.07 args.palette
+                R10.FormComponents.Internal.UI.Color.onSurfaceA 0.09 args.palette
 
             else
                 R10.FormComponents.Internal.UI.Color.onSurfaceA 0 args.palette
@@ -223,7 +215,7 @@ viewComboboxOption value select args opt =
                 R10.FormComponents.Internal.UI.Color.primaryVariantA 0.1 args.palette
 
             else
-                R10.FormComponents.Internal.UI.Color.onSurfaceA 0.05 args.palette
+                R10.FormComponents.Internal.UI.Color.onSurfaceA 0.1 args.palette
     in
     el
         [ width fill
@@ -262,7 +254,7 @@ view attrs model args =
             , focused = model.focused
             , label = args.label
             , msgOnChange = args.toMsg << always R10.FormComponents.Internal.Single.Common.NoOp
-            , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus model.value
+            , msgOnFocus = args.toMsg <| R10.FormComponents.Internal.Single.Common.OnFocus
             , msgOnLoseFocus = Nothing
             , msgOnEnter = Nothing
             , msgOnKeyDown = Nothing

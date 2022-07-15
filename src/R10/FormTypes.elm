@@ -32,11 +32,13 @@ type TypeText
     | TextMobileEmail
     | TextUsername
     | TextUsernameWithUseEmailCheckbox String
-    | TextPasswordNew
-    | TextPasswordCurrent
+    | TextPasswordNew String
+    | TextPasswordCurrent String
     | TextMultiline
     | TextWithPattern String
     | TextWithPatternLarge String
+    | TextWithPatternLargeWithoutLabel String -- Only used for IdlitePhoneVerification, has specific styles.
+    | TextOnlyDigitsOrDash -- Only input digits and the dash, similar input:tel
 
 
 {-| Possible types of **Single** input fields
@@ -65,10 +67,11 @@ type TypeMulti
 {-| Possible types of **Special** input fields
 -}
 type TypeSpecial
-    = SpecialPhone Bool -- Bool: Disabled country change.
+    = SpecialPhone { disableInternationalPrefixPhoneChange : Bool, isJapanService : Bool }
 
 
 
+-- disableInternationalPrefixPhoneChange: Disabled country change. isJapanService: OMN-5904 Disable valiadion change
 --
 --
 --
@@ -117,8 +120,8 @@ inputField :
     , textEmailWithSuggestions : List String -> FieldType
     , textMobileEmail : FieldType
     , textMultiline : FieldType
-    , textPasswordCurrent : FieldType
-    , textPasswordNew : FieldType
+    , textPasswordCurrent : String -> FieldType
+    , textPasswordNew : String -> FieldType
     , textPlain : FieldType
     , textUsername : FieldType
     , textUsernameWithUseEmailCheckbox : String -> FieldType
@@ -131,8 +134,8 @@ inputField =
     , textMobileEmail = TypeText TextMobileEmail
     , textUsername = TypeText TextUsername
     , textUsernameWithUseEmailCheckbox = \checkboxLabel -> TypeText (TextUsernameWithUseEmailCheckbox checkboxLabel)
-    , textPasswordNew = TypeText TextPasswordNew
-    , textPasswordCurrent = TypeText TextPasswordCurrent
+    , textPasswordNew = \checkboxLabel -> TypeText (TextPasswordNew checkboxLabel)
+    , textPasswordCurrent = \checkboxLabel -> TypeText (TextPasswordCurrent checkboxLabel)
     , textMultiline = TypeText TextMultiline
     , textWithPattern = \string -> TypeText (TextWithPattern string)
 

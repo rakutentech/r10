@@ -172,29 +172,20 @@ animatedList elements =
         expandedLine : Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
         expandedLine =
             el
-                [ paddingEach { top = 6, right = 0, bottom = 0, left = 0 }
+                [ paddingEach { top = 6, right = 16, bottom = 0, left = 16 }
                 , Font.size 14
                 , alpha 1
                 , htmlAttribute <| Html.Attributes.style "min-height" "24px"
-                , htmlAttribute <| Html.Attributes.style "max-height" "64px"
+                -- 2022.06.14 We don't remember why the max-height was set here.
+                -- We remove because is hiding part of the error if very long. 
+                -- Leaving this comment here in case we realize there was a purpose for it. 
+                -- More history could be found in the R10 repo. Reference: https://jira.rakuten-it.com/jira/browse/OMN-5836
+                -- , htmlAttribute <| Html.Attributes.style "max-height" "64px"
                 , transition
                 , clipY
                 , htmlAttribute <| Html.Attributes.tabindex -1
                 ]
     in
-    column
-        ([ alignTop
-         , transition
-         ]
-            ++ (if List.length elements > 0 then
-                    [ paddingEach { top = R10.FormComponents.Internal.UI.genericSpacing, right = 0, bottom = 0, left = 0 } ]
-
-                else
-                    [ padding 0 ]
-               )
-        )
-    <|
-        (elements
-            |> List.map expandedLine
-        )
+    column [ alignTop, transition ] <|
+        (elements |> List.map expandedLine)
             ++ List.repeat 5 wrappedLine

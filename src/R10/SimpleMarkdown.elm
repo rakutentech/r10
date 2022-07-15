@@ -89,22 +89,20 @@ parseTextForBold text =
             (\index splitted ->
                 let
                     maybeGetFinding =
-                        case Array.get index (Array.fromList find) of
-                            Just match ->
-                                Just <|
-                                    List.map
-                                        (\item_ ->
-                                            case item_ of
-                                                Just i ->
-                                                    i
+                        Maybe.map
+                            (\match ->
+                                List.map
+                                    (\item_ ->
+                                        case item_ of
+                                            Just i ->
+                                                i
 
-                                                Nothing ->
-                                                    ""
-                                        )
-                                        match.submatches
-
-                            Nothing ->
-                                Nothing
+                                            Nothing ->
+                                                ""
+                                    )
+                                    match.submatches
+                            )
+                            (Array.get index (Array.fromList find))
                 in
                 case maybeGetFinding of
                     Just getFinding ->
@@ -197,22 +195,20 @@ parseTextForLinks text =
             (\index splitted ->
                 let
                     maybeGetFinding =
-                        case Array.get index (Array.fromList find) of
-                            Just match ->
-                                Just <|
-                                    List.map
-                                        (\item_ ->
-                                            case item_ of
-                                                Just i ->
-                                                    i
+                        Maybe.map
+                            (\match ->
+                                List.map
+                                    (\item_ ->
+                                        case item_ of
+                                            Just i ->
+                                                i
 
-                                                Nothing ->
-                                                    ""
-                                        )
-                                        match.submatches
-
-                            Nothing ->
-                                Nothing
+                                            Nothing ->
+                                                ""
+                                    )
+                                    match.submatches
+                            )
+                            (Array.get index (Array.fromList find))
                 in
                 case maybeGetFinding of
                     Just getFinding ->

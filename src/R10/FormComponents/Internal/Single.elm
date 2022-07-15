@@ -11,20 +11,14 @@ module R10.FormComponents.Internal.Single exposing
     , viewCustom
     )
 
-import Dict
 import Element.WithContext exposing (..)
-import Element.WithContext.Background as Background
-import Element.WithContext.Border as Border
 import Element.WithContext.Events as Events
 import Html.Attributes
 import R10.Context exposing (..)
-import R10.Form.Internal.Helpers
-import R10.Form.Internal.Shared
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Single.Combobox
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Single.Radio
-import R10.FormComponents.Internal.Single.Update
 import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
@@ -33,7 +27,6 @@ import R10.FormTypes
 import R10.Palette
 import R10.SimpleMarkdown
 import R10.Transition
-import Url
 
 
 
@@ -112,37 +105,6 @@ defaultTrailingIcon { opened, palette } =
         }
 
 
-getFlagIcon : String -> Element (R10.Context.ContextInternal z) msg
-getFlagIcon countryCode =
-    let
-        backgroundPosition : List (Attribute context msg)
-        backgroundPosition =
-            case Dict.get countryCode R10.Form.Internal.Shared.flagIconPositions of
-                Just ( x, y ) ->
-                    [ htmlAttribute <| Html.Attributes.style "background-position" (String.fromFloat (x - 1) ++ "px " ++ String.fromFloat (y - 2) ++ "px")
-                    , htmlAttribute <| Html.Attributes.style "background-size" "auto"
-                    ]
-
-                Nothing ->
-                    [ htmlAttribute <| Html.Attributes.style "background-size" "cover"
-                    ]
-    in
-    withContext
-        (\c ->
-            el
-                ([ width <| px 14
-                 , height <| px 11
-                 , Border.shadow { offset = ( 0, 0 ), size = 1, blur = 1, color = rgba 0 0 0 0.2 }
-                 , moveDown 1
-                 , Background.image c.contextR10.urlImageFlags
-                 ]
-                    ++ backgroundPosition
-                )
-            <|
-                none
-        )
-
-
 viewOptionElForCountry : { a | search : String, msgOnSelect : String -> msg } -> R10.FormComponents.Internal.Single.Common.FieldOption -> Element (R10.Context.ContextInternal z) msg
 viewOptionElForCountry { search, msgOnSelect } { label, value } =
     let
@@ -171,7 +133,7 @@ viewOptionElForCountry { search, msgOnSelect } { label, value } =
         , htmlAttribute <| Html.Attributes.style "mask-image" "linear-gradient(right, rgba(255,255,0,0), rgba(255,255,0, 1) 16px)"
         , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
         ]
-        [ getFlagIcon value
+        [ R10.FormComponents.Internal.Utils.getFlagIcon value
         , row [ moveRight 10 ] (withBold |> R10.SimpleMarkdown.elementMarkdown)
         ]
 
@@ -190,11 +152,6 @@ insertBold : List Int -> String -> String
 insertBold indexes string =
     string
         |> R10.FormComponents.Internal.Utils.stringInsertAtMulti "**" indexes
-
-
-update : R10.FormComponents.Internal.Single.Common.Msg -> R10.FormComponents.Internal.Single.Common.Model -> ( R10.FormComponents.Internal.Single.Common.Model, Cmd R10.FormComponents.Internal.Single.Common.Msg )
-update =
-    R10.FormComponents.Internal.Single.Update.update
 
 
 type alias Args msg =
@@ -257,21 +214,7 @@ view attrs model conf =
                         []
 
                     else
-                        [ el
-                            (case args.style of
-                                R10.FormComponents.Internal.Style.Filled ->
-                                    [ moveRight 12
-                                    , moveDown -2
-                                    ]
-
-                                R10.FormComponents.Internal.Style.Outlined ->
-                                    [ moveRight 19
-                                    , moveDown 3
-                                    ]
-                            )
-                          <|
-                            getFlagIcon model.value
-                        ]
+                        [ el [ moveRight 19, moveDown 3 ] <| R10.FormComponents.Internal.Utils.getFlagIcon model.value ]
                 , viewOptionEl =
                     viewOptionElForCountry
                         { search = model.search
@@ -281,16 +224,7 @@ view attrs model conf =
 
         attrsForCountryPicker : List (Attribute (R10.Context.ContextInternal z) msg)
         attrsForCountryPicker =
-            attrs
-                ++ (case args.style of
-                        R10.FormComponents.Internal.Style.Filled ->
-                            [ moveRight 20
-                            ]
-
-                        R10.FormComponents.Internal.Style.Outlined ->
-                            [ moveRight 10
-                            ]
-                   )
+            attrs ++ [ moveRight 10 ]
     in
     case args.singleType of
         R10.FormTypes.SingleCombobox ->

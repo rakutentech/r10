@@ -8,13 +8,11 @@ module R10.Card exposing (high, low, normal, noShadow)
 
 import Element.WithContext exposing (..)
 import Element.WithContext.Border as Border
-import Html.Attributes
 import R10.Color.AttrsBackground
 import R10.Color.AttrsBorder
 import R10.Color.AttrsFont
 import R10.Context exposing (..)
 import R10.Mode
-import R10.Theme
 import R10.Transition
 
 

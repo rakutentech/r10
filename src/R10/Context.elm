@@ -1,16 +1,13 @@
-module R10.Context exposing (ContextInternal, ContextR10, builder, isShouldUseSimplePhoneInputWindowSize, isSmallScreen, default)
+module R10.Context exposing (ContextInternal, ContextR10, builder, isSmallScreen, default)
 
 {-| Contains data that is automatically passed to all functions, based on `elm-ui-with-context`
 
-@docs ContextInternal, ContextR10, builder, isShouldUseSimplePhoneInputWindowSize, isSmallScreen, default
+@docs ContextInternal, ContextR10, builder, isSmallScreen, default
 
 -}
 
-import Dict
-import Element.WithContext
 import R10.Color
 import R10.Color.Internal.Primary
-import R10.CountryCode
 import R10.Device
 import R10.Language
 import R10.Mode
@@ -28,7 +25,7 @@ type alias ContextInternal a =
 type alias ContextR10 =
     { language : R10.Language.Language
     , theme : R10.Theme.Theme
-    , userAgent : R10.Device.UserAgent
+    , device : R10.Device.Device
     , windowSize : { width : Int }
     , emailDomainList : List String
     , currentUrl : Url.Url
@@ -50,9 +47,11 @@ type alias ContextR10 =
     -- We will leave these here at the moment.
     -- A possibility for the future is to convert this field in markdown.
     --
-    , termsAndConditionsLink : String
-    , privacyPolicyLink : String
-    , cookiePolicyLink : String
+    , urlTermsAndConditions : String
+    , urlPrivacyPolicy : String
+    , urlCookiePolicy : String
+    , referenceExternalServiceName : String
+    , clientName : String
     }
 
 
@@ -64,14 +63,16 @@ type alias Flags b =
         , platform : String
         , isOntouchendInDocument : Bool
         , emailDomainList : List String
-        , termsAndConditionsLink : String
-        , privacyPolicyLink : String
-        , cookiePolicyLink : String
-        , registrationLink : String
-        , loginLink : String
+        , urlTermsAndConditions : String
+        , urlPrivacyPolicy : String
+        , urlCookiePolicy : String
+        , urlRegistration : String
+        , urlLogin : String
         , debugger_transitionSpeed : Float
         , debugger_formStyleAsString : String
         , displayPromoArea : Bool
+        , referenceExternalServiceName : String
+        , clientName : String
     }
 
 
@@ -86,6 +87,7 @@ type alias Model a b c =
         , url : Url.Url
         , windowSize : WindowSize c
         , urlImageFlags : String
+        , device : R10.Device.Device
     }
 
 
@@ -94,16 +96,18 @@ builder : { model : Model a b c } -> ContextR10
 builder { model } =
     { language = model.language
     , theme = R10.Theme.fromFlags model.flags
-    , userAgent = R10.Device.constructor model.flags.userAgent model.flags.platform model.flags.isOntouchendInDocument
+    , device = model.device
     , windowSize = { width = model.windowSize.width }
     , emailDomainList = model.flags.emailDomainList
     , currentUrl = model.url
     , urlImageFlags = model.urlImageFlags
 
     --
-    , termsAndConditionsLink = model.flags.termsAndConditionsLink
-    , privacyPolicyLink = model.flags.privacyPolicyLink
-    , cookiePolicyLink = model.flags.cookiePolicyLink
+    , urlTermsAndConditions = model.flags.urlTermsAndConditions
+    , urlPrivacyPolicy = model.flags.urlPrivacyPolicy
+    , urlCookiePolicy = model.flags.urlCookiePolicy
+    , referenceExternalServiceName = model.flags.referenceExternalServiceName
+    , clientName = model.flags.clientName
 
     --
     , inputFieldWithLargePattern_width = when (isSmallScreen model.windowSize.width) do 200 otherwise 240
@@ -123,12 +127,6 @@ isSmallScreen width =
 
 
 {-| -}
-isShouldUseSimplePhoneInputWindowSize : Int -> Bool
-isShouldUseSimplePhoneInputWindowSize width =
-    width < 700
-
-
-{-| -}
 default : ContextInternal {}
 default =
     { contextR10 =
@@ -141,14 +139,16 @@ default =
                     , platform = ""
                     , isOntouchendInDocument = False
                     , emailDomainList = [ "google.com" ]
-                    , termsAndConditionsLink = ""
-                    , privacyPolicyLink = ""
-                    , cookiePolicyLink = ""
-                    , registrationLink = ""
-                    , loginLink = ""
+                    , urlTermsAndConditions = ""
+                    , urlPrivacyPolicy = ""
+                    , urlCookiePolicy = ""
+                    , urlRegistration = ""
+                    , urlLogin = ""
                     , debugger_transitionSpeed = 1
                     , debugger_formStyleAsString = ""
                     , displayPromoArea = False
+                    , referenceExternalServiceName = ""
+                    , clientName = ""
                     }
                 , language = R10.Language.EN_US
                 , url =
@@ -161,6 +161,7 @@ default =
                     }
                 , windowSize = { width = 1200 }
                 , urlImageFlags = "https://example.com/flags.gif"
+                , device = R10.Device.constructor "" "" False
                 }
             }
     }

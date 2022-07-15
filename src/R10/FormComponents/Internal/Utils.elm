@@ -2,13 +2,22 @@ module R10.FormComponents.Internal.Utils exposing
     ( entitiesValidationOutcomes
     , entitiesWithErrors
     , errorsList
+    , getFlagIcon
     , listSlice
+    , maybeCountryCodeToString
     , stringInsertAtMulti
     )
 
 {-| same as String.Extra.insertAt but allows to input at several positions at once
 -}
 
+import Dict
+import Element.WithContext exposing (..)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
+import Html.Attributes
+import R10.Context
+import R10.Country
 import R10.Form.Internal.Converter
 import R10.Form.Internal.Dict
 import R10.Form.Internal.FieldConf
@@ -114,7 +123,92 @@ entitiesValidationOutcomes form maybeTranslator =
                 , fieldType
                 , R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
                     validationSpec
-                    fieldState.validation
+                    fieldState
                     (translator key)
+                    fieldType
                 )
             )
+
+
+countryCodeToFlag : String -> List (Attribute context msg)
+countryCodeToFlag countryCode =
+    let
+        newCountryCode : String
+        newCountryCode =
+            --
+            -- https://jira.rakuten-it.com/jira/browse/OMN-5571
+            --
+            -- Several phone international prefixes are not countries so a flag is not
+            -- available. As temporary fix I used the flag of the related country.
+            --
+            -- In the future we should have an official Rakuten's list of international
+            -- prefixes,  and associated flags.
+            --
+            -- * AQ Antarctica -> AU
+            -- * IO BritishIndianOceanTerritory -> GB
+            -- * CX ChristmasIsland -> AU
+            -- * CC CocosIslands -> AU
+            -- * XK Kosovo -> Serbia (RS)
+            -- * PM SaintPierreandMiquelon -> FR
+            --   SX SintMaarten -> Netherlands (NL)
+            --   SJ SvalbardandJanMayen -> Norway (NO)
+            --
+            if countryCode == "AQ" then
+                "AU"
+
+            else if countryCode == "IO" then
+                "GB"
+
+            else if countryCode == "CX" then
+                "AU"
+
+            else if countryCode == "CC" then
+                "AU"
+
+            else if countryCode == "XK" then
+                "RS"
+
+            else if countryCode == "PM" then
+                "FR"
+
+            else if countryCode == "SX" then
+                "NL"
+
+            else if countryCode == "SJ" then
+                "NO"
+
+            else
+                countryCode
+    in
+    case Dict.get newCountryCode R10.Form.Internal.Shared.flagIconPositions of
+        Just ( x, y ) ->
+            [ htmlAttribute <| Html.Attributes.style "background-position" (String.fromFloat (x - 1) ++ "px " ++ String.fromFloat (y - 2) ++ "px")
+            , htmlAttribute <| Html.Attributes.style "background-size" "auto"
+            ]
+
+        Nothing ->
+            [ htmlAttribute <| Html.Attributes.style "background-size" "cover" ]
+
+
+maybeCountryCodeToString : Maybe R10.Country.Country -> String
+maybeCountryCodeToString maybeCountry_ =
+    Maybe.map R10.Country.toCountryCode maybeCountry_
+        |> Maybe.withDefault ""
+
+
+getFlagIcon : String -> Element (R10.Context.ContextInternal z) msg
+getFlagIcon countryCode =
+    withContext
+        (\c ->
+            el
+                ([ width <| px 14
+                 , height <| px 11
+                 , Border.shadow { offset = ( 0, 0 ), size = 1, blur = 1, color = rgba 0 0 0 0.2 }
+                 , moveDown 1
+                 , Background.image c.contextR10.urlImageFlags
+                 ]
+                    ++ countryCodeToFlag countryCode
+                )
+            <|
+                none
+        )

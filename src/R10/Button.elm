@@ -27,6 +27,7 @@ import R10.Color.Svg
 import R10.Color.Utils
 import R10.Context exposing (..)
 import R10.FontSize
+import R10.Language
 import R10.Libu
 import R10.Theme
 import R10.Transition
@@ -57,17 +58,22 @@ primary :
     ->
         { label : Element (R10.Context.ContextInternal z) msg
         , libu : R10.Libu.Type msg
+        , translation : { a | key : String }
         }
     -> Element (R10.Context.ContextInternal z) msg
 primary attrsExtra data =
     let
+        id : Attribute context msg
+        id =
+            htmlAttribute <| Html.Attributes.id ("prim_" ++ data.translation.key)
+
         attrs : List (Attribute (R10.Context.ContextInternal z) msg)
         attrs =
             if data.libu == R10.Libu.Bu Nothing then
-                attrsPrimaryDisabled
+                attrsDisabled
 
             else
-                attrsPrimary
+                id :: attrsPrimary
     in
     R10.Libu.view
         (attrs ++ attrsExtra)
@@ -78,7 +84,7 @@ primary attrsExtra data =
 
 {-| -}
 withId : String -> Element (R10.Context.ContextInternal z) msg -> Element (R10.Context.ContextInternal z) msg
-withId id button =
+withId _ button =
     button
 
 
@@ -89,17 +95,22 @@ secondary :
     ->
         { label : Element (R10.Context.ContextInternal z) msg
         , libu : R10.Libu.Type msg
+        , translation : { a | key : String }
         }
     -> Element (R10.Context.ContextInternal z) msg
 secondary attrsExtra data =
     let
+        id : Attribute context msg
+        id =
+            htmlAttribute <| Html.Attributes.id ("seco_" ++ data.translation.key)
+
         attrs : List (Attribute (R10.Context.ContextInternal z) msg)
         attrs =
             if data.libu == R10.Libu.Bu Nothing then
-                attrsSecondaryDisabled
+                attrsDisabled
 
             else
-                attrsSecondary
+                id :: attrsSecondary
     in
     R10.Libu.view
         (attrs ++ attrsExtra)
@@ -115,17 +126,22 @@ tertiary :
     ->
         { label : Element (R10.Context.ContextInternal z) msg
         , libu : R10.Libu.Type msg
+        , translation : { a | key : String }
         }
     -> Element (R10.Context.ContextInternal z) msg
 tertiary attrsExtra data =
     let
+        id : Attribute context msg
+        id =
+            htmlAttribute <| Html.Attributes.id ("terz_" ++ data.translation.key)
+
         attrs : List (Attribute (R10.Context.ContextInternal z) msg)
         attrs =
             if data.libu == R10.Libu.Bu Nothing then
-                attrsTertiaryDisabled
+                attrsDisabled
 
             else
-                attrsTertiary
+                id :: attrsTertiary
     in
     R10.Libu.view
         (attrs ++ attrsExtra)
@@ -141,11 +157,17 @@ quaternary :
     ->
         { label : Element (R10.Context.ContextInternal z) msg
         , libu : R10.Libu.Type msg
+        , translation : { a | key : String }
         }
     -> Element (R10.Context.ContextInternal z) msg
 quaternary attrsExtra data =
+    let
+        id : Attribute context msg
+        id =
+            htmlAttribute <| Html.Attributes.id ("quat_" ++ data.translation.key)
+    in
     R10.Libu.view
-        (attrsQuaternary ++ attrsExtra)
+        (id :: attrsQuaternary ++ attrsExtra)
         { label = data.label
         , type_ = data.libu
         }
@@ -201,23 +223,6 @@ attrsPrimary =
            ]
 
 
-attrsPrimaryDisabled : List (Attribute (R10.Context.ContextInternal z) msg)
-attrsPrimaryDisabled =
-    attrsInCommon
-        ++ [ R10.Color.AttrsBackground.buttonPrimaryDisabled
-           , R10.Color.AttrsFont.buttonPrimaryDisabled
-           , mouseOver
-                [ R10.Color.AttrsBackground.buttonPrimaryDisabledOver
-                , R10.Color.AttrsFont.buttonPrimaryDisabledOver
-                ]
-           , focused
-                [ R10.Color.AttrsBackground.buttonPrimaryDisabledOver
-                , R10.Color.AttrsFont.buttonPrimaryDisabledOver
-                ]
-           , htmlAttribute <| Html.Attributes.style "cursor" "not-allowed"
-           ]
-
-
 attrsSecondary : List (Attribute (R10.Context.ContextInternal z) msg)
 attrsSecondary =
     attrsInCommon
@@ -229,13 +234,14 @@ attrsSecondary =
            ]
 
 
-attrsSecondaryDisabled : List (Attribute (R10.Context.ContextInternal z) msg)
-attrsSecondaryDisabled =
+attrsDisabled : List (Attribute (R10.Context.ContextInternal z) msg)
+attrsDisabled =
     attrsInCommon
         ++ [ R10.Color.AttrsBackground.buttonPrimaryDisabled
+           , R10.Color.AttrsFont.buttonPrimaryDisabled
+           , R10.Color.AttrsBorder.buttonSecondary
            , mouseOver [ R10.Color.AttrsBackground.buttonMinorOver ]
            , focused [ R10.Color.AttrsBackground.buttonMinorOver ]
-           , R10.Color.AttrsBorder.buttonSecondary
            , Border.width 1
            , htmlAttribute <| Html.Attributes.style "cursor" "not-allowed"
            ]
@@ -252,15 +258,6 @@ attrsTertiary =
     , Font.center
     , R10.FontSize.small
     ]
-
-
-attrsTertiaryDisabled : List (Attribute (R10.Context.ContextInternal z) msg)
-attrsTertiaryDisabled =
-    attrsTertiary
-        ++ [ mouseOver []
-           , focused []
-           , htmlAttribute <| Html.Attributes.style "cursor" "not-allowed"
-           ]
 
 
 attrsQuaternary : List (Attribute (R10.Context.ContextInternal z) msg)

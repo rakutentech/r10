@@ -1,5 +1,6 @@
 module R10.Form.Internal.State exposing
     ( State
+    , encoder
     , fromString
     , init
     , toString
@@ -11,12 +12,9 @@ import Json.Decode.Extra
 import Json.Decode.Pipeline
 import Json.Encode as E
 import Json.Encode.Extra
-import R10.Country
-import R10.Form.Internal.Conf
 import R10.Form.Internal.FieldState
 import R10.Form.Internal.Key
 import R10.Form.Internal.QtySubmitAttempted
-import R10.FormTypes
 import Set
 
 

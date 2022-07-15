@@ -7,10 +7,6 @@ module R10.When exposing (do, otherwise, when)
 -- when x do ... otherwise ...
 
 
-type Is
-    = Is
-
-
 type Do
     = Do
 

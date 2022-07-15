@@ -8,13 +8,8 @@ module R10.Okaimonopanda exposing (view)
 
 -}
 
-import Browser
-import Browser.Events
-import Dict
 import Html
 import Html.Attributes
-import Html.Events
-import Json.Decode
 import Svg
 import Svg.Attributes as SA
 
@@ -25,58 +20,8 @@ import Svg.Attributes as SA
 -- lingua e84564
 
 
-defaultCodeLanguage : String
-defaultCodeLanguage =
-    "en-US"
-
-
-defaultCodeError : String
-defaultCodeError =
-    "GENERIC"
-
-
-type alias Okaimonopanda =
-    { mouse : Position
-    , screen : Position
-    , flags : Flags
-    , codeLanguage : String
-    , codeError : String
-    }
-
-
-init : Flags -> ( Okaimonopanda, Cmd Msg )
-init flags =
-    ( { mouse = { x = flags.x // 2, y = flags.y // 2 }
-      , screen = { x = flags.x, y = flags.y }
-      , flags = flags
-      , codeLanguage = Maybe.withDefault defaultCodeLanguage flags.codeLanguage
-      , codeError = Maybe.withDefault defaultCodeError flags.codeError
-      }
-    , Cmd.none
-    )
-
-
 type Msg
-    = MouseMove Position
-    | ScreenResize Int Int
-    | ChangeCodeLanguage String
-    | ChangeCodeError String
-
-
-update : Msg -> Okaimonopanda -> ( Okaimonopanda, Cmd Msg )
-update msg model =
-    case msg of
-        MouseMove mouse ->
-            ( { model | mouse = mouse }, Cmd.none )
-
-        ScreenResize x y ->
-            ( { model | screen = { x = x, y = y } }, Cmd.none )
-
-        ChangeCodeLanguage codeLanguage ->
-            ( { model | codeLanguage = codeLanguage }, Cmd.none )
-
-        ChangeCodeError codeError ->
-            ( { model | codeError = codeError }, Cmd.none )
+    = Int Int String String
 
 
 attrs : Float -> Float -> Float -> Float -> Float -> List (Html.Attribute msg)
@@ -109,21 +54,6 @@ svgY =
 svgWidthOnScreen : Int
 svgWidthOnScreen =
     400
-
-
-backgroundX : number
-backgroundX =
-    580
-
-
-backgroundY : number
-backgroundY =
-    400
-
-
-backgroundRatio : Float
-backgroundRatio =
-    580 / 400
 
 
 {-| -}
@@ -159,207 +89,18 @@ view model =
     ]
 
 
-viewFullPage : Okaimonopanda -> Html.Html Msg
-viewFullPage model =
-    let
-        windowRatio =
-            toFloat model.screen.x / toFloat model.screen.y
 
-        deltaX =
-            toFloat model.mouse.x / toFloat model.screen.x
-
-        deltaY =
-            toFloat model.mouse.y / toFloat model.screen.y
-
-        svgWidth =
-            Basics.max 180 (Basics.min (model.screen.x - 220) svgWidthOnScreen)
-
-        dictTranslations =
-            listToDict model.flags.translations .codeLanguage
-
-        translation =
-            getTranslation emptyTranslation defaultCodeLanguage model.codeLanguage dictTranslations
-
-        dictErrors =
-            listToDict translation.errors .codeError
-
-        error =
-            getTranslation emptyError defaultCodeError model.codeError dictErrors
-
-        widthBackground =
-            if backgroundRatio - windowRatio < 0 then
-                model.screen.x
-
-            else
-                -- model.screen.y : backgroundY = ? : backgroundX
-                round <| toFloat model.screen.y * backgroundX / toFloat backgroundY
-    in
-    Html.div [ Html.Attributes.class "meta" ]
-        -- here we sliglty enlarge the background and we shift to the top left so that the borders are not showing
-        [ Html.div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -5 ++ [ Html.Attributes.style "position" "fixed" ]) [ back1 <| round (toFloat widthBackground * 1.1) ]
-        , Html.div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -10 ++ [ Html.Attributes.style "position" "fixed" ]) [ back2 <| round (toFloat widthBackground * 1.1) ]
-        , Html.div (attrs (toFloat widthBackground * -0.05) (toFloat widthBackground * -0.05) deltaX deltaY -20 ++ [ Html.Attributes.style "position" "fixed" ]) [ back3 <| round (toFloat widthBackground * 1.1) ]
-        , Html.div [ Html.Attributes.class "container" ]
-            [ Html.div [ Html.Attributes.class "section left" ]
-                -- Panda
-                (view model)
-            , Html.div [ Html.Attributes.class "section right" ]
-                [ Html.h1 [ Html.Attributes.class "centerIfMobile", Html.Attributes.id "title" ] [ Html.text error.title ]
-                , Html.h2 [ Html.Attributes.class "centerIfMobile", Html.Attributes.id "subTitle" ] [ Html.text error.subTitle ]
-                , Html.hr [] []
-                , Html.div [] [ Html.text translation.text1 ]
-                , Html.div [] [ Html.text translation.text2 ]
-                , Html.ul []
-                    [ Html.li [] [ Html.text translation.point1 ]
-                    , Html.li [] [ Html.text translation.point2 ]
-                    , Html.li [] [ Html.text translation.point3 ]
-                    ]
-                , case ( translation.buttonHref, translation.buttonText ) of
-                    ( Just "", _ ) ->
-                        Html.text ""
-
-                    ( _, Just "" ) ->
-                        Html.text ""
-
-                    ( Just buttonHref, Just buttonText ) ->
-                        Html.div []
-                            [ Html.a
-                                [ Html.Attributes.class "button largeIfMobile centerIfMobile"
-                                , Html.Attributes.href buttonHref
-                                ]
-                                [ Html.text buttonText ]
-                            ]
-
-                    _ ->
-                        Html.text ""
-                , if Dict.size dictTranslations < 2 then
-                    Html.text ""
-
-                  else
-                    Html.div [ Html.Attributes.class "languageSelectorWrapper" ]
-                        [ Html.select
-                            [ Html.Events.on "change" (Json.Decode.map ChangeCodeLanguage Html.Events.targetValue)
-                            , Html.Attributes.value model.codeLanguage
-                            , Html.Attributes.class "select"
-                            ]
-                            (List.map
-                                (\codeLanguage ->
-                                    let
-                                        translation_ =
-                                            getTranslation emptyTranslation defaultCodeLanguage codeLanguage dictTranslations
-                                    in
-                                    Html.option
-                                        ([ Html.Attributes.value codeLanguage ]
-                                            ++ (if codeLanguage == model.codeLanguage then
-                                                    [ Html.Attributes.selected True ]
-
-                                                else
-                                                    []
-                                               )
-                                        )
-                                        [ Html.text translation_.language ]
-                                )
-                                (Dict.keys dictTranslations)
-                            )
-                        ]
-                , Html.div [ Html.Attributes.class "codeError" ] [ Html.text <| model.codeError ]
-                ]
-            ]
-        ]
-
-
-getTranslation : v -> comparable -> comparable -> Dict.Dict comparable v -> v
-getTranslation emptyValue defaultCode codeLanguage dictTranslations =
-    Maybe.withDefault
-        (Maybe.withDefault emptyValue (Dict.get defaultCode dictTranslations))
-        (Dict.get codeLanguage dictTranslations)
-
-
-emptyTranslation : Translation
-emptyTranslation =
-    { codeLanguage = ""
-    , language = ""
-    , errors = []
-    , text1 = ""
-    , text2 = ""
-    , point1 = ""
-    , point2 = ""
-    , point3 = ""
-    , buttonText = Nothing
-    , buttonHref = Nothing
-    }
-
-
-emptyError : Error
-emptyError =
-    { codeError = ""
-    , title = ""
-    , subTitle = ""
-    }
-
-
-type alias Position =
-    { x : Int, y : Int }
-
-
-decoder : Json.Decode.Decoder Position
-decoder =
-    Json.Decode.map2 Position
-        (Json.Decode.field "pageX" Json.Decode.int)
-        (Json.Decode.field "pageY" Json.Decode.int)
-
-
-subscriptions : a -> Sub Msg
-subscriptions _ =
-    Sub.batch
-        [ Browser.Events.onMouseMove (Json.Decode.map MouseMove decoder)
-        , Browser.Events.onResize ScreenResize
-        ]
-
-
-listToDict : List v -> (v -> comparable) -> Dict.Dict comparable v
-listToDict translations f =
-    Dict.fromList <| List.map (\translation -> ( f translation, translation )) translations
-
-
-type alias Flags =
-    { x : Int
-    , y : Int
-    , codeLanguage : Maybe String
-    , codeError : Maybe String
-    , translations : List Translation
-    }
-
-
-type alias Error =
-    { codeError : String
-    , title : String
-    , subTitle : String
-    }
-
-
-type alias Translation =
-    { codeLanguage : String
-    , language : String
-    , errors : List Error
-    , text1 : String
-    , text2 : String
-    , point1 : String
-    , point2 : String
-    , point3 : String
-    , buttonText : Maybe String
-    , buttonHref : Maybe String
-    }
-
-
-main : Program Flags Okaimonopanda Msg
-main =
-    Browser.element
-        { init = init
-        , view = viewFullPage
-        , update = update
-        , subscriptions = subscriptions
-        }
+-- This is a main function in case the Okaimonopanda
+-- need to run autonumos
+--
+-- main : Program Flags Okaimonopanda Msg
+-- main =
+--     Browser.element
+--         { init = init
+--         , view = viewFullPage
+--         , update = update
+--         , subscriptions = subscriptions
+--         }
 
 
 svgWrapper : String -> Int -> List (Svg.Svg msg) -> Svg.Svg msg
@@ -458,31 +199,4 @@ svgHead size =
         , Svg.path [ SA.fill darkColor, SA.d head ] []
         , Svg.path [ SA.fill darkColor, SA.d smoke ] []
         , Svg.path [ SA.fill "#fff", SA.d "M6152 5349c-74-12-323-85-397-116l-142-59a9846 9846 0 01-668-336c-689-374-808-414-1210-412-177 1-232 5-350 27-154 27-428 94-545 132-155 51-524 134-634 144-236 20-389-22-554-156a855 855 0 01-327-528c-61-298 61-685 330-1050 31-42 54-79 51-84-17-27 318-217 560-319 483-203 990-257 1675-177 212 24 639 111 818 166 330 101 611 247 872 455 94 74 318 298 391 390 229 289 353 518 451 835 58 185 77 298 84 484 8 225-30 444-97 557-18 30-28 37-77 47-64 13-154 13-231 0zM4217 3200c52-23 127-91 143-131 13-30 14-30 64-23 135 19 265-9 344-73 54-44 72-79 72-141 0-39-7-60-32-98-44-66-72-78-132-60-26 8-53 20-61 26-20 16-19 44 1 61 26 21 54 86 54 124 0 54-28 75-97 75-67 0-126-26-162-71-30-39-70-136-71-171 0-39-24-59-63-51-55 10-90 33-153 102a370 370 0 01-232 132c-145 24-296-30-316-113-13-53 6-106 54-154 46-45 51-69 15-78-58-15-119 13-176 80-128 150-69 284 151 348 30 9 93 19 138 23l84 8 12 36c31 90 99 152 185 170 50 10 128 1 178-21z" ] []
-        ]
-
-
-back1 : Int -> Svg.Svg msg
-back1 size =
-    svgWrapper
-        "0 0 580 400"
-        size
-        [ Svg.path [ SA.fillOpacity ".04", SA.d "M483 123c-49 17-80 7-112 13-32 7-43 18-55 27s-21 28-28 38c-6 11-21 29-39 37-18 7-47 6-66 1s-33-11-51-30a98 98 0 01-24-62c-2-21 1-42 13-57 12-16 35-38 86-45s99-6 115-6c17 0 76 2 106-19 31-22 32-27 53-37 21-11 40-12 57-7s33 11 48 28c15 16 8 43-9 61-16 19-45 41-94 58z" ] []
-        ]
-
-
-back2 : Int -> Svg.Svg msg
-back2 size =
-    svgWrapper
-        "0 0 580 400"
-        size
-        [ Svg.path [ SA.fillOpacity ".04", SA.d "M8 271c26-10 67-40 96-62 28-23 53-69 83-87 31-19 53-24 78-22 24 3 40 15 56 31 17 15 25 38 26 51 0 13-1 43-7 61-7 18-29 46-59 57s-80 16-119 8-91-5-127 12c-35 18-25 44-60 62-35 17-63 7-75-19-11-27 5-66 27-83 22-16 56 0 81-9z" ] []
-        ]
-
-
-back3 : Int -> Svg.Svg msg
-back3 size =
-    svgWrapper
-        "0 0 580 400"
-        size
-        [ Svg.ellipse [ SA.cx "450.2", SA.cy "297.3", SA.fillOpacity ".04", SA.rx "102.6", SA.ry "100.2" ] []
         ]

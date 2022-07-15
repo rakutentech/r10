@@ -1,4 +1,7 @@
-module R10.Color.AttrsBackground exposing (buttonMinorOver, buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, buttonPrimaryOver, debugger, debuggerOver, dropdown, dropdownHover, dropdownSelected, inputFieldCheckboxOver, inputFieldCheckboxSelected, surface, sameAsBorderNormal, background, surface2dp)
+module R10.Color.AttrsBackground exposing
+    ( buttonMinorOver, buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, buttonPrimaryOver, debugger, debuggerOver, dropdown, dropdownHover, dropdownSelected, inputFieldCheckboxOver, inputFieldCheckboxSelected, surface, sameAsBorderNormal, background, surface2dp
+    , backgroundAlertDanger, backgroundAlertInfo, backgroundAlertSuccess, backgroundAlertWarning
+    )
 
 {-| Background colors
 
@@ -24,6 +27,50 @@ background =
     withContextAttribute <|
         \c ->
             R10.Color.Internal.Derived.Background
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
+
+
+{-| -}
+backgroundAlertDanger : Attribute (R10.Context.ContextInternal context) msg
+backgroundAlertDanger =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundAlertDanger
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
+
+
+{-| -}
+backgroundAlertInfo : Attribute (R10.Context.ContextInternal context) msg
+backgroundAlertInfo =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundAlertInfo
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
+
+
+{-| -}
+backgroundAlertSuccess : Attribute (R10.Context.ContextInternal context) msg
+backgroundAlertSuccess =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundAlertSuccess
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Background.color
+
+
+{-| -}
+backgroundAlertWarning : Attribute (R10.Context.ContextInternal context) msg
+backgroundAlertWarning =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.BackgroundAlertWarning
                 |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Background.color

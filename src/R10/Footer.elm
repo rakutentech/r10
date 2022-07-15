@@ -59,7 +59,7 @@ view model args =
                                 map args.msgMapper <| R10.Header.logoutLink model args
 
                             R10.Header.SessionError _ ->
-                                map args.msgMapper <| R10.Header.loginLink model args
+                                map args.msgMapper <| R10.Header.urlLogin model args
                        ]
             ]
         , el [ alignBottom, centerX, Font.size 14 ] <| text "© Rakuten, Inc."

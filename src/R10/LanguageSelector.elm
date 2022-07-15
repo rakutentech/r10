@@ -9,7 +9,6 @@ module R10.LanguageSelector exposing (view)
 import Element.WithContext exposing (..)
 import Element.WithContext.Font as Font
 import Html.Attributes
-import R10.Color.Svg
 import R10.Color.Utils
 import R10.Context exposing (..)
 import R10.DropDown

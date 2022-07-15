@@ -147,7 +147,7 @@ listPrimary =
 
 
 {-| -}
-listBase : R10.Theme.Theme -> List { color : Color.Color, name : String, description : String }
+listBase : R10.Theme.Theme -> List { color : Color.Color, name : String }
 listBase theme =
     R10.Color.Internal.Base.list theme
 

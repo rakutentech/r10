@@ -12,7 +12,7 @@ module R10.Form exposing
     , updateField, getField, getFieldValue, getFieldValueIgnoringPath, getFieldValueAsBool, getActiveTab, getMultiActiveKeys
     , setFieldValue, setActiveTab, setMultiplicableQuantities, setFieldDisabled
     , stringToBool, boolToString
-    , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, textView, processValue, TextArgs, ArgsText, viewBinary, ArgsBinary
+    , viewIconButton, ArgsIconButton, viewButton, ArgsButton, viewText, processValue, TextArgs, ArgsText, viewBinary, ArgsBinary
     , Style, style, defaultStyle, styleToString, stringToStyle
     , Button, button
     , themeToPalette, label, extraCssComponents, extraCss, colorToCssString
@@ -23,6 +23,8 @@ module R10.Form exposing
     , viewSingle, ArgsSingle, viewSingleCustom, ArgsSingleCustom
     , validate, validation, Validation, ValidationCode, ValidationSpecs, ValidationForView, ValidationMessage, validateDirtyFormFields, validateEntireForm, validationMessage, validationToString, shouldShowTheValidationOverview, allValidationKeysMaker, runOnlyExistingValidations, commonValidation, clearFieldValidation, componentValidation, initValidationSpecs, isExistingFormFieldsValid, setFieldValidationError, entitiesValidationOutcomes, isRegexValidation, entitiesWithErrors
     , fieldConfigConcatMap, fieldConfigMap
+    , handleWithPatternChange, errorsFromApiToValidationForView, validationForViewToErrorMessages
+    , commonRegularExpression, msgToValue, stateToValue
     )
 
 {-| Useful things to build a form.
@@ -192,11 +194,17 @@ If you want to personalise the translations or you want to translate them in dif
 
 @docs fieldConfigConcatMap, fieldConfigMap
 
+
+# Others
+
+@docs handleWithPatternChange, errorsFromApiToValidationForView, validationForViewToErrorMessages
+
 -}
 
 import Dict
 import Element.WithContext exposing (..)
 import Json.Decode
+import Json.Encode
 import R10.Context exposing (..)
 import R10.Country
 import R10.Form.Internal.Conf
@@ -216,9 +224,6 @@ import R10.FormComponents.Internal.Binary
 import R10.FormComponents.Internal.Button
 import R10.FormComponents.Internal.ExtraCss
 import R10.FormComponents.Internal.IconButton
-import R10.FormComponents.Internal.Phone
-import R10.FormComponents.Internal.Phone.Common
-import R10.FormComponents.Internal.Phone.Update
 import R10.FormComponents.Internal.Single
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Single.Update
@@ -444,6 +449,12 @@ msg =
     }
 
 
+{-| -}
+msgToValue : Msg -> Maybe String
+msgToValue =
+    R10.Form.Internal.Msg.toValue
+
+
 
 -- ███████ ████████  █████  ████████ ███████
 -- ██         ██    ██   ██    ██    ██
@@ -498,6 +509,12 @@ initStateWithDefaults =
 stateToString : State -> String
 stateToString =
     R10.Form.Internal.State.toString
+
+
+{-| -}
+stateToValue : State -> Json.Encode.Value
+stateToValue =
+    R10.Form.Internal.State.encoder
 
 
 {-| -}
@@ -830,7 +847,7 @@ This function is normally used to disble or not the submit button.
 -}
 isFormSubmittable : Form -> Bool
 isFormSubmittable =
-    R10.Form.Internal.Update.submittable
+    R10.Form.Internal.Update.isFormSubmittable
 
 
 {-| -}
@@ -880,7 +897,11 @@ type alias ArgsButton z msg =
 
 
 {-| -}
-viewText : List (Attribute (R10.Context.ContextInternal z) msg) -> List (Attribute (R10.Context.ContextInternal z) msg) -> ArgsText z msg -> Element (R10.Context.ContextInternal z) msg
+viewText :
+    List (Attribute (R10.Context.ContextInternal z) msg)
+    -> List (Attribute (R10.Context.ContextInternal z) msg)
+    -> ArgsText z msg
+    -> Element (R10.Context.ContextInternal z) msg
 viewText =
     R10.FormComponents.Internal.Text.view
 
@@ -915,10 +936,10 @@ type alias Style =
 
 
 {-| -}
-style : { filled : Style, outlined : Style }
+style : { fixedLabels : Style, floatingLabels : Style }
 style =
-    { filled = R10.FormComponents.Internal.Style.Filled
-    , outlined = R10.FormComponents.Internal.Style.Outlined
+    { fixedLabels = R10.FormComponents.Internal.Style.FixedLabels
+    , floatingLabels = R10.FormComponents.Internal.Style.FloatingLabels
     }
 
 
@@ -1094,6 +1115,7 @@ validationCodes :
     , jsonFormatInvalid : ValidationCode
     , lengthTooLargeInvalid : ValidationCode
     , lengthTooSmallInvalid : ValidationCode
+    , lengthExactInvalid : ValidationCode
     , lengthValid : ValidationCode
     , required : ValidationCode
     , empty : ValidationCode
@@ -1239,6 +1261,10 @@ type alias ValidationSpecs =
     R10.Form.Internal.FieldConf.ValidationSpecs
 
 
+type alias Range =
+    R10.Form.Internal.FieldConf.Range
+
+
 {-| -}
 validation :
     { allOf : List Validation -> Validation
@@ -1253,6 +1279,7 @@ validation :
     , withMsg : ValidationMessage -> Validation -> Validation
     , empty : Validation
     , not : Validation -> Validation
+    , dateRange : Range -> Validation
     }
 validation =
     { noValidation = R10.Form.Internal.FieldConf.NoValidation
@@ -1267,6 +1294,7 @@ validation =
     , regex = R10.Form.Internal.FieldConf.Regex
     , empty = R10.Form.Internal.FieldConf.Empty
     , not = R10.Form.Internal.FieldConf.Not
+    , dateRange = R10.Form.Internal.FieldConf.DateRange
     }
 
 
@@ -1342,6 +1370,24 @@ commonValidation =
 
 
 {-| -}
+commonRegularExpression :
+    { alpha : String
+    , alphaNumeric : String
+    , alphaNumericDash : String
+    , alphaNumericDashSpace : String
+    , phoneNumber : String
+    , email : String
+    , numeric : String
+    , integer : String
+    , decimal : String
+    , url : String
+    , hexColor : String
+    }
+commonRegularExpression =
+    R10.Form.Internal.Validation.commonRegularExpression
+
+
+{-| -}
 clearFieldValidation : KeyAsString -> State -> State
 clearFieldValidation =
     R10.Form.Internal.Helpers.clearFieldValidation
@@ -1354,7 +1400,16 @@ setFieldValidationError =
 
 
 {-| -}
-validate : (String -> String -> String) -> Bool -> Key -> R10.FormTypes.FieldType -> Maybe ValidationSpecs -> State -> FieldState -> FieldState
+validate :
+    { formStateBeforeValidationFixer : String -> String -> String
+    , showAlsoPassedValidation : Bool
+    , key : R10.Form.Internal.Key.Key
+    , fieldType : R10.FormTypes.FieldType
+    , maybeValidationSpec : Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+    , formState : R10.Form.Internal.State.State
+    }
+    -> FieldState
+    -> FieldState
 validate =
     R10.Form.Internal.Validation.validate
 
@@ -1410,6 +1465,55 @@ entitiesWithErrors =
 entitiesValidationOutcomes : Form -> Maybe Translator -> List ( Key, R10.FormTypes.FieldType, ValidationForView )
 entitiesValidationOutcomes =
     R10.FormComponents.Internal.Utils.entitiesValidationOutcomes
+
+
+{-| -}
+errorsFromApiToValidationForView :
+    Translator
+    -> List { a | field : String, reasonCode : String }
+    -> List ( Key, ValidationForView )
+errorsFromApiToValidationForView translator apiErrors =
+    List.map
+        (\apiError ->
+            let
+                key : Key
+                key =
+                    stringToKey apiError.field
+            in
+            ( key
+            , R10.FormComponents.Internal.Validations.Validated
+                [ R10.FormComponents.Internal.Validations.MessageErr <|
+                    translator key apiError.reasonCode
+                ]
+            )
+        )
+        apiErrors
+
+
+{-| -}
+validationForViewToErrorMessages : List ( Key, ValidationForView ) -> List String
+validationForViewToErrorMessages valiadtionsForView =
+    List.concat <|
+        List.filterMap
+            (\( _, validation_ ) ->
+                case validation_ of
+                    R10.FormComponents.Internal.Validations.Validated validatedList ->
+                        Just <|
+                            List.filterMap
+                                (\validated_ ->
+                                    case validated_ of
+                                        R10.FormComponents.Internal.Validations.MessageErr message ->
+                                            Just message
+
+                                        _ ->
+                                            Nothing
+                                )
+                                validatedList
+
+                    _ ->
+                        Nothing
+            )
+            valiadtionsForView
 
 
 
@@ -1477,16 +1581,6 @@ type alias TextArgs z msg =
 
 
 {-| -}
-textView :
-    List (Attribute (R10.Context.ContextInternal z) msg)
-    -> List (Attribute (R10.Context.ContextInternal z) msg)
-    -> R10.FormComponents.Internal.Text.Args z msg
-    -> Element (R10.Context.ContextInternal z) msg
-textView =
-    R10.FormComponents.Internal.Text.view
-
-
-{-| -}
 processValue : { pattern : String, previousValue : String, value : String } -> String
 processValue =
     R10.FormComponents.Internal.Text.processValue
@@ -1515,3 +1609,15 @@ For example a Japanese address field can require to have at least one digit in i
 fieldConfigConcatMap : (FieldConf -> List FieldConf) -> Conf -> Conf
 fieldConfigConcatMap =
     R10.Form.Internal.Conf.fieldConfigConcatMap
+
+
+
+--
+--
+--
+
+
+{-| -}
+handleWithPatternChange : { pattern : String, oldValue : String, newValue : String } -> String
+handleWithPatternChange =
+    R10.FormComponents.Internal.Text.handleWithPatternChange

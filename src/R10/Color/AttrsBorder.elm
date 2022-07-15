@@ -90,7 +90,7 @@ inputFieldError : Attribute (R10.Context.ContextInternal z) msg
 inputFieldError =
     withContextAttribute <|
         \c ->
-            R10.Color.Internal.Derived.Error
+            R10.Color.Internal.Derived.FontAlertDanger
                 |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color
@@ -101,7 +101,7 @@ inputFieldSuccess : Attribute (R10.Context.ContextInternal z) msg
 inputFieldSuccess =
     withContextAttribute <|
         \c ->
-            R10.Color.Internal.Derived.Success
+            R10.Color.Internal.Derived.FontAlertSuccess
                 |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Border.color

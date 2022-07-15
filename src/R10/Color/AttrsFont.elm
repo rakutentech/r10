@@ -1,4 +1,7 @@
-module R10.Color.AttrsFont exposing (buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, error, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid)
+module R10.Color.AttrsFont exposing
+    ( buttonPrimary, buttonPrimaryDisabled, buttonPrimaryDisabledOver, inputFieldCheckboxOver, link, linkOver, normal, normalLighter, valid
+    , fontAlertDanger, fontAlertInfo, fontAlertSuccess, fontAlertWarning
+    )
 
 {-| Font colors
 
@@ -12,6 +15,7 @@ import Element.WithContext.Font as Font
 import R10.Color.Internal.Derived
 import R10.Color.Utils
 import R10.Context exposing (..)
+import R10.Mode
 
 
 {-| -}
@@ -66,20 +70,61 @@ linkOver =
             R10.Color.Internal.Derived.FontLink
                 |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> Color.Manipulate.scaleHsl
-                    { saturationScale = 0.3
-                    , lightnessScale = -0.2
-                    , alphaScale = 0
-                    }
+                    (if R10.Mode.isLight c.contextR10.theme.mode then
+                        { saturationScale = 0.3
+                        , lightnessScale = -0.25
+                        , alphaScale = 0
+                        }
+
+                     else
+                        { saturationScale = 0.3
+                        , lightnessScale = 0.25
+                        , alphaScale = 0
+                        }
+                    )
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
 
 
 {-| -}
-error : Attribute (R10.Context.ContextInternal z) msg
-error =
+fontAlertDanger : Attribute (R10.Context.ContextInternal z) msg
+fontAlertDanger =
     withContextAttribute <|
         \c ->
-            R10.Color.Internal.Derived.Error
+            R10.Color.Internal.Derived.FontAlertDanger
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
+
+
+{-| -}
+fontAlertInfo : Attribute (R10.Context.ContextInternal z) msg
+fontAlertInfo =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.FontAlertInfo
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
+
+
+{-| -}
+fontAlertWarning : Attribute (R10.Context.ContextInternal z) msg
+fontAlertWarning =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.FontAlertWarning
+                |> R10.Color.Internal.Derived.toColor c.contextR10.theme
+                |> R10.Color.Utils.fromColorColor
+                |> Font.color
+
+
+{-| -}
+fontAlertSuccess : Attribute (R10.Context.ContextInternal z) msg
+fontAlertSuccess =
+    withContextAttribute <|
+        \c ->
+            R10.Color.Internal.Derived.FontAlertSuccess
                 |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
@@ -90,7 +135,7 @@ valid : Attribute (R10.Context.ContextInternal z) msg
 valid =
     withContextAttribute <|
         \c ->
-            R10.Color.Internal.Derived.Success
+            R10.Color.Internal.Derived.FontAlertSuccess
                 |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color
@@ -116,7 +161,7 @@ buttonPrimaryDisabled : Attribute (R10.Context.ContextInternal z) msg
 buttonPrimaryDisabled =
     withContextAttribute <|
         \c ->
-            R10.Color.Internal.Derived.FontMediumEmphasisWithMaximumContrast
+            R10.Color.Internal.Derived.FontMediumEmphasis
                 |> R10.Color.Internal.Derived.toColor c.contextR10.theme
                 |> R10.Color.Utils.fromColorColor
                 |> Font.color

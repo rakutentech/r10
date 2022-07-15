@@ -1,5 +1,6 @@
 module R10.Palette exposing
-    ( black
+    ( Palette
+    , black
     , crimson
     , crimsonLight
     , danger
@@ -22,7 +23,6 @@ module R10.Palette exposing
     , warning
     , white
     , withOpacity
-    , Palette
     )
 
 import Color
@@ -88,8 +88,8 @@ fromTheme theme =
 
     --
     , primaryVariant = R10.Color.Utils.toColorColor <| R10.Color.Svg.primaryVariant theme
-    , success = R10.Color.Utils.toColorColor <| R10.Color.Svg.success theme
-    , error = R10.Color.Utils.toColorColor <| R10.Color.Svg.error theme
+    , success = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontAlertSuccess theme
+    , error = R10.Color.Utils.toColorColor <| R10.Color.Svg.fontAlertDanger theme
     , background = R10.Color.Utils.toColorColor <| R10.Color.Svg.background theme
 
     --

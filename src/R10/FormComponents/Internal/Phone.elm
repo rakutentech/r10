@@ -6,7 +6,6 @@ module R10.FormComponents.Internal.Phone exposing
     , viewOptionEl
     )
 
-import Dict
 import Element.WithContext exposing (..)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
@@ -16,8 +15,6 @@ import Element.WithContext.Input as Input
 import Html.Attributes
 import R10.Context exposing (..)
 import R10.Country
-import R10.Form.Internal.Helpers
-import R10.Form.Internal.Shared
 import R10.FormComponents.Internal.IconButton
 import R10.FormComponents.Internal.Phone.Combobox
 import R10.FormComponents.Internal.Phone.Common
@@ -29,7 +26,6 @@ import R10.FormComponents.Internal.Utils
 import R10.Palette
 import R10.SimpleMarkdown
 import R10.Transition
-import Url
 
 
 
@@ -70,46 +66,6 @@ defaultTrailingIcon { opened, palette } =
 
 
 --helpers Public
-
-
-update : R10.FormComponents.Internal.Phone.Common.Msg -> R10.FormComponents.Internal.Phone.Common.Model -> ( R10.FormComponents.Internal.Phone.Common.Model, Cmd R10.FormComponents.Internal.Phone.Common.Msg )
-update =
-    R10.FormComponents.Internal.Phone.Update.update
-
-
-getFlagIcon : Maybe R10.Country.Country -> Element (R10.Context.ContextInternal z) msg
-getFlagIcon maybeCountry =
-    let
-        countryCode : String
-        countryCode =
-            Maybe.map R10.Country.toCountryCode maybeCountry
-                |> Maybe.withDefault ""
-
-        backgroundPosition : List (Attribute context msg)
-        backgroundPosition =
-            case Dict.get countryCode R10.Form.Internal.Shared.flagIconPositions of
-                Just ( x, y ) ->
-                    [ htmlAttribute <| Html.Attributes.style "background-position" (String.fromFloat (x - 1) ++ "px " ++ String.fromFloat (y - 2) ++ "px")
-                    , htmlAttribute <| Html.Attributes.style "background-size" "auto"
-                    ]
-
-                Nothing ->
-                    [ htmlAttribute <| Html.Attributes.style "background-size" "cover" ]
-    in
-    withContext
-        (\c ->
-            el
-                ([ width <| px 14
-                 , height <| px 11
-                 , Border.shadow { offset = ( 0, 0 ), size = 1, blur = 1, color = rgba 0 0 0 0.2 }
-                 , moveDown 1
-                 , Background.image c.contextR10.urlImageFlags
-                 ]
-                    ++ backgroundPosition
-                )
-            <|
-                none
-        )
 
 
 insertBold : List Int -> String -> String
@@ -156,7 +112,8 @@ viewOptionEl { search, msgOnSelect } country =
         , htmlAttribute <| Html.Attributes.style "mask-image" "linear-gradient(right, rgba(255,255,0,0), rgba(255,255,0, 1) 16px)"
         , htmlAttribute <| Html.Attributes.style "-webkit-mask-image" "-webkit-linear-gradient(right, rgba(255,255,0,0) 10px, rgba(255,255,0, 1) 16px)"
         ]
-        [ getFlagIcon <| Just country
+        [ R10.FormComponents.Internal.Utils.getFlagIcon
+            (R10.FormComponents.Internal.Utils.maybeCountryCodeToString <| Just country)
         , row [] (withBold |> R10.SimpleMarkdown.elementMarkdown)
         , el [ alpha 0.5 ] <| text ("(" ++ R10.Country.toCountryTelCode country ++ ")")
         ]
@@ -172,23 +129,14 @@ getFlagButton :
     , style : R10.FormComponents.Internal.Style.Style
     }
     -> Element (R10.Context.ContextInternal z) msg
-getFlagButton { palette, disabled, toMsg, key, filteredFieldOption, model, style } =
+getFlagButton { palette, disabled, toMsg, key, filteredFieldOption, model } =
     Input.button
         ([ R10.Transition.transition "all 0.2s"
          , paddingXY 10 5
          , Border.rounded 10
+         , moveDown 3
+         , moveRight 8
          ]
-            ++ (case style of
-                    R10.FormComponents.Internal.Style.Filled ->
-                        [ moveDown -2
-                        , moveRight 0
-                        ]
-
-                    R10.FormComponents.Internal.Style.Outlined ->
-                        [ moveDown 3
-                        , moveRight 8
-                        ]
-               )
             ++ (if not disabled then
                     [ mouseOver [ Background.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 palette ]
                     , focused [ Background.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 palette ]
@@ -233,7 +181,10 @@ getFlagButton { palette, disabled, toMsg, key, filteredFieldOption, model, style
             in
             row
                 [ spacing 7 ]
-                [ el [] (getFlagIcon maybeCountryValue)
+                [ el []
+                    (R10.FormComponents.Internal.Utils.getFlagIcon
+                        (R10.FormComponents.Internal.Utils.maybeCountryCodeToString maybeCountryValue)
+                    )
                 , text <| Maybe.withDefault "" (Maybe.map R10.Country.toCountryTelCode maybeCountryValue)
                 , el
                     [ Font.size 11
@@ -325,6 +276,7 @@ view attrs model conf =
 
             -- , trailingIcon = [ defaultTrailingIcon { opened = model.opened, palette = conf.palette } ]
             , trailingIcon = []
+            , disabledCountryChange = conf.disabledCountryChange
             }
     in
     R10.FormComponents.Internal.Phone.Combobox.view attrs model args

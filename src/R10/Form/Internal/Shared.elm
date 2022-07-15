@@ -4,13 +4,16 @@ module R10.Form.Internal.Shared exposing
     , defaultEmailFieldKeyString
     , defaultMobilePhoneFieldKeyString
     , defaultUsernameFieldKeyString
+    , defaultHideShowPasswordCheckboxKey
     , flagIconPositions
+    , toPhonePlaceholder
     )
 
 import Dict
 import R10.Form.Internal.Conf
 import R10.Form.Internal.Key
 import R10.Form.Internal.State
+import R10.Country
 
 
 {-| Forms are composed of two parts: a configuration and a state.
@@ -39,6 +42,34 @@ defaultUsernameFieldKeyString =
 defaultMobilePhoneFieldKeyString : String
 defaultMobilePhoneFieldKeyString =
     "mobile_phone"
+
+
+defaultHideShowPasswordCheckboxKey : R10.Form.Internal.Key.Key
+defaultHideShowPasswordCheckboxKey =
+    R10.Form.Internal.Key.fromString "hide_show_password"
+
+
+toPhonePlaceholder : String -> Maybe R10.Country.Country -> Maybe String
+toPhonePlaceholder fieldKey maybeCountry =
+    Maybe.andThen
+        (\country -> 
+            case ( fieldKey, country ) of
+                ( "mobile_phone", R10.Country.Japan ) ->
+                    Just "08011112222"
+
+                ( "telephone", R10.Country.Japan ) ->
+                    Just "08011112222"
+
+                ( "idlite_phone", R10.Country.Japan ) ->
+                    Just "08011112222"
+
+                ( "fax", R10.Country.Japan ) ->
+                    Just "08011112222"
+                
+                _ ->
+                    Nothing
+        )
+        maybeCountry
 
 
 flagIconPositions : Dict.Dict String ( Float, Float )

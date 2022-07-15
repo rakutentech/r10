@@ -14,9 +14,6 @@ import R10.Country
 import R10.Form.Internal.Shared
 import R10.FormComponents.Internal.Phone.Common
 import R10.FormComponents.Internal.Phone.Update
-import R10.FormComponents.Internal.Single.Common
-import R10.FormComponents.Internal.Single.Update
-import R10.FormComponents.Internal.Style
 import R10.FormComponents.Internal.Text
 import R10.FormComponents.Internal.UI
 import R10.FormComponents.Internal.UI.Color
@@ -63,7 +60,7 @@ viewSearchBox model args =
                     { onChange = \string -> args.toMsg (R10.FormComponents.Internal.Phone.Update.getMsgOnSearch args string)
                     , text = model.search
                     , placeholder = Nothing
-                    , label = Input.labelLeft [ moveDown 3, moveRight 5 ] <| R10.Svg.Icons.search [] (R10.Color.Svg.fontHighEmphasis c.contextR10.theme) 18
+                    , label = Input.labelLeft [ centerY, moveRight 5 ] <| R10.Svg.Icons.search [] (R10.Color.Svg.fontHighEmphasis c.contextR10.theme) 18
                     }
         , Input.button
             [ mouseOver [ Background.color <| R10.FormComponents.Internal.UI.Color.borderA 0.3 args.palette ]
@@ -139,15 +136,14 @@ viewComboboxDropdown model args opened filteredFieldOption =
             , Background.color <| R10.FormComponents.Internal.UI.Color.surface args.palette
             , Border.color <| R10.FormComponents.Internal.UI.Color.borderA 0.5 args.palette
             , Border.width 1
-            , htmlAttribute <| Html.Attributes.style "z-index" "1"
-            , Border.rounded
-                (case args.style of
-                    R10.FormComponents.Internal.Style.Filled ->
-                        0
 
-                    R10.FormComponents.Internal.Style.Outlined ->
-                        8
-                )
+            --
+            -- The Email field has the zIndex: 1 attribute to resolve https://jira.rakuten-it.com/jira/browse/OMN-4832
+            -- In the Safari, if the dropdown is top on the Email field, the input of the Email field will override the dropdown.
+            -- So upper the zIndex of the dropdown to 2
+            --
+            , htmlAttribute <| Html.Attributes.style "z-index" "2"
+            , Border.rounded 8
             , Border.shadow
                 { color = R10.FormComponents.Internal.UI.Color.onSurfaceA 0.3 args.palette
                 , offset = ( 0, 0 )
@@ -210,13 +206,13 @@ viewComboboxOption countryValue select args country =
         getBackgroundColor : Color
         getBackgroundColor =
             if isActiveValue && isSelected_ then
-                R10.FormComponents.Internal.UI.Color.primaryVariantA 0.13 args.palette
+                R10.FormComponents.Internal.UI.Color.primaryVariantA 0.15 args.palette
 
             else if isActiveValue then
-                R10.FormComponents.Internal.UI.Color.primaryVariantA 0.07 args.palette
+                R10.FormComponents.Internal.UI.Color.primaryVariantA 0.09 args.palette
 
             else if isSelected_ then
-                R10.FormComponents.Internal.UI.Color.onSurfaceA 0.07 args.palette
+                R10.FormComponents.Internal.UI.Color.onSurfaceA 0.09 args.palette
 
             else
                 R10.FormComponents.Internal.UI.Color.onSurfaceA 0 args.palette
@@ -227,7 +223,7 @@ viewComboboxOption countryValue select args country =
                 R10.FormComponents.Internal.UI.Color.primaryVariantA 0.1 args.palette
 
             else
-                R10.FormComponents.Internal.UI.Color.onSurfaceA 0.05 args.palette
+                R10.FormComponents.Internal.UI.Color.onSurfaceA 0.1 args.palette
     in
     el
         [ width fill
@@ -289,7 +285,7 @@ view attrs model args =
             , style = args.style
             , showPassword = False
             , textType = R10.FormTypes.TextPlain
-            , fieldType = Just <| R10.FormTypes.TypeSpecial <| R10.FormTypes.SpecialPhone False
+            , fieldType = Just <| R10.FormTypes.TypeSpecial <| R10.FormTypes.SpecialPhone { disableInternationalPrefixPhoneChange = False, isJapanService = False }
             , leadingIcon = args.leadingIcon
             , trailingIcon = args.trailingIcon
             , value = valueToShowOnTheScreen
@@ -299,13 +295,7 @@ view attrs model args =
             , idDom = Nothing
             , autocomplete = Nothing
             , floatingLabelAlwaysUp = True
-            , placeholder =
-                if args.key == R10.Form.Internal.Shared.defaultMobilePhoneFieldKeyString then
-                    maybeCountry
-                        |> Maybe.map R10.Country.toPhoneTemplate
-
-                else
-                    Nothing
+            , placeholder = R10.Form.Internal.Shared.toPhonePlaceholder args.key maybeCountry
             }
 
         inputAttrs : List (Attribute (R10.Context.ContextInternal z) msg)
@@ -330,12 +320,32 @@ view attrs model args =
                       )
                     ]
             ]
-                ++ (if args.style == R10.FormComponents.Internal.Style.Filled then
-                        [ moveUp 4 ]
 
-                    else
-                        []
-                   )
+        arrowKeysPressBatch : List ( Int, msg )
+        arrowKeysPressBatch =
+            if args.disabledCountryChange then
+                []
+
+            else
+                [ ( R10.FormComponents.Internal.UI.keyCode.down
+                  , R10.FormComponents.Internal.Phone.Common.OnArrowDown
+                        { key = args.key
+                        , selectOptionHeight = args.selectOptionHeight
+                        , maxDisplayCount = args.maxDisplayCount
+                        , filteredFieldOption = filteredFieldOption
+                        }
+                        |> args.toMsg
+                  )
+                , ( R10.FormComponents.Internal.UI.keyCode.up
+                  , R10.FormComponents.Internal.Phone.Common.OnArrowUp
+                        { key = args.key
+                        , selectOptionHeight = args.selectOptionHeight
+                        , maxDisplayCount = args.maxDisplayCount
+                        , filteredFieldOption = filteredFieldOption
+                        }
+                        |> args.toMsg
+                  )
+                ]
     in
     column [ width fill, spacing 50, paddingEach { top = 15, right = 0, bottom = 0, left = 0 } ]
         [ R10.FormComponents.Internal.Text.view
@@ -343,31 +353,12 @@ view attrs model args =
             , htmlAttribute <| Html.Attributes.tabindex -1
             , htmlAttribute <|
                 R10.FormComponents.Internal.UI.onKeyPressBatch <|
-                    [ ( R10.FormComponents.Internal.UI.keyCode.down
-                      , R10.FormComponents.Internal.Phone.Common.OnArrowDown
-                            { key = args.key
-                            , selectOptionHeight = args.selectOptionHeight
-                            , maxDisplayCount = args.maxDisplayCount
-                            , filteredFieldOption = filteredFieldOption
-                            }
-                            |> args.toMsg
-                      )
-                    , ( R10.FormComponents.Internal.UI.keyCode.up
-                      , R10.FormComponents.Internal.Phone.Common.OnArrowUp
-                            { key = args.key
-                            , selectOptionHeight = args.selectOptionHeight
-                            , maxDisplayCount = args.maxDisplayCount
-                            , filteredFieldOption = filteredFieldOption
-                            }
-                            |> args.toMsg
-                      )
-                    ]
+                    arrowKeysPressBatch
                         ++ (if model.opened then
-                                [ ( R10.FormComponents.Internal.UI.keyCode.esc
-                                  , args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnEsc args.key False
-                                  )
-                                ]
-                                    ++ (case R10.Country.fromString model.select of
+                                ( R10.FormComponents.Internal.UI.keyCode.esc
+                                , args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnEsc args.key False
+                                )
+                                    :: (case R10.Country.fromString model.select of
                                             Just country ->
                                                 [ ( R10.FormComponents.Internal.UI.keyCode.enter
                                                   , args.toMsg <| R10.FormComponents.Internal.Phone.Common.OnOptionSelect args.key country

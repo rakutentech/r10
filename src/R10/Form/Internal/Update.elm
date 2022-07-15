@@ -5,12 +5,12 @@ module R10.Form.Internal.Update exposing
     , entitiesWithErrorsForOnlyExistingValidations
     , isEntireFormValid
     , isExistingFormFieldsValid
+    , isFormSubmittable
     , isFormSubmittableAndSubmitted
     , runAllValidations
     , runOnlyExistingValidations
     , shouldShowTheValidationOverview
     , submit
-    , submittable
     , update
     , validateDirtyFormFields
     , validateEntireForm
@@ -34,7 +34,9 @@ import R10.FormComponents.Internal.Phone.Update
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Single.Update
 import R10.FormTypes
+import R10.KatakanaConverter
 import Set
+import String.Extra
 
 
 stateWithDefault : Maybe R10.Form.Internal.FieldState.FieldState -> R10.Form.Internal.FieldState.FieldState
@@ -55,11 +57,21 @@ stateWithDefault maybeFieldState =
 isEntireFormValid : R10.Form.Internal.Shared.Form -> Bool
 isEntireFormValid form =
     let
-        allKeys : List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+        allKeys :
+            List
+                ( R10.Form.Internal.Key.Key
+                , R10.FormTypes.FieldType
+                , Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+                )
         allKeys =
             allValidationKeysMaker form
 
-        fieldsWithErrors_ : List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+        fieldsWithErrors_ :
+            List
+                ( R10.Form.Internal.Key.Key
+                , R10.FormTypes.FieldType
+                , Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+                )
         fieldsWithErrors_ =
             entitiesWithErrors allKeys form.state.fieldsState
     in
@@ -132,14 +144,40 @@ helperToggleShowPassword maybeFieldState =
     Just { fieldState | showPassword = not fieldState.showPassword }
 
 
-helperUpdateValue : String -> Maybe R10.Form.Internal.FieldState.FieldState -> Maybe R10.Form.Internal.FieldState.FieldState
-helperUpdateValue value maybeFieldState =
+helperUpdateValue : R10.Form.Internal.FieldConf.FieldConf -> String -> Maybe R10.Form.Internal.FieldState.FieldState -> Maybe R10.Form.Internal.FieldState.FieldState
+helperUpdateValue fieldConf value maybeFieldState =
     let
         fieldState : R10.Form.Internal.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
+
+        maxLength : Maybe Int
+        maxLength =
+            fieldConf.validationSpecs
+                |> Maybe.map .validation
+                |> Maybe.map
+                    (List.filterMap
+                        (\validation ->
+                            case validation of
+                                R10.Form.Internal.FieldConf.MaxLength val ->
+                                    Just val
+
+                                _ ->
+                                    Nothing
+                        )
+                    )
+                |> Maybe.andThen List.head
+
+        newValue : String
+        newValue =
+            case ( fieldConf.allowOverMaxLength, maxLength ) of
+                ( False, Just maxLength_ ) ->
+                    String.left maxLength_ value
+
+                _ ->
+                    value
     in
-    Just { fieldState | value = value }
+    Just { fieldState | value = newValue }
 
 
 helperCopyEmailIntoUsername :
@@ -255,6 +293,16 @@ helperUpdateSelect value maybeFieldState =
     Just { fieldState | select = value }
 
 
+helperUpdateOver : Maybe String -> Maybe R10.Form.Internal.FieldState.FieldState -> Maybe R10.Form.Internal.FieldState.FieldState
+helperUpdateOver over maybeFieldState =
+    let
+        fieldState : R10.Form.Internal.FieldState.FieldState
+        fieldState =
+            stateWithDefault maybeFieldState
+    in
+    Just { fieldState | over = over }
+
+
 helperUpdateScroll : Float -> Maybe R10.Form.Internal.FieldState.FieldState -> Maybe R10.Form.Internal.FieldState.FieldState
 helperUpdateScroll value maybeScroll =
     let
@@ -282,48 +330,90 @@ helperLostFocus maybeFieldState =
         fieldState =
             stateWithDefault maybeFieldState
     in
-    Just { fieldState | lostFocusOneOrMoreTime = True }
+    if String.isEmpty fieldState.value then
+        --
+        -- We pretend this field never lost the focus because we want to avoid
+        -- fields starting to get validation error if they were just focused
+        -- in and out.
+        -- https://jira.rakuten-it.com/jira/browse/OMN-5419
+        --
+        -- This works a bit different for the telephone input box, because the
+        -- value is never emoty, as it contains the international prefix
+        --
+        Just fieldState
+
+    else
+        Just { fieldState | lostFocusOneOrMoreTime = True }
+
+
+validateIfLostFocusAtLeastOnce :
+    { formStateBeforeValidationFixer : String -> String -> String
+    , showAlsoPassedValidation : Bool
+    , key : R10.Form.Internal.Key.Key
+    , fieldType : R10.FormTypes.FieldType
+    , maybeValidationSpec : Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+    , formState : R10.Form.Internal.State.State
+    }
+    -> Maybe R10.Form.Internal.FieldState.FieldState
+    -> Maybe R10.Form.Internal.FieldState.FieldState
+validateIfLostFocusAtLeastOnce args maybeFieldState =
+    -- https://jira.rakuten-it.com/jira/browse/OMN-5419
+    case maybeFieldState of
+        Just fieldState ->
+            if fieldState.lostFocusOneOrMoreTime then
+                helperValidateCreatingFieldsState args maybeFieldState
+
+            else
+                maybeFieldState
+
+        Nothing ->
+            maybeFieldState
 
 
 helperValidateCreatingFieldsState :
-    (String -> String -> String)
-    -> Bool
-    -> R10.Form.Internal.Key.Key
-    -> R10.FormTypes.FieldType
-    -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs
-    -> R10.Form.Internal.State.State
+    { formStateBeforeValidationFixer : String -> String -> String
+    , showAlsoPassedValidation : Bool
+    , key : R10.Form.Internal.Key.Key
+    , fieldType : R10.FormTypes.FieldType
+    , maybeValidationSpec : Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+    , formState : R10.Form.Internal.State.State
+    }
     -> Maybe R10.Form.Internal.FieldState.FieldState
     -> Maybe R10.Form.Internal.FieldState.FieldState
-helperValidateCreatingFieldsState formStateBeforeValidationFixer showAlsoPassedValidation key fieldType maybeValidationSpec formState maybeFieldState =
-    let
-        fieldState : R10.Form.Internal.FieldState.FieldState
-        fieldState =
-            stateWithDefault maybeFieldState
-    in
+helperValidateCreatingFieldsState args maybeFieldState =
     maybeFieldState
         |> Maybe.withDefault R10.Form.Internal.FieldState.init
-        |> R10.Form.Internal.Validation.validate formStateBeforeValidationFixer showAlsoPassedValidation key fieldType maybeValidationSpec formState
+        |> R10.Form.Internal.Validation.validate args
         |> Just
 
 
 helperValidateOnChangeValue :
-    (String -> String -> String)
-    -> Bool
-    -> R10.Form.Internal.Key.Key
-    -> R10.FormTypes.FieldType
-    -> Maybe R10.Form.Internal.FieldConf.ValidationSpecs
-    -> R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted
-    -> R10.Form.Internal.State.State
+    { formStateBeforeValidationFixer : String -> String -> String
+    , showAlsoPassedValidation : Bool
+    , key : R10.Form.Internal.Key.Key
+    , fieldType : R10.FormTypes.FieldType
+    , maybeValidationSpec : Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+    , qtySubmitAttempted : R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted
+    , formState : R10.Form.Internal.State.State
+    }
     -> Maybe R10.Form.Internal.FieldState.FieldState
     -> Maybe R10.Form.Internal.FieldState.FieldState
-helperValidateOnChangeValue formStateBeforeValidationFixer showAlsoPassedValidation key fieldType maybeValidationSpec qtySubmitAttempted formState maybeFieldState =
+helperValidateOnChangeValue args maybeFieldState =
     let
         fieldState : R10.Form.Internal.FieldState.FieldState
         fieldState =
             stateWithDefault maybeFieldState
     in
-    if shouldValidationBeVisible fieldType qtySubmitAttempted fieldState then
-        helperValidateCreatingFieldsState formStateBeforeValidationFixer showAlsoPassedValidation key fieldType maybeValidationSpec formState maybeFieldState
+    if shouldValidationBeVisible args.fieldType args.qtySubmitAttempted fieldState then
+        helperValidateCreatingFieldsState
+            { formStateBeforeValidationFixer = args.formStateBeforeValidationFixer
+            , showAlsoPassedValidation = args.showAlsoPassedValidation
+            , key = args.key
+            , fieldType = args.fieldType
+            , maybeValidationSpec = args.maybeValidationSpec
+            , formState = args.formState
+            }
+            maybeFieldState
 
     else
         maybeFieldState
@@ -395,12 +485,14 @@ runAllValidations formStateBeforeValidationFixer allKeys formState fieldsState =
     List.foldl
         (\( key, fieldType, maybeValidationSpec ) acc ->
             R10.Form.Internal.Dict.update key
-                (helperValidateCreatingFieldsState formStateBeforeValidationFixer
-                    (isShowAlsoPassedValidation maybeValidationSpec)
-                    key
-                    fieldType
-                    maybeValidationSpec
-                    formState
+                (helperValidateCreatingFieldsState
+                    { formStateBeforeValidationFixer = formStateBeforeValidationFixer
+                    , showAlsoPassedValidation = isShowAlsoPassedValidation maybeValidationSpec
+                    , key = key
+                    , fieldType = fieldType
+                    , maybeValidationSpec = maybeValidationSpec
+                    , formState = formState
+                    }
                 )
                 acc
         )
@@ -436,12 +528,14 @@ runOnlyExistingValidations formStateBeforeValidationFixer allKeys formState fiel
                             -- ██ ███████        ██    ██   ██ ██ ███████     ██   ████ ███████ ███████ ██████  ███████ ██████    ██
                             -- if fieldState.lostFocusOneOrMoreTime then
                             fieldState
-                                |> R10.Form.Internal.Validation.validate formStateBeforeValidationFixer
-                                    (isShowAlsoPassedValidation maybeValidationSpec)
-                                    key
-                                    fieldType
-                                    maybeValidationSpec
-                                    formState
+                                |> R10.Form.Internal.Validation.validate
+                                    { formStateBeforeValidationFixer = formStateBeforeValidationFixer
+                                    , showAlsoPassedValidation = isShowAlsoPassedValidation maybeValidationSpec
+                                    , key = key
+                                    , fieldType = fieldType
+                                    , maybeValidationSpec = maybeValidationSpec
+                                    , formState = formState
+                                    }
                                 |> Just
                  -- else
                  --     maybeFieldState
@@ -533,7 +627,12 @@ allErrorsForView : R10.Form.Internal.Conf.Conf -> R10.Form.Internal.State.State 
 allErrorsForView conf state =
     if shouldShowTheValidationOverview state then
         let
-            allKeys : List ( R10.Form.Internal.Key.Key, R10.FormTypes.FieldType, Maybe R10.Form.Internal.FieldConf.ValidationSpecs )
+            allKeys :
+                List
+                    ( R10.Form.Internal.Key.Key
+                    , R10.FormTypes.FieldType
+                    , Maybe R10.Form.Internal.FieldConf.ValidationSpecs
+                    )
             allKeys =
                 allValidationKeysMaker { conf = conf, state = state }
         in
@@ -548,8 +647,8 @@ shouldShowTheValidationOverview formState =
     R10.Form.Internal.QtySubmitAttempted.toInt formState.qtySubmitAttempted > 0 && not formState.changesSinceLastSubmissions
 
 
-submittable : R10.Form.Internal.Shared.Form -> Bool
-submittable form =
+isFormSubmittable : R10.Form.Internal.Shared.Form -> Bool
+isFormSubmittable form =
     if R10.Form.Internal.QtySubmitAttempted.toInt form.state.qtySubmitAttempted == 0 then
         -- Always submittable if it has never been submitted
         True
@@ -560,7 +659,7 @@ submittable form =
 
 isFormSubmittableAndSubmitted : R10.Form.Internal.Shared.Form -> R10.Form.Internal.Msg.Msg -> Bool
 isFormSubmittableAndSubmitted form formMsg =
-    submittable form && R10.Form.Internal.Msg.isSubmitted formMsg
+    isFormSubmittable form && R10.Form.Internal.Msg.isSubmitted formMsg
 
 
 
@@ -579,7 +678,12 @@ submit formStateBeforeValidationFixer form =
     let
         newFieldsState : R10.Form.Internal.State.State
         newFieldsState =
-            validateEntireForm formStateBeforeValidationFixer form
+            if isFormSubmittable form then
+                -- Why we validating the entire form only if it is submittable?
+                validateEntireForm formStateBeforeValidationFixer form
+
+            else
+                form.state
 
         newQtySubmitAttempted : R10.Form.Internal.QtySubmitAttempted.QtySubmitAttempted
         newQtySubmitAttempted =
@@ -603,24 +707,65 @@ onGetFocus :
     -> R10.Form.Internal.State.State
     -> R10.Form.Internal.State.State
 onGetFocus formStateBeforeValidationFixer key fieldConf formState =
+    let
+        lostFocusOneOrMoreTime : Bool
+        lostFocusOneOrMoreTime =
+            formState.fieldsState
+                |> R10.Form.Internal.Dict.get key
+                |> Maybe.map .lostFocusOneOrMoreTime
+                |> Maybe.withDefault False
+    in
     { formState
         | focused = Just (R10.Form.Internal.Key.toString key)
         , fieldsState =
-            if isShowAlsoPassedValidation fieldConf.validationSpecs then
-                formState.fieldsState
-                    |> R10.Form.Internal.Dict.update key helperLostFocus
-                    |> R10.Form.Internal.Dict.update key
-                        (helperValidateCreatingFieldsState
-                            formStateBeforeValidationFixer
-                            (isShowAlsoPassedValidation fieldConf.validationSpecs)
-                            key
-                            fieldConf.type_
-                            fieldConf.validationSpecs
-                            formState
-                        )
+            formState.fieldsState
+                |> R10.Form.Internal.Dict.update key
+                    --
+                    -- Here we update the value "valueWhenFocused"
+                    --
+                    (Maybe.map (\v -> { v | valueWhenFocused = v.value }))
+                |> (\fieldState ->
+                        (--
+                         -- VALIDATION
+                         --
+                         -- 2022.04.27 This is a special case for fields like the password.
+                         -- We want the validation to start as soon as the user focus on the
+                         -- field because the validations are used as instructions for the user
+                         -- about the requirements of the password.
+                         --
+                         -- But if there are errors from the server, like for example
+                         -- PASSWORD_USERUSERNAME_IDENTICAL, these errors will be wrongly removed
+                         -- when the user focus the field, when instead they should be removed
+                         -- when the user change the value (See this ticket:
+                         -- https://jira.rakuten-it.com/jira/browse/OMN-5526)
+                         --
+                         -- To avoid this condition, I added the "not lostFocusOneOrMoreTime"
+                         -- condition so to run the validation on the first focus, and not on
+                         -- the following focuses.
+                         --
+                         if isShowAlsoPassedValidation fieldConf.validationSpecs && not lostFocusOneOrMoreTime then
+                            fieldState
+                                --
+                                -- Removed the next line on 2022.04.26 because it didn't
+                                -- make much sense
+                                --
+                                -- |> R10.Form.Internal.Dict.update key helperLostFocus
+                                --
+                                |> R10.Form.Internal.Dict.update key
+                                    (helperValidateCreatingFieldsState
+                                        { formStateBeforeValidationFixer = formStateBeforeValidationFixer
+                                        , showAlsoPassedValidation = isShowAlsoPassedValidation fieldConf.validationSpecs
+                                        , key = key
+                                        , fieldType = fieldConf.type_
+                                        , maybeValidationSpec = fieldConf.validationSpecs
+                                        , formState = formState
+                                        }
+                                    )
 
-            else
-                formState.fieldsState
+                         else
+                            fieldState
+                        )
+                   )
     }
 
 
@@ -631,22 +776,99 @@ onLoseFocus :
     -> R10.Form.Internal.State.State
     -> R10.Form.Internal.State.State
 onLoseFocus formStateBeforeValidationFixer key fieldConf formState =
+    let
+        valueIsTheSameAsWhenFocusedIn : Bool
+        valueIsTheSameAsWhenFocusedIn =
+            formState.fieldsState
+                |> R10.Form.Internal.Dict.get key
+                |> Maybe.map
+                    (\fieldState ->
+                        (String.Extra.isBlank fieldState.valueWhenFocused && String.Extra.isBlank fieldState.value)
+                            || (fieldState.valueWhenFocused == fieldState.value)
+                    )
+                |> Maybe.withDefault True
+    in
     { formState
         | focused = Nothing
         , fieldsState =
-            formState.fieldsState
-                |> R10.Form.Internal.Dict.update key helperLostFocus
-                |> R10.Form.Internal.Dict.update
-                    key
-                    (helperValidateCreatingFieldsState
-                        formStateBeforeValidationFixer
-                        (isShowAlsoPassedValidation fieldConf.validationSpecs)
-                        key
-                        fieldConf.type_
-                        fieldConf.validationSpecs
-                        formState
-                    )
+            --
+            -- We run the validation only if the field has been changed since focusing
+            -- in. This is to avoid this issue:
+            -- https://jira.rakuten-it.com/jira/browse/OMN-5526
+            --
+            -- Probably to fix this even better, we should run the validation
+            -- also if user edited the field and eventually made it exactly the
+            -- same as it was when the field was focused in.
+            --
+            -- Another solution is to leverage "changesSinceLastSubmissions" but
+            -- I could not verify if this value is properly reset upon submission.
+            -- It seems that it stays always as True, also when the form is
+            -- submitted. Maybe it only happens in localhost. Need more time
+            -- to verify that.
+            --
+            -- So as a temporary solution, I will keep using
+            -- "valueIsTheSameAsWhenFocusedIn". In the future we can remove
+            -- this flag if not needed anymore.
+            --
+            if valueIsTheSameAsWhenFocusedIn then
+                formState.fieldsState
+
+            else
+                formState.fieldsState
+                    |> convertToFullwidthKatakanaIfNecessary key
+                    |> R10.Form.Internal.Dict.update key helperLostFocus
+                    |> R10.Form.Internal.Dict.update key
+                        (validateIfLostFocusAtLeastOnce
+                            { formStateBeforeValidationFixer = formStateBeforeValidationFixer
+                            , showAlsoPassedValidation = isShowAlsoPassedValidation fieldConf.validationSpecs
+                            , key = key
+                            , fieldType = fieldConf.type_
+                            , maybeValidationSpec = fieldConf.validationSpecs
+                            , formState = formState
+                            }
+                        )
     }
+
+
+convertToFullwidthKatakanaIfNecessary :
+    R10.Form.Internal.Key.Key
+    -> Dict.Dict String { a | value : String }
+    -> Dict.Dict String { a | value : String }
+convertToFullwidthKatakanaIfNecessary key fieldsState =
+    let
+        headId : String
+        headId =
+            R10.Form.Internal.Key.headId key
+
+        maybeNewKanaValue : Maybe String
+        maybeNewKanaValue =
+            (-- We convert Hiragana or Half-width katakana to Full-width katakana
+             -- https://jira.rakuten-it.com/jira/browse/OMN-5269
+             if String.contains "kana" headId then
+                fieldsState
+                    |> Dict.get (R10.Form.Internal.Key.toString key)
+                    |> Maybe.map .value
+                    |> Maybe.map R10.KatakanaConverter.halfWidthKatakanaAndHiraganaToFullWidthKatakana
+
+             else if String.contains "nickname" headId || String.contains "last_name" headId || String.contains "first_name" headId then
+                fieldsState
+                    |> Dict.get (R10.Form.Internal.Key.toString key)
+                    |> Maybe.map .value
+                    |> Maybe.map R10.KatakanaConverter.halfWidthKatakanaToFullWidthKatakana
+
+             else
+                Nothing
+            )
+    in
+    case maybeNewKanaValue of
+        Nothing ->
+            fieldsState
+
+        Just newKanaValue ->
+            Dict.update
+                (R10.Form.Internal.Key.toString key)
+                (\mv -> Maybe.andThen (\v -> Just { v | value = newKanaValue }) mv)
+                fieldsState
 
 
 onDeactivate : R10.Form.Internal.State.State -> R10.Form.Internal.State.State
@@ -672,9 +894,19 @@ onChangeValue formStateBeforeValidationFixer showAlsoPassedValidation key fieldC
         | focused = Just (R10.Form.Internal.Key.toString key)
         , fieldsState =
             formState.fieldsState
-                |> R10.Form.Internal.Dict.update key (helperUpdateValue string)
+                |> R10.Form.Internal.Dict.update key (helperUpdateValue fieldConf string)
                 |> R10.Form.Internal.Dict.update key helperUpdateDirty
-                |> R10.Form.Internal.Dict.update key (helperValidateOnChangeValue formStateBeforeValidationFixer showAlsoPassedValidation key fieldConf.type_ fieldConf.validationSpecs formState.qtySubmitAttempted formState)
+                |> R10.Form.Internal.Dict.update key
+                    (helperValidateOnChangeValue
+                        { formStateBeforeValidationFixer = formStateBeforeValidationFixer
+                        , showAlsoPassedValidation = showAlsoPassedValidation
+                        , key = key
+                        , fieldType = fieldConf.type_
+                        , maybeValidationSpec = fieldConf.validationSpecs
+                        , qtySubmitAttempted = formState.qtySubmitAttempted
+                        , formState = formState
+                        }
+                    )
                 |> helperCopyEmailIntoUsername key string
         , lastKeyDownIsProcess = False
     }
@@ -691,7 +923,16 @@ onChangeSelect key string formState =
     { formState | fieldsState = formState.fieldsState |> R10.Form.Internal.Dict.update key (helperUpdateSelect string) }
 
 
-update : (String -> String -> String) -> R10.Form.Internal.Msg.Msg -> R10.Form.Internal.State.State -> ( R10.Form.Internal.State.State, Cmd R10.Form.Internal.Msg.Msg )
+onChangeOver : R10.Form.Internal.Key.Key -> Maybe String -> R10.Form.Internal.State.State -> R10.Form.Internal.State.State
+onChangeOver key string formState =
+    { formState | fieldsState = formState.fieldsState |> R10.Form.Internal.Dict.update key (helperUpdateOver string) }
+
+
+update :
+    (String -> String -> String)
+    -> R10.Form.Internal.Msg.Msg
+    -> R10.Form.Internal.State.State
+    -> ( R10.Form.Internal.State.State, Cmd R10.Form.Internal.Msg.Msg )
 update formStateBeforeValidationFixer msg formStateBeforeHandleChangesSinceLastSubmissions =
     let
         formState : R10.Form.Internal.State.State
@@ -768,8 +1009,17 @@ update formStateBeforeValidationFixer msg formStateBeforeHandleChangesSinceLastS
             , Cmd.none
             )
 
+        R10.Form.Internal.Msg.Hover key over ->
+            ( { formState
+                | fieldsState =
+                    formState.fieldsState
+                        |> R10.Form.Internal.Dict.update key (helperUpdateOver over)
+              }
+            , Cmd.none
+            )
+
         R10.Form.Internal.Msg.ChangeValue key fieldConf formConf contextR10 string ->
-            if formState.lastKeyDownIsProcess && R10.Device.isChromeDesktop contextR10.userAgent then
+            if formState.lastKeyDownIsProcess && R10.Device.isChromeDesktop contextR10.device then
                 ( { formState | lastKeyDownIsProcess = False }, Cmd.none )
 
             else
@@ -790,6 +1040,7 @@ update formStateBeforeValidationFixer msg formStateBeforeHandleChangesSinceLastS
                     , scroll = fieldState.scroll
                     , focused = formState.focused == Just (R10.Form.Internal.Key.toString key)
                     , opened = formState.active == Just (R10.Form.Internal.Key.toString key)
+                    , over = fieldState.over
                     }
 
                 ( newSingleModel, singleCmd ) =
@@ -827,6 +1078,7 @@ update formStateBeforeValidationFixer msg formStateBeforeHandleChangesSinceLastS
                     , scroll = fieldState.scroll
                     , focused = formState.focused == Just (R10.Form.Internal.Key.toString key)
                     , opened = formState.active == Just (R10.Form.Internal.Key.toString key)
+                    , over = fieldState.over
                     }
 
                 ( newSingleModel, singleCmd ) =
@@ -856,9 +1108,10 @@ isShowAlsoPassedValidation maybeValidationSpecs =
     -- In case a field is set to isShowAlsoPassedValidation == True (usually
     -- a password, it also means that
     --
-    --    * the validation should start on focus
-    --    * the "required" validation is hidden
-    --    * also green validations are showing
+    --    * The validation should start on focus (this is necessary because we use the
+    --      validations as instructions for the users)
+    --    * The "required" validation is hidden
+    --    * Validations are showing also when they are "green"
     --
     case maybeValidationSpecs of
         Just validationSpecs ->
@@ -873,59 +1126,65 @@ copyComponentStateToFormState :
     , fieldConf : R10.Form.Internal.FieldConf.FieldConf
     , fieldState : R10.Form.Internal.FieldState.FieldState
     , formConf : R10.Form.Internal.Conf.Conf
-    , formState : R10.Form.Internal.State.State
     , key : R10.Form.Internal.Key.Key
     , newSingleModel : R10.FormComponents.Internal.Single.Common.Model
     , singleModel : R10.FormComponents.Internal.Single.Common.Model
+    , formState : R10.Form.Internal.State.State
     }
     -> R10.Form.Internal.State.State
-copyComponentStateToFormState { formStateBeforeValidationFixer, formState, key, fieldConf, formConf, fieldState, singleModel, newSingleModel } =
-    formState
-        |> (if fieldState.value /= newSingleModel.value then
-                onChangeValue formStateBeforeValidationFixer
-                    (isShowAlsoPassedValidation fieldConf.validationSpecs)
-                    key
-                    fieldConf
-                    formConf
-                    newSingleModel.value
+copyComponentStateToFormState args =
+    args.formState
+        |> (if args.fieldState.value /= args.newSingleModel.value then
+                onChangeValue args.formStateBeforeValidationFixer
+                    (isShowAlsoPassedValidation args.fieldConf.validationSpecs)
+                    args.key
+                    args.fieldConf
+                    args.formConf
+                    args.newSingleModel.value
 
             else
                 identity
            )
-        |> (if fieldState.search /= newSingleModel.search then
-                onChangeSearch key newSingleModel.search
+        |> (if args.fieldState.search /= args.newSingleModel.search then
+                onChangeSearch args.key args.newSingleModel.search
 
             else
                 identity
            )
-        |> (if fieldState.select /= newSingleModel.select then
-                onChangeSelect key newSingleModel.select
+        |> (if args.fieldState.select /= args.newSingleModel.select then
+                onChangeSelect args.key args.newSingleModel.select
 
             else
                 identity
            )
-        |> (if fieldState.scroll /= newSingleModel.scroll then
-                onScroll key newSingleModel.scroll
+        |> (if args.fieldState.scroll /= args.newSingleModel.scroll then
+                onScroll args.key args.newSingleModel.scroll
 
             else
                 identity
            )
-        |> (if singleModel.focused /= newSingleModel.focused then
-                if newSingleModel.focused then
-                    onGetFocus formStateBeforeValidationFixer key fieldConf
+        |> (if args.singleModel.focused /= args.newSingleModel.focused then
+                if args.newSingleModel.focused then
+                    onGetFocus args.formStateBeforeValidationFixer args.key args.fieldConf
 
                 else
-                    onLoseFocus formStateBeforeValidationFixer key fieldConf
+                    onLoseFocus args.formStateBeforeValidationFixer args.key args.fieldConf
 
             else
                 identity
            )
-        |> (if singleModel.opened /= newSingleModel.opened then
-                if newSingleModel.opened then
-                    onActivate key
+        |> (if args.singleModel.opened /= args.newSingleModel.opened then
+                if args.newSingleModel.opened then
+                    onActivate args.key
 
                 else
                     onDeactivate
+
+            else
+                identity
+           )
+        |> (if args.singleModel.over /= args.newSingleModel.over then
+                onChangeOver args.key args.newSingleModel.over
 
             else
                 identity

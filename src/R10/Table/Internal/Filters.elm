@@ -5,7 +5,6 @@ import Element.WithContext exposing (..)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Events as Events
-import Html.Attributes
 import Html.Events
 import Json.Decode
 import R10.Context exposing (..)

@@ -76,10 +76,10 @@ changeFieldConf mapper entity =
         EntityField fieldConf ->
             EntityField (mapper fieldConf)
 
-        EntityTitle entityId textConf ->
+        EntityTitle _ _ ->
             entity
 
-        EntitySubTitle entityId textConf ->
+        EntitySubTitle _ _ ->
             entity
 
 

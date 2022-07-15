@@ -66,7 +66,7 @@ buildFormModel filter defaultValue =
         extra : { type_ : R10.FormTypes.FieldType }
         extra =
             case filter of
-                R10.Table.Internal.Types.FilterText { label, key } ->
+                R10.Table.Internal.Types.FilterText _ ->
                     { type_ = R10.FormTypes.TypeText R10.FormTypes.TextPlain
                     }
 
@@ -108,7 +108,7 @@ justUpdateForm formMsg filtersState =
         Just ( key, form ) ->
             let
                 ( newFormState_, formCmd ) =
-                    R10.Form.update formMsg form.state
+                    R10.Form.update (\_ value -> value) formMsg form.state
             in
             ( { filtersState
                 | filterEditor =

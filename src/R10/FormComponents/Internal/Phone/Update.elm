@@ -11,7 +11,7 @@ import List.Extra
 import Process
 import R10.Country
 import R10.FormComponents.Internal.Phone.Common
-import Regex
+import R10.Utils
 import Task
 
 
@@ -270,19 +270,9 @@ getNewSelectAndY_ step defaultIndex defaultCountry model args =
     ( newSelect, newY )
 
 
-userReplace : String -> (Regex.Match -> String) -> String -> String
-userReplace userRegex replacer string =
-    case Regex.fromString userRegex of
-        Nothing ->
-            string
-
-        Just regex ->
-            Regex.replace regex replacer string
-
-
 cleanPhoneNumber : String -> String
 cleanPhoneNumber phone =
-    userReplace "[^0-9 \\-\\(\\).]" (\_ -> "") phone
+    R10.Utils.userReplace "[^0-9 \\-\\(\\).]" (\_ -> "") phone
 
 
 helperFocusField : String -> Cmd R10.FormComponents.Internal.Phone.Common.Msg

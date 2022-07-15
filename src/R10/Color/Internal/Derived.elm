@@ -11,16 +11,18 @@ import R10.Theme
 
 
 type Color
-    = Success
-    | Primary
+    = Primary
     | PrimaryVariant
     | Logo
     | FontMediumEmphasisWithMaximumContrast
     | FontMediumEmphasis
     | FontLink
+    | FontAlertDanger
+    | FontAlertInfo
+    | FontAlertSuccess
+    | FontAlertWarning
     | FontHighEmphasisWithMaximumContrast
     | FontHighEmphasis
-    | Error
     | Debugger
     | Border
     | BackgroundPhoneDropdown
@@ -33,6 +35,10 @@ type Color
     | BackgroundButtonPrimaryDisabled
     | BackgroundButtonPrimary
     | BackgroundButtonMinorOver
+    | BackgroundAlertDanger
+    | BackgroundAlertInfo
+    | BackgroundAlertSuccess
+    | BackgroundAlertWarning
 
 
 list : R10.Theme.Theme -> List { color : Color.Color, name : String, description : String }
@@ -54,9 +60,6 @@ list theme =
 toString_ : Color -> String
 toString_ value =
     case value of
-        Success ->
-            "Success"
-
         Primary ->
             "Primary"
 
@@ -75,14 +78,23 @@ toString_ value =
         FontLink ->
             "Font Link"
 
+        FontAlertDanger ->
+            "Font Alert Danger"
+
+        FontAlertInfo ->
+            "Font Alert Info"
+
+        FontAlertSuccess ->
+            "Font Alert Success"
+
+        FontAlertWarning ->
+            "Font Alert Warning"
+
         FontHighEmphasisWithMaximumContrast ->
             "Font High Emphasis With Maximum Contrast"
 
         FontHighEmphasis ->
             "Font High Emphasis"
-
-        Error ->
-            "Error"
 
         Debugger ->
             "Debugger"
@@ -120,6 +132,18 @@ toString_ value =
         BackgroundButtonMinorOver ->
             "Background Button Minor Over"
 
+        BackgroundAlertDanger ->
+            "Background Alert Danger"
+
+        BackgroundAlertInfo ->
+            "Background Alert Info"
+
+        BackgroundAlertSuccess ->
+            "Background Alert Success"
+
+        BackgroundAlertWarning ->
+            "Background Alert Warning"
+
 
 list_ : List Color
 list_ =
@@ -129,11 +153,13 @@ list_ =
     , FontMediumEmphasis
     , Primary
     , PrimaryVariant
-    , Success
-    , Error
     , Logo
     , FontMediumEmphasisWithMaximumContrast
     , FontLink
+    , FontAlertDanger
+    , FontAlertInfo
+    , FontAlertSuccess
+    , FontAlertWarning
     , FontHighEmphasisWithMaximumContrast
     , FontHighEmphasis
     , Debugger
@@ -145,6 +171,10 @@ list_ =
     , BackgroundButtonPrimaryDisabled
     , BackgroundButtonPrimary
     , BackgroundButtonMinorOver
+    , BackgroundAlertDanger
+    , BackgroundAlertInfo
+    , BackgroundAlertSuccess
+    , BackgroundAlertWarning
     ]
 
 
@@ -172,11 +202,6 @@ toColor theme colorDerived =
 toColor_ : R10.Theme.Theme -> Color -> ( Color.Color, String )
 toColor_ theme colorDerived =
     case colorDerived of
-        Success ->
-            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Success
-            , "same as base color `Succes`"
-            )
-
         Logo ->
             ( case theme.mode of
                 R10.Mode.Light ->
@@ -217,9 +242,24 @@ toColor_ theme colorDerived =
             , "The same as the base `FontLink` color"
             )
 
-        Error ->
-            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.Error
-            , "The same as the base `Error` color"
+        FontAlertDanger ->
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontAlertDanger
+            , "The same as the base `FontAlertDanger` color"
+            )
+
+        FontAlertInfo ->
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontAlertInfo
+            , "The same as the base `FontAlertInfo` color"
+            )
+
+        FontAlertSuccess ->
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontAlertSuccess
+            , "The same as the base `FontAlertSuccess` color"
+            )
+
+        FontAlertWarning ->
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.FontAlertWarning
+            , "The same as the base `FontAlertWarning` color"
             )
 
         Debugger ->
@@ -379,6 +419,26 @@ toColor_ theme colorDerived =
             , "Background of minors buttons based on the normal background color. Just making it lighter in Dark mode and darker in Light mode"
             )
 
+        BackgroundAlertDanger ->
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.BackgroundAlertDanger
+            , "The same as the base `BackgroundAlertDanger` color"
+            )
+
+        BackgroundAlertInfo ->
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.BackgroundAlertInfo
+            , "The same as the base `BackgroundAlertInfo` color"
+            )
+
+        BackgroundAlertSuccess ->
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.BackgroundAlertSuccess
+            , "The same as the base `BackgroundAlertSuccess` color"
+            )
+
+        BackgroundAlertWarning ->
+            ( R10.Color.Internal.Base.toColor theme R10.Color.Internal.Base.BackgroundAlertWarning
+            , "The same as the base `BackgroundAlertWarning` color"
+            )
+
 
 
 -- From here colors that are used several times so they are
@@ -391,11 +451,11 @@ backgroundButtonPrimaryDisabled_ theme =
         |> R10.Color.Internal.Base.toColor theme
         |> (\color ->
                 case theme.mode of
+                    R10.Mode.Light ->
+                        Color.Manipulate.darken 0.1 color
+
                     R10.Mode.Dark ->
                         Color.Manipulate.lighten 0.2 color
-
-                    R10.Mode.Light ->
-                        Color.Manipulate.darken 0.2 color
            )
 
 

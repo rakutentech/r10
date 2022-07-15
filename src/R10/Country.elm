@@ -1,8 +1,8 @@
-module R10.Country exposing (Country(..), emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate, toCountryNameWithAlias)
+module R10.Country exposing (Country(..), codeAndNameList, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toCountryNameWithAlias)
 
 {-|
 
-@docs Country, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate, toCountryNameWithAlias
+@docs Country, codeAndNameList, emptyFlag, fromCountryCode, fromCountryTelCode, fromString, list, listHead, listTail, toCountryCode, toCountryTelCode, toFlag, toString, fromTelephoneAsString, toPhoneTemplate, toCountryNameWithAlias
 
 -}
 
@@ -1775,18 +1775,6 @@ fromCountryTelCode code =
 
         _ ->
             Nothing
-
-
-{-| -}
-toPhoneTemplate : Country -> String
-toPhoneTemplate country =
-    case country of
-        -- From https://dev-cdn.rex.contents.rakuten.co.jp/rex-form/docs/components/form-sample2.html
-        Japan ->
-            "08011112222"
-
-        _ ->
-            ""
 
 
 {-| -}
@@ -6124,3 +6112,15 @@ toCountryNameWithAlias country =
 
         Zimbabwe ->
             "Zimbabwe"
+
+
+{-| -}
+codeAndNameList : List { code: String, name : String }
+codeAndNameList =
+    List.map
+        (\country -> 
+            { code = toCountryCode country 
+            , name = toString country
+            }
+        )
+        list

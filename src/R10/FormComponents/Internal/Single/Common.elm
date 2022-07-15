@@ -24,7 +24,8 @@ import R10.Palette
 
 type Msg
     = NoOp
-    | OnFocus String
+    | Hover (Maybe String)
+    | OnFocus
     | OnLoseFocus String
     | OnScroll Float
     | OnEsc
@@ -46,6 +47,7 @@ init =
     , scroll = 0
     , opened = False
     , select = ""
+    , over = Nothing
     }
 
 
@@ -56,6 +58,7 @@ type alias Model =
     , scroll : Float
     , opened : Bool
     , select : String
+    , over : Maybe String
     }
 
 

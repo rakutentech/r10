@@ -1,7 +1,8 @@
 module R10.Color.Svg exposing
-    ( logo, primary, error, success, primaryVariant, border
+    ( logo, primary, primaryVariant, border
     , background, surface, surface2dp, backgroundButtonMinorOver, backgroundPhoneDropdown
     , fontHighEmphasis, fontMediumEmphasis, fontHighEmphasisWithMaximumContrast, link
+    , backgroundAlertDanger, backgroundAlertInfo, backgroundAlertSuccess, backgroundAlertWarning, fontAlertDanger, fontAlertInfo, fontAlertSuccess, fontAlertWarning
     )
 
 {-|
@@ -96,17 +97,65 @@ primaryVariant theme =
 
 
 {-| -}
-error : R10.Theme.Theme -> Color
-error theme =
-    R10.Color.Internal.Derived.Error
+fontAlertDanger : R10.Theme.Theme -> Color
+fontAlertDanger theme =
+    R10.Color.Internal.Derived.FontAlertDanger
         |> R10.Color.Internal.Derived.toColor theme
         |> R10.Color.Utils.fromColorColor
 
 
 {-| -}
-success : R10.Theme.Theme -> Color
-success theme =
-    R10.Color.Internal.Derived.Success
+fontAlertInfo : R10.Theme.Theme -> Color
+fontAlertInfo theme =
+    R10.Color.Internal.Derived.FontAlertInfo
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.fromColorColor
+
+
+{-| -}
+fontAlertWarning : R10.Theme.Theme -> Color
+fontAlertWarning theme =
+    R10.Color.Internal.Derived.FontAlertWarning
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.fromColorColor
+
+
+{-| -}
+fontAlertSuccess : R10.Theme.Theme -> Color
+fontAlertSuccess theme =
+    R10.Color.Internal.Derived.FontAlertSuccess
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.fromColorColor
+
+
+{-| -}
+backgroundAlertSuccess : R10.Theme.Theme -> Color
+backgroundAlertSuccess theme =
+    R10.Color.Internal.Derived.BackgroundAlertSuccess
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.fromColorColor
+
+
+{-| -}
+backgroundAlertWarning : R10.Theme.Theme -> Color
+backgroundAlertWarning theme =
+    R10.Color.Internal.Derived.BackgroundAlertWarning
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.fromColorColor
+
+
+{-| -}
+backgroundAlertInfo : R10.Theme.Theme -> Color
+backgroundAlertInfo theme =
+    R10.Color.Internal.Derived.BackgroundAlertInfo
+        |> R10.Color.Internal.Derived.toColor theme
+        |> R10.Color.Utils.fromColorColor
+
+
+{-| -}
+backgroundAlertDanger : R10.Theme.Theme -> Color
+backgroundAlertDanger theme =
+    R10.Color.Internal.Derived.BackgroundAlertDanger
         |> R10.Color.Internal.Derived.toColor theme
         |> R10.Color.Utils.fromColorColor
 

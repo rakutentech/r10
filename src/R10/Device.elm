@@ -1,13 +1,11 @@
-module R10.Device exposing (Browser, OS, UserAgent, constructor, decoder, deviceBrowserFromString, deviceOSFromString, deviceOSToString, encodedValueToUserAgent, encoder, examples, isAndroid, isChromeDesktop, isFirefoxAndroid, isIOS, isInternetExplorer, isMobileOS, isSafari)
+module R10.Device exposing (Browser, OS, Device, constructor, osToString, examples, isAndroid, isChromeDesktop, isChromeAndroid, isFirefoxAndroid, isIOS, isInternetExplorer, isMobileOS, isSafari, isSafari10OrIOS10, toString)
 
 {-| Information related to the device.
 
-@docs Browser, OS, UserAgent, constructor, decoder, deviceBrowserFromString, deviceOSFromString, deviceOSToString, encodedValueToUserAgent, encoder, examples, isAndroid, isChromeDesktop, isFirefoxAndroid, isIOS, isInternetExplorer, isMobileOS, isSafari
+@docs Browser, OS, Device, constructor, deviceBrowserFromString, deviceOSFromString, osToString, encodedValueToDevice, encoder, examples, isAndroid, isChromeDesktop, isChromeAndroid, isFirefoxAndroid, isIOS, isInternetExplorer, isMobileOS, isSafari, isSafari10OrIOS10, toString
 
 -}
 
-import Json.Decode
-import Json.Encode
 import Regex
 
 
@@ -15,6 +13,7 @@ import Regex
 type OS
     = Android
     | IOS
+    | MacOS
     | WindowsPhone
     | Other
 
@@ -30,93 +29,22 @@ type Browser
 
 
 {-| -}
-type alias UserAgent =
-    ( OS, Browser )
+type alias Device =
+    { os : OS
+    , browser : Browser
+    , userAgent : String
+    , isSafari10OrIOS10 : Bool
+    }
+
+
+toString : Device -> String
+toString device =
+    osToString device.os ++ " " ++ browserToString device.browser
 
 
 {-| -}
-deviceOSDecoder : Json.Decode.Decoder OS
-deviceOSDecoder =
-    Json.Decode.string
-        |> Json.Decode.andThen (deviceOSFromString >> Json.Decode.succeed)
-
-
-{-| -}
-deviceBrowserDecoder : Json.Decode.Decoder Browser
-deviceBrowserDecoder =
-    Json.Decode.string
-        |> Json.Decode.andThen (deviceBrowserFromString >> Json.Decode.succeed)
-
-
-{-| -}
-decoder : Json.Decode.Decoder UserAgent
-decoder =
-    Json.Decode.map2 Tuple.pair
-        (Json.Decode.index 0 deviceOSDecoder)
-        (Json.Decode.index 1 deviceBrowserDecoder)
-
-
-{-| -}
-deviceOSEncoder : OS -> Json.Encode.Value
-deviceOSEncoder =
-    deviceOSToString >> Json.Encode.string
-
-
-{-| -}
-deviceBrowserEncoder : Browser -> Json.Encode.Value
-deviceBrowserEncoder =
-    deviceBrowserToString >> Json.Encode.string
-
-
-{-| -}
-encoder : UserAgent -> Json.Encode.Value
-encoder ( os, browser ) =
-    Json.Encode.list identity [ deviceOSEncoder os, deviceBrowserEncoder browser ]
-
-
-{-| -}
-deviceOSFromString : String -> OS
-deviceOSFromString os =
-    case os of
-        "Android" ->
-            Android
-
-        "iOS" ->
-            IOS
-
-        "Windows Phone" ->
-            WindowsPhone
-
-        _ ->
-            Other
-
-
-{-| -}
-deviceBrowserFromString : String -> Browser
-deviceBrowserFromString os =
-    case os of
-        "Opera" ->
-            Opera
-
-        "Chrome" ->
-            Chrome
-
-        "Safari" ->
-            Safari
-
-        "Firefox" ->
-            Firefox
-
-        "IE" ->
-            IE
-
-        _ ->
-            Unknown
-
-
-{-| -}
-deviceOSToString : OS -> String
-deviceOSToString browser =
+osToString : OS -> String
+osToString browser =
     case browser of
         Android ->
             "Android"
@@ -124,16 +52,19 @@ deviceOSToString browser =
         IOS ->
             "iOS"
 
+        MacOS ->
+            "macOS"
+
         WindowsPhone ->
-            "Windows Phone"
+            "WindowsPhone"
 
         Other ->
             "Other"
 
 
 {-| -}
-deviceBrowserToString : Browser -> String
-deviceBrowserToString browser =
+browserToString : Browser -> String
+browserToString browser =
     case browser of
         Opera ->
             "Opera"
@@ -155,16 +86,15 @@ deviceBrowserToString browser =
 
 
 {-| -}
-encodedValueToUserAgent : Json.Decode.Value -> UserAgent
-encodedValueToUserAgent device =
-    Json.Decode.decodeValue decoder device
-        |> Result.toMaybe
-        |> Maybe.withDefault ( Other, Unknown )
-
-
-{-| -}
-constructor : String -> String -> Bool -> UserAgent
+constructor : String -> String -> Bool -> Device
 constructor userAgent platform isOntouchendInDocument =
+    --
+    -- From src-ts/main.ts
+    --
+    -- userAgent................: navigator.userAgent || navigator.vendor || (window as any).opera
+    -- platform.................: navigator.platform
+    -- isOntouchendInDocument...: 'ontouchend' in document
+    --
     let
         iOSPlatformList : List String
         iOSPlatformList =
@@ -176,26 +106,32 @@ constructor userAgent platform isOntouchendInDocument =
             , "iPod"
             ]
 
-        osRegex : String -> Regex.Regex
-        osRegex string =
-            Regex.fromStringWith { caseInsensitive = True, multiline = False } string |> Maybe.withDefault Regex.never
-
-        ieRegex : Regex.Regex
-        ieRegex =
-            Regex.fromString "Trident.*rv:11\\." |> Maybe.withDefault Regex.never
+        regex : String -> Regex.Regex
+        regex string =
+            string
+                |> Regex.fromStringWith { caseInsensitive = True, multiline = False }
+                |> Maybe.withDefault Regex.never
 
         os : OS
         os =
             -- Windows Phone must come first because its UA also contains "Android"
-            if Regex.contains (osRegex "windows phone") userAgent then
+            if Regex.contains (regex "windows phone") userAgent then
                 WindowsPhone
 
-            else if Regex.contains (osRegex "android") userAgent then
+            else if Regex.contains (regex "android") userAgent then
                 Android
 
-            else if List.any ((==) platform) iOSPlatformList || (String.contains "Mac" userAgent && isOntouchendInDocument) then
+            else if List.any ((==) platform) iOSPlatformList then
                 -- https://stackoverflow.com/a/9039885
                 IOS
+
+            else if String.contains "Mac" userAgent then
+                if isOntouchendInDocument then
+                    -- https://stackoverflow.com/a/9039885
+                    IOS
+
+                else
+                    MacOS
 
             else
                 Other
@@ -214,18 +150,22 @@ constructor userAgent platform isOntouchendInDocument =
             else if String.contains "Firefox" userAgent then
                 Firefox
 
-            else if String.contains "MSIE " userAgent || Regex.contains ieRegex userAgent then
+            else if String.contains "MSIE " userAgent || Regex.contains (regex "Trident.*rv:11\\.") userAgent then
                 IE
 
             else
                 Unknown
     in
-    ( os, browser )
+    { os = os
+    , browser = browser
+    , isSafari10OrIOS10 = Regex.contains (regex "Macintosh;.*Version\\/10\\.|iPhone OS 10_") userAgent
+    , userAgent = userAgent
+    }
 
 
 {-| -}
-isInternetExplorer : UserAgent -> Bool
-isInternetExplorer ( _, browser ) =
+isInternetExplorer : Device -> Bool
+isInternetExplorer { browser } =
     case browser of
         IE ->
             True
@@ -235,14 +175,17 @@ isInternetExplorer ( _, browser ) =
 
 
 {-| -}
-isMobileOS : UserAgent -> Bool
-isMobileOS ( os, _ ) =
+isMobileOS : Device -> Bool
+isMobileOS { os } =
     case os of
         Android ->
             True
 
         IOS ->
             True
+
+        MacOS ->
+            False
 
         WindowsPhone ->
             True
@@ -252,8 +195,8 @@ isMobileOS ( os, _ ) =
 
 
 {-| -}
-isIOS : UserAgent -> Bool
-isIOS ( os, _ ) =
+isIOS : Device -> Bool
+isIOS { os } =
     case os of
         Android ->
             False
@@ -261,21 +204,7 @@ isIOS ( os, _ ) =
         IOS ->
             True
 
-        WindowsPhone ->
-            False
-
-        Other ->
-            False
-
-
-{-| -}
-isAndroid : UserAgent -> Bool
-isAndroid ( os, _ ) =
-    case os of
-        Android ->
-            True
-
-        IOS ->
+        MacOS ->
             False
 
         WindowsPhone ->
@@ -286,9 +215,29 @@ isAndroid ( os, _ ) =
 
 
 {-| -}
-isFirefoxAndroid : UserAgent -> Bool
-isFirefoxAndroid userAgent =
-    case userAgent of
+isAndroid : Device -> Bool
+isAndroid { os } =
+    case os of
+        Android ->
+            True
+
+        IOS ->
+            False
+
+        MacOS ->
+            False
+
+        WindowsPhone ->
+            False
+
+        Other ->
+            False
+
+
+{-| -}
+isFirefoxAndroid : Device -> Bool
+isFirefoxAndroid { os, browser } =
+    case ( os, browser ) of
         ( Android, Firefox ) ->
             True
 
@@ -297,10 +246,16 @@ isFirefoxAndroid userAgent =
 
 
 {-| -}
-isChromeDesktop : UserAgent -> Bool
-isChromeDesktop userAgent =
-    case userAgent of
-        ( Other, Chrome ) ->
+isChromeDesktop : Device -> Bool
+isChromeDesktop device =
+    not (isMobileOS device) && device.browser == Chrome
+
+
+{-| -}
+isChromeAndroid : Device -> Bool
+isChromeAndroid { os, browser } =
+    case ( os, browser ) of
+        ( Android, Chrome ) ->
             True
 
         ( _, _ ) ->
@@ -308,14 +263,20 @@ isChromeDesktop userAgent =
 
 
 {-| -}
-isSafari : UserAgent -> Bool
-isSafari userAgent =
-    case userAgent of
+isSafari : Device -> Bool
+isSafari { os, browser } =
+    case ( os, browser ) of
         ( _, Safari ) ->
             True
 
         ( _, _ ) ->
             False
+
+
+{-| -}
+isSafari10OrIOS10 : Device -> Bool
+isSafari10OrIOS10 device =
+    device.isSafari10OrIOS10
 
 
 {-| -}

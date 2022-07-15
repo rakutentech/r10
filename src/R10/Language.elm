@@ -28,6 +28,8 @@ type alias Translations =
     , zh_cn : String
     , it_it : String
     , uk_ua : String
+    , pt_pt : String
+    , nl_nl : String
     }
 
 
@@ -68,6 +70,10 @@ type
     | IT_IT
       -- Ukrainian
     | UK_UA
+      -- European Portuguese
+    | PT_PT
+      -- Dutch (Netherlands)
+    | NL_NL
 
 
 {-| -}
@@ -83,6 +89,8 @@ list =
     , ES_ES
     , IT_IT
     , UK_UA
+    , PT_PT
+    , NL_NL
     ]
 
 
@@ -104,6 +112,8 @@ defaultSupportedLanguageList =
     , FR_FR
     , IT_IT
     , UK_UA
+    , PT_PT
+    , NL_NL
     ]
 
 
@@ -174,6 +184,33 @@ decoderFourLettersLanguage string =
         "ukua" ->
             Ok UK_UA
 
+        "ptpt" ->
+            Ok PT_PT
+
+        "nlnl" ->
+            Ok NL_NL
+
+        "zhhk" ->
+            Ok ZH_TW
+
+        "zhmo" ->
+            Ok ZH_TW
+
+        "zhsg" ->
+            Ok ZH_CN
+
+        "zhid" ->
+            Ok ZH_TW
+
+        "zhmy" ->
+            Ok ZH_CN
+
+        "hant" ->
+            Ok ZH_TW
+
+        "hans" ->
+            Ok ZH_CN
+
         _ ->
             Err <| string ++ " is not a valid language"
 
@@ -205,6 +242,12 @@ decoderTwoLettersLanguage string =
 
         "uk" ->
             Ok UK_UA
+
+        "pt" ->
+            Ok PT_PT
+
+        "nl" ->
+            Ok NL_NL
 
         _ ->
             Err <| string ++ " is not a valid language"
@@ -261,14 +304,21 @@ preferredLanguage { supportedLanguages, navigatorLanguages } =
 {-| -}
 clean : String -> String
 clean string =
-    string
-        |> String.toLower
-        |> String.split "-"
-        |> String.join ""
-        |> String.split "_"
-        |> String.join ""
-        |> String.split " "
-        |> String.join ""
+    if String.contains "hant" (String.toLower string) then
+        "hant"
+
+    else if String.contains "hans" (String.toLower string) then
+        "hans"
+
+    else
+        string
+            |> String.toLower
+            |> String.split "-"
+            |> String.join ""
+            |> String.split "_"
+            |> String.join ""
+            |> String.split " "
+            |> String.join ""
 
 
 {-| -}
@@ -345,6 +395,12 @@ toString language =
 
         UK_UA ->
             "uk-UA"
+
+        PT_PT ->
+            "pt-PT"
+
+        NL_NL ->
+            "nl-NL"
 
 
 {-| -}
@@ -425,6 +481,18 @@ toStringLong languageType language =
         ( Localization, UK_UA ) ->
             "Українська"
 
+        ( International, PT_PT ) ->
+            "Portuguese"
+
+        ( Localization, PT_PT ) ->
+            "Português"
+
+        ( International, NL_NL ) ->
+            "Dutch"
+
+        ( Localization, NL_NL ) ->
+            "Nederlands"
+
 
 {-| -}
 select : Language -> Translations -> String
@@ -462,3 +530,9 @@ select language translation =
 
         UK_UA ->
             .uk_ua translation
+
+        PT_PT ->
+            .pt_pt translation
+
+        NL_NL ->
+            .nl_nl translation

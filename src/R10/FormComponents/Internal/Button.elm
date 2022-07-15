@@ -113,17 +113,12 @@ getHeight args =
 
 getBorderRadius : Args z msg -> number
 getBorderRadius args =
-    case args.style of
-        R10.FormComponents.Internal.Style.Filled ->
-            0
+    case args.type_ of
+        Icon ->
+            2
 
-        R10.FormComponents.Internal.Style.Outlined ->
-            case args.type_ of
-                Icon ->
-                    2
-
-                _ ->
-                    4
+        _ ->
+            4
 
 
 getBackgroundColor : Args z msg -> Color

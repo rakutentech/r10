@@ -3,7 +3,6 @@ module R10.Table.Internal.Header exposing (simpleHeader, toHeaderInfo, toSortArr
 import Element.WithContext exposing (..)
 import Element.WithContext.Events as Events
 import Element.WithContext.Font as Font
-import Html.Attributes
 import R10.Context exposing (..)
 import R10.Palette
 import R10.Table.Internal.Config
@@ -162,7 +161,7 @@ viewHeaderSortArrow ( buttonType, isReversed ) =
 
 
 simpleHeader : List (Attribute (R10.Context.ContextInternal z) msg) -> R10.Palette.Palette -> R10.Table.Internal.Config.HeaderInfo msg -> Element (R10.Context.ContextInternal z) msg
-simpleHeader attrs palette headerInfo =
+simpleHeader attrs _ headerInfo =
     el
         (R10.Table.Internal.Style.defaultHeaderAttrs
             ++ [ R10.Transition.transition "all 0.25s ease-out"

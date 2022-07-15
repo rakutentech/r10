@@ -34,6 +34,8 @@ signInHeader =
     , es_es = "Inicie sesión en su cuenta de Rakuten"
     , it_it = "Collegati col tuo account Rakuten"
     , uk_ua = ""
+    , pt_pt = ""
+    , nl_nl = ""
     }
 
 
@@ -50,6 +52,8 @@ language =
     , es_es = "Idioma"
     , it_it = "Lingua"
     , uk_ua = ""
+    , pt_pt = ""
+    , nl_nl = ""
     }
 
 
@@ -66,6 +70,8 @@ signOut =
     , es_es = "Desconectar"
     , it_it = "Disconnetti"
     , uk_ua = ""
+    , pt_pt = ""
+    , nl_nl = ""
     }
 
 
@@ -82,4 +88,6 @@ signIn =
     , es_es = "Registrarse"
     , it_it = ""
     , uk_ua = ""
+    , pt_pt = ""
+    , nl_nl = ""
     }

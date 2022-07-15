@@ -101,7 +101,7 @@ authenticator_shapeR =
 
 {-| -}
 authenticator : List (Attribute (R10.Context.ContextInternal z) msg) -> Color -> Int -> Element (R10.Context.ContextInternal z) msg
-authenticator attrs cl size =
+authenticator attrs _ size =
     R10.Svg.Utils.wrapperWithViewbox attrs
         "0 0 77 77"
         size

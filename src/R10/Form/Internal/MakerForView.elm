@@ -14,7 +14,6 @@ import Element.WithContext.Input as Input
 import Html.Attributes
 import R10.Context exposing (..)
 import R10.Country
-import R10.Device
 import R10.Form.Internal.Conf
 import R10.Form.Internal.Converter
 import R10.Form.Internal.Dict
@@ -30,7 +29,6 @@ import R10.Form.Internal.Update
 import R10.FormComponents.Internal.Binary
 import R10.FormComponents.Internal.ExtraCss
 import R10.FormComponents.Internal.Phone
-import R10.FormComponents.Internal.Phone.Common
 import R10.FormComponents.Internal.Single
 import R10.FormComponents.Internal.Single.Common
 import R10.FormComponents.Internal.Style
@@ -41,6 +39,7 @@ import R10.FormComponents.Internal.Validations
 import R10.FormTypes
 import R10.Palette
 import R10.Transition
+import String.Extra
 
 
 
@@ -125,8 +124,8 @@ getFieldConfig entity =
             R10.Form.Internal.FieldConf.init
 
 
-maybeValid : R10.Form.Internal.FieldState.Validation -> Maybe Bool
-maybeValid validation =
+maybeValid : Bool -> String -> R10.Form.Internal.FieldState.Validation -> Maybe Bool
+maybeValid isOptional value validation =
     --
     -- Before this function was:
     --
@@ -140,12 +139,24 @@ maybeValid validation =
     --     R10.Form.Internal.FieldState.NotValid ->
     --         Just False
     --
-    case validation of
-        R10.Form.Internal.FieldState.NotYetValidated ->
-            Nothing
+    --
+    -- 2022.04.26
+    -- Avoid showing the validation for fields that are optional and empty
+    -- https://jira.rakuten-it.com/jira/browse/OMN-5419
+    --
+    -- Use String.Extra.isBlank instead of String.isEmpty,
+    -- Because String.isEmpty " " returned False
+    --
+    if isOptional && String.Extra.isBlank value then
+        Nothing
 
-        R10.Form.Internal.FieldState.Validated listValidationMessage ->
-            Just (R10.Form.Internal.FieldState.isValid listValidationMessage)
+    else
+        case validation of
+            R10.Form.Internal.FieldState.NotYetValidated ->
+                Nothing
+
+            R10.Form.Internal.FieldState.Validated listValidationMessage ->
+                Just (R10.Form.Internal.FieldState.isValid listValidationMessage)
 
 
 
@@ -162,6 +173,13 @@ viewText :
     -> R10.Form.Internal.Conf.Conf
     -> Element (R10.Context.ContextInternal z) R10.Form.Internal.Msg.Msg
 viewText args textType formConf =
+    let
+        isOptional =
+            not (isRequired_ args.fieldConf.validationSpecs)
+
+        value =
+            args.fieldState.value
+    in
     withContext
         (\c ->
             R10.FormComponents.Internal.Text.view
@@ -190,12 +208,19 @@ viewText args textType formConf =
                                     identity
                            )
                     )
+
+                --
+                -- 2022.06.21 - Trying with paragraph again, now that we
+                --              changed the "magic" value for when fields
+                --              should stay in two columns
+                --              https://jira.rakuten-it.com/jira/browse/OMN-5844
+                , alignTop
                 ]
                 []
                 -- Stuff that change
                 { value = args.fieldState.value
                 , focused = args.focused
-                , maybeValid = maybeValid args.fieldState.validation
+                , maybeValid = maybeValid isOptional value args.fieldState.validation
                 , showPassword = args.fieldState.showPassword
                 , leadingIcon = []
                 , trailingIcon = []
@@ -227,6 +252,9 @@ viewText args textType formConf =
                 , floatingLabelAlwaysUp =
                     case textType of
                         R10.FormTypes.TextWithPatternLarge _ ->
+                            True
+
+                        R10.FormTypes.TextWithPatternLargeWithoutLabel _ ->
                             True
 
                         _ ->
@@ -265,6 +293,7 @@ viewUsernameWithUseEmailCheckbox makerArgs args checkboxLabel formConf formState
             , validationSpecs = Nothing
             , minWidth = Nothing
             , maxWidth = Nothing
+            , allowOverMaxLength = True
             , autocomplete = Nothing
             , placeholder = Nothing
             }
@@ -314,6 +343,11 @@ viewUsernameWithUseEmailCheckbox makerArgs args checkboxLabel formConf formState
             args.fieldConf.validationSpecs
                 |> Maybe.map .validationIcon
                 |> Maybe.withDefault R10.FormTypes.NoIcon
+
+        fieldState : R10.Form.Internal.FieldState.FieldState
+        fieldState =
+            R10.Form.Internal.Dict.get makerArgs.key formState.fieldsState
+                |> Maybe.withDefault R10.Form.Internal.FieldState.init
     in
     column
         [ width fill
@@ -324,12 +358,85 @@ viewUsernameWithUseEmailCheckbox makerArgs args checkboxLabel formConf formState
             , R10.FormComponents.Internal.Validations.viewValidation makerArgs.palette validationIcon <|
                 R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
                     args.fieldConf.validationSpecs
-                    (R10.Form.Internal.Dict.get makerArgs.key formState.fieldsState
-                        |> Maybe.withDefault R10.Form.Internal.FieldState.init
-                    ).validation
+                    fieldState
                     (makerArgs.translator makerArgs.key)
+                    args.fieldConf.type_
             ]
-        , viewBinary checkboxArgs R10.FormTypes.BinaryCheckbox formConf
+        , viewBinary checkboxArgs R10.FormTypes.BinaryCheckbox formConf Nothing
+        ]
+
+
+viewPasswordWithHideShowCheckbox :
+    R10.FormTypes.TypeText
+    -> MakerArgs
+    -> ArgsForFields
+    -> String
+    -> R10.Form.Internal.Conf.Conf
+    -> R10.Form.Internal.State.State
+    -> Element (R10.Context.ContextInternal z) R10.Form.Internal.Msg.Msg
+viewPasswordWithHideShowCheckbox typeText makerArgs args checkboxLabel formConf formState =
+    let
+        checkboxKey : R10.Form.Internal.Key.Key
+        checkboxKey =
+            R10.Form.Internal.Key.composeKey
+                R10.Form.Internal.Shared.defaultHideShowPasswordCheckboxKey
+            <|
+                R10.Form.Internal.Key.toString args.key
+
+        checkboxConf : R10.Form.Internal.FieldConf.FieldConf
+        checkboxConf =
+            { id = R10.Form.Internal.Key.toString checkboxKey
+            , idDom = Just <| R10.Form.Internal.Key.toString checkboxKey
+            , type_ = R10.FormTypes.TypeText typeText
+            , label = checkboxLabel
+            , clickableLabel = True
+            , helperText = Nothing
+            , requiredLabel = Nothing
+            , validationSpecs = Nothing
+            , minWidth = Nothing
+            , maxWidth = Nothing
+            , allowOverMaxLength = True
+            , autocomplete = Nothing
+            , placeholder = Nothing
+            }
+
+        checkboxState : R10.Form.Internal.FieldState.FieldState
+        checkboxState =
+            R10.Form.Internal.Dict.get checkboxKey formState.fieldsState
+                |> Maybe.withDefault R10.Form.Internal.FieldState.init
+                |> (\state ->
+                        { state
+                            | value =
+                                if args.fieldState.showPassword then
+                                    "True"
+
+                                else
+                                    "False"
+                        }
+                   )
+
+        checkboxFocused : Bool
+        checkboxFocused =
+            isFocused checkboxKey formState.focused
+
+        checkboxArgs : ArgsForFields
+        checkboxArgs =
+            { fieldConf = checkboxConf
+            , fieldState = checkboxState
+            , focused = checkboxFocused
+            , active = args.fieldState.showPassword
+            , key = checkboxKey
+            , translator = makerArgs.translator checkboxKey
+            , style = makerArgs.style
+            , palette = makerArgs.palette
+            }
+    in
+    column
+        [ width fill
+        , spacing 15
+        ]
+        [ viewText args typeText formConf
+        , viewBinary checkboxArgs R10.FormTypes.BinaryCheckbox formConf <| Just <| R10.Form.Internal.Msg.TogglePasswordShow args.key
         ]
 
 
@@ -345,16 +452,26 @@ viewBinary :
     ArgsForFields
     -> R10.FormTypes.TypeBinary
     -> R10.Form.Internal.Conf.Conf
+    -- The checkbox often used combine with other components, at the time it may need a specific msg.
+    -> Maybe R10.Form.Internal.Msg.Msg
     -> Element (R10.Context.ContextInternal z) R10.Form.Internal.Msg.Msg
-viewBinary args typeBinary formConf =
+viewBinary args typeBinary formConf maybeMsg =
     let
+        isOptional =
+            not (isRequired_ args.fieldConf.validationSpecs)
+
         value : Bool
         value =
             R10.Form.Internal.Helpers.stringToBool args.fieldState.value
 
         msgOnClick : R10.Context.ContextR10 -> R10.Form.Internal.Msg.Msg
         msgOnClick contextR10 =
-            R10.Form.Internal.Msg.ChangeValue args.key args.fieldConf formConf contextR10 (R10.Form.Internal.Helpers.boolToString <| not value)
+            case maybeMsg of
+                Just msg ->
+                    msg
+
+                Nothing ->
+                    R10.Form.Internal.Msg.ChangeValue args.key args.fieldConf formConf contextR10 (R10.Form.Internal.Helpers.boolToString <| not value)
     in
     withContext
         (\c ->
@@ -363,8 +480,9 @@ viewBinary args typeBinary formConf =
                 -- Stuff that change
                 { value = value
                 , focused = args.focused
-                , maybeValid = maybeValid args.fieldState.validation
+                , maybeValid = maybeValid isOptional args.fieldState.value args.fieldState.validation
                 , fieldConf = args.fieldConf
+                , over = args.fieldState.over
 
                 -- Messages
                 , msgOnChange = \_ -> msgOnClick c.contextR10
@@ -372,6 +490,7 @@ viewBinary args typeBinary formConf =
                 , msgOnLoseFocus = R10.Form.Internal.Msg.LoseFocus args.key args.fieldConf
                 , msgOnClick = msgOnClick c.contextR10
                 , msgNoOp = R10.Form.Internal.Msg.NoOp
+                , msgHover = R10.Form.Internal.Msg.Hover args.key
 
                 -- Stuff that doesn't change
                 , label = args.fieldConf.label
@@ -395,6 +514,14 @@ viewBinary args typeBinary formConf =
 --   ████   ██ ███████  ███ ███      ███████ ██ ██   ████  ██████  ███████ ███████
 
 
+isRequired_ : Maybe { a | validation : List R10.Form.Internal.FieldConf.Validation } -> Bool
+isRequired_ maybeValidationSpec =
+    maybeValidationSpec
+        |> Maybe.map .validation
+        |> Maybe.map (List.member R10.Form.Internal.FieldConf.Required)
+        |> Maybe.withDefault False
+
+
 viewSingle :
     ArgsForFields
     -> R10.FormTypes.TypeSingle
@@ -402,6 +529,13 @@ viewSingle :
     -> R10.Form.Internal.Conf.Conf
     -> Element (R10.Context.ContextInternal z) R10.Form.Internal.Msg.Msg
 viewSingle args singleType fieldOptions formConf =
+    let
+        isOptional =
+            not (isRequired_ args.fieldConf.validationSpecs)
+
+        value =
+            args.fieldState.value
+    in
     R10.FormComponents.Internal.Single.view
         []
         -- Stuff that change
@@ -412,8 +546,9 @@ viewSingle args singleType fieldOptions formConf =
         , scroll = args.fieldState.scroll
         , focused = args.focused
         , opened = args.active
+        , over = args.fieldState.over
         }
-        { maybeValid = maybeValid args.fieldState.validation
+        { maybeValid = maybeValid isOptional value args.fieldState.validation
 
         -- Message mapper
         , toMsg = R10.Form.Internal.Msg.OnSingleMsg args.key args.fieldConf formConf
@@ -433,16 +568,31 @@ viewSingle args singleType fieldOptions formConf =
         }
 
 
+
+-- ██    ██ ██ ███████ ██     ██     ███████ ██████  ███████  ██████ ██  █████  ██
+-- ██    ██ ██ ██      ██     ██     ██      ██   ██ ██      ██      ██ ██   ██ ██
+-- ██    ██ ██ █████   ██  █  ██     ███████ ██████  █████   ██      ██ ███████ ██
+--  ██  ██  ██ ██      ██ ███ ██          ██ ██      ██      ██      ██ ██   ██ ██
+--   ████   ██ ███████  ███ ███      ███████ ██      ███████  ██████ ██ ██   ██ ███████
+
+
 viewSpecial :
     ArgsForFields
     -> R10.FormTypes.TypeSpecial
     -> R10.Form.Internal.Conf.Conf
     -> Element (R10.Context.ContextInternal z) R10.Form.Internal.Msg.Msg
 viewSpecial args typeSpecial formConf =
+    let
+        isOptional =
+            not (isRequired_ args.fieldConf.validationSpecs)
+
+        _ =
+            args.fieldState.value
+    in
     case typeSpecial of
         R10.FormTypes.SpecialPhone disabledChangeCountry ->
             withContext
-                (\c ->
+                (\_ ->
                     let
                         model : R10.FormComponents.Internal.Single.Common.Model
                         model =
@@ -452,21 +602,8 @@ viewSpecial args typeSpecial formConf =
                             , scroll = args.fieldState.scroll
                             , focused = args.focused
                             , opened = args.active
+                            , over = args.fieldState.over
                             }
-
-                        shouldUseSimpleInput : Bool
-                        shouldUseSimpleInput =
-                            R10.Device.isMobileOS c.contextR10.userAgent
-                                || R10.Device.isInternetExplorer c.contextR10.userAgent
-                                || R10.Context.isShouldUseSimplePhoneInputWindowSize c.contextR10.windowSize.width
-
-                        onSimpleInputValueChange : String -> R10.Form.Internal.Msg.Msg
-                        onSimpleInputValueChange =
-                            R10.Form.Internal.Msg.OnPhoneMsg
-                                args.key
-                                args.fieldConf
-                                formConf
-                                << R10.FormComponents.Internal.Phone.Common.OnSimpleValueChange disabledChangeCountry
 
                         countryTelCode : String
                         countryTelCode =
@@ -475,131 +612,25 @@ viewSpecial args typeSpecial formConf =
                                 |> Maybe.map R10.Country.toCountryTelCode
                                 |> Maybe.withDefault ""
 
-                        countryTelCodeViewWidth : Int
-                        countryTelCodeViewWidth =
-                            -- one char width 10
-                            String.length countryTelCode * 10
-
-                        isEmptyExceptCountryTelCode : Bool
-                        isEmptyExceptCountryTelCode =
+                        valueWithoutCountryTelCode : String
+                        valueWithoutCountryTelCode =
                             String.replace countryTelCode "" args.fieldState.value
-                                |> String.isEmpty
-
-                        maybePlaceholderString : Maybe String
-                        maybePlaceholderString =
-                            if R10.Form.Internal.Key.headId args.key == R10.Form.Internal.Shared.defaultMobilePhoneFieldKeyString then
-                                args.fieldState.value
-                                    |> R10.Country.fromTelephoneAsString
-                                    |> Maybe.map R10.Country.toPhoneTemplate
-
-                            else
-                                Nothing
                     in
-                    if shouldUseSimpleInput then
-                        R10.FormComponents.Internal.Text.view
-                            [ width
-                                (fill
-                                    --
-                                    -- Min width can be customized in case we need to keep
-                                    -- two fields in the same row.
-                                    --
-                                    -- Before minimum and maximum were set at 300 and 900 (for
-                                    -- the Self Service Portal). Now they are set in the formConf
-                                    -- of each field.
-                                    --
-                                    |> (case args.fieldConf.minWidth of
-                                            Just int ->
-                                                minimum int
-
-                                            Nothing ->
-                                                identity
-                                       )
-                                    |> (case args.fieldConf.maxWidth of
-                                            Just int ->
-                                                maximum int
-
-                                            Nothing ->
-                                                identity
-                                       )
-                                )
-                            , behindContent <|
-                                el
-                                    ([ Font.color <| R10.FormComponents.Internal.UI.Color.onSurfaceA 0.6 args.palette
-                                     ]
-                                        ++ (case args.style of
-                                                R10.FormComponents.Internal.Style.Filled ->
-                                                    [ moveDown 23
-                                                    , moveRight 30
-                                                    , moveRight <| toFloat <| countryTelCodeViewWidth
-                                                    ]
-
-                                                R10.FormComponents.Internal.Style.Outlined ->
-                                                    [ moveDown 20
-                                                    , moveRight <| toFloat <| countryTelCodeViewWidth + 16 --padding-left 16
-                                                    ]
-                                           )
-                                    )
-                                <|
-                                    text
-                                        (if isEmptyExceptCountryTelCode then
-                                            Maybe.withDefault "" maybePlaceholderString
-
-                                         else
-                                            ""
-                                        )
-                            ]
-                            [ htmlAttribute <| Html.Attributes.type_ "tel"
-                            , htmlAttribute <| Html.Attributes.attribute "autocomplete" "tel"
-                            ]
-                            -- Stuff that change
-                            { value = args.fieldState.value
-                            , focused = args.focused
-                            , maybeValid = maybeValid args.fieldState.validation
-                            , showPassword = args.fieldState.showPassword
-                            , leadingIcon = []
-                            , trailingIcon = []
-
-                            -- Messages
-                            , msgOnChange = onSimpleInputValueChange
-                            , msgOnFocus = R10.Form.Internal.Msg.GetFocus args.key args.fieldConf
-                            , msgOnLoseFocus = Just <| R10.Form.Internal.Msg.LoseFocus args.key args.fieldConf
-                            , msgOnTogglePasswordShow = Nothing
-                            , msgOnEnter = Just <| R10.Form.Internal.Msg.Submit formConf
-                            , msgOnKeyDown = Just R10.Form.Internal.Msg.KeyDown
-
-                            -- Stuff that doesn't change
-                            , label = args.fieldConf.label
-                            , helperText = args.fieldConf.helperText
-                            , disabled = args.fieldState.disabled
-                            , idDom = args.fieldConf.idDom
-                            , style = args.style
-                            , requiredLabel = args.fieldConf.requiredLabel
-                            , palette = args.palette
-                            , autocomplete = args.fieldConf.autocomplete
-                            , floatingLabelAlwaysUp = False
-
-                            -- Specific
-                            , textType = R10.FormTypes.TextPlain
-                            , fieldType = Nothing
-                            , placeholder = maybePlaceholderString
-                            }
-
-                    else
-                        R10.FormComponents.Internal.Phone.view
-                            []
-                            model
-                            { maybeValid = maybeValid args.fieldState.validation
-                            , toMsg = R10.Form.Internal.Msg.OnPhoneMsg args.key args.fieldConf formConf
-                            , label = args.fieldConf.label
-                            , helperText = args.fieldConf.helperText
-                            , disabled = args.fieldState.disabled
-                            , requiredLabel = args.fieldConf.requiredLabel
-                            , style = args.style
-                            , key = R10.Form.Internal.Key.toString args.key
-                            , palette = args.palette
-                            , countryOptions = Nothing
-                            , disabledCountryChange = disabledChangeCountry
-                            }
+                    R10.FormComponents.Internal.Phone.view
+                        []
+                        model
+                        { maybeValid = maybeValid isOptional valueWithoutCountryTelCode args.fieldState.validation
+                        , toMsg = R10.Form.Internal.Msg.OnPhoneMsg args.key args.fieldConf formConf
+                        , label = args.fieldConf.label
+                        , helperText = args.fieldConf.helperText
+                        , disabled = args.fieldState.disabled
+                        , requiredLabel = args.fieldConf.requiredLabel
+                        , style = args.style
+                        , key = R10.Form.Internal.Key.toString args.key
+                        , palette = args.palette
+                        , countryOptions = Nothing
+                        , disabledCountryChange = disabledChangeCountry.disableInternationalPrefixPhoneChange
+                        }
                 )
 
 
@@ -646,6 +677,7 @@ viewEntityWrappable args entities formConf =
         , width fill
         , height fill
         , spacingGeneric
+        , htmlAttribute <| Html.Attributes.class "safari10-ios10-flex-fix"
         ]
       <|
         maker_ args entities formConf
@@ -1107,11 +1139,17 @@ viewEntityField args fieldConf formConf =
                         R10.FormTypes.TextUsernameWithUseEmailCheckbox checkboxLabel ->
                             viewUsernameWithUseEmailCheckbox args args2 checkboxLabel formConf args.formState
 
+                        R10.FormTypes.TextPasswordCurrent checkboxLabel ->
+                            viewPasswordWithHideShowCheckbox typeText args args2 checkboxLabel formConf args.formState
+
+                        R10.FormTypes.TextPasswordNew checkboxLabel ->
+                            viewPasswordWithHideShowCheckbox typeText args args2 checkboxLabel formConf args.formState
+
                         _ ->
                             viewText args2 typeText formConf
 
                 R10.FormTypes.TypeBinary typeBinary ->
-                    viewBinary args2 typeBinary formConf
+                    viewBinary args2 typeBinary formConf Nothing
 
                 R10.FormTypes.TypeSingle typeSingle options ->
                     viewSingle args2 typeSingle options formConf
@@ -1166,33 +1204,51 @@ addValidationMessagesUnderTheField args entity listEl =
                 |> Maybe.map .validationIcon
                 |> Maybe.withDefault R10.FormTypes.NoIcon
 
-        validationView : List (Element (R10.Context.ContextInternal z) msg)
-        validationView =
+        fieldState : R10.Form.Internal.FieldState.FieldState
+        fieldState =
+            R10.Form.Internal.Dict.get args.key args.formState.fieldsState
+                |> Maybe.withDefault R10.Form.Internal.FieldState.init
+
+        fieldConf : R10.Form.Internal.FieldConf.FieldConf
+        fieldConf =
+            getFieldConfig entity
+
+        validationView : Element (R10.Context.ContextInternal z) msg -> List (Element (R10.Context.ContextInternal z) msg)
+        validationView separate_ =
             [ column [ width fill, height fill ] <|
                 listEl
-                    ++ [ R10.FormComponents.Internal.Validations.viewValidation args.palette validationIcon <|
+                    ++ [ separate_
+                       , R10.FormComponents.Internal.Validations.viewValidation args.palette validationIcon <|
                             R10.Form.Internal.Converter.fromFieldStateValidationToComponentValidation
-                                (getFieldConfig entity |> .validationSpecs)
-                                (R10.Form.Internal.Dict.get args.key args.formState.fieldsState
-                                    |> Maybe.withDefault R10.Form.Internal.FieldState.init
-                                ).validation
+                                fieldConf.validationSpecs
+                                fieldState
                                 (args.translator args.key)
+                                fieldConf.type_
                        ]
             ]
+
+        separate : Element (R10.Context.ContextInternal z) msg
+        separate =
+            column [ height <| px 30 ] []
     in
     case entity of
-        R10.Form.Internal.Conf.EntityField fieldConf ->
+        R10.Form.Internal.Conf.EntityField fieldConf_ ->
             --
-            -- Inside viewUsernameWithUseEmailCheckbox
+            -- The validation view is inside viewUsernameWithUseEmailCheckbox
             --
-            if fieldConf.id == defaultUsernameFieldKeyString then
+            if fieldConf_.id == defaultUsernameFieldKeyString then
                 listEl
 
             else
-                validationView
+                case fieldConf_.type_ of
+                    R10.FormTypes.TypeText (R10.FormTypes.TextWithPatternLargeWithoutLabel _) ->
+                        validationView separate
+
+                    _ ->
+                        validationView none
 
         _ ->
-            validationView
+            validationView none
 
 
 

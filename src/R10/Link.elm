@@ -1,4 +1,7 @@
-module R10.Link exposing (attrs)
+module R10.Link exposing
+    ( attrs
+    , attrsUnderline
+    )
 
 {-|
 
@@ -7,7 +10,7 @@ module R10.Link exposing (attrs)
 -}
 
 import Element.WithContext exposing (..)
-import Html.Attributes
+import Element.WithContext.Font as Font
 import R10.Color.AttrsFont
 import R10.Context exposing (..)
 import R10.Transition
@@ -18,6 +21,15 @@ import R10.Transition
 attrs : List (Attr (R10.Context.ContextInternal z) () msg)
 attrs =
     [ R10.Color.AttrsFont.link
+    , mouseOver [ R10.Color.AttrsFont.linkOver ]
+    , transition
+    ]
+
+
+attrsUnderline : List (Attr (R10.Context.ContextInternal z) () msg)
+attrsUnderline =
+    [ Font.underline
+    , R10.Color.AttrsFont.link
     , mouseOver [ R10.Color.AttrsFont.linkOver ]
     , transition
     ]

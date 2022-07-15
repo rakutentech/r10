@@ -6,19 +6,17 @@ module R10.I18n exposing (t, replace, text, paragraph, RenderingMode(..), paragr
 
 -}
 
-import Dict
 import Element.WithContext exposing (..)
-import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Html.Attributes
 import Html.Events
 import Json.Decode
-import List.Extra
-import R10.Color.AttrsBackground
 import R10.Color.AttrsFont
 import R10.Color.Svg
 import R10.Context exposing (..)
+import R10.Device
 import R10.Language
+import R10.Link
 import R10.Paragraph
 import R10.SimpleMarkdown
 import R10.Svg.Others
@@ -83,7 +81,49 @@ paragraphFromString :
         , msgNoOp : Maybe msg
         }
     -> Element (R10.Context.ContextInternal z) msg
-paragraphFromString attrs { renderingMode, tagReplacer, string, msgNoOp } =
+paragraphFromString attrs args =
+    --
+    -- 2022.06.02 - Introduced this system so that if the text contains
+    -- new lines "\n", these get respected in the final output.
+    --
+    let
+        interim : List (Element (R10.Context.ContextInternal z) msg)
+        interim =
+            args.string
+                |> String.split "\n"
+                |> List.map (\subString -> paragraphFromString_ attrs { args | string = subString })
+
+        fixFlexIE : R10.Device.Device -> List (Attribute (R10.Context.ContextInternal z) msg)
+        fixFlexIE device =
+            if R10.Device.isInternetExplorer device then
+                [ htmlAttribute <| Html.Attributes.style "width" "100%" ]
+
+            else
+                []
+
+    in
+    withContext <|
+        \c ->
+            column
+                ([ width fill
+                , spacing 10
+                ]
+                    -- Fix break line issue for IE
+                    ++ fixFlexIE c.contextR10.device
+                )
+                interim
+
+
+paragraphFromString_ :
+    List (Attribute (R10.Context.ContextInternal z) msg)
+    ->
+        { renderingMode : RenderingMode
+        , tagReplacer : R10.Context.ContextInternal z -> String -> String
+        , string : String
+        , msgNoOp : Maybe msg
+        }
+    -> Element (R10.Context.ContextInternal z) msg
+paragraphFromString_ attrs { renderingMode, tagReplacer, string, msgNoOp } =
     withContext <|
         \c ->
             case renderingMode of
@@ -102,7 +142,7 @@ paragraphFromString attrs { renderingMode, tagReplacer, string, msgNoOp } =
                 Error ->
                     R10.Paragraph.small
                         ([ htmlAttribute <| Html.Attributes.id "ie-flex-fix-320"
-                         , R10.Color.AttrsFont.error
+                         , R10.Color.AttrsFont.fontAlertDanger
                          ]
                             ++ attrs
                         )
@@ -139,12 +179,6 @@ applySubstitutions { tagReplacer, context, renderingMode, msgNoOp } translationA
 type RenderingMode
     = Normal
     | Error
-
-
-replaceStartOver : (a -> String) -> a -> String -> String
-replaceStartOver tagReplacer c string =
-    string
-        |> String.replace "{start_over}" (tagReplacer c)
 
 
 specialMarkdown :
@@ -202,15 +236,15 @@ specialMarkdown { tagReplacer, renderingMode, msgNoOp } translationAsString =
                     if tag == "fake_link" then
                         case renderingMode of
                             Normal ->
-                                el [ R10.Color.AttrsFont.link ] <| Element.WithContext.text label
+                                el R10.Link.attrsUnderline <| Element.WithContext.text label
 
                             Error ->
                                 el [ Font.underline ] <| Element.WithContext.text label
 
                     else
                         row
-                            ([ spacing 5 ]
-                                ++ (case msgNoOp of
+                            (spacing 5
+                                :: (case msgNoOp of
                                         Just msg ->
                                             [ htmlAttribute <| Html.Events.stopPropagationOn "click" <| Json.Decode.map (\a -> ( a, True )) (Json.Decode.succeed msg) ]
 
@@ -233,7 +267,7 @@ specialMarkdown { tagReplacer, renderingMode, msgNoOp } translationAsString =
                                 ([]
                                     ++ (case renderingMode of
                                             Normal ->
-                                                [ R10.Color.AttrsFont.link ]
+                                                R10.Link.attrsUnderline
 
                                             Error ->
                                                 [ Font.underline ]
@@ -260,7 +294,7 @@ specialMarkdown { tagReplacer, renderingMode, msgNoOp } translationAsString =
                                                     R10.Color.Svg.link
 
                                                 Error ->
-                                                    R10.Color.Svg.error
+                                                    R10.Color.Svg.fontAlertDanger
                                              )
                                                 c.contextR10.theme
                                             )
@@ -298,11 +332,6 @@ isInternalLink current target =
                 )
             -- In case we cannot compare, we assume it is internal
             |> Maybe.withDefault False
-
-
-dictUrls : Dict.Dict String String
-dictUrls =
-    Dict.fromList [ ( "cookie", "https://example.com/cookies" ) ]
 
 
 

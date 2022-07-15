@@ -38,6 +38,7 @@ type ValidationOutcome
 type alias FieldState =
     { lostFocusOneOrMoreTime : Bool
     , value : String
+    , valueWhenFocused : String
     , search : String
     , select : String
     , scroll : Float
@@ -45,6 +46,7 @@ type alias FieldState =
     , disabled : Bool
     , validation : Validation
     , showPassword : Bool -- Used only for passwords
+    , over : Maybe String -- Used only for radio
     }
 
 
@@ -65,12 +67,14 @@ init =
     { lostFocusOneOrMoreTime = False
     , showPassword = False
     , value = ""
+    , valueWhenFocused = ""
     , search = ""
     , select = ""
     , scroll = 0
     , dirty = False
     , disabled = False
     , validation = NotYetValidated
+    , over = Nothing
     }
 
 
@@ -131,6 +135,7 @@ encoderFieldState v =
             E.object
                 [ ( "lostFocusOneOrMoreTime", E.bool v_.lostFocusOneOrMoreTime )
                 , ( "value", E.string v_.value )
+                , ( "valueWhenFocused", E.string v_.value )
                 , ( "search", E.string v_.search )
                 , ( "select", E.string v_.search )
                 , ( "scroll", E.float v_.scroll )
@@ -149,6 +154,7 @@ decoderFieldState =
         (D.succeed FieldState
             |> Json.Decode.Pipeline.required "lostFocusOneOrMoreTime" D.bool
             |> Json.Decode.Pipeline.required "value" D.string
+            |> Json.Decode.Pipeline.required "valueWhenFocused" D.string
             |> Json.Decode.Pipeline.required "search" D.string
             |> Json.Decode.Pipeline.required "select" D.string
             |> Json.Decode.Pipeline.required "scroll" D.float
@@ -156,6 +162,7 @@ decoderFieldState =
             |> Json.Decode.Pipeline.required "disabled" D.bool
             |> Json.Decode.Pipeline.required "validation" decoderValidation
             |> Json.Decode.Pipeline.required "showPassword" D.bool
+            |> Json.Decode.Pipeline.required "over" (D.nullable D.string)
         )
 
 

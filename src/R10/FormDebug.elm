@@ -15,12 +15,12 @@ textTypeMetaData :
     -> { next : R10.FormTypes.TypeText, string : String }
 textTypeMetaData textType =
     case textType of
-        R10.FormTypes.TextPasswordNew ->
+        R10.FormTypes.TextPasswordNew _ ->
             { string = "R10.FormTypes.TextPasswordNew"
-            , next = R10.FormTypes.TextPasswordCurrent
+            , next = R10.FormTypes.TextPasswordCurrent ""
             }
 
-        R10.FormTypes.TextPasswordCurrent ->
+        R10.FormTypes.TextPasswordCurrent _ ->
             { string = "R10.FormTypes.TextPasswordCurrent"
             , next = R10.FormTypes.TextPlain
             }
@@ -67,7 +67,17 @@ textTypeMetaData textType =
 
         R10.FormTypes.TextWithPatternLarge data ->
             { string = "R10.FormTypes.TextWithPatternLarge " ++ data
-            , next = R10.FormTypes.TextPasswordNew
+            , next = R10.FormTypes.TextWithPatternLargeWithoutLabel ""
+            }
+
+        R10.FormTypes.TextWithPatternLargeWithoutLabel data ->
+            { string = "R10.FormTypes.TextWithPatternLargeWithoutLabel " ++ data
+            , next = R10.FormTypes.TextOnlyDigitsOrDash
+            }
+
+        R10.FormTypes.TextOnlyDigitsOrDash ->
+            { string = "R10.FormTypes.TextOnlyDigitsOrDash"
+            , next = R10.FormTypes.TextPasswordNew ""
             }
 
 

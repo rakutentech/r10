@@ -69,6 +69,7 @@ type alias Args z msg =
     , style : R10.FormComponents.Internal.Style.Style
     , key : String
     , palette : R10.Palette.Palette
+    , disabledCountryChange : Bool
 
     -- Specific
     , countryOptions : List R10.Country.Country

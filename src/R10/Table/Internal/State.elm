@@ -18,20 +18,6 @@ type PaginationButtonState
     | PaginationButtonEnabled
 
 
-type Edge
-    = EdgeNone
-    | EdgeLeft
-    | EdgeRight
-    | EdgeBoth
-
-
-type Loading
-    = LoadingNone
-    | LoadingLeft
-    | LoadingRight
-    | LoadingBoth
-
-
 type alias PaginationStateRecord =
     -- TODO there is too many combinations of nextButtonState + prevButtonState
     { length : Int

@@ -63,11 +63,12 @@ init _ =
                     , maxWidth = Nothing
                     , autocomplete = Nothing
                     , placeholder = Nothing
+                    , allowOverMaxLength = False
                     }
                 , R10.Form.entity.field
                     { id = "password"
                     , idDom = Nothing
-                    , type_ = R10.FormTypes.TypeText R10.FormTypes.TextPasswordNew
+                    , type_ = R10.FormTypes.TypeText (R10.FormTypes.TextPasswordNew "Show password")
                     , label = "Password"
                     , clickableLabel = False
                     , helperText = Just "Helper text for Password"
@@ -86,6 +87,7 @@ init _ =
                     , maxWidth = Nothing
                     , autocomplete = Nothing
                     , placeholder = Nothing
+                    , allowOverMaxLength = False
                     }
                 ]
             , state = R10.Form.initState
@@ -142,6 +144,7 @@ view model =
                 R10.Button.primary []
                     { label = text "Sign In"
                     , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
+                    , translation = { key = "example" }
                     }
             ]
         )

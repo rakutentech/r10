@@ -21,7 +21,6 @@ import R10.Svg.Icons
 import R10.Svg.Logos
 import R10.Svg.LogosExtra
 import R10.Theme
-import Url
 
 
 main : Html.Html msg
@@ -48,9 +47,11 @@ main =
                                 , R10.Svg.Icons.cart_f [] (R10.Color.Svg.fontHighEmphasisWithMaximumContrast c.contextR10.theme) 18
                                 ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
+                , translation = { key = "primary-example" }
                 }
             , R10.Button.secondary []
                 { label = R10.Paragraph.normal [] [ text "Secondary Buttons" ]
                 , libu = R10.Libu.Li "https://r10.netlify.app"
+                , translation = { key = "secodnary-example" }
                 }
             ]

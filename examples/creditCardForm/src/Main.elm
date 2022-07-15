@@ -50,6 +50,7 @@ init =
                 , maxWidth = Nothing
                 , autocomplete = Nothing
                 , placeholder = Nothing
+                , allowOverMaxLength = False
                 }
             , R10.Form.entity.field
                 { id = "cardHolder"
@@ -71,6 +72,7 @@ init =
                 , maxWidth = Nothing
                 , autocomplete = Nothing
                 , placeholder = Nothing
+                , allowOverMaxLength = False
                 }
             , R10.Form.entity.wrappable "wrappable"
                 [ R10.Form.entity.field
@@ -92,6 +94,7 @@ init =
                     , maxWidth = Nothing
                     , autocomplete = Nothing
                     , placeholder = Nothing
+                    , allowOverMaxLength = False
                     }
                 , R10.Form.entity.field
                     { id = "cvv"
@@ -112,6 +115,7 @@ init =
                     , maxWidth = Nothing
                     , autocomplete = Nothing
                     , placeholder = Nothing
+                    , allowOverMaxLength = False
                     }
                 ]
             ]
@@ -243,13 +247,14 @@ view model =
                             MsgForm
                             { maker = Nothing
                             , translator = Nothing
-                            , style = R10.Form.style.outlined
+                            , style = R10.Form.style.floatingLabels
                             , palette = Just <| R10.Form.themeToPalette c.contextR10.theme
                             }
             , map MsgForm <|
                 R10.Button.primary []
                     { label = text "Submit"
                     , libu = R10.Libu.Bu <| Just <| R10.Form.msg.submit model.form.conf
+                    , translation = { key = "example" }
                     }
             ]
 

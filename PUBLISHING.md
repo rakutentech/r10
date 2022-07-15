@@ -24,7 +24,15 @@ You can add or remove dependencies with `elm-json`
 
 ## Publishing
 
+**Notes about elm-bump: Read below about the error "I got the data back, but it was not what I was expecting"**
+
 Run the following to bump && publish the version in elm.json:
+
+```
+npx -p elm@0.19.0-no-deps elm bump
+```
+
+or
 
 ```
 elm bump

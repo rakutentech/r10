@@ -1,8 +1,8 @@
-module R10.Header exposing (view, Header, LanguageSystem(..), Msg(..), Session(..), SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, urlLogin, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample)
+module R10.Header exposing (view, Header, LanguageSystem(..), Msg(..), Session(..), SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, urlLogin, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample, iconHamburger, cssHamburger)
 
 {-| This create a generic header.
 
-@docs view, Header, LanguageSystem, Msg, Session, SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, urlLogin, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample
+@docs view, Header, LanguageSystem, Msg, Session, SessionData, ViewArgs, attrsLink, closeMenu, decodeSession, extraCss, getSession, init, languageMenu, urlLogin, logoutLink, menuSeparator, menuTitle, subscriptions, update, userExample, iconHamburger, cssHamburger
 
 -}
 
@@ -299,9 +299,10 @@ type LanguageSystem route
     | LanguageInModel
 
 
-{-| -}
-css : String -> String
-css color =
+{-| Styles for the Hamburger icon
+-}
+cssHamburger : String -> String
+cssHamburger color =
     """/*!
  * Hamburgers
  * @description Tasty CSS-animated hamburgers
@@ -446,7 +447,7 @@ view model args =
                 else
                     fontColorHeader args
           in
-          inFront <| html <| Html.node "style" [] [ Html.text (css <| R10.Color.Utils.toCssRgba hamburgerColor) ]
+          inFront <| html <| Html.node "style" [] [ Html.text (cssHamburger <| R10.Color.Utils.toCssRgba hamburgerColor) ]
         , inFront <| cover model args
         , inFront <| sideMenu model args
         , inFront <| humbergAndLogo model args
@@ -863,7 +864,7 @@ humbergAndLogo model args =
                 , R10.Transition.transition "transform 0.2s"
                 ]
             <|
-                hamburger model.sideMenuOpen
+                iconHamburger model.sideMenuOpen
         , R10.Libu.view
             [ moveDown (fromTop args.isTop + 2)
             , R10.Transition.transition "transform 0.2s"
@@ -885,8 +886,9 @@ humbergAndLogo model args =
         ]
 
 
-hamburger : Bool -> Element (R10.Context.ContextInternal z) Msg
-hamburger sideMenuOpen =
+{-| -}
+iconHamburger : Bool -> Element (R10.Context.ContextInternal z) Msg
+iconHamburger sideMenuOpen =
     -- From https://jonsuh.com/hamburgers/
     Input.button
         [ htmlAttribute <| Html.Attributes.class "hamburger"

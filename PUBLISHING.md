@@ -71,8 +71,8 @@ npx -p elm@0.19.0-no-deps elm bump
 Commit and push your changes in a PR. Once it's approved and merged, then:
 
 ```
-git tag -a 6.2.0 -m "release version 6.2.0"
-git push origin 6.2.0
+git tag -a 7.0.0 -m "release version 7.0.0"
+git push origin 7.0.0
 npx -p elm@0.19.0-no-deps elm publish
 ```
 

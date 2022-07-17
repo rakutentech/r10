@@ -310,11 +310,9 @@ cssHamburger color =
  * @site https://jonsuh.com/hamburgers
  * @link https://github.com/jonsuh/hamburgers
  */
- 
- .hamburger:focus {
-     outline: -webkit-focus-ring-color auto 0px;
- }
- 
+.hamburger:focus {
+  outline: -webkit-focus-ring-color auto 0px;
+}
 .hamburger {
   padding: 15px 15px;
   display: inline-block;
@@ -328,42 +326,46 @@ cssHamburger color =
   background-color: transparent;
   border: 0;
   margin: 0;
-  overflow: visible; }
-  .hamburger:hover {
-    opacity: 0.7; }
-  .hamburger.is-active:hover {
-    opacity: 0.7; }
-  .hamburger.is-active .hamburger-inner,
-  .hamburger.is-active .hamburger-inner::before,
-  .hamburger.is-active .hamburger-inner::after {
-    background-color: """ ++ color ++ """; }
-
+  overflow: visible;
+}
+/* .hamburger:hover { opacity: 0.7 } */
+/* .hamburger.is-active:hover { opacity: 0.7 } */
+.hamburger.is-active .hamburger-inner,
+.hamburger.is-active .hamburger-inner::before,
+.hamburger.is-active .hamburger-inner::after {
+  background-color: """ ++ color ++ """;
+}
 .hamburger-box {
   width: 30px;
   height: 24px;
   display: inline-block;
-  position: relative; }
-
+  position: relative;
+}
 .hamburger-inner {
   display: block;
   top: 50%;
-  margin-top: -2px; }
-  .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
-    width: 30px;
-    height: 3px;
-    background-color: """ ++ color ++ """;
-    border-radius: 3px;
-    position: absolute;
-    transition-property: transform;
-    transition-duration: 0.15s;
-    transition-timing-function: ease; }
-  .hamburger-inner::before, .hamburger-inner::after {
+  margin-top: -2px;
+}
+.hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
+  width: 30px;
+  height: 3px;
+  background-color: """ ++ color ++ """;
+  border-radius: 3px;
+  position: absolute;
+  transition-property: transform;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+}
+.hamburger-inner::before, .hamburger-inner::after {
     content: "";
-    display: block; }
-  .hamburger-inner::before {
-    top: -10px; }
-  .hamburger-inner::after {
-    bottom: -10px; }
+    display: block; 
+}
+.hamburger-inner::before {
+    top: -10px;
+}
+.hamburger-inner::after {
+    bottom: -10px;
+}
 
 /*
    * Elastic
@@ -896,8 +898,8 @@ iconHamburger args =
         , htmlAttribute <| Html.Attributes.classList [ ( "is-active", args.isActive ) ]
         , htmlAttribute <| Html.Attributes.attribute "aria-label" "Left Side Menu button"
         , Border.rounded 60
-        , width <| px 60
-        , height <| px 60
+        , width <| px 55
+        , height <| px 55
         , mouseOver [ Background.color <| rgba 0 0 0 0.05 ]
         , R10.Transition.transition "background 0.2s"
         , scale 0.7

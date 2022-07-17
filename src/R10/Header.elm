@@ -450,7 +450,7 @@ view model args =
           inFront <| html <| Html.node "style" [] [ Html.text (cssHamburger <| R10.Color.Utils.toCssRgba hamburgerColor) ]
         , inFront <| cover model args
         , inFront <| sideMenu model args
-        , inFront <| humbergAndLogo model args
+        , inFront <| hambergAndLogo model args
         ]
     <|
         header model args
@@ -852,8 +852,8 @@ logoColor darkHeader theme =
 
 
 {-| -}
-humbergAndLogo : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) msg
-humbergAndLogo model args =
+hambergAndLogo : Header -> ViewArgs z msg route -> Element (R10.Context.ContextInternal z) msg
+hambergAndLogo model args =
     row
         [ paddingXY 10 0
         , spacing 10
@@ -864,7 +864,7 @@ humbergAndLogo model args =
                 , R10.Transition.transition "transform 0.2s"
                 ]
             <|
-                iconHamburger model.sideMenuOpen
+                iconHamburger { isActive = model.sideMenuOpen, onPress = ToggleSideMenu }
         , R10.Libu.view
             [ moveDown (fromTop args.isTop + 2)
             , R10.Transition.transition "transform 0.2s"
@@ -887,13 +887,13 @@ humbergAndLogo model args =
 
 
 {-| -}
-iconHamburger : Bool -> Element (R10.Context.ContextInternal z) Msg
-iconHamburger sideMenuOpen =
+iconHamburger : { isActive : Bool, onPress : msg } -> Element (R10.Context.ContextInternal z) msg
+iconHamburger args =
     -- From https://jonsuh.com/hamburgers/
     Input.button
         [ htmlAttribute <| Html.Attributes.class "hamburger"
         , htmlAttribute <| Html.Attributes.class "hamburger--elastic"
-        , htmlAttribute <| Html.Attributes.classList [ ( "is-active", sideMenuOpen ) ]
+        , htmlAttribute <| Html.Attributes.classList [ ( "is-active", args.isActive ) ]
         , htmlAttribute <| Html.Attributes.attribute "aria-label" "Left Side Menu button"
         , Border.rounded 60
         , width <| px 60
@@ -907,7 +907,7 @@ iconHamburger sideMenuOpen =
                 Html.span [ Html.Attributes.class "hamburger-box" ]
                     [ Html.span [ Html.Attributes.class "hamburger-inner" ] []
                     ]
-        , onPress = Just ToggleSideMenu
+        , onPress = Just args.onPress
         }
 
 
